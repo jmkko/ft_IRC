@@ -11,18 +11,17 @@ Toutes les contributions passent par des Pull Requests (PR) vers ce dépôt prin
 ### 🧩 Organisation générale
 
 - `main` — branche stable, propre, toujours fonctionnelle.
-- =dev= (optionnel) — branche commune de développement (avant main).
-- =feature/...= — branches créées dans chaque fork pour développer une fonctionnalité.
+- `feature/...` — branches créées dans chaque fork pour développer une fonctionnalité.
 
 ### ⚙️ Mise en place du dépôt local (une seule fois)
 
-1. Forker le dépôt principal (bouton Fork sur GitHub)
+1. Forker le dépôt principal
 2. Cloner son fork personnel :
 ```bash
 git clone git@github.com:MON-USERNAME/ft_IRC.git
 cd ft_IRC
 ```
-3. Relier le dépôt principal en upstream :
+3. Relier le dépôt principal en `upstream` :
 ```bash
 git remote add upstream https://github.com/TON-USERNAME/ft_IRC.git
 ```
@@ -54,8 +53,8 @@ git push origin feature/ma_fonction
 1. Aller sur GitHub → votre fork
 2. Sur votre branche → cliquer « Compare & pull request »
 3. Vérifier :
-	- base : TON-USERNAME/ft_IRC → main
-	- compare : MON-USERNAME/ft_IRC → feature/ma_fonction
+	- base : `TON-USERNAME/ft_IRC` → `main`
+	- compare : `MON-USERNAME/ft_IRC` → `feature/ma_fonction`
 4. Créer la PR
 
 ### ♻️ Mettre à jour votre fork
@@ -72,11 +71,11 @@ git push origin main
 	✅ Ajoute la gestion du JOIN
 	❌ J'ai codé join
 
-- Branches : feature/... ou fix/...
+- Branches : `feature/...` ou `fix/...`
 - Jamais coder sur main
 - Faire des PR petites et régulières
 
-### 🧪 (Optionnel) Tests automatiques
+### 🧪 Tests automatiques
 
 Nous pourrons ajouter un workflow GitHub Actions pour :
 - Compiler le projet automatiquement à chaque PR
@@ -98,5 +97,5 @@ Nous pourrons ajouter un workflow GitHub Actions pour :
 +-----------+        +-----------+
 ```
 
-✨ Astuce : toujours synchroniser main avant de créer une branche de feature.
+✨ Important : toujours synchroniser `main` avant de créer une branche de feature.
 ---
