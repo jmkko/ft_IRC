@@ -77,10 +77,9 @@ git push origin main
 ````
 ### 📏 Conventions de code
 
-- Commits clairs et concis (présent)
-	✅ Ajoute la gestion du JOIN
-	❌ J'ai codé join
-
+- Commits clairs et concis (présent)  
+	✅ Ajoute la gestion du JOIN  
+	❌ J'ai codé join  
 - Branches : `feature/...` ou `fix/...`
 - Jamais coder sur main
 - Faire des PR petites et régulières
