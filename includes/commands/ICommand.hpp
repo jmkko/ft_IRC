@@ -2,6 +2,8 @@
 # define ICOMMAND_HPP
 # include <iostream>
 
+
+// interface of each commands
 class ICommand
 {
     public:
