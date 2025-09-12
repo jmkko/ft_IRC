@@ -41,12 +41,12 @@ private:
     TcpSocket                   _serverSocket;
     std::vector<pollfd>         _fds;
     std::map<SOCKET, Client>    _clients;
-    int                         _nfds;
     std::string                 _psswd;
     std::string                 _name;
 
-    void handleNewConnection();
+    void handleNewConnection(int);
     void cleanupSocket(int);
+    void handleClientDisconnection(int);
 
 public:
     Server(const unsigned short port, const std::string &psswd);
