@@ -31,11 +31,14 @@ Client& Client::operator=(const Client& inst)
 
 std::ostream&	operator<<(std::ostream& os, const Client& c)
 {
-	return os << "Client [socket_fd = " << c.getSocket().getSocket()
-		<< " status=" << (c.getStatus() == REGISTERED ? "registered" : "unauthenticated")
-		<< " nick=" << c.getNickName() 
-		<< " to receive=" << c.getReceiveBuffer().size()
-		<< " to send=" << c.getSendBuffer().size()
+	return os << CYAN << "Client" << NC << "["
+		<< BWHITE << "socket_fd = " << NC << c.getSocket().getSocket()
+		<< BWHITE << " status=" << NC << (c.getStatus() == REGISTERED ? "registered" : "unauthenticated")
+		<< BWHITE << " nick=" << NC << c.getNickName() 
+		<< BWHITE << " to receive=" << NC << c.getReceiveBuffer().size()
+		<< BWHITE << " to send=" << NC << c.getSendBuffer().size()
+		<< BWHITE << " joined channels=" << NC << c.getNbJoinedChannels()
+		<< "]"
 		<< std::endl;
 }
 
@@ -97,6 +100,11 @@ bool			Client::isRegistered() const
 	return _status == REGISTERED;
 }
 
+int				Client::getNbJoinedChannels() const
+{
+	return _joinedChannels.size();
+}
+
 void			Client::setNickName(const std::string& nick)
 {
 	_nickName = nick;
@@ -115,4 +123,14 @@ void			Client::setRealName(const std::string& realName)
 void			Client::setStatus(ClientStatus status)
 {
 	_status = status;
+}
+
+void			Client::addJoinedChannel(Channel& channel)
+{
+	_joinedChannels[channel.getName()] = &channel;
+}
+
+void			Client::removeJoinedChannel(Channel& channel)
+{
+	_joinedChannels.erase(channel.getName());
 }
