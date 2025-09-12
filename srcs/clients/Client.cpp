@@ -29,6 +29,16 @@ Client& Client::operator=(const Client& inst)
 	return (*this);
 }
 
+std::ostream&	operator<<(std::ostream& os, const Client& c)
+{
+	return os << "Client [socket_fd = " << c.getSocket().getSocket()
+		<< " status=" << (c.getStatus() == REGISTERED ? "registered" : "unauthenticated")
+		<< " nick=" << c.getNickName() 
+		<< " to receive=" << c.getReceiveBuffer().size()
+		<< " to send=" << c.getSendBuffer().size()
+		<< std::endl;
+}
+
 /*************************************************************
 *		🛠️ FUNCTIONS											*
 *************************************************************/
@@ -41,6 +51,11 @@ void		Client::appendToSendBuffer(const std::string& msg)
 /*************************************************************
 *		👁️‍ GETTERS and SETTERS				 				*
 *************************************************************/
+
+TcpSocket&		Client::getSocket() const
+{
+	return _socket;
+}
 
 std::string		Client::getNickName() const
 {

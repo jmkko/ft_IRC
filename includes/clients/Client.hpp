@@ -3,6 +3,7 @@
 #include "TcpSocket.hpp"
 
 #include <string>
+#include <iostream>
 
 enum ClientStatus
 {
@@ -19,6 +20,7 @@ class Client
 
 		Client& operator=(const Client& other);
 
+		TcpSocket&		getSocket() const;
 		std::string		getNickName() const;
 		std::string		getUserName() const;
 		std::string		getRealName() const;
@@ -46,3 +48,5 @@ class Client
 		std::string			_sendBuffer;
 		std::string			_receiveBuffer;
 };
+
+std::ostream&	operator<<(std::ostream& os, const Client& c);
