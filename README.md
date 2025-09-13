@@ -112,11 +112,29 @@ git push origin main
 - Jamais coder sur main
 - Faire des PR petites et régulières
 
-### 🧪 Tests automatiques
+### 🧪 Tests
 
-Nous pourrons ajouter un workflow GitHub Actions pour :
-- Compiler le projet automatiquement à chaque PR
-- Vérifier qu’aucune PR ne casse le build
+We will strive to make different tests to prevent regressions while shipping new features.
+This part of the project is not meant to be evaluated.
+Therefore, we will use a more recent standard (c++20) and give a try at new features such as : 
+- lambdas
+- introspection with type traits (ex: printing the name of an exception being thrown)
+
+Once implemented, each person implementing a new feature or a fix should be also responsible for the tests.
+
+- unit tests to check the output of a function, for normal and edge cases.
+- integration test, based on a basic client, to check that a command or series or command produces the expected output from the server.
+
+#### Assertions
+
+- `AssertUtils` contains utility functions to perform basic checks
+
+#### Continuous integration and development
+
+If possible, we will try to add a Github Action workflow in order to check at each PR that
+- the projects compiles
+- the norm is respected (using a linter based on [LLVM code rules](https://llvm.org/docs/CodingStandards.html))
+- the codebase doesn't have potential bugs (using [CPPcheck](https://github.com/danmar/cppcheck), a static analysis checker)
 
 ### 🧠 Résumé visuel
 ```bash
