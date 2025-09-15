@@ -1,11 +1,13 @@
 #include "Server.hpp"
+#include <sstream>
+#include "utils.hpp"
 
 /******************************************************************************
  * Initialize the Server
  * assign a socket, a port and an adress
  * register the password
  * add the socket of the server to the pollfd vector
-******************************************************************************/
+ ******************************************************************************/
 Server::Server(const unsigned short port, const std::string &psswd) : _psswd(psswd) {
     _name = "hazardous.irc.serv";
     try {
@@ -15,7 +17,7 @@ Server::Server(const unsigned short port, const std::string &psswd) : _psswd(pss
         std::cout << e.what() << std::endl;
         return; // need improve for exit program
     }
-    std::cout << "Server start at port :" << port << std::endl;
+    LOG_SERVER.info("Server " + _name + "start at port :" + utils::toString(port));
     std::cout << std::endl;
 
     // Socket serveur : surveiller nouvelles connexions
@@ -27,7 +29,7 @@ Server::Server(const unsigned short port, const std::string &psswd) : _psswd(pss
 }
 
 Server::~Server() {
-    for (int i = 0; i < _fds.size(); ++i){
+    for (int i = 0; i < (int)_fds.size(); ++i) {
         cleanupSocket(i);
     }
 }
@@ -36,7 +38,7 @@ Server::~Server() {
  * start the server
  * poll allow to know if there is activity on socket
  *
-******************************************************************************/
+ ******************************************************************************/
 void Server::start() {
     while (true) {
         int pollResult = poll(_fds.data(), _fds.size(), 1000); // Timeout 1 second
@@ -49,10 +51,10 @@ void Server::start() {
             continue;
         }
         std::cout << std::endl;
-        std::cout << pollResult << " evenement(s) detecte(s)" << std::endl;
+        LOG_SERVER.debug(utils::toString(pollResult)+ "event(s) detected");
 
-        // Examiner chaque socket
-        for (int i = 0; i < _fds.size(); i++) {
+        // review each client socket
+        for (int i = 0; i < (int)_fds.size(); i++) {
             // new connection
             if (i == 0 && (_fds[i].revents & POLLIN)) {
                 handleNewConnection(i);
@@ -69,8 +71,13 @@ void Server::start() {
                 if (_fds[i].revents & (POLLHUP | POLLNVAL | POLLERR)) {
                     handleClientDisconnection(i);
                     --i;
+                } else if (_fds[i].revents & POLLIN) {
+                    handleClientData(i);
+                } else if (_fds[i].revents & POLLOUT) {
+                    handleClientOutput(i);
                 }
             }
+            _fds[i].revents = 0; // Reset events
         }
     }
 }
@@ -118,12 +125,12 @@ void Server::handleNewConnection(int i) {
 }
 
 /******************************************************************************
-* Cleanup a socket
-* close the socket fd
-* remove from client list : the _clients map
-* remove from pollfd list : the _fds vector
-*
-******************************************************************************/
+ * Cleanup a socket
+ * close the socket fd
+ * remove from client list : the _clients map
+ * remove from pollfd list : the _fds vector
+ *
+ ******************************************************************************/
 void Server::cleanupSocket(int i) {
     close(_fds[i].fd);
     _clients.erase(_fds[i].fd);
@@ -145,3 +152,92 @@ void Server::handleClientDisconnection(int clientIndex) {
     std::cout << "Deconnexion de [" << clientAddress << ":" << clientPort << "]" << std::endl;
 }
 
+void Server::handleClientData(int clientIndex) {
+    SOCKET clientSocket = _fds[clientIndex].fd;
+    Client &client = _clients[clientSocket];
+    const unsigned short clientPort = ntohs(client.addr.sin_port);
+    const std::string clientAddress = TcpSocket::getAddress(client.addr);
+    char buffer[512];
+    memset(buffer, 0, sizeof(buffer));
+    int bytesReceived = recv(clientSocket, buffer, sizeof(buffer) - 1, 0);
+
+    if (bytesReceived == 0) {
+        std::cout << "Connexion fermee proprement" << std::endl;
+        handleClientDisconnection(clientIndex);
+        return;
+    } else if (bytesReceived == -1) {
+        if (errno != EAGAIN && errno != EWOULDBLOCK) {
+            std::cout << "Erreur reception : " << strerror(errno) << std::endl;
+            handleClientDisconnection(clientIndex);
+        }
+        return;
+    } else {
+        buffer[bytesReceived] = '\0';
+        std::cout << "[" << clientAddress << ":" << clientPort << "] " << buffer << std::endl;
+
+        // if (strncmp(buffer,"HELLO\n",6)==0)
+        //     std::cout << "VALID" << std::endl;
+        // std::cout << strncmp(buffer,"HELLO\n",6) << std::endl;
+        // Préparer la réponse
+        std::string response = "sECHO: ";
+        response += buffer;
+        std::cout << response << std::endl;
+
+        // Immediate sending attempt
+        sendToClient(clientIndex, response);
+    }
+}
+
+void Server::sendToClient(int clientIndex, const std::string &response) {
+    SOCKET clientSocket = _fds[clientIndex].fd;
+    Client &client = _clients[clientSocket];
+
+    int bytesSent = send(clientSocket, response.c_str(), response.length(), 0);
+
+    if (bytesSent == -1) {
+        if (errno == EAGAIN || errno == EWOULDBLOCK) {
+            // Socket pas prêt, mettre en queue
+            std::cout << "Socket pas pret, ajout a la queue" << std::endl;
+            client.messageQueue += response;
+            _fds[clientIndex].events |= POLLOUT;
+        } else {
+            std::cout << "Erreur envoi : " << strerror(errno) << std::endl;
+            handleClientDisconnection(clientIndex);
+        }
+    } else if (bytesSent < (int)response.length()) {
+        // send partial
+        std::cout << "Envoi partiel (" << bytesSent << "/" << response.length() << ")" << std::endl;
+        client.messageQueue += response.substr(bytesSent);
+        _fds[clientIndex].events |= POLLOUT;
+    } else {
+        std::cout << "Message envoye completement" << std::endl;
+    }
+}
+
+void Server::handleClientOutput(int clientIndex) {
+    SOCKET clientSocket = _fds[clientIndex].fd;
+    Client &client = _clients[clientSocket];
+    if (client.hasDataToSend()) {
+        int bytesSent = send(clientSocket, client.messageQueue.c_str(), client.messageQueue.length(), 0);
+
+        if (bytesSent == -1) {
+            if (errno != EAGAIN && errno != EWOULDBLOCK) {
+                std::cout << "Erreur envoi queue : " << strerror(errno) << std::endl;
+                handleClientDisconnection(clientIndex);
+            }
+        } else {
+            std::cout << "Envoye de la queue : " << bytesSent << " bytes" << std::endl;
+            client.messageQueue.erase(0, bytesSent);
+
+            // Queue vide ? Désactiver POLLOUT
+            if (!client.hasDataToSend()) {
+                _fds[clientIndex].events &= ~POLLOUT;
+                std::cout << "Queue videe, POLLOUT desactive" << std::endl;
+            }
+        }
+    } else {
+        // no data but POLLOUT set
+        _fds[clientIndex].events &= ~POLLOUT;
+        std::cout << "POLLOUT desactive (pas de donnees)" << std::endl;
+    }
+}

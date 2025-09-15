@@ -26,6 +26,7 @@
 #include <fcntl.h>
 #include <exception>
 #include "TcpSocket.hpp"
+#include "LogManager.hpp"
 
 #define SOCKET int
 
@@ -47,6 +48,9 @@ private:
     void handleNewConnection(int);
     void cleanupSocket(int);
     void handleClientDisconnection(int);
+    void handleClientData(int);
+    void sendToClient(int, const std::string &);
+    void handleClientOutput(int);
 
 public:
     Server(const unsigned short port, const std::string &psswd);

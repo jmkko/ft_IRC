@@ -2,27 +2,29 @@ NAME = ircserv
 
 CXX= c++ -g -MMD
 CXXFLAGS= -Wall -Wextra -Werror -std=c++98
-INCLUDES= -Iincludes/server
+INCLUDES= -Iincludes/server -Iincludes
 
 
 SRCS= 	srcs/main.cpp \
-		srcs/server/Server.cpp srcs/server/TcpSocket.cpp
+		srcs/server/Server.cpp srcs/server/TcpSocket.cpp srcs/server/Logger.cpp \
+		srcs/server/LogManager.cpp
 
 OBJS_DIR= objs
 
 OBJS= $(SRCS:%.cpp=$(OBJS_DIR)/%.o)
 DEPS= $(OBJS:%.o=%.d)
+OBJ_DIRS = $(sort $(dir $(OBJS)))
 
 all : $(NAME)
 
 $(NAME) : $(OBJS)
 	$(CXX) $(CXXFLAGS) $(INCLUDES) $^ -o $@
 
-$(OBJS) :$(OBJS_DIR)/%.o : %.cpp | $(OBJS_DIR)
+$(OBJS) :$(OBJS_DIR)/%.o : %.cpp | $(OBJ_DIRS)
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
-$(OBJS_DIR) :
-	@mkdir -p $(OBJS_DIR)
+$(OBJ_DIRS) :
+	@mkdir -p $@
 
 clean :
 	rm -rf $(OBJS)
