@@ -1,5 +1,7 @@
 #include "Server.hpp"
+#include <cstring>
 #include <sstream>
+#include "LogManager.hpp"
 #include "utils.hpp"
 
 /******************************************************************************
@@ -43,7 +45,8 @@ void Server::start() {
     while (true) {
         int pollResult = poll(_fds.data(), _fds.size(), 1000); // Timeout 1 second
         if (pollResult == -1) {
-            std::cout << "Erreur poll : " << strerror(errno) << std::endl;
+            LOG_ERR.error("Poll failed: " + TO_STRING(strerror(errno)));
+            LOG_SERVER.error("Critical: Poll system failed");
             break;
         }
         if (pollResult == 0) {
@@ -51,7 +54,7 @@ void Server::start() {
             continue;
         }
         std::cout << std::endl;
-        LOG_SERVER.debug(utils::toString(pollResult)+ "event(s) detected");
+        LOG_SERVER.debug(utils::toString(pollResult) + "event(s) detected");
 
         // review each client socket
         for (int i = 0; i < (int)_fds.size(); i++) {
@@ -83,15 +86,17 @@ void Server::start() {
 }
 
 void Server::handleNewConnection(int i) {
-    std::cout << "Socket " << _fds[i].fd << " events: ";
+    // std::cout << "Socket " << _fds[i].fd << " events: ";
+    std::string pollEvent;
     if (_fds[i].revents & POLLIN)
-        std::cout << "POLLIN ";
+        pollEvent.append("POLLIN ");
     if (_fds[i].revents & POLLOUT)
-        std::cout << "POLLOUT ";
+        pollEvent.append("POLLOUT ");
     if (_fds[i].revents & POLLHUP)
-        std::cout << "POLLHUP ";
+        pollEvent.append("POLLHUP ");
     if (_fds[i].revents & POLLERR)
-        std::cout << "POLLERR ";
+        pollEvent.append("POLLERR ");
+    LOG_SOCKET.debug("Socket [" + utils::toString(_fds[i].fd) + "]event :" + pollEvent);
     std::cout << std::endl;
 
     sockaddr_in clientAddr;
@@ -102,10 +107,12 @@ void Server::handleNewConnection(int i) {
     if (clientSocket != -1) {
         // non blocking socket
         if (fcntl(clientSocket, F_SETFL, O_NONBLOCK) == -1) {
-            std::cout << "Erreur configuration non-bloquant : " << strerror(errno) << std::endl;
+            LOG_SOCKET.error("Non-blocking configuration error: " + TO_STRING(strerror(errno)));
+            // std::cout << "Non-blocking configuration error: " << strerror(errno) << std::endl;
             close(clientSocket);
         } else {
-            std::cout << "Nouvelle connexion acceptee: socket " << clientSocket << std::endl;
+            LOG_SOCKET.debug("New connection accepted: socket " + TO_STRING(clientSocket));
+            // std::cout << "Nouvelle connexion acceptee: socket " << clientSocket << std::endl;
 
             // Add new CLient
             Client newClient;
@@ -144,12 +151,15 @@ void Server::handleClientDisconnection(int clientIndex) {
     socklen_t err;
     socklen_t errsize = sizeof(err);
     if (getsockopt(clientSocket, SOL_SOCKET, SO_ERROR, (char *)&err, &errsize) == 0) {
-        std::cout << "Erreur socket : " << strerror(err) << std::endl;
+        LOG_SOCKET.error("socket: " + TO_STRING(strerror(err)));
+        // std::cout << "Erreur socket : " << strerror(err) << std::endl;
     } else {
-        std::cout << "Client ferme la connexion" << std::endl;
+        LOG_CONN.warning("Client closes connexion");
+        // std::cout << "Client ferme la connexion" << std::endl;
     }
     cleanupSocket(clientIndex);
-    std::cout << "Deconnexion de [" << clientAddress << ":" << clientPort << "]" << std::endl;
+    LOG_CONN.warning("Disconnection of [" + TO_STRING(clientAddress) + ":" + TO_STRING(clientPort) + "]");
+    // std::cout << "Deconnexion de [" << clientAddress << ":" << clientPort << "]" << std::endl;
 }
 
 void Server::handleClientData(int clientIndex) {
@@ -162,17 +172,18 @@ void Server::handleClientData(int clientIndex) {
     int bytesReceived = recv(clientSocket, buffer, sizeof(buffer) - 1, 0);
 
     if (bytesReceived == 0) {
-        std::cout << "Connexion fermee proprement" << std::endl;
+        LOG_CONN.warning("Connection closed properly");
         handleClientDisconnection(clientIndex);
         return;
     } else if (bytesReceived == -1) {
         if (errno != EAGAIN && errno != EWOULDBLOCK) {
-            std::cout << "Erreur reception : " << strerror(errno) << std::endl;
+            LOG_ERR.error("Reception failed:" + TO_STRING(strerror(errno)));
             handleClientDisconnection(clientIndex);
         }
         return;
     } else {
         buffer[bytesReceived] = '\0';
+        LOG_SERVER.debug("[" + TO_STRING(clientAddress) + ":" + TO_STRING(clientPort) + "]" + TO_STRING(buffer));
         std::cout << "[" << clientAddress << ":" << clientPort << "] " << buffer << std::endl;
 
         // if (strncmp(buffer,"HELLO\n",6)==0)
@@ -196,21 +207,20 @@ void Server::sendToClient(int clientIndex, const std::string &response) {
 
     if (bytesSent == -1) {
         if (errno == EAGAIN || errno == EWOULDBLOCK) {
-            // Socket pas prêt, mettre en queue
-            std::cout << "Socket pas pret, ajout a la queue" << std::endl;
+            LOG_SOCKET.warning("Socket not ready, adding to queue");
             client.messageQueue += response;
             _fds[clientIndex].events |= POLLOUT;
         } else {
-            std::cout << "Erreur envoi : " << strerror(errno) << std::endl;
+            LOG_ERR.error("Sending failed: " + TO_STRING(errno));
             handleClientDisconnection(clientIndex);
         }
     } else if (bytesSent < (int)response.length()) {
         // send partial
-        std::cout << "Envoi partiel (" << bytesSent << "/" << response.length() << ")" << std::endl;
+        LOG_SERVER.warning("Partial sending (" + TO_STRING(bytesSent) + "/" + TO_STRING(response.length()) + ")");
         client.messageQueue += response.substr(bytesSent);
         _fds[clientIndex].events |= POLLOUT;
     } else {
-        std::cout << "Message envoye completement" << std::endl;
+        LOG_SERVER.info("Message sent completely");
     }
 }
 
@@ -222,22 +232,23 @@ void Server::handleClientOutput(int clientIndex) {
 
         if (bytesSent == -1) {
             if (errno != EAGAIN && errno != EWOULDBLOCK) {
-                std::cout << "Erreur envoi queue : " << strerror(errno) << std::endl;
+                LOG_ERR.error("Sending queue failed: " + TO_STRING(errno));
                 handleClientDisconnection(clientIndex);
             }
         } else {
-            std::cout << "Envoye de la queue : " << bytesSent << " bytes" << std::endl;
+            LOG_SERVER.info("Queue sent: " + TO_STRING(bytesSent) + " bytes");
             client.messageQueue.erase(0, bytesSent);
 
             // Queue vide ? Désactiver POLLOUT
             if (!client.hasDataToSend()) {
                 _fds[clientIndex].events &= ~POLLOUT;
-                std::cout << "Queue videe, POLLOUT desactive" << std::endl;
+                LOG_SERVER.warning("Queue empty, disabled POLLOUT");
             }
         }
     } else {
         // no data but POLLOUT set
         _fds[clientIndex].events &= ~POLLOUT;
+        LOG_SERVER.warning("No data, disabled POLLOUT");
         std::cout << "POLLOUT desactive (pas de donnees)" << std::endl;
     }
 }

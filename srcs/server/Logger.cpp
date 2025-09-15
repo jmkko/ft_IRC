@@ -29,7 +29,10 @@ void Logger::log(LogLevel level, const std::string &message) {
     std::string color = getColorForLevel(level);
     std::string terminalMessage = timestamp + " " + color + "[" + levelStr + "]" + RESET + " " + message;
     std::string fileMessage = timestamp + " [" + levelStr + "] " + message;
-    std::cout << terminalMessage << std::endl;
+    if (level == ERROR)
+        std::cerr << terminalMessage << std::endl;
+    else
+        std::cout << terminalMessage << std::endl;
     if (_fileEnabled) {
         _logFile << fileMessage << std::endl;
         _logFile.flush();

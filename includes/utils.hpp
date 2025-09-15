@@ -13,5 +13,6 @@ namespace utils {
     }
 }
 
+#define TO_STRING utils::toString
 
 #endif

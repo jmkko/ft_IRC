@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "TcpSocket.hpp"
+#include "LogManager.hpp"
 #include <cstring>
 #include <netinet/in.h>
 #include <sstream>
@@ -20,6 +21,8 @@
 #include <fcntl.h>
 #include <iostream>
 #include <stdexcept>
+#include <cerrno>
+#include "utils.hpp"
 
 /******************************************************************************
  * Create a socket
@@ -31,7 +34,7 @@ TcpSocket::TcpSocket() {
     _sckt = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (_sckt == -1) {
         std::ostringstream error;
-        error << "Error: init socket [" << strerror(errno) << "]";
+        LOG_SOCKET.error("init socket: [" + TO_STRING(errno) + "]");
         throw std::runtime_error(error.str());
     }
 }
@@ -67,7 +70,7 @@ void TcpSocket::tcpBind(unsigned short port) {
     int res = bind(_sckt, (const sockaddr *)&addr, sizeof(addr));
     std::string error = strerror(errno);
     if (res != 0) {
-        std::cout << "Error bind:" << error << std::endl;
+        LOG_SOCKET.error("Bind:" + error);
         throw std::runtime_error("Error bind:" + error + "\n");
     }
 }
@@ -84,7 +87,7 @@ void TcpSocket::tcpListen() {
     int res = listen(_sckt, SOMAXCONN);
     std::string error = strerror(errno);
     if (res != 0) {
-        std::cout << "Error listen:" << strerror(errno) << std::endl;
+        LOG_SOCKET.error("Listen: " + error);
         throw std::runtime_error("Error listen:" + error + "\n");
     }
 }
