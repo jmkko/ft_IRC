@@ -6,7 +6,7 @@
 /*   By: fpetit <fpetit@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/11 08:55:19 by jhervoch          #+#    #+#             */
-/*   Updated: 2025/09/15 19:17:08 by fpetit           ###   ########.fr       */
+/*   Updated: 2025/09/15 19:59:01 by fpetit           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,18 +43,21 @@ class Server {
 private:
     TcpSocket                       _serverSocket;
     std::vector<pollfd>             _fds;
-    std::map<Socket, Client>        _clients;
-    std::map<std::string, Client>   _clientsByNick;
+    std::map<Socket, Client*>        _clients;
+    std::map<std::string, Client*>   _clientsByNick;
     std::string                     _psswd;
     std::string                     _name;
 
     void handleNewConnection(int);
-    void cleanupSocket(int);
+    void cleanupSocket(int, Client* c);
+	void removeClient(Socket socket);
     void handleClientDisconnection(int);
     void handleClientData(int);
     void sendToClient(int, const std::string &);
     void handleClientOutput(int);
     void subscribeToEvents(Socket toListen, uint32_t flags);
+	Client*	getClientBySocket(Socket socket);
+	Client*	getClientByNick(const std::string& nick);
 
 public:
     Server(const unsigned short port, const std::string &psswd);

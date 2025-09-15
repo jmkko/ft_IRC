@@ -60,10 +60,10 @@ void Server::start() {
             }
             // Client socket : data or disconnection
             else if (i > 0) {
-                std::map<Socket, Client>::iterator clientIt = _clients.find(_fds[i].fd);
+                std::map<Socket, Client*>::iterator clientIt = _clients.find(_fds[i].fd);
                 // orphelan socket
                 if (clientIt == _clients.end()) {
-                    cleanupSocket(i);
+                    cleanupSocket(i, NULL);
                     --i;
                     continue;
                 }
@@ -105,42 +105,54 @@ void Server::handleNewConnection(int i) {
             close(clientSocket);
         } else {
 			LOG_SERVER.info(std::string("New connection accepted on socket ") + utils::toString(clientSocket));
-            Client newClient(clientSocket, clientAddr);
+            Client* newClient = new Client(clientSocket, clientAddr);
             _clients[clientSocket] = newClient;
 			subscribeToEvents(clientSocket, POLLIN);
         }
     }
 }
 
-/******************************************************************************
- * Cleanup a socket
- * close the socket fd
- * remove from client list : the _clients map
- * remove from pollfd list : the _fds vector
- *
- ******************************************************************************/
-void Server::cleanupSocket(int i) {
-    close(_fds[i].fd);
-    _clients.erase(_fds[i].fd);
-    _fds.erase(_fds.begin() + i);
+
+/// @brief cleanup a socket and associated Client
+/// remove entry from _clients
+/// remove entry from _clientsByNick
+/// delete client instance 
+/// close the socket fd
+/// remove entry from _fds (the pollfd list)
+/// @param i index of monitored fd
+/// @param c client
+void Server::cleanupSocket(int i, Client* c) {
+	_clients.erase(_fds[i].fd);
+	if (c)
+	{
+		if (!c->getNickName().empty())
+			_clientsByNick.erase(c->getNickName());
+		delete c;
+	}
+	close(_fds[i].fd);
+	_fds.erase(_fds.begin() + i);
 }
 
+/// @brief removes client 
+/// @param clientIndex 
 void Server::handleClientDisconnection(int clientIndex) {
-    Socket clientSocket = _fds[clientIndex].fd;
-    const unsigned short clientPort = ntohs(_clients[clientSocket].addr.sin_port);
-    const std::string clientAddress = TcpSocket::getAddress(_clients[clientSocket].addr);
+	Client* client = getClientBySocket(clientIndex);
+	if (!client)
+	{
+		LOG_SERVER.error("client not found");
+		return ;
+	}
+	Socket clientSocket = client->getSocket();
+
     socklen_t err;
     socklen_t errsize = sizeof(err);
     if (getsockopt(clientSocket, SOL_SOCKET, SO_ERROR, (char *)&err, &errsize) == 0) {
-        LOG_SOCKET.error("socket: " + TO_STRING(strerror(err)));
-        // std::cout << "Erreur socket : " << strerror(err) << std::endl;
+		LOG_SERVER.error(std::string("socket error : ") + strerror(err));
     } else {
-        LOG_CONN.warning("Client closes connexion");
-        // std::cout << "Client ferme la connexion" << std::endl;
+		LOG_SERVER.info("connection has been closed by client");
     }
-    cleanupSocket(clientIndex);
-    LOG_CONN.warning("Disconnection of [" + TO_STRING(clientAddress) + ":" + TO_STRING(clientPort) + "]");
-    // std::cout << "Deconnexion de [" << clientAddress << ":" << clientPort << "]" << std::endl;
+    cleanupSocket(clientIndex, client);
+	LOG_SERVER.info(std::string("Client at ") +  client->getAddress() + ":" + utils::toString(client->getPort()) + " disconnected");
 }
 
 void Server::handleClientData(int clientIndex) {
@@ -242,4 +254,20 @@ void	Server::subscribeToEvents(Socket toListen, uint32_t flags)
 		.revents = 0
 	};
 	_fds.push_back(newPollFd);
+}
+
+Client*	Server::getClientBySocket(Socket socket)
+{
+	std::map<Socket, Client*>::iterator it = _clients.find(socket);
+	if (it != _clients.end())
+		return it->second;
+	return NULL;
+}
+
+Client*	Server::getClientByNick(const std::string& nick)
+{
+	std::map<std::string, Client*>::iterator it = _clientsByNick.find(nick);
+	if (it != _clientsByNick.end())
+		return it->second;
+	return NULL;
 }
