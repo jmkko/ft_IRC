@@ -81,6 +81,8 @@ void Server::start() {
     }
 }
 
+/// @brief store new client socket, set it non blocking, and subscribe to new POLLIN events
+/// @param i index of the monitored fds
 void Server::handleNewConnection(int i) {
 	LOG_SERVER.debug("Socket " + utils::toString(_fds[i].fd) + " events: ");
     if (_fds[i].revents & POLLIN)
@@ -98,19 +100,13 @@ void Server::handleNewConnection(int i) {
     Socket clientSocket = accept(_serverSocket.getSocket(), (sockaddr *)&clientAddr, &addrLen);
 
     if (clientSocket != -1) {
-        // non blocking socket
         if (fcntl(clientSocket, F_SETFL, O_NONBLOCK) == -1) {
 			LOG_SERVER.error(std::string("Error while setting a non blocking client socket") + strerror(errno));
             close(clientSocket);
         } else {
 			LOG_SERVER.info(std::string("New connection accepted on socket ") + utils::toString(clientSocket));
-
-            // Add new CLient
             Client newClient(clientSocket, clientAddr);
             _clients[clientSocket] = newClient;
-
-            // add the new  client to  the watching fd list ti poll
-            // only POLLIN for first time
 			subscribeToEvents(clientSocket, POLLIN);
         }
     }
