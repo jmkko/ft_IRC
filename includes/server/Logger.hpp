@@ -1,6 +1,8 @@
 #ifndef LOGGER_HPP
 #define LOGGER_HPP
 
+#include "colors.hpp"
+
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -17,22 +19,18 @@ enum LogLevel {
     ERROR = 3
 };
 
-#define RESET "\033[0m"
-#define RED "\033[31m"
-#define YELLOW "\033[33m"
-#define GREEN "\033[32m"
-#define BLUE "\033[34m"
+#define RESET	NC
 
 class Logger {
 private:
-    std::string _name;
-    std::ofstream _logFile;
-    LogLevel _minLevel;
-    bool _fileEnabled;	
+    std::string		_name;
+    std::ofstream	_logFile;
+    LogLevel		_minLevel;
+    bool			_fileEnabled;	
     
-    std::string getCurrentTime();
-    std::string levelToString(LogLevel level);
-    std::string getColorForLevel(LogLevel level);
+    std::string		getCurrentTime();
+    std::string		levelToString(LogLevel level);
+    std::string		getColorForLevel(LogLevel level);
     
 public:
     Logger(const std::string& logName, const std::string& filename= "irc_server.log", LogLevel level = INFO);
@@ -45,7 +43,7 @@ public:
     {
         std::ostringstream oss;
         oss << message;
-        oss << obj;
+        oss << t;
         log(DEBUG, oss.str());
     }
     void info(const std::string& message);

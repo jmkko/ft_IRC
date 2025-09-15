@@ -1,12 +1,16 @@
-#pragma once
+#ifndef CHANNEL_HPP
+#define CHANNEL_HPP
 
-#include "Client.hpp"
 #include "ICommand.hpp"
+#include "Client.hpp"
 #include "colors.hpp"
+#include "consts.hpp"
 
 #include <iostream>
 #include <string>
 #include <set>
+
+class Client;
 
 class Channel {
 
@@ -17,7 +21,6 @@ class Channel {
 		virtual ~Channel();
 		Channel& operator=(const Channel& other);
 		
-
 		const std::string&	getName() const;
 		const std::string&	getTopic() const;
 		bool				isMember(Client& client) const;
@@ -54,3 +57,5 @@ class Channel {
 };
 
 std::ostream&	operator<<(std::ostream& os, const Channel& c);
+
+#endif

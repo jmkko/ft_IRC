@@ -2,9 +2,10 @@
 
 #include "consts.hpp"
 
+#include <errno.h>
 #include <string>
 #include <vector>
-#include <netinet/in.h> // sockaddr_in, IPPROTO_TCP
+#include <netinet/in.h>		// sockaddr_in, IPPROTO_TCP
 
 class TcpSocket {
 public:

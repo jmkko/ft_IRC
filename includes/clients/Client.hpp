@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CLIENT_HPP
+#define CLIENT_HPP
 
 #include "TcpSocket.hpp"
 #include "Channel.hpp"
@@ -7,6 +8,8 @@
 #include <string>
 #include <iostream>
 #include <map>
+
+class Channel;
 
 enum ClientStatus
 {
@@ -52,6 +55,7 @@ class Client
 	private:
 		TcpSocket						_socket;
 		sockaddr_in						_addr;
+		std::string						_addrStr;
 		std::string						_nickName;
 		std::string						_userName;
 		std::string						_realName;
@@ -62,3 +66,5 @@ class Client
 };
 
 std::ostream&	operator<<(std::ostream& os, const Client& c);
+
+#endif

@@ -5,7 +5,6 @@
 
 class LogManager {
 private:
-    static LogManager* _instance;
     std::map<std::string, Logger*> _loggers;
     
     LogManager() {};

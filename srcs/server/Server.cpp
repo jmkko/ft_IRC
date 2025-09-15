@@ -23,7 +23,7 @@ Server::Server(const unsigned short port, const std::string &psswd) : _psswd(pss
     std::cout << std::endl;
 
     // Socket serveur : surveiller nouvelles connexions
-	subscribeToEvents(_serverSocket.getSocket(), POLLIN);
+	listenToSocket(_serverSocket.getSocket(), POLLIN);
 }
 
 Server::~Server() {
@@ -39,7 +39,7 @@ Server::~Server() {
  ******************************************************************************/
 void Server::start() {
     while (true) {
-        int pollResult = poll(_fds.data(), _fds.size(), 1000); // Timeout 1 second
+        int pollResult = poll(_fds.data(), _fds.size(), 10000); // Timeout 1 second
         if (pollResult == -1) {
             LOG_ERR.error("Poll failed: " + TO_STRING(strerror(errno)));
             LOG_SERVER.error("Critical: Poll system failed");
@@ -53,7 +53,7 @@ void Server::start() {
         LOG_SERVER.debug(utils::toString(pollResult) + "event(s) detected");
 
         // review each client socket
-        for (int i = 0; i < (int)_fds.size(); i++) {
+        for (int i = 0; i < static_cast<int>(_fds.size()); i++) {
             // new connection
             if (i == 0 && (_fds[i].revents & POLLIN)) {
                 handleNewConnection(i);
@@ -104,10 +104,10 @@ void Server::handleNewConnection(int i) {
 			LOG_SERVER.error(std::string("Error while setting a non blocking client socket") + strerror(errno));
             close(clientSocket);
         } else {
-			LOG_SERVER.info(std::string("New connection accepted on socket ") + utils::toString(clientSocket));
-            Client* newClient = new Client(clientSocket, clientAddr);
+			Client* newClient = new Client(clientSocket, clientAddr);
+			LOG_SERVER.info(std::string("New connection accepted on socket ") + utils::toString(clientSocket) + " => " + utils::toString(*newClient));
             _clients[clientSocket] = newClient;
-			subscribeToEvents(clientSocket, POLLIN);
+			listenToSocket(clientSocket, POLLIN);
         }
     }
 }
@@ -135,23 +135,26 @@ void Server::cleanupSocket(int i, Client* c) {
 /// @brief removes client 
 /// @param clientIndex 
 void Server::handleClientDisconnection(int clientIndex) {
-	Client* client = getClientBySocket(clientIndex);
+	Socket clientSocket = _fds[clientIndex].fd;
+    Client* client = _clients[clientSocket];
 	if (!client)
 	{
 		LOG_SERVER.error("client not found");
 		return ;
 	}
-	Socket clientSocket = client->getSocket();
 
     socklen_t err;
     socklen_t errsize = sizeof(err);
     if (getsockopt(clientSocket, SOL_SOCKET, SO_ERROR, (char *)&err, &errsize) == 0) {
-		LOG_SERVER.error(std::string("socket error : ") + strerror(err));
-    } else {
-		LOG_SERVER.info("connection has been closed by client");
+		if (err == 0) {
+			LOG_SERVER.debug("connection has been closed by client");
+		}
+		else {
+			LOG_SERVER.error(std::string("socket error : ") + strerror(err));
+		}
     }
-    cleanupSocket(clientIndex, client);
 	LOG_SERVER.info(std::string("Client at ") +  client->getAddress() + ":" + utils::toString(client->getPort()) + " disconnected");
+    cleanupSocket(clientIndex, client);
 }
 
 static bool	hasCommandEnding(char* msg)
@@ -159,7 +162,7 @@ static bool	hasCommandEnding(char* msg)
 	std::string s(msg);
 	if (s.size() < 2)
 		return false;
-	std::string::const_reverse_iterator it = s.crbegin();
+	std::string::reverse_iterator it = s.rbegin();
 	char last = *it;
 	char beforeLast = *(++it);
 	if (beforeLast != '\r' || last != 'n')
@@ -172,13 +175,14 @@ static bool	hasCommandEnding(char* msg)
 /// in case of partial reception (message not ending with \r\n), add to receive buffer
 /// @param clientIndex index of monitored fd
 void Server::handleClientData(int clientIndex) {
-    Client* &client = _clients[clientIndex];
+	LOG_SERVER.debug("Server#handleClientData");
+	Socket clientSocket = _fds[clientIndex].fd;
+    Client* client = _clients[clientSocket];
 	if (!client)
 	{
-		LOG_SERVER.error("client not found");
+		LOG_SERVER.error("handle receive... client not found");
 		return ;
 	}
-	Socket clientSocket = client->getSocket();
 
     char buffer[CLIENT_READ_BUFFER_SIZE];
     memset(buffer, 0, sizeof(buffer));
@@ -222,34 +226,6 @@ void Server::handleClientData(int clientIndex) {
     }
 }
 
-// void Server::sendToClient(int clientIndex, const std::string &response) {
-//     Client* &client = _clients[clientIndex];
-// 	if (!client)
-// 	{
-// 		LOG_SERVER.error("client not found");
-// 		return ;
-// 	}
-// 	Socket clientSocket = client->getSocket();
-
-//     int bytesSent = send(clientSocket, response.c_str(), response.length(), 0);
-
-//     if (bytesSent == -1) {
-//         if (errno == EAGAIN || errno == EWOULDBLOCK) {
-// 			LOG_SERVER.warning(std::string("Socket is not ready for sending ... adding to queue"));
-//             client->appendToSendBuffer(response);
-//             _fds[clientIndex].events |= POLLOUT;
-//         } else {
-// 			LOG_SERVER.error(std::string("Error sending message"));
-//             handleClientDisconnection(clientIndex);
-//         }
-//     } else if (bytesSent < (int)response.length()) {
-// 		LOG_SERVER.warning(std::string("Response has been partially sent (") \
-// 			+ utils::toString(bytesSent) + "/" + utils::toString(response.length()) + ")");
-// 		client->appendToSendBuffer(response.substr(bytesSent));
-//     } else {
-// 		LOG_SERVER.debug(std::string("Message sent normally"));
-//     }
-// }
 
 /// @brief attempt sending the queued messages
 /// if a message is partially sent, updates send buffer accordingly
@@ -257,13 +233,14 @@ void Server::handleClientData(int clientIndex) {
 /// in case of send error, either retry or disconnect the client
 /// @param clientIndex monitored fd for client
 void Server::handleClientOutput(int clientIndex) {
-    Client* &client = _clients[clientIndex];
+	LOG_SERVER.debug("Server#handleClientOutput");
+	Socket clientSocket = _fds[clientIndex].fd;
+    Client* client = _clients[clientSocket];
 	if (!client)
 	{
 		LOG_SERVER.error("client not found");
 		return ;
 	}
-	Socket clientSocket = client->getSocket();
 	std::string sendBuffer = client->getSendBuffer();
 
     if (client->hasDataToSend()) {
@@ -293,9 +270,9 @@ void Server::handleClientOutput(int clientIndex) {
     }
 }
 
-void	Server::subscribeToEvents(Socket toListen, uint32_t flags)
+void	Server::listenToSocket(Socket toListen, uint32_t flags)
 {
-	pollfd newPollFd {
+	pollfd newPollFd = {
 		.fd = toListen,
 		.events = flags,
 		.revents = 0
@@ -321,5 +298,6 @@ Client*	Server::getClientByNick(const std::string& nick)
 
 ICommand* parseCommand(char* buffer)
 {
+	(void) buffer;
 	return NULL;
 }

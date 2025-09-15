@@ -6,7 +6,7 @@
 /*   By: fpetit <fpetit@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/11 08:55:19 by jhervoch          #+#    #+#             */
-/*   Updated: 2025/09/15 21:11:52 by fpetit           ###   ########.fr       */
+/*   Updated: 2025/09/15 23:35:11 by fpetit           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,9 @@
 
 #include "Client.hpp"
 #include "ICommand.hpp"
+#include "TcpSocket.hpp"
+#include "LogManager.hpp"
+#include "consts.hpp"
 
 #include <string>
 #include <string.h>
@@ -28,17 +31,6 @@
 #include <poll.h>
 #include <fcntl.h>
 #include <exception>
-#include "TcpSocket.hpp"
-#include "LogManager.hpp"
-
-#define SOCKET int
-
-// struct Client {
-//     Socket sckt;
-//     sockaddr_in addr;
-//     std::string messageQueue; // Messages sending queue
-//     bool hasDataToSend() const { return !messageQueue.empty(); }
-// };
 
 class Server {
 private:
@@ -56,7 +48,7 @@ private:
     void handleClientData(int);
     void sendToClient(int, const std::string &);
     void handleClientOutput(int);
-    void subscribeToEvents(Socket toListen, uint32_t flags);
+    void listenToSocket(Socket toListen, uint32_t flags);
 	Client*	getClientBySocket(Socket socket);
 	Client*	getClientByNick(const std::string& nick);
 	ICommand* parseCommand(char* buffer);

@@ -1,12 +1,11 @@
 #include "Channel.hpp"
-#include "consts.hpp"
 
 /************************************************************
 *		📁 CLASS METHODS									*
 ************************************************************/
 
 /// @brief checks validity according to RFC
-bool				_isValidChannelName(const std::string& name)
+bool		Channel::_isValidChannelName(const std::string& name)
 {
 	return name.length() > 1 && name[0] == '#' && name.length() < CHAN_NAME_MAX_LEN;
 }
@@ -22,8 +21,8 @@ Channel::Channel(const std::string& name) :
 	_isInviteOnly(false), 
 	_isTopicChangeRestricted(false), 
 	_members(), 
-	_operators(), 
-	_invites()
+	_invites(),
+	_operators() 
 {
 	setName(name);
 }
@@ -35,8 +34,8 @@ Channel::Channel(const Channel& inst) :
 	_isInviteOnly(inst._isInviteOnly), 
 	_isTopicChangeRestricted(inst._isTopicChangeRestricted), 
 	_members(inst._members), 
-	_operators(inst._operators), 
-	_invites(inst._invites)
+	_invites(inst._invites),
+	_operators(inst._operators)
 	{}
 
 Channel::Channel(void) : 
@@ -46,8 +45,8 @@ Channel::Channel(void) :
 	_isInviteOnly(false), 
 	_isTopicChangeRestricted(false), 
 	_members(), 
-	_operators(), 
-	_invites()
+	_invites(),
+	_operators() 
 {}
 
 Channel::~Channel() {}
@@ -123,7 +122,7 @@ bool				Channel::isOperator(Client& client) const
 	return _operators.find(&client) != _operators.end();
 }
 
-bool				Channel::isMember(Client& client) const
+bool				Channel::isInvited(Client& client) const
 {
 	return _invites.find(&client) != _invites.end();
 }
@@ -146,7 +145,7 @@ bool				Channel::isTopicChangeRestricted() const
 
 void				Channel::setName(const std::string& name)
 {
-	if (_isValidChannelName(name))
+	if (Channel::_isValidChannelName(name))
 		_name = name;
 	else
 		throw std::runtime_error("invalid channel name");
@@ -172,10 +171,10 @@ void				Channel::setIsInviteOnly(bool isInviteOnly)
 
 void				Channel::setIsTopicChangeRestricted(bool isRestricted)
 {
-	_isTopicChangeRestricted = isTopicChangeRestricted;
+	_isTopicChangeRestricted = isRestricted;
 }
 
-void				Channel::addMember(Client& client)
+void				Channel::inviteClient(Client& client)
 {
 		_invites.insert(&client);
 }
