@@ -28,7 +28,7 @@ Server::Server(const unsigned short port, const std::string &psswd) : _psswd(pss
 
 Server::~Server() {
     for (int i = 0; i < (int)_fds.size(); ++i) {
-        cleanupSocket(i);
+        cleanupSocket(i, getClientBySocket(i));
     }
 }
 
@@ -112,7 +112,6 @@ void Server::handleNewConnection(int i) {
     }
 }
 
-
 /// @brief cleanup a socket and associated Client
 /// remove entry from _clients
 /// remove entry from _clientsByNick
@@ -155,12 +154,33 @@ void Server::handleClientDisconnection(int clientIndex) {
 	LOG_SERVER.info(std::string("Client at ") +  client->getAddress() + ":" + utils::toString(client->getPort()) + " disconnected");
 }
 
+static bool	hasCommandEnding(char* msg)
+{
+	std::string s(msg);
+	if (s.size() < 2)
+		return false;
+	std::string::const_reverse_iterator it = s.crbegin();
+	char last = *it;
+	char beforeLast = *(++it);
+	if (beforeLast != '\r' || last != 'n')
+		return false;
+	return true;
+}
+
+/// @brief attempt receiving bytes from client, parse into a command and execute it
+/// enable write notification on client socket if a response has to be sent
+/// in case of partial reception (message not ending with \r\n), add to receive buffer
+/// @param clientIndex index of monitored fd
 void Server::handleClientData(int clientIndex) {
-    Socket clientSocket = _fds[clientIndex].fd;
-    Client &client = _clients[clientSocket];
-    const unsigned short clientPort = ntohs(client.addr.sin_port);
-    const std::string clientAddress = TcpSocket::getAddress(client.addr);
-    char buffer[512];
+    Client* &client = _clients[clientIndex];
+	if (!client)
+	{
+		LOG_SERVER.error("client not found");
+		return ;
+	}
+	Socket clientSocket = client->getSocket();
+
+    char buffer[CLIENT_READ_BUFFER_SIZE];
     memset(buffer, 0, sizeof(buffer));
     int bytesReceived = recv(clientSocket, buffer, sizeof(buffer) - 1, 0);
 
@@ -175,74 +195,101 @@ void Server::handleClientData(int clientIndex) {
         }
         return;
     } else {
+		if (buffer[bytesReceived])
         buffer[bytesReceived] = '\0';
-        LOG_SERVER.debug("[" + TO_STRING(clientAddress) + ":" + TO_STRING(clientPort) + "]" + TO_STRING(buffer));
-        std::cout << "[" << clientAddress << ":" << clientPort << "] " << buffer << std::endl;
-
-        // if (strncmp(buffer,"HELLO\n",6)==0)
-        //     std::cout << "VALID" << std::endl;
-        // std::cout << strncmp(buffer,"HELLO\n",6) << std::endl;
-        // Préparer la réponse
-        std::string response = "sECHO: ";
-        response += buffer;
-        std::cout << response << std::endl;
-
-        // Immediate sending attempt
-        sendToClient(clientIndex, response);
+		LOG_SERVER.debug(std::string("[") +  client->getAddress() + ":" \
+			+ utils::toString(client->getPort()) + "] : " + buffer);
+		
+		// if the buffer ends with \r\n -> parse as command
+		// otherwise it can be a partial message with CTRL+D -> we append and wait \r\n
+		if (hasCommandEnding(buffer))
+		{
+			// parse to command and execute
+			// ICommand* cmd = parseCommand(buffer)
+			// cmd->execute(*this, client)
+			// delete cmd;
+			std::string response = "sECHO: ";
+			response += buffer;
+			std::cout << response << std::endl;
+			client->appendToSendBuffer(response);
+		}
+		else
+			client->appendToReceiveBuffer(std::string(buffer));
+		if (client->hasDataToSend())
+		{
+			_fds[clientIndex].events |= POLLOUT;
+		}
     }
 }
 
-void Server::sendToClient(int clientIndex, const std::string &response) {
-    Socket clientSocket = _fds[clientIndex].fd;
-    Client &client = _clients[clientSocket];
+// void Server::sendToClient(int clientIndex, const std::string &response) {
+//     Client* &client = _clients[clientIndex];
+// 	if (!client)
+// 	{
+// 		LOG_SERVER.error("client not found");
+// 		return ;
+// 	}
+// 	Socket clientSocket = client->getSocket();
 
-    int bytesSent = send(clientSocket, response.c_str(), response.length(), 0);
+//     int bytesSent = send(clientSocket, response.c_str(), response.length(), 0);
 
-    if (bytesSent == -1) {
-        if (errno == EAGAIN || errno == EWOULDBLOCK) {
-            LOG_SOCKET.warning("Socket not ready, adding to queue");
-            client.messageQueue += response;
-            _fds[clientIndex].events |= POLLOUT;
-        } else {
-            LOG_ERR.error("Sending failed: " + TO_STRING(errno));
-            handleClientDisconnection(clientIndex);
-        }
-    } else if (bytesSent < (int)response.length()) {
-        // send partial
-        LOG_SERVER.warning("Partial sending (" + TO_STRING(bytesSent) + "/" + TO_STRING(response.length()) + ")");
-        client.messageQueue += response.substr(bytesSent);
-        _fds[clientIndex].events |= POLLOUT;
-    } else {
-        LOG_SERVER.info("Message sent completely");
-    }
-}
+//     if (bytesSent == -1) {
+//         if (errno == EAGAIN || errno == EWOULDBLOCK) {
+// 			LOG_SERVER.warning(std::string("Socket is not ready for sending ... adding to queue"));
+//             client->appendToSendBuffer(response);
+//             _fds[clientIndex].events |= POLLOUT;
+//         } else {
+// 			LOG_SERVER.error(std::string("Error sending message"));
+//             handleClientDisconnection(clientIndex);
+//         }
+//     } else if (bytesSent < (int)response.length()) {
+// 		LOG_SERVER.warning(std::string("Response has been partially sent (") \
+// 			+ utils::toString(bytesSent) + "/" + utils::toString(response.length()) + ")");
+// 		client->appendToSendBuffer(response.substr(bytesSent));
+//     } else {
+// 		LOG_SERVER.debug(std::string("Message sent normally"));
+//     }
+// }
 
+/// @brief attempt sending the queued messages
+/// if a message is partially sent, updates send buffer accordingly
+/// if a message is completely send, disable write notification for the client fd
+/// in case of send error, either retry or disconnect the client
+/// @param clientIndex monitored fd for client
 void Server::handleClientOutput(int clientIndex) {
-    Socket clientSocket = _fds[clientIndex].fd;
-    Client &client = _clients[clientSocket];
-    if (client.hasDataToSend()) {
-        int bytesSent = send(clientSocket, client.messageQueue.c_str(), client.messageQueue.length(), 0);
+    Client* &client = _clients[clientIndex];
+	if (!client)
+	{
+		LOG_SERVER.error("client not found");
+		return ;
+	}
+	Socket clientSocket = client->getSocket();
+	std::string sendBuffer = client->getSendBuffer();
+
+    if (client->hasDataToSend()) {
+
+        int bytesSent = send(clientSocket, sendBuffer.c_str(), sendBuffer.length(), 0);
 
         if (bytesSent == -1) {
             if (errno != EAGAIN && errno != EWOULDBLOCK) {
-                LOG_ERR.error("Sending queue failed: " + TO_STRING(errno));
-                handleClientDisconnection(clientIndex);
-            }
-        } else {
-            LOG_SERVER.info("Queue sent: " + TO_STRING(bytesSent) + " bytes");
-            client.messageQueue.erase(0, bytesSent);
-
-            // Queue vide ? Désactiver POLLOUT
-            if (!client.hasDataToSend()) {
-                _fds[clientIndex].events &= ~POLLOUT;
-                LOG_SERVER.warning("Queue empty, disabled POLLOUT");
-            }
-        }
+				LOG_SERVER.warning(std::string("Socket is not ready for sending ... trying later"));
+				
+            } else {
+				LOG_SERVER.error(std::string("Error sending to client"));
+				handleClientDisconnection(clientIndex);
+			}
+		} else if (bytesSent < static_cast<int>(sendBuffer.length())) {
+			LOG_SERVER.warning(std::string("Queue has been partially sent (") \
+				+ utils::toString(bytesSent) + "/" + utils::toString(sendBuffer.length()) + ")");
+			client->setSendBuffer(sendBuffer.substr(bytesSent));
+		} else {
+			LOG_SERVER.debug(std::string("Message sent normally ... unsubscribing from POLLOUT"));
+			client->setSendBuffer("");
+			_fds[clientIndex].events &= ~POLLOUT;
+		}
     } else {
-        // no data but POLLOUT set
+		LOG_SERVER.debug(std::string("No data to send ... unsubscribing from POLLOUT"));
         _fds[clientIndex].events &= ~POLLOUT;
-        LOG_SERVER.warning("No data, disabled POLLOUT");
-        std::cout << "POLLOUT desactive (pas de donnees)" << std::endl;
     }
 }
 
@@ -269,5 +316,10 @@ Client*	Server::getClientByNick(const std::string& nick)
 	std::map<std::string, Client*>::iterator it = _clientsByNick.find(nick);
 	if (it != _clientsByNick.end())
 		return it->second;
+	return NULL;
+}
+
+ICommand* parseCommand(char* buffer)
+{
 	return NULL;
 }

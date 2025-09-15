@@ -6,7 +6,7 @@
 /*   By: fpetit <fpetit@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/11 08:55:19 by jhervoch          #+#    #+#             */
-/*   Updated: 2025/09/15 19:59:01 by fpetit           ###   ########.fr       */
+/*   Updated: 2025/09/15 21:11:52 by fpetit           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #define __SERVER_HPP__
 
 #include "Client.hpp"
+#include "ICommand.hpp"
 
 #include <string>
 #include <string.h>
@@ -58,6 +59,7 @@ private:
     void subscribeToEvents(Socket toListen, uint32_t flags);
 	Client*	getClientBySocket(Socket socket);
 	Client*	getClientByNick(const std::string& nick);
+	ICommand* parseCommand(char* buffer);
 
 public:
     Server(const unsigned short port, const std::string &psswd);

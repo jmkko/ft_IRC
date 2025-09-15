@@ -44,8 +44,10 @@ class Client
 		void				setStatus(ClientStatus status);
 		void				addJoinedChannel(Channel& channel);
 	  	void				removeJoinedChannel(Channel& channel);
+		void				setSendBuffer(const std::string& buffer);
 
 		void				appendToSendBuffer(const std::string& msg);
+		void				appendToReceiveBuffer(const std::string& msg);
 
 	private:
 		TcpSocket						_socket;

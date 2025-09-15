@@ -61,6 +61,11 @@ void		Client::appendToSendBuffer(const std::string& msg)
 	_sendBuffer += msg;
 }
 
+void		Client::appendToReceiveBuffer(const std::string& msg)
+{
+	_receiveBuffer += msg;
+}
+
 /*************************************************************
 *		👁️‍ GETTERS and SETTERS				 				*
 *************************************************************/
@@ -153,4 +158,9 @@ void			Client::addJoinedChannel(Channel& channel)
 void			Client::removeJoinedChannel(Channel& channel)
 {
 	_joinedChannels.erase(channel.getName());
+}
+
+void	Client::setSendBuffer(const std::string& buffer)
+{
+	_sendBuffer = buffer;
 }
