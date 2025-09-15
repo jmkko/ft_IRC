@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   TcpSocket.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jhervoch <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: fpetit <fpetit@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/13 14:12:49 by jhervoch          #+#    #+#             */
-/*   Updated: 2025/08/13 14:34:41 by jhervoch         ###   ########.fr       */
+/*   Updated: 2025/09/15 19:17:08 by fpetit           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,9 +39,11 @@ TcpSocket::TcpSocket() {
     }
 }
 
+TcpSocket::TcpSocket(Socket socketFd) : _sckt(socketFd) {}
+
 TcpSocket::~TcpSocket() { close(_sckt); }
 
-SOCKET TcpSocket::getSocket() { return _sckt; }
+Socket TcpSocket::getSocket() const { return _sckt; }
 
 /******************************************************************************
  * Connect a socket to a server

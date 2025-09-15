@@ -40,6 +40,14 @@ public:
     
     void log(LogLevel level, const std::string& message);
     void debug(const std::string& message);
+    template <typename T>
+    void debug(const T& t, const std::string& message)
+    {
+        std::ostringstream oss;
+        oss << message;
+        oss << obj;
+        log(DEBUG, oss.str());
+    }
     void info(const std::string& message);
     void warning(const std::string& message);
     void error(const std::string& message);

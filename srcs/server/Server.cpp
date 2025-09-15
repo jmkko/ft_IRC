@@ -23,11 +23,7 @@ Server::Server(const unsigned short port, const std::string &psswd) : _psswd(pss
     std::cout << std::endl;
 
     // Socket serveur : surveiller nouvelles connexions
-    pollfd tfd;
-    tfd.fd = _serverSocket.getSocket();
-    tfd.events = POLLIN;
-    tfd.revents = 0;
-    _fds.push_back(tfd);
+	subscribeToEvents(_serverSocket.getSocket(), POLLIN);
 }
 
 Server::~Server() {
@@ -64,7 +60,7 @@ void Server::start() {
             }
             // Client socket : data or disconnection
             else if (i > 0) {
-                std::map<SOCKET, Client>::iterator clientIt = _clients.find(_fds[i].fd);
+                std::map<Socket, Client>::iterator clientIt = _clients.find(_fds[i].fd);
                 // orphelan socket
                 if (clientIt == _clients.end()) {
                     cleanupSocket(i);
@@ -86,47 +82,36 @@ void Server::start() {
 }
 
 void Server::handleNewConnection(int i) {
-    // std::cout << "Socket " << _fds[i].fd << " events: ";
-    std::string pollEvent;
+	LOG_SERVER.debug("Socket " + utils::toString(_fds[i].fd) + " events: ");
     if (_fds[i].revents & POLLIN)
-        pollEvent.append("POLLIN ");
+		LOG_SERVER.debug("POLLIN ");
     if (_fds[i].revents & POLLOUT)
-        pollEvent.append("POLLOUT ");
+		LOG_SERVER.debug("POLLOUT ");
     if (_fds[i].revents & POLLHUP)
-        pollEvent.append("POLLHUP ");
+		LOG_SERVER.debug("POLLHUP ");
     if (_fds[i].revents & POLLERR)
-        pollEvent.append("POLLERR ");
-    LOG_SOCKET.debug("Socket [" + utils::toString(_fds[i].fd) + "]event :" + pollEvent);
-    std::cout << std::endl;
+		LOG_SERVER.debug("POLLERR ");
 
     sockaddr_in clientAddr;
     memset(&clientAddr, 0, sizeof(clientAddr));
     socklen_t addrLen = sizeof(clientAddr);
-    SOCKET clientSocket = accept(_serverSocket.getSocket(), (sockaddr *)&clientAddr, &addrLen);
+    Socket clientSocket = accept(_serverSocket.getSocket(), (sockaddr *)&clientAddr, &addrLen);
 
     if (clientSocket != -1) {
         // non blocking socket
         if (fcntl(clientSocket, F_SETFL, O_NONBLOCK) == -1) {
-            LOG_SOCKET.error("Non-blocking configuration error: " + TO_STRING(strerror(errno)));
-            // std::cout << "Non-blocking configuration error: " << strerror(errno) << std::endl;
+			LOG_SERVER.error(std::string("Error while setting a non blocking client socket") + strerror(errno));
             close(clientSocket);
         } else {
-            LOG_SOCKET.debug("New connection accepted: socket " + TO_STRING(clientSocket));
-            // std::cout << "Nouvelle connexion acceptee: socket " << clientSocket << std::endl;
+			LOG_SERVER.info(std::string("New connection accepted on socket ") + utils::toString(clientSocket));
 
             // Add new CLient
-            Client newClient;
-            newClient.sckt = clientSocket;
-            newClient.addr = clientAddr;
+            Client newClient(clientSocket, clientAddr);
             _clients[clientSocket] = newClient;
 
             // add the new  client to  the watching fd list ti poll
             // only POLLIN for first time
-            pollfd newPollFd;
-            newPollFd.fd = clientSocket;
-            newPollFd.events = POLLIN;
-            newPollFd.revents = 0;
-            _fds.push_back(newPollFd);
+			subscribeToEvents(clientSocket, POLLIN);
         }
     }
 }
@@ -145,7 +130,7 @@ void Server::cleanupSocket(int i) {
 }
 
 void Server::handleClientDisconnection(int clientIndex) {
-    SOCKET clientSocket = _fds[clientIndex].fd;
+    Socket clientSocket = _fds[clientIndex].fd;
     const unsigned short clientPort = ntohs(_clients[clientSocket].addr.sin_port);
     const std::string clientAddress = TcpSocket::getAddress(_clients[clientSocket].addr);
     socklen_t err;
@@ -163,7 +148,7 @@ void Server::handleClientDisconnection(int clientIndex) {
 }
 
 void Server::handleClientData(int clientIndex) {
-    SOCKET clientSocket = _fds[clientIndex].fd;
+    Socket clientSocket = _fds[clientIndex].fd;
     Client &client = _clients[clientSocket];
     const unsigned short clientPort = ntohs(client.addr.sin_port);
     const std::string clientAddress = TcpSocket::getAddress(client.addr);
@@ -200,7 +185,7 @@ void Server::handleClientData(int clientIndex) {
 }
 
 void Server::sendToClient(int clientIndex, const std::string &response) {
-    SOCKET clientSocket = _fds[clientIndex].fd;
+    Socket clientSocket = _fds[clientIndex].fd;
     Client &client = _clients[clientSocket];
 
     int bytesSent = send(clientSocket, response.c_str(), response.length(), 0);
@@ -225,7 +210,7 @@ void Server::sendToClient(int clientIndex, const std::string &response) {
 }
 
 void Server::handleClientOutput(int clientIndex) {
-    SOCKET clientSocket = _fds[clientIndex].fd;
+    Socket clientSocket = _fds[clientIndex].fd;
     Client &client = _clients[clientSocket];
     if (client.hasDataToSend()) {
         int bytesSent = send(clientSocket, client.messageQueue.c_str(), client.messageQueue.length(), 0);
@@ -251,4 +236,14 @@ void Server::handleClientOutput(int clientIndex) {
         LOG_SERVER.warning("No data, disabled POLLOUT");
         std::cout << "POLLOUT desactive (pas de donnees)" << std::endl;
     }
+}
+
+void	Server::subscribeToEvents(Socket toListen, uint32_t flags)
+{
+	pollfd newPollFd {
+		.fd = toListen,
+		.events = flags,
+		.revents = 0
+	};
+	_fds.push_back(newPollFd);
 }

@@ -4,9 +4,18 @@
 *		🥚 CONSTRUCTORS & DESTRUCTOR						*
 ************************************************************/
 
-Client::Client(TcpSocket& socket) : _socket(socket), _status(UNAUTHENTICATED) {}
+Client::Client(Socket socket, sockaddr_in addr) : _socket(socket), _addr(addr), _status(UNAUTHENTICATED) {}
 
-Client::Client(const Client& inst) : _socket(inst._socket), _status(inst._status) {}
+Client::Client(const Client& inst) : 
+	_socket(inst._socket), 
+	_addr(inst._addr), 
+	_status(inst._status),
+	_nickName(inst._nickName),
+	_userName(inst._userName),
+	_realName(inst._realName),
+	_sendBuffer(inst._sendBuffer),
+	_receiveBuffer(inst._receiveBuffer)
+	{}
 
 Client::~Client(void) {}
 
@@ -19,6 +28,7 @@ Client& Client::operator=(const Client& inst)
 	if (this != &inst)
 	{
 		_socket = inst._socket;
+		_addr = inst._addr;
 		_status = inst._status;
 		_nickName = inst._nickName;
 		_userName = inst._userName;
@@ -32,7 +42,7 @@ Client& Client::operator=(const Client& inst)
 std::ostream&	operator<<(std::ostream& os, const Client& c)
 {
 	return os << CYAN << "Client" << NC << "["
-		<< BWHITE << "socket_fd = " << NC << c.getSocket().getSocket()
+		<< BWHITE << "socket_fd = " << NC << c.getSocket()
 		<< BWHITE << " status=" << NC << (c.getStatus() == REGISTERED ? "registered" : "unauthenticated")
 		<< BWHITE << " nick=" << NC << c.getNickName() 
 		<< BWHITE << " to receive=" << NC << c.getReceiveBuffer().size()
@@ -55,9 +65,19 @@ void		Client::appendToSendBuffer(const std::string& msg)
 *		👁️‍ GETTERS and SETTERS				 				*
 *************************************************************/
 
-TcpSocket&		Client::getSocket() const
+Socket		Client::getSocket() const
 {
-	return _socket;
+	return _socket.getSocket();
+}
+
+const std::string&  Client::getAddress() const
+{
+  return TcpSocket::getAddress(_addr);
+}
+
+unsigned short  Client::getPort() const
+{
+  return ntohs(_addr.sin_port);
 }
 
 std::string		Client::getNickName() const

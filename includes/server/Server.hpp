@@ -1,17 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   server.hpp                                         :+:      :+:    :+:   */
+/*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jhervoch <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: fpetit <fpetit@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/11 08:55:19 by jhervoch          #+#    #+#             */
-/*   Updated: 2025/09/11 09:27:13 by jhervoch         ###   ########.fr       */
+/*   Updated: 2025/09/15 19:17:08 by fpetit           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef __SERVER_HPP__
 #define __SERVER_HPP__
+
+#include "Client.hpp"
 
 #include <string>
 #include <string.h>
@@ -30,20 +32,21 @@
 
 #define SOCKET int
 
-struct Client {
-    SOCKET sckt;
-    sockaddr_in addr;
-    std::string messageQueue; // Messages sending queue
-    bool hasDataToSend() const { return !messageQueue.empty(); }
-};
+// struct Client {
+//     Socket sckt;
+//     sockaddr_in addr;
+//     std::string messageQueue; // Messages sending queue
+//     bool hasDataToSend() const { return !messageQueue.empty(); }
+// };
 
 class Server {
 private:
-    TcpSocket                   _serverSocket;
-    std::vector<pollfd>         _fds;
-    std::map<SOCKET, Client>    _clients;
-    std::string                 _psswd;
-    std::string                 _name;
+    TcpSocket                       _serverSocket;
+    std::vector<pollfd>             _fds;
+    std::map<Socket, Client>        _clients;
+    std::map<std::string, Client>   _clientsByNick;
+    std::string                     _psswd;
+    std::string                     _name;
 
     void handleNewConnection(int);
     void cleanupSocket(int);
@@ -51,6 +54,7 @@ private:
     void handleClientData(int);
     void sendToClient(int, const std::string &);
     void handleClientOutput(int);
+    void subscribeToEvents(Socket toListen, uint32_t flags);
 
 public:
     Server(const unsigned short port, const std::string &psswd);
