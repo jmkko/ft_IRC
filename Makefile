@@ -26,9 +26,16 @@ OBJS			:=	$(SRCS:%.cpp=$(OBJS_DIR)/%.o)
 DEPS			:=	$(OBJS:%.o=%.d)
 OBJ_DIRS		:=	$(sort $(dir $(OBJS)))
 
+################	LINTERS
+
+# Paths for clang-format / clang-tidy-12 if manually installed
+export PATH 	:=	$(HOME)/local/bin:$(PATH)
+
+HEADERS			:=	$(wildcard includes/*.h)
 FILES_TO_FORMAT	:=	$(SRCS) $(HEADERS)
-# Path for clang-format
-export PATH 	:= $(HOME)/local/bin:$(PATH)
+
+TIDYFLAGS_CPL	:=	-- -std=c++98 -I./includes -I./includes/channels -I./includes/commands -I./includes/server -I./srcs
+TIDYFLAGS		:=	--use-color --config-file=.clang-tidy
 
 ################	LOADER
 
@@ -71,6 +78,10 @@ format-check:
 format:
 	@echo "$(YELLOW)=== Formatting code ===$(NOC)"
 	@clang-format --Werror $(FILES_TO_FORMAT)
+
+tidy:
+	@echo "$(YELLOW)=== Code analysis ===$(NOC)"
+	@clang-tidy-12 $(FILES_TO_FORMAT) $(TIDYFLAGS) $(TIDYFLAGS_CPL)
 
 clean :
 	@rm -rf $(OBJS)

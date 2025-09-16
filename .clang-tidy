@@ -1,0 +1,8 @@
+Checks: >
+  bugprone-*,
+  performance-*,
+  readability-*,
+  cppcoreguidelines-*,
+WarningsAsErrors: '*'
+HeaderFilterRegex: '.*'
+FormatStyle:     none
