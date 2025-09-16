@@ -5,7 +5,7 @@
 #include "utils.hpp"
 
 /******************************************************************************
- * Initialize the Server
+ * Initialize the Server IRC
  * assign a socket, a port and an adress
  * register the password
  * add the socket of the server to the pollfd vector
