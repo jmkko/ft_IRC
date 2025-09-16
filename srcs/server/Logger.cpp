@@ -1,8 +1,8 @@
 #include "Logger.hpp"
 
-
-Logger::Logger(const std::string& logName, const std::string &filename, LogLevel level)
-    : _name(logName), _minLevel(level), _fileEnabled(false) {
+Logger::Logger(const std::string& logName, const std::string& filename, LogLevel level) :
+    _name(logName), _minLevel(level), _fileEnabled(false)
+{
 
     _logFile.open(filename.c_str(), std::ios::app);
     if (_logFile.is_open()) {
@@ -13,14 +13,16 @@ Logger::Logger(const std::string& logName, const std::string &filename, LogLevel
     }
 }
 
-Logger::~Logger() {
-	log(INFO, "Logger shutting down");
+Logger::~Logger()
+{
+    log(INFO, "Logger shutting down");
     if (_fileEnabled) {
-		_logFile.close();
+        _logFile.close();
     }
 }
 
-void Logger::log(LogLevel level, const std::string &message) {
+void Logger::log(LogLevel level, const std::string& message)
+{
     if (level < _minLevel)
         return;
 
@@ -39,14 +41,15 @@ void Logger::log(LogLevel level, const std::string &message) {
     }
 }
 
-void Logger::debug(const std::string &message) { log(DEBUG, message); }
-void Logger::info(const std::string &message) { log(INFO, message); }
-void Logger::warning(const std::string &message) { log(WARN, message); }
-void Logger::error(const std::string &message) { log(ERROR, message); }
+void        Logger::debug(const std::string& message) { log(DEBUG, message); }
+void        Logger::info(const std::string& message) { log(INFO, message); }
+void        Logger::warning(const std::string& message) { log(WARN, message); }
+void        Logger::error(const std::string& message) { log(ERROR, message); }
 
-void Logger::setMinLevel(LogLevel level) { _minLevel = level; }
+void        Logger::setMinLevel(LogLevel level) { _minLevel = level; }
 
-std::string Logger::levelToString(LogLevel level) {
+std::string Logger::levelToString(LogLevel level)
+{
     switch (level) {
     case DEBUG:
         return "DEBUG";
@@ -61,7 +64,8 @@ std::string Logger::levelToString(LogLevel level) {
     }
 }
 
-std::string Logger::getColorForLevel(LogLevel level) {
+std::string Logger::getColorForLevel(LogLevel level)
+{
     switch (level) {
     case DEBUG:
         return BLUE;
@@ -76,15 +80,14 @@ std::string Logger::getColorForLevel(LogLevel level) {
     }
 }
 
-std::string Logger::getCurrentTime() {
-    std::time_t now = std::time(0);
-    struct std::tm* tm_ptr = std::localtime(&now);
+std::string Logger::getCurrentTime()
+{
+    std::time_t        now = std::time(0);
+    struct std::tm*    tm_ptr = std::localtime(&now);
     std::ostringstream oss;
-    oss << "[" << (tm_ptr->tm_year + 1900) << "-"
-        << std::setfill('0') << std::setw(2) << (tm_ptr->tm_mon + 1) << "-"
-        << std::setfill('0') << std::setw(2) << tm_ptr->tm_mday << " "
-        << std::setfill('0') << std::setw(2) << tm_ptr->tm_hour << ":"
-        << std::setfill('0') << std::setw(2) << tm_ptr->tm_min << ":"
-        << std::setfill('0') << std::setw(2) << tm_ptr->tm_sec << "]";
+    oss << "[" << (tm_ptr->tm_year + 1900) << "-" << std::setfill('0') << std::setw(2) << (tm_ptr->tm_mon + 1) << "-"
+        << std::setfill('0') << std::setw(2) << tm_ptr->tm_mday << " " << std::setfill('0') << std::setw(2)
+        << tm_ptr->tm_hour << ":" << std::setfill('0') << std::setw(2) << tm_ptr->tm_min << ":" << std::setfill('0')
+        << std::setw(2) << tm_ptr->tm_sec << "]";
     return oss.str();
 }

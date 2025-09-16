@@ -12,17 +12,17 @@
 
 #include "TcpSocket.hpp"
 #include "LogManager.hpp"
-#include <cstring>
-#include <netinet/in.h>
-#include <sstream>
-#include <string.h>
-#include <unistd.h>    // close
+#include "utils.hpp"
 #include <arpa/inet.h> // hton*, ntoh*, inet_addr
+#include <cerrno>
+#include <cstring>
 #include <fcntl.h>
 #include <iostream>
+#include <netinet/in.h>
+#include <sstream>
 #include <stdexcept>
-#include <cerrno>
-#include "utils.hpp"
+#include <string.h>
+#include <unistd.h> // close
 
 /******************************************************************************
  * Create a socket
@@ -30,7 +30,8 @@
  * SOCK_STREAM tcp type
  * IPPROTO_TCP tcp protocol
  ******************************************************************************/
-TcpSocket::TcpSocket() {
+TcpSocket::TcpSocket()
+{
     _sckt = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (_sckt == -1) {
         std::ostringstream error;
@@ -50,28 +51,29 @@ Socket TcpSocket::getSocket() const { return _sckt; }
  * ipaddress like "127.0.0.1"
  * AF_INET IPv4 familly
  ******************************************************************************/
-bool TcpSocket::tcpConnect(const std::string &ipaddress, unsigned short port) {
+bool TcpSocket::tcpConnect(const std::string& ipaddress, unsigned short port)
+{
     sockaddr_in addr;
     addr.sin_addr.s_addr = inet_addr(ipaddress.c_str());
     addr.sin_family = AF_INET;
     addr.sin_port = htons(port);
-    return connect(_sckt, (const sockaddr *)&addr, sizeof(addr)) == 0;
+    return connect(_sckt, (const sockaddr*)&addr, sizeof(addr)) == 0;
 }
-
 
 /// @brief assign a local address to a socket
 /// INADDR_ANY = all sources
 /// AF_INET = IPV4
 /// @param port port to bind
 /// @throw exception if bind error
-void TcpSocket::tcpBind(unsigned short port) {
+void TcpSocket::tcpBind(unsigned short port)
+{
     sockaddr_in addr;
     addr.sin_addr.s_addr = INADDR_ANY;
     addr.sin_family = AF_INET;
     addr.sin_port = htons(port);
-	int yes = 1;
-	setsockopt(_sckt, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes));
-    int res = bind(_sckt, (const sockaddr *)&addr, sizeof(addr));
+    int yes = 1;
+    setsockopt(_sckt, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes));
+    int         res = bind(_sckt, (const sockaddr*)&addr, sizeof(addr));
     std::string error = strerror(errno);
     if (res != 0) {
         LOG_SOCKET.error("Bind:" + error);
@@ -86,9 +88,10 @@ void TcpSocket::tcpBind(unsigned short port) {
  * AF_INET IPv4 familly
  * return 0 on success or -1 on error
  ******************************************************************************/
-void TcpSocket::tcpListen() {
+void TcpSocket::tcpListen()
+{
 
-    int res = listen(_sckt, SOMAXCONN);
+    int         res = listen(_sckt, SOMAXCONN);
     std::string error = strerror(errno);
     if (res != 0) {
         LOG_SOCKET.error("Listen: " + error);
@@ -96,29 +99,29 @@ void TcpSocket::tcpListen() {
     }
 }
 
-std::string TcpSocket::getAddress(const sockaddr_in& addr) {
-    return inet_ntoa(addr.sin_addr);
-}
+std::string TcpSocket::getAddress(const sockaddr_in& addr) { return inet_ntoa(addr.sin_addr); }
 
-int TcpSocket::setNonBlockingSocket() { return fcntl(_sckt, F_SETFL, O_NONBLOCK); }
+int         TcpSocket::setNonBlockingSocket() { return fcntl(_sckt, F_SETFL, O_NONBLOCK); }
 
 /*****************************************************************************
  * first send data size
  * second send data
  *******************************************************************************/
-int TcpSocket::Send(const unsigned char *data, unsigned short len) {
+int TcpSocket::Send(const unsigned char* data, unsigned short len)
+{
     unsigned short networkLen = htons(len);
-    return send(_sckt, reinterpret_cast<const char *>(&networkLen), sizeof(networkLen), 0) == sizeof(networkLen) &&
-           send(_sckt, reinterpret_cast<const char *>(data), len, 0) == len;
+    return send(_sckt, reinterpret_cast<const char*>(&networkLen), sizeof(networkLen), 0) == sizeof(networkLen) &&
+           send(_sckt, reinterpret_cast<const char*>(data), len, 0) == len;
 }
 
 /*****************************************************************************
  * first read data size
  * second read data
  ******************************************************************************/
-int TcpSocket::Receive(std::vector<unsigned char> &buffer) {
+int TcpSocket::Receive(std::vector<unsigned char>& buffer)
+{
     unsigned short expectedSize;
-    int pending = recv(_sckt, reinterpret_cast<char *>(&expectedSize), sizeof(expectedSize), 0);
+    int            pending = recv(_sckt, reinterpret_cast<char*>(&expectedSize), sizeof(expectedSize), 0);
     if (pending <= 0 || pending != sizeof(unsigned short)) {
         //!< Erreur
         return false;
@@ -128,7 +131,7 @@ int TcpSocket::Receive(std::vector<unsigned char> &buffer) {
     buffer.resize(expectedSize);
     int receivedSize = 0;
     do {
-        int ret = recv(_sckt, reinterpret_cast<char *>(&buffer[receivedSize]),
+        int ret = recv(_sckt, reinterpret_cast<char*>(&buffer[receivedSize]),
                        (expectedSize - receivedSize) * sizeof(unsigned char), 0);
         if (ret <= 0) {
             //!< Erreur
