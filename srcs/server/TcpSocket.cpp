@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   TcpSocket.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jhervoch <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: fpetit <fpetit@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/13 14:12:49 by jhervoch          #+#    #+#             */
-/*   Updated: 2025/08/13 14:34:41 by jhervoch         ###   ########.fr       */
+/*   Updated: 2025/09/16 00:25:40 by fpetit           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,9 +39,11 @@ TcpSocket::TcpSocket() {
     }
 }
 
+TcpSocket::TcpSocket(Socket socketFd) : _sckt(socketFd) {}
+
 TcpSocket::~TcpSocket() { close(_sckt); }
 
-SOCKET TcpSocket::getSocket() { return _sckt; }
+Socket TcpSocket::getSocket() const { return _sckt; }
 
 /******************************************************************************
  * Connect a socket to a server
@@ -56,17 +58,19 @@ bool TcpSocket::tcpConnect(const std::string &ipaddress, unsigned short port) {
     return connect(_sckt, (const sockaddr *)&addr, sizeof(addr)) == 0;
 }
 
-/******************************************************************************
- * Assign a local address to a socket
- * INADDR_ANY all source allowed
- * AF_INET IPv4 familly
- * return 0 or SOKET_ERROR = -1
- ******************************************************************************/
+
+/// @brief assign a local address to a socket
+/// INADDR_ANY = all sources
+/// AF_INET = IPV4
+/// @param port port to bind
+/// @throw exception if bind error
 void TcpSocket::tcpBind(unsigned short port) {
     sockaddr_in addr;
     addr.sin_addr.s_addr = INADDR_ANY;
     addr.sin_family = AF_INET;
     addr.sin_port = htons(port);
+	int yes = 1;
+	setsockopt(_sckt, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes));
     int res = bind(_sckt, (const sockaddr *)&addr, sizeof(addr));
     std::string error = strerror(errno);
     if (res != 0) {
@@ -92,9 +96,8 @@ void TcpSocket::tcpListen() {
     }
 }
 
-std::string TcpSocket::getAddress(const sockaddr_in &addr) {
-    char buff[INET6_ADDRSTRLEN] = {0};
-    return inet_ntop(addr.sin_family, (void *)&(addr.sin_addr), buff, INET6_ADDRSTRLEN);
+std::string TcpSocket::getAddress(const sockaddr_in& addr) {
+    return inet_ntoa(addr.sin_addr);
 }
 
 int TcpSocket::setNonBlockingSocket() { return fcntl(_sckt, F_SETFL, O_NONBLOCK); }

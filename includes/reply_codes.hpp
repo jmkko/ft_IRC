@@ -1,4 +1,6 @@
-#pragma once
+#ifndef REPLY_CODES_HPP
+#define REPLY_CODES_HPP
+
 
 /// @brief https://datatracker.ietf.org/doc/html/rfc2812#section-5
 enum ReplyCode {
@@ -48,3 +50,5 @@ enum ReplyCode {
 	PWD_ERR = 803
 
 };
+
+#endif

@@ -1,11 +1,10 @@
-#ifndef __LOGMANAGER__
-#define __LOGMANAGER__
+#ifndef LOGMANAGER
+#define LOGMANAGER
 
 #include "Logger.hpp"
 
 class LogManager {
 private:
-    static LogManager* _instance;
     std::map<std::string, Logger*> _loggers;
     
     LogManager() {};

@@ -4,9 +4,24 @@
 *		🥚 CONSTRUCTORS & DESTRUCTOR						*
 ************************************************************/
 
-Client::Client(TcpSocket& socket) : _socket(socket), _status(UNAUTHENTICATED) {}
+Client::Client(Socket socket, sockaddr_in addr) : 
+	_socket(socket), 
+	_addr(addr), 
+	_addrStr(TcpSocket::getAddress(_addr)), 
+	_status(UNAUTHENTICATED) 
+	{}
 
-Client::Client(const Client& inst) : _socket(inst._socket), _status(inst._status) {}
+Client::Client(const Client& inst) : 
+	_socket(inst._socket), 
+	_addr(inst._addr),
+	_addrStr(inst._addrStr),
+	_nickName(inst._nickName),
+	_userName(inst._userName),
+	_realName(inst._realName),
+	_status(inst._status),
+	_sendBuffer(inst._sendBuffer),
+	_receiveBuffer(inst._receiveBuffer)
+	{}
 
 Client::~Client(void) {}
 
@@ -19,6 +34,8 @@ Client& Client::operator=(const Client& inst)
 	if (this != &inst)
 	{
 		_socket = inst._socket;
+		_addr = inst._addr;
+		_addrStr = inst._addrStr;
 		_status = inst._status;
 		_nickName = inst._nickName;
 		_userName = inst._userName;
@@ -31,15 +48,15 @@ Client& Client::operator=(const Client& inst)
 
 std::ostream&	operator<<(std::ostream& os, const Client& c)
 {
-	return os << CYAN << "Client" << NC << "["
-		<< BWHITE << "socket_fd = " << NC << c.getSocket().getSocket()
-		<< BWHITE << " status=" << NC << (c.getStatus() == REGISTERED ? "registered" : "unauthenticated")
-		<< BWHITE << " nick=" << NC << c.getNickName() 
-		<< BWHITE << " to receive=" << NC << c.getReceiveBuffer().size()
-		<< BWHITE << " to send=" << NC << c.getSendBuffer().size()
-		<< BWHITE << " joined channels=" << NC << c.getNbJoinedChannels()
-		<< "]"
-		<< std::endl;
+	return os << "Client" << "["
+		<< "socket_fd = " << c.getSocket()
+		<< " address = " << c.getAddress()
+		<< " status=" << (c.getStatus() == REGISTERED ? "registered" : "unauthenticated")
+		<< " nick=" << c.getNickName() 
+		<< " to receive=" << c.getReceiveBuffer().size()
+		<< " to send=" << c.getSendBuffer().size()
+		<< " joined channels=" << c.getNbJoinedChannels()
+		<< "]";
 }
 
 /*************************************************************
@@ -51,13 +68,28 @@ void		Client::appendToSendBuffer(const std::string& msg)
 	_sendBuffer += msg;
 }
 
+void		Client::appendToReceiveBuffer(const std::string& msg)
+{
+	_receiveBuffer += msg;
+}
+
 /*************************************************************
 *		👁️‍ GETTERS and SETTERS				 				*
 *************************************************************/
 
-TcpSocket&		Client::getSocket() const
+Socket		Client::getSocket() const
 {
-	return _socket;
+	return _socket.getSocket();
+}
+
+const std::string&  Client::getAddress() const
+{
+  return _addrStr;
+}
+
+unsigned short  Client::getPort() const
+{
+  return ntohs(_addr.sin_port);
 }
 
 std::string		Client::getNickName() const
@@ -133,4 +165,9 @@ void			Client::addJoinedChannel(Channel& channel)
 void			Client::removeJoinedChannel(Channel& channel)
 {
 	_joinedChannels.erase(channel.getName());
+}
+
+void	Client::setSendBuffer(const std::string& buffer)
+{
+	_sendBuffer = buffer;
 }

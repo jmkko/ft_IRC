@@ -4,19 +4,16 @@
 #include <cstring>
 #include <iostream>
 
-LogManager* LogManager::_instance = 0;
 
-LogManager &LogManager::getInstance() {
-    if (!_instance) {
-        _instance = new LogManager();
-    }
-    return *_instance;
+LogManager& LogManager::getInstance() {
+    static LogManager instance;
+	return instance;
 }
 
 LogManager::~LogManager() {
     std::map<std::string, Logger *>::iterator it;
     for (it = _loggers.begin(); it != _loggers.end(); ++it) {
-        delete it->second;
+		delete it->second;
     }
 }
 

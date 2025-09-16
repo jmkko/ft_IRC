@@ -14,9 +14,9 @@ Logger::Logger(const std::string& logName, const std::string &filename, LogLevel
 }
 
 Logger::~Logger() {
+	log(INFO, "Logger shutting down");
     if (_fileEnabled) {
-        log(INFO, "Logger shutting down");
-        _logFile.close();
+		_logFile.close();
     }
 }
 
