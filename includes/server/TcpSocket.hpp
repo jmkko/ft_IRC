@@ -1,4 +1,5 @@
-#pragma once
+#ifndef TCP_SOCKET_HPP
+#define TCP_SOCKET_HPP
 
 #include "consts.hpp"
 
@@ -27,3 +28,5 @@ public:
 private:
     Socket _sckt;
 };
+
+#endif

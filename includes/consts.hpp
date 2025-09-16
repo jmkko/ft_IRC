@@ -1,4 +1,6 @@
-#pragma once
+#ifndef CONSTS_HPP
+#define CONSTS_HPP
+
 
 #define NO_LIMIT -1
 #define MAX_JOINED_CHANNELS NO_LIMIT
@@ -8,3 +10,5 @@
 #define DYNAMIC_PORT_MIN 49152
 
 typedef int Socket;
+
+#endif

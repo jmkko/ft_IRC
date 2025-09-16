@@ -48,16 +48,15 @@ Client& Client::operator=(const Client& inst)
 
 std::ostream&	operator<<(std::ostream& os, const Client& c)
 {
-	return os << CYAN << "Client" << NC << "["
-		<< BWHITE << "socket_fd = " << NC << c.getSocket()
-		<< BWHITE << " address = " << NC << c.getAddress()
-		<< BWHITE << " status=" << NC << (c.getStatus() == REGISTERED ? "registered" : "unauthenticated")
-		<< BWHITE << " nick=" << NC << c.getNickName() 
-		<< BWHITE << " to receive=" << NC << c.getReceiveBuffer().size()
-		<< BWHITE << " to send=" << NC << c.getSendBuffer().size()
-		<< BWHITE << " joined channels=" << NC << c.getNbJoinedChannels()
-		<< "]"
-		<< std::endl;
+	return os << "Client" << "["
+		<< "socket_fd = " << c.getSocket()
+		<< " address = " << c.getAddress()
+		<< " status=" << (c.getStatus() == REGISTERED ? "registered" : "unauthenticated")
+		<< " nick=" << c.getNickName() 
+		<< " to receive=" << c.getReceiveBuffer().size()
+		<< " to send=" << c.getSendBuffer().size()
+		<< " joined channels=" << c.getNbJoinedChannels()
+		<< "]";
 }
 
 /*************************************************************

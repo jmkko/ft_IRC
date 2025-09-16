@@ -6,12 +6,12 @@
 /*   By: fpetit <fpetit@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/11 08:55:19 by jhervoch          #+#    #+#             */
-/*   Updated: 2025/09/15 23:35:11 by fpetit           ###   ########.fr       */
+/*   Updated: 2025/09/16 12:39:10 by fpetit           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef __SERVER_HPP__
-#define __SERVER_HPP__
+#ifndef SERVER_HPP
+#define SERVER_HPP
 
 #include "Client.hpp"
 #include "ICommand.hpp"
@@ -42,16 +42,14 @@ private:
     std::string                     _name;
 
     void handleNewConnection(int);
-    void cleanupSocket(int, Client* c);
-	void removeClient(Socket socket);
+    void cleanupSocket(int);
+	void removeClient(Socket);
     void handleClientDisconnection(int);
     void handleClientData(int);
-    void sendToClient(int, const std::string &);
+    void sendToClient(int, const std::string&);
     void handleClientOutput(int);
-    void listenToSocket(Socket toListen, uint32_t flags);
-	Client*	getClientBySocket(Socket socket);
-	Client*	getClientByNick(const std::string& nick);
-	ICommand* parseCommand(char* buffer);
+    void listenToSocket(Socket, uint32_t);
+	ICommand* parseCommand(char*);
 
 public:
     Server(const unsigned short port, const std::string &psswd);

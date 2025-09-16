@@ -28,7 +28,7 @@ Server::Server(const unsigned short port, const std::string &psswd) : _psswd(pss
 
 Server::~Server() {
     for (int i = 0; i < (int)_fds.size(); ++i) {
-        cleanupSocket(i, getClientBySocket(i));
+        cleanupSocket(i);
     }
 }
 
@@ -39,7 +39,7 @@ Server::~Server() {
  ******************************************************************************/
 void Server::start() {
     while (true) {
-        int pollResult = poll(_fds.data(), _fds.size(), 10000); // Timeout 1 second
+        int pollResult = poll(_fds.data(), _fds.size(), 1000); // Timeout 1 second
         if (pollResult == -1) {
             LOG_ERR.error("Poll failed: " + TO_STRING(strerror(errno)));
             LOG_SERVER.error("Critical: Poll system failed");
@@ -63,7 +63,7 @@ void Server::start() {
                 std::map<Socket, Client*>::iterator clientIt = _clients.find(_fds[i].fd);
                 // orphelan socket
                 if (clientIt == _clients.end()) {
-                    cleanupSocket(i, NULL);
+                    cleanupSocket(i);
                     --i;
                     continue;
                 }
@@ -84,15 +84,16 @@ void Server::start() {
 /// @brief store new client socket, set it non blocking, and subscribe to new POLLIN events
 /// @param i index of the monitored fds
 void Server::handleNewConnection(int i) {
-	LOG_SERVER.debug("Socket " + utils::toString(_fds[i].fd) + " events: ");
+	std::string pollEvent;
     if (_fds[i].revents & POLLIN)
-		LOG_SERVER.debug("POLLIN ");
+		pollEvent.append("POLLIN ");
     if (_fds[i].revents & POLLOUT)
-		LOG_SERVER.debug("POLLOUT ");
+		pollEvent.append("POLLOUT ");
     if (_fds[i].revents & POLLHUP)
-		LOG_SERVER.debug("POLLHUP ");
+		pollEvent.append("POLLHUP ");
     if (_fds[i].revents & POLLERR)
-		LOG_SERVER.debug("POLLERR ");
+		pollEvent.append("POLLERR ");
+	LOG_SOCKET.debug("Socket " + utils::toString(_fds[i].fd) + " events: " + pollEvent);
 
     sockaddr_in clientAddr;
     memset(&clientAddr, 0, sizeof(clientAddr));
@@ -101,11 +102,12 @@ void Server::handleNewConnection(int i) {
 
     if (clientSocket != -1) {
         if (fcntl(clientSocket, F_SETFL, O_NONBLOCK) == -1) {
-			LOG_SERVER.error(std::string("Error while setting a non blocking client socket") + strerror(errno));
+			LOG_ERR.error(std::string("Error while setting a non blocking client socket") + strerror(errno));
+			LOG_SOCKET.error(std::string("Error while setting a non blocking client socket") + strerror(errno));
             close(clientSocket);
         } else {
 			Client* newClient = new Client(clientSocket, clientAddr);
-			LOG_SERVER.info(std::string("New connection accepted on socket ") + utils::toString(clientSocket) + " => " + utils::toString(*newClient));
+			LOG_CONN.info(std::string("New connection accepted on socket ") + utils::toString(clientSocket) + " => " + utils::toString(*newClient));
             _clients[clientSocket] = newClient;
 			listenToSocket(clientSocket, POLLIN);
         }
@@ -113,14 +115,15 @@ void Server::handleNewConnection(int i) {
 }
 
 /// @brief cleanup a socket and associated Client
+/// close the socket fd
 /// remove entry from _clients
 /// remove entry from _clientsByNick
 /// delete client instance 
-/// close the socket fd
 /// remove entry from _fds (the pollfd list)
 /// @param i index of monitored fd
-/// @param c client
-void Server::cleanupSocket(int i, Client* c) {
+void Server::cleanupSocket(int i) {
+	Client* c = _clients[_fds[i].fd];
+	close(_fds[i].fd);
 	_clients.erase(_fds[i].fd);
 	if (c)
 	{
@@ -128,7 +131,6 @@ void Server::cleanupSocket(int i, Client* c) {
 			_clientsByNick.erase(c->getNickName());
 		delete c;
 	}
-	close(_fds[i].fd);
 	_fds.erase(_fds.begin() + i);
 }
 
@@ -150,13 +152,15 @@ void Server::handleClientDisconnection(int clientIndex) {
 			LOG_SERVER.debug("connection has been closed by client");
 		}
 		else {
-			LOG_SERVER.error(std::string("socket error : ") + strerror(err));
+			LOG_ERR.error(std::string("socket error : ") + strerror(err));
+			LOG_SOCKET.error(std::string("socket error : ") + strerror(err));
 		}
     }
-	LOG_SERVER.info(std::string("Client at ") +  client->getAddress() + ":" + utils::toString(client->getPort()) + " disconnected");
-    cleanupSocket(clientIndex, client);
+	LOG_CONN.info(std::string("Client at ") +  client->getAddress() + ":" + utils::toString(client->getPort()) + " disconnected");
+    cleanupSocket(clientIndex);
 }
 
+// TODO change return true if we find a way to pass \r through netcat
 static bool	hasCommandEnding(char* msg)
 {
 	std::string s(msg);
@@ -165,7 +169,7 @@ static bool	hasCommandEnding(char* msg)
 	std::string::reverse_iterator it = s.rbegin();
 	char last = *it;
 	char beforeLast = *(++it);
-	if (beforeLast != '\r' || last != 'n')
+	if (beforeLast != '\r' || last != '\n')
 		return false;
 	return true;
 }
@@ -180,7 +184,7 @@ void Server::handleClientData(int clientIndex) {
     Client* client = _clients[clientSocket];
 	if (!client)
 	{
-		LOG_SERVER.error("handle receive... client not found");
+		LOG_ERR.error("handle receive... client not found");
 		return ;
 	}
 
@@ -214,22 +218,45 @@ void Server::handleClientData(int clientIndex) {
 			// delete cmd;
 			std::string response = "sECHO: ";
 			response += buffer;
-			std::cout << response << std::endl;
-			client->appendToSendBuffer(response);
+			_fds[clientIndex].events |= POLLOUT;
+			sendToClient(clientIndex, response);
 		}
 		else
 			client->appendToReceiveBuffer(std::string(buffer));
-		if (client->hasDataToSend())
-		{
-			_fds[clientIndex].events |= POLLOUT;
-		}
     }
 }
 
+void Server::sendToClient(int clientIndex, const std::string& response)
+{
+	LOG_SOCKET.debug(std::string("sending response : " + response));
+    Socket clientSocket = _fds[clientIndex].fd;
+    Client* client = _clients[clientSocket];
+
+    int bytesSent = send(clientSocket, response.c_str(), response.length(), 0);
+
+    if (bytesSent == -1) {
+        if (errno == EAGAIN || errno == EWOULDBLOCK) {
+            LOG_SOCKET.warning("Socket not ready, adding to queue");
+            client->appendToSendBuffer(response);
+            _fds[clientIndex].events |= POLLOUT;
+        } else {
+            LOG_ERR.error("Sending failed: " + TO_STRING(errno));
+            handleClientDisconnection(clientIndex);
+        }
+    } else if (bytesSent < (int)response.length()) {
+        // send partial
+        LOG_SOCKET.warning("Partial sending (" + TO_STRING(bytesSent) + "/" + TO_STRING(response.length()) + ")");
+        client->appendToSendBuffer(response.substr(bytesSent));
+        // _fds[clientIndex].events |= POLLOUT;
+    } else {
+        LOG_SERVER.info("Message sent completely");
+		_fds[clientIndex].events &= ~POLLOUT;
+    }
+}
 
 /// @brief attempt sending the queued messages
 /// if a message is partially sent, updates send buffer accordingly
-/// if a message is completely send, disable write notification for the client fd
+/// if a message is completely sent, disable write notification for the client fd
 /// in case of send error, either retry or disconnect the client
 /// @param clientIndex monitored fd for client
 void Server::handleClientOutput(int clientIndex) {
@@ -278,22 +305,6 @@ void	Server::listenToSocket(Socket toListen, uint32_t flags)
 		.revents = 0
 	};
 	_fds.push_back(newPollFd);
-}
-
-Client*	Server::getClientBySocket(Socket socket)
-{
-	std::map<Socket, Client*>::iterator it = _clients.find(socket);
-	if (it != _clients.end())
-		return it->second;
-	return NULL;
-}
-
-Client*	Server::getClientByNick(const std::string& nick)
-{
-	std::map<std::string, Client*>::iterator it = _clientsByNick.find(nick);
-	if (it != _clientsByNick.end())
-		return it->second;
-	return NULL;
 }
 
 ICommand* parseCommand(char* buffer)

@@ -1,5 +1,5 @@
-#ifndef __LOGMANAGER__
-#define __LOGMANAGER__
+#ifndef LOGMANAGER
+#define LOGMANAGER
 
 #include "Logger.hpp"
 
