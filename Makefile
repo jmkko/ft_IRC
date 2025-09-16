@@ -31,7 +31,7 @@ OBJ_DIRS		:=	$(sort $(dir $(OBJS)))
 # Paths for clang-format / clang-tidy-12 if manually installed
 export PATH 	:=	$(HOME)/local/bin:$(PATH)
 
-HEADERS			:=	$(wildcard includes/*.h)
+HEADERS			:=	$(wildcard includes/*/*.hpp) $(wildcard includes/*.hpp)
 FILES_TO_FORMAT	:=	$(SRCS) $(HEADERS)
 
 TIDYFLAGS_CPL	:=	-- -std=c++98 -I./includes -I./includes/channels -I./includes/commands -I./includes/server -I./srcs
@@ -73,15 +73,20 @@ $(OBJ_DIRS) :
 
 format-check:
 	@echo "$(YELLOW)=== Checking code format ===$(NOC)"
-	@clang-format --dry-run --Werror $(FILES_TO_FORMAT)
+	@clang-format --dry-run --Werror -style=file:./.clang-format $(FILES_TO_FORMAT)
 
 format:
 	@echo "$(YELLOW)=== Formatting code ===$(NOC)"
-	@clang-format --Werror $(FILES_TO_FORMAT)
+	@clang-format -style=file:./.clang-format -i $(FILES_TO_FORMAT)
 
 tidy:
 	@echo "$(YELLOW)=== Code analysis ===$(NOC)"
 	@clang-tidy-12 $(FILES_TO_FORMAT) $(TIDYFLAGS) $(TIDYFLAGS_CPL)
+
+debug-files:
+	@echo "SRCS: $(SRCS)"
+	@echo "HEADERS: $(HEADERS)" 
+	@echo "FILES_TO_FORMAT: $(FILES_TO_FORMAT)"
 
 clean :
 	@rm -rf $(OBJS)
