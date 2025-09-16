@@ -3,43 +3,38 @@
 
 #include "colors.hpp"
 
-#include <iostream>
+#include <ctime>
 #include <fstream>
-#include <string>
+#include <iomanip>
+#include <iostream>
 #include <map>
 #include <memory>
-#include <ctime>
-#include <iomanip>
 #include <sstream>
+#include <string>
 
-enum LogLevel {
-    DEBUG = 0,
-    INFO = 1,
-    WARN = 2,
-    ERROR = 3
-};
+enum LogLevel { DEBUG = 0, INFO = 1, WARN = 2, ERROR = 3 };
 
-#define RESET	NC
+#define RESET NC
 
-class Logger {
-private:
-    std::string		_name;
-    std::ofstream	_logFile;
-    LogLevel		_minLevel;
-    bool			_fileEnabled;	
-    
-    std::string		getCurrentTime();
-    std::string		levelToString(LogLevel level);
-    std::string		getColorForLevel(LogLevel level);
-    
-public:
-    Logger(const std::string& logName, const std::string& filename= "irc_server.log", LogLevel level = INFO);
+class Logger
+{
+  private:
+    std::string   _name;
+    std::ofstream _logFile;
+    LogLevel      _minLevel;
+    bool          _fileEnabled;
+
+    std::string   getCurrentTime();
+    std::string   levelToString(LogLevel level);
+    std::string   getColorForLevel(LogLevel level);
+
+  public:
+    Logger(const std::string& logName, const std::string& filename = "irc_server.log", LogLevel level = INFO);
     ~Logger();
-    
-    void log(LogLevel level, const std::string& message);
-    void debug(const std::string& message);
-    template <typename T>
-    void debug(const T& t, const std::string& message)
+
+    void                       log(LogLevel level, const std::string& message);
+    void                       debug(const std::string& message);
+    template <typename T> void debug(const T& t, const std::string& message)
     {
         std::ostringstream oss;
         oss << message;
@@ -52,6 +47,4 @@ public:
     void setMinLevel(LogLevel level);
 };
 
-
 #endif
-

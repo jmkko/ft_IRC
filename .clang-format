@@ -1,10 +1,20 @@
 BasedOnStyle: LLVM
 IndentWidth: 4
 ColumnLimit: 120
+---
+Language: Cpp
 # alignment
-PointerAlignement: Left
+PointerAlignment: Left
+AlignConsecutiveMacros:
+  Enabled: true
+  AcrossEmptyLines: true
 AlignConsecutiveDeclarations:
-	Enabled: true
-	AcrossEmptyLines: true
+  Enabled: true
+  AcrossEmptyLines: true
+AlignTrailingComments: true
+# ctor alignment
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+BreakConstructorInitializers: AfterColon
+ConstructorInitializerIndentWidth: 4
 # line break
 BreakBeforeBraces: Linux
