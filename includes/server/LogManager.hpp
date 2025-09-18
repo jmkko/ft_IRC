@@ -9,6 +9,9 @@ class LogManager
     std::map<std::string, Logger*> _loggers;
 
     LogManager() {};
+		LogManager(const LogManager& inst);
+
+		LogManager& 			operator=(const LogManager& inst);
 
   public:
     static LogManager& getInstance();

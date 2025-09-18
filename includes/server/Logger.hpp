@@ -24,6 +24,10 @@ class Logger
     LogLevel      _minLevel;
     bool          _fileEnabled;
 
+		Logger();
+		Logger(const Logger& inst);
+
+		Logger&				operator=(const Logger& inst);
     std::string   getCurrentTime();
     std::string   levelToString(LogLevel level);
     std::string   getColorForLevel(LogLevel level);

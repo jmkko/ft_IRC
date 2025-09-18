@@ -1,6 +1,7 @@
 Checks: >
   clang-diagnostic-*,
   cppcoreguidelines-*,
+  -cppcoreguidelines-pro-bounds-pointer-arithmetic,
   bugprone-*,
   performance-*,
 WarningsAsErrors: '*'
