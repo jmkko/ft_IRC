@@ -6,7 +6,7 @@
 /*   By: fpetit <fpetit@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/11 08:55:19 by jhervoch          #+#    #+#             */
-/*   Updated: 2025/09/16 12:39:10 by fpetit           ###   ########.fr       */
+/*   Updated: 2025/09/18 23:44:30 by npolack          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@
 #include <sys/poll.h>
 #include <sys/socket.h>
 #include <unistd.h> // close
+# include "CmdFactory.hpp"
 
 class Server
 {
@@ -50,12 +51,13 @@ class Server
     void                           sendToClient(int, const std::string&);
     void                           handleClientOutput(int);
     void                           listenToSocket(Socket, uint32_t);
-    ICommand*                      parseCommand(char*);
+    ICommand*                  		parseCommand(Server&, Client&, std::string);
 
   public:
     Server(const unsigned short port, const std::string& psswd);
     ~Server();
     void start();
+	Client*							findClientByNickname(std::string&); // added
 };
 
 #endif
