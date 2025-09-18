@@ -20,7 +20,7 @@ class Channel
     Channel(const Channel& other);
 
     virtual ~Channel();
-    Channel&           operator=(const Channel& other);
+    Channel& operator=(const Channel& other);
 
     const std::string& getName() const;
     const std::string& getTopic() const;
@@ -31,17 +31,17 @@ class Channel
     bool               isInviteOnly() const;
     bool               isTopicChangeRestricted() const;
 
-    void               setName(const std::string& name);
-    void               setTopic(const std::string& topic);
-    void               setUserLimit(int limit);
-    void               setIsInviteOnly(bool isInviteOnly);
-    void               setIsTopicChangeRestricted(bool isRestricted);
-    void               inviteClient(Client& client);
-    void               addMember(Client& client); // should implement different logics whether it is or not invite-only
-    void               removeMember(Client& client);
-    void               makeOperator(Client& client);
+    void setName(const std::string& name);
+    void setTopic(const std::string& topic);
+    void setUserLimit(int limit);
+    void setIsInviteOnly(bool isInviteOnly);
+    void setIsTopicChangeRestricted(bool isRestricted);
+    void inviteClient(Client& client);
+    void addMember(Client& client); // should implement different logics whether it is or not invite-only
+    void removeMember(Client& client);
+    void makeOperator(Client& client);
 
-    void               broadcast(const std::string& message, Client* sender = NULL) const;
+    void broadcast(const std::string& message, Client* sender = NULL) const;
 
   private:
     std::string       _name;

@@ -43,21 +43,20 @@ class Server
     std::string                    _psswd;
     std::string                    _name;
 
-    void                           handleNewConnection(int);
-    void                           cleanupSocket(int);
-    void                           removeClient(Socket);
-    void                           handleClientDisconnection(int);
-    void                           handleClientData(int);
-    void                           handleClientOutput(int);
-    void                           listenToSocket(Socket, uint32_t);
-    ICommand*                      parseCommand(char*);
+    void      handleNewConnection(int);
+    void      cleanupSocket(int);
+    void      removeClient(Socket);
+    void      handleClientDisconnection(int);
+    void      handleClientData(int);
+    void      handleClientOutput(int);
+    void      listenToSocket(Socket, uint32_t);
+    ICommand* parseCommand(char*);
 
   public:
     Server(const unsigned short port, const std::string& psswd);
     ~Server();
     void start();
-		void                           sendToClient(int, const std::string&);
-
+    void sendToClient(int, const std::string&);
 };
 
 #endif

@@ -5,27 +5,27 @@
 #include "Server.hpp"
 #include "reply_codes.hpp"
 
-#include	<sstream>
-#include	<iostream>
-#include	<string>
-#include	<iomanip>
+#include <iomanip>
+#include <iostream>
+#include <sstream>
+#include <string>
 
 class Server;
 
 class ReplyHandler
 {
-	public:
-		~ReplyHandler();
+  public:
+    ~ReplyHandler();
 
-		void									sendReply(int, ReplyCode, const std::string& target, const std::string& trailing = "");
-		void									sendErrNeedMoreParams(int, const std::string& commandName);
-		static ReplyHandler&	getInstance(Server*);
+    void                 sendReply(int, ReplyCode, const std::string& target, const std::string& trailing = "");
+    void                 sendErrNeedMoreParams(int, const std::string& commandName);
+    static ReplyHandler& getInstance(Server*);
 
-	private:
-		Server*		_server;
+  private:
+    Server* _server;
 
-		ReplyHandler(Server*);
-		ReplyHandler(const ReplyHandler& inst);
+    ReplyHandler(Server*);
+    ReplyHandler(const ReplyHandler& inst);
 };
 
 #endif

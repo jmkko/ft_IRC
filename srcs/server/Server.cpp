@@ -221,8 +221,8 @@ void Server::handleClientData(int clientIndex)
             // cmd->execute(*this, client)
             // delete cmd;
 
-						ReplyHandler& rh = ReplyHandler::getInstance(this);
-						rh.sendErrNeedMoreParams(clientIndex, "ECHO");
+            ReplyHandler& rh = ReplyHandler::getInstance(this);
+            rh.sendErrNeedMoreParams(clientIndex, "ECHO");
             _fds[clientIndex].events |= POLLOUT;
         } else
             client->appendToReceiveBuffer(std::string(buffer));
@@ -235,7 +235,7 @@ void Server::sendToClient(int clientIndex, const std::string& response)
     Socket  clientSocket = _fds[clientIndex].fd;
     Client* client = _clients[clientSocket];
 
-    int     bytesSent = send(clientSocket, response.c_str(), response.length(), 0);
+    int bytesSent = send(clientSocket, response.c_str(), response.length(), 0);
 
     if (bytesSent == -1) {
         if (errno == EAGAIN || errno == EWOULDBLOCK) {
@@ -249,7 +249,7 @@ void Server::sendToClient(int clientIndex, const std::string& response)
     } else if (bytesSent < (int)response.length()) {
         // send partial
         LOG_SOCKET.warning("Partial sending (" + TO_STRING(bytesSent) + "/" + TO_STRING(response.length()) + ")");
-				// _fds[clientIndex].events |= POLLOUT;
+        // _fds[clientIndex].events |= POLLOUT;
     } else {
         LOG_SERVER.info("Message sent completely");
         _fds[clientIndex].events &= ~POLLOUT;

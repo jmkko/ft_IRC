@@ -1,16 +1,14 @@
-BasedOnStyle: LLVM
-IndentWidth: 4
-ColumnLimit: 120
----
 Language: Cpp
+BasedOnStyle: LLVM
+# indentation
+IndentWidth: 4
+TabWidth: 4
+# width
+ColumnLimit: 120
 # alignment
 PointerAlignment: Left
-AlignConsecutiveMacros:
-  Enabled: true
-  AcrossEmptyLines: true
-AlignConsecutiveDeclarations:
-  Enabled: true
-  AcrossEmptyLines: true
+AlignConsecutiveMacros: true
+AlignConsecutiveDeclarations: true
 AlignTrailingComments: true
 # ctor alignment
 ConstructorInitializerAllOnOneLineOrOnePerLine: true

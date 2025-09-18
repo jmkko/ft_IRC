@@ -72,11 +72,11 @@ $(OBJS) :$(OBJS_DIR)/%.o : %.cpp | $(OBJ_DIRS)
 $(OBJ_DIRS) :
 	@mkdir -p $@
 
-format-check:
+forminette:
 	@echo "$(YELLOW)=== Checking code format ===$(NOC)"
 	@clang-format --dry-run --Werror -style=file:./.clang-format $(FILES_TO_FORMAT)
 
-format:
+formator:
 	@echo "$(YELLOW)=== Formatting code ===$(NOC)"
 	@clang-format -style=file:./.clang-format -i $(FILES_TO_FORMAT)
 

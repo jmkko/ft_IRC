@@ -1,40 +1,39 @@
 #include "ReplyHandler.hpp"
 
 /************************************************************
-*		🥚 CONSTRUCTORS & DESTRUCTOR						*
-************************************************************/
+ *		🥚 CONSTRUCTORS & DESTRUCTOR						*
+ ************************************************************/
 
 ReplyHandler::ReplyHandler(Server* server) : _server(server) {}
 ReplyHandler::ReplyHandler(const ReplyHandler& inst) : _server(inst._server) {}
 ReplyHandler::~ReplyHandler() {}
 
 /*************************************************************
-*		🛠️ FUNCTIONS											*
-*************************************************************/
+ *		🛠️ FUNCTIONS											*
+ *************************************************************/
 
-static const std::string	codeToStr(ReplyCode code)
+static const std::string codeToStr(ReplyCode code)
 {
-	std::stringstream		ss;
-	std::string					codeStr;
-	ss << std::setw(3) << std::setfill('c') << code;
-	return ss.str();
+    std::stringstream ss;
+    std::string       codeStr;
+    ss << std::setw(3) << std::setfill('c') << code;
+    return ss.str();
 }
 
 // TODO pass clientIndex in args ?
-void	ReplyHandler::sendReply(int clientIndex, ReplyCode code, const std::string& target, const std::string& trailing)
+void ReplyHandler::sendReply(int clientIndex, ReplyCode code, const std::string& target, const std::string& trailing)
 {
-	std::string reply = std::string(": ") + SERVER_NAME + codeToStr(code) + " " + target;
-	if (!trailing.empty())
-	{
-		reply += " :" + trailing;
-	}
-	reply + "\r\n";
-	_server->sendToClient(clientIndex, reply);
+    std::string reply = std::string(": ") + SERVER_NAME + codeToStr(code) + " " + target;
+    if (!trailing.empty()) {
+        reply += " :" + trailing;
+    }
+    reply + "\r\n";
+    _server->sendToClient(clientIndex, reply);
 }
 
-void								ReplyHandler::sendErrNeedMoreParams(int clientIndex, const std::string& commandName)
+void ReplyHandler::sendErrNeedMoreParams(int clientIndex, const std::string& commandName)
 {
-	sendReply(clientIndex, ERR_NEEDMOREPARAMS, commandName, "Not enough parameters");
+    sendReply(clientIndex, ERR_NEEDMOREPARAMS, commandName, "Not enough parameters");
 }
 
 /*************************************************************
@@ -43,6 +42,6 @@ void								ReplyHandler::sendErrNeedMoreParams(int clientIndex, const std::stri
 
 ReplyHandler& ReplyHandler::getInstance(Server* s)
 {
-	static ReplyHandler instance(s);
-	return instance;
+    static ReplyHandler instance(s);
+    return instance;
 }
