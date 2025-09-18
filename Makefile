@@ -19,7 +19,8 @@ SRCS			:=	srcs/main.cpp\
 					srcs/server/Server.cpp\
 					srcs/server/TcpSocket.cpp\
 					srcs/server/Logger.cpp \
-					srcs/server/LogManager.cpp
+					srcs/server/LogManager.cpp\
+					srcs/server/ReplyHandler.cpp\
 
 OBJS_DIR		:=	objs
 OBJS			:=	$(SRCS:%.cpp=$(OBJS_DIR)/%.o)
@@ -85,7 +86,7 @@ tidy:
 
 debug-files:
 	@echo "SRCS: $(SRCS)"
-	@echo "HEADERS: $(HEADERS)" 
+	@echo "HEADERS: $(HEADERS)"
 	@echo "FILES_TO_FORMAT: $(FILES_TO_FORMAT)"
 
 clean :
@@ -97,7 +98,7 @@ fclean : clean
 	@rm -rf logs
 	@echo "$(BOLD)=== Fully cleaned ===$(NC)"
 
-re : fclean 
+re : fclean
 	@make
 
 .PHONY : all clean fclean re
