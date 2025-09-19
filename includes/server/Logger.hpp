@@ -24,9 +24,14 @@ class Logger
     LogLevel      _minLevel;
     bool          _fileEnabled;
 
-    std::string getCurrentTime();
-    std::string levelToString(LogLevel level);
-    std::string getColorForLevel(LogLevel level);
+		Logger();
+		Logger(const Logger& inst);
+
+		Logger&				operator=(const Logger& inst);
+    std::string   getCurrentTime();
+    std::string   levelToString(LogLevel level);
+    std::string   getColorForLevel(LogLevel level);
+
 
   public:
     Logger(const std::string& logName, const std::string& filename = "irc_server.log", LogLevel level = INFO);
