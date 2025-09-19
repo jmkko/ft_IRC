@@ -87,6 +87,7 @@ ClientStatus       Client::getStatus() const { return _status; }
 std::string        Client::getSendBuffer() const { return _sendBuffer; }
 
 std::string        Client::getReceiveBuffer() const { return _receiveBuffer; }
+std::string&        Client::getReceiveBuffer() { return _receiveBuffer; }
 
 bool               Client::hasDataToSend() const { return _sendBuffer.empty(); }
 

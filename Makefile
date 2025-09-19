@@ -1,6 +1,7 @@
 include	colors.mk
 
 NAME			:=	ircserv
+OS 				:= $(shell uname)
 
 CXX				:=	clang++
 CXXFLAGS		:=	-Wall -Wextra -Werror -std=c++98 -g -MMD
@@ -20,9 +21,11 @@ SRCS			:=	srcs/main.cpp\
 					srcs/server/TcpSocket.cpp\
 					srcs/server/Logger.cpp \
 					srcs/server/LogManager.cpp\
+					srcs/commands/CmdFactory.cpp\
+					srcs/commands/Nick.cpp\
 					srcs/server/ReplyHandler.cpp\
 
-OBJS_DIR		:=	objs
+OBJS_DIR		:=	.objs
 OBJS			:=	$(SRCS:%.cpp=$(OBJS_DIR)/%.o)
 DEPS			:=	$(OBJS:%.o=%.d)
 OBJ_DIRS		:=	$(sort $(dir $(OBJS)))
@@ -59,6 +62,7 @@ $(NAME) : $(OBJS)
 	@$(CXX) $(INCLUDES) $^ -o $@
 
 $(OBJS) :$(OBJS_DIR)/%.o : %.cpp | $(OBJ_DIRS)
+ifeq ($(OS), Linux)
 	@if [ $(NB_COMP) -eq 1 ]; then echo "=== $(BOLD)Compilation of source files$(NOC) ===";fi
 	$(eval PERCENT=$(shell if [ $(TO_COMP) -eq 0 ]; then echo 100; else expr $(NB_COMP)00 "/" $(TO_COMP); fi))
 	@if [ $(PERCENT) -le 30 ]; then echo -n "$(RED)"; elif [ $(PERCENT) -le 66 ]; then echo -n "$(YELLOW)"; elif [ $(PERCENT) -gt 66 ]; then echo -n "$(GREEN)"; fi
@@ -68,6 +72,9 @@ $(OBJS) :$(OBJS_DIR)/%.o : %.cpp | $(OBJ_DIRS)
 	@echo -n "$(NOC)"
 	@$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 	$(eval NB_COMP=$(shell expr $(NB_COMP) + 1))
+else
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
+endif
 
 $(OBJ_DIRS) :
 	@mkdir -p $@
@@ -90,7 +97,7 @@ debug-files:
 	@echo "FILES_TO_FORMAT: $(FILES_TO_FORMAT)"
 
 clean :
-	@rm -rf $(OBJS)
+	@rm -rf $(OBJS_DIR)
 	@echo "$(BOLD)=== Obj cleaned ===$(NC)"
 
 fclean : clean

@@ -2,14 +2,14 @@
 #define ICOMMAND_HPP
 #include <iostream>
 
+class Server;
+class Client;
 // interface of each commands
 class ICommand
 {
   public:
-    ICommand(void);
-    ICommand(const ICommand& other);
-    ICommand& operator=(const ICommand& other);
-    ~ICommand();
+    virtual ~ICommand() {};
+	virtual void execute(Server&, Client&) = 0;
 };
 
 #endif
