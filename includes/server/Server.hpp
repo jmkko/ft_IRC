@@ -20,6 +20,7 @@
 #include "TcpSocket.hpp"
 #include "consts.hpp"
 
+#include "CmdFactory.hpp"
 #include <arpa/inet.h> // hton*, ntoh*, inet_addr
 #include <exception>
 #include <fcntl.h>
@@ -32,7 +33,6 @@
 #include <sys/poll.h>
 #include <sys/socket.h>
 #include <unistd.h> // close
-# include "CmdFactory.hpp"
 
 class Server
 {
@@ -44,23 +44,29 @@ class Server
     std::string                    _psswd;
     std::string                    _name;
 
-    void                           handleNewConnection(int);
-    void                           cleanupSocket(int);
-    void                           removeClient(Socket);
-    void                           handleClientDisconnection(int);
-    void                           handleClientData(int);
-    //void                           sendToClient(int, const std::string&);
-    void                           handleClientOutput(int);
-    void                           listenToSocket(Socket, uint32_t);
-    ICommand*                  		parseCommand(Server&, Client&, std::string);
+    Server();
+    Server(const Server&);
 
+    Server& operator=(const Server& inst);
+
+    void handleNewConnection(int);
+    void cleanupSocket(int);
+    void removeClient(Socket);
+    void handleClientDisconnection(int);
+    void handleClientData(int);
+    // void                           sendToClient(int, const std::string&);
+    void      handleClientOutput(int);
+    void      listenToSocket(Socket, uint32_t);
+    ICommand* parseCommand(Server&, Client&, std::string);
 
   public:
     Server(const unsigned short port, const std::string& psswd);
     ~Server();
+
     void start();
-	Client*							findClientByNickname(std::string&); // added
-    void sendToClient(int, const std::string&);
+
+    Client* findClientByNickname(std::string&);
+    void    sendToClient(int, const std::string&);
 };
 
 #endif

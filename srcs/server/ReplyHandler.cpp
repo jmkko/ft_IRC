@@ -5,8 +5,6 @@
  ************************************************************/
 
 ReplyHandler::ReplyHandler(Server* server) : _server(server) {}
-ReplyHandler::ReplyHandler(const ReplyHandler& inst) : _server(inst._server) {}
-ReplyHandler::~ReplyHandler() {}
 
 /*************************************************************
  *		🛠️ FUNCTIONS											*

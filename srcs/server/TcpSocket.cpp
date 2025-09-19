@@ -24,12 +24,16 @@
 #include <string.h>
 #include <unistd.h> // close
 
-/******************************************************************************
- * Create a socket
+/************************************************************
+ *		🥚 CONSTRUCTORS & DESTRUCTOR						*
+ ************************************************************/
+
+/**
+ * @brief create a socket
  * AF_INET IPv4 familly
  * SOCK_STREAM tcp type
  * IPPROTO_TCP tcp protocol
- ******************************************************************************/
+ */
 TcpSocket::TcpSocket()
 {
     _sckt = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
@@ -40,11 +44,33 @@ TcpSocket::TcpSocket()
     }
 }
 
+/**
+ * @brief create a socket
+ * @param socketFd
+ */
 TcpSocket::TcpSocket(Socket socketFd) : _sckt(socketFd) {}
+
+TcpSocket::TcpSocket(const TcpSocket& inst) : _sckt(inst._sckt) {}
 
 TcpSocket::~TcpSocket() { close(_sckt); }
 
 Socket TcpSocket::getSocket() const { return _sckt; }
+
+/************************************************************
+ *		➕ OPERATORS											*
+ ************************************************************/
+
+TcpSocket& TcpSocket::operator=(const TcpSocket& inst)
+{
+    if (this != &inst) {
+        _sckt = inst._sckt;
+    }
+    return *this;
+}
+
+/*************************************************************
+ *		🛠️ FUNCTIONS											*
+ *************************************************************/
 
 /******************************************************************************
  * Connect a socket to a server
@@ -60,11 +86,13 @@ bool TcpSocket::tcpConnect(const std::string& ipaddress, unsigned short port)
     return connect(_sckt, (const sockaddr*)&addr, sizeof(addr)) == 0;
 }
 
-/// @brief assign a local address to a socket
-/// INADDR_ANY = all sources
-/// AF_INET = IPV4
-/// @param port port to bind
-/// @throw exception if bind error
+/**
+ * @brief assign a local address to a socket
+ * INADDR_ANY = all sources
+ * AF_INET = IPV4
+ * @param port port to bind
+ * @throw exception if bind error
+ */
 void TcpSocket::tcpBind(unsigned short port)
 {
     sockaddr_in addr;

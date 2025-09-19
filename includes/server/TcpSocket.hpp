@@ -13,7 +13,11 @@ class TcpSocket
   public:
     TcpSocket();
     TcpSocket(Socket socketFd);
+    TcpSocket(const TcpSocket& inst);
+
     ~TcpSocket();
+
+    TcpSocket& operator=(const TcpSocket& inst);
 
     static std::string getAddress(const sockaddr_in& addr);
     Socket             getSocket(void) const;

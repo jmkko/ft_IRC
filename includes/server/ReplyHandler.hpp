@@ -15,8 +15,6 @@ class Server;
 class ReplyHandler
 {
   public:
-    ~ReplyHandler();
-
     void                 sendReply(int, ReplyCode, const std::string& target, const std::string& trailing = "");
     void                 sendErrNeedMoreParams(int, const std::string& commandName);
     static ReplyHandler& getInstance(Server*);
@@ -25,7 +23,6 @@ class ReplyHandler
     Server* _server;
 
     ReplyHandler(Server*);
-    ReplyHandler(const ReplyHandler& inst);
 };
 
 #endif

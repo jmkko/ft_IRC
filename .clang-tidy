@@ -3,7 +3,7 @@ Checks: >
   cppcoreguidelines-*,
   -cppcoreguidelines-pro-bounds-pointer-arithmetic,
   bugprone-*,
-  performance-*,
+  -performance-*,
 WarningsAsErrors: '*'
 HeaderFilterRegex: '.*'
 # do not interfere with clang format

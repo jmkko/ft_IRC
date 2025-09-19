@@ -13,16 +13,18 @@
 #ifndef CONSTS_HPP
 #define CONSTS_HPP
 
-#define EXPECTED_ARGS_NB				3
-#define MIN_PASSWORD_LEN				8
+#define EXPECTED_ARGS_NB        3
+#define MIN_PASSWORD_LEN        8
 #define NO_LIMIT                (-1)
 #define SERVER_NAME             "hazardous"
+#define DEFAULT_PASSWORD        "password"
+#define DEFAULT_PORT            6667
 #define MAX_JOINED_CHANNELS     NO_LIMIT
 #define CHAN_NAME_MAX_LEN       200
 #define CLIENT_READ_BUFFER_SIZE 512
 #define WELL_KNOWN_PORT_MAX     1024
 #define DYNAMIC_PORT_MIN        49152
-#define NICKNAME_MAX_LEN		9
+#define NICKNAME_MAX_LEN        9
 typedef int Socket;
 
 #endif
