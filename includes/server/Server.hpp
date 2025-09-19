@@ -49,7 +49,7 @@ class Server
     void                           removeClient(Socket);
     void                           handleClientDisconnection(int);
     void                           handleClientData(int);
-    void                           sendToClient(int, const std::string&);
+    //void                           sendToClient(int, const std::string&);
     void                           handleClientOutput(int);
     void                           listenToSocket(Socket, uint32_t);
     ICommand*                  		parseCommand(Server&, Client&, std::string);
