@@ -21,7 +21,6 @@ SRCS			:=	srcs/main.cpp\
 					srcs/server/TcpSocket.cpp\
 					srcs/server/Logger.cpp \
 					srcs/server/LogManager.cpp\
-					srcs/commands/ACommand.cpp\
 					srcs/commands/CmdFactory.cpp\
 					srcs/commands/Nick.cpp\
 					srcs/server/ReplyHandler.cpp\
@@ -39,7 +38,7 @@ export PATH 	:=	$(HOME)/local/bin:$(PATH)
 HEADERS			:=	$(wildcard includes/*/*.hpp) $(wildcard includes/*.hpp)
 FILES_TO_FORMAT	:=	$(SRCS) $(HEADERS)
 
-TIDYFLAGS_CPL	:=	-- -std=c++98 -I./includes -I./includes/channels -I./includes/commands -I./includes/server -I./srcs
+TIDYFLAGS_CPL	:=	-- -std=c++98 -I./includes -I./includes/channels -I./includes/clients -I./includes/commands -I./includes/server -I./srcs
 TIDYFLAGS		:=	--use-color --config-file=.clang-tidy
 
 ################	LOADER

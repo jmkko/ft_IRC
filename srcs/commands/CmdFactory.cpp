@@ -18,7 +18,7 @@ CmdFactory::~CmdFactory(void) {}
 
 // Return a NICK command object if the nickname is valid
 // throw an exception if not with appropriate error code (to be improved)
-ACommand* CmdFactory::nickCmd(Server& server, Client& client, std::string& params)
+ICommand* CmdFactory::nickCmd(Server& server, Client& client, std::string& params)
 {
     (void)client;
     std::istringstream iss(params);
@@ -46,7 +46,7 @@ ACommand* CmdFactory::nickCmd(Server& server, Client& client, std::string& param
 }
 
 // NOT IMPLEMENTED YET
-ACommand* CmdFactory::userCmd(Server& server, Client& client, std::string& line)
+ICommand* CmdFactory::userCmd(Server& server, Client& client, std::string& line)
 {
     (void)client;
     (void)server;
@@ -54,7 +54,7 @@ ACommand* CmdFactory::userCmd(Server& server, Client& client, std::string& line)
     LOG_CMD.debug("Build USER (not implemented)");
     return NULL;
 };
-ACommand* CmdFactory::passCmd(Server& server, Client& client, std::string& line)
+ICommand* CmdFactory::passCmd(Server& server, Client& client, std::string& line)
 {
     (void)client;
     (void)server;
@@ -62,7 +62,7 @@ ACommand* CmdFactory::passCmd(Server& server, Client& client, std::string& line)
     LOG_CMD.debug("Build PASS (not implemented)");
     return NULL;
 };
-ACommand* CmdFactory::quitCmd(Server& server, Client& client, std::string& line)
+ICommand* CmdFactory::quitCmd(Server& server, Client& client, std::string& line)
 {
     (void)client;
     (void)server;
@@ -70,7 +70,7 @@ ACommand* CmdFactory::quitCmd(Server& server, Client& client, std::string& line)
     LOG_CMD.debug("Build QUIT (not implemented)");
     return NULL;
 };
-ACommand* CmdFactory::joinCmd(Server& server, Client& client, std::string& line)
+ICommand* CmdFactory::joinCmd(Server& server, Client& client, std::string& line)
 {
     (void)client;
     (void)server;
@@ -78,7 +78,7 @@ ACommand* CmdFactory::joinCmd(Server& server, Client& client, std::string& line)
     LOG_CMD.debug("Build JOIN (not implemented)");
     return NULL;
 };
-ACommand* CmdFactory::partCmd(Server& server, Client& client, std::string& line)
+ICommand* CmdFactory::partCmd(Server& server, Client& client, std::string& line)
 {
     (void)client;
     (void)server;
@@ -86,7 +86,7 @@ ACommand* CmdFactory::partCmd(Server& server, Client& client, std::string& line)
     LOG_CMD.debug("Build PART (not implemented)");
     return NULL;
 };
-ACommand* CmdFactory::modeCmd(Server& server, Client& client, std::string& line)
+ICommand* CmdFactory::modeCmd(Server& server, Client& client, std::string& line)
 {
     (void)client;
     (void)server;
@@ -94,7 +94,7 @@ ACommand* CmdFactory::modeCmd(Server& server, Client& client, std::string& line)
     LOG_CMD.debug("Build MODE (not implemented)");
     return NULL;
 };
-ACommand* CmdFactory::operCmd(Server& server, Client& client, std::string& line)
+ICommand* CmdFactory::operCmd(Server& server, Client& client, std::string& line)
 {
     (void)client;
     (void)server;
@@ -102,7 +102,7 @@ ACommand* CmdFactory::operCmd(Server& server, Client& client, std::string& line)
     LOG_CMD.debug("Build OPER (not implemented)");
     return NULL;
 };
-ACommand* CmdFactory::inviteCmd(Server& server, Client& client, std::string& line)
+ICommand* CmdFactory::inviteCmd(Server& server, Client& client, std::string& line)
 {
     (void)client;
     (void)server;
@@ -111,13 +111,13 @@ ACommand* CmdFactory::inviteCmd(Server& server, Client& client, std::string& lin
     return NULL;
 };
 
-ACommand* CmdFactory::makeCommand(Server& server, Client& client, std::string& line)
+ICommand* CmdFactory::makeCommand(Server& server, Client& client, std::string& line)
 {
 
     std::string        command_line;
     std::istringstream iss(line);
     std::string available[COMMANDS_NB] = {"USER", "PASS", "NICK", "QUIT", "INVITE", "JOIN", "PART", "MODE", "OPER"};
-    ACommand* (CmdFactory::*ptr[COMMANDS_NB])(Server&, Client&, std::string&) = {
+    ICommand* (CmdFactory::*ptr[COMMANDS_NB])(Server&, Client&, std::string&) = {
         &CmdFactory::userCmd, &CmdFactory::passCmd, &CmdFactory::nickCmd, &CmdFactory::quitCmd, &CmdFactory::inviteCmd,
         &CmdFactory::joinCmd, &CmdFactory::partCmd, &CmdFactory::modeCmd, &CmdFactory::operCmd};
     iss >> command_line;

@@ -13,7 +13,7 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
-#include "ACommand.hpp"
+#include "ICommand.hpp"
 #include "Client.hpp"
 #include "LogManager.hpp"
 #include "ReplyHandler.hpp"
@@ -57,7 +57,7 @@ class Server
     // void                           sendToClient(int, const std::string&);
     void      handleClientOutput(int);
     void      listenToSocket(Socket, uint32_t);
-    ACommand* parseCommand(Server&, Client&, std::string);
+    ICommand* parseCommand(Server&, Client&, std::string);
 
   public:
     Server(const unsigned short port, const std::string& psswd);

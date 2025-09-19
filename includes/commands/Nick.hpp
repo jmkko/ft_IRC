@@ -1,15 +1,15 @@
 #ifndef NICK_HPP
 #define NICK_HPP
-#include "ACommand.hpp"
+#include "ICommand.hpp"
 #include <iostream>
 
 class Server;
 class Client;
 
-class Nick : public ACommand
+class Nick : public ICommand
 {
   public:
-    Nick(const std::string& nickname);
+    explicit Nick(const std::string& nickname);
     ~Nick();
 
     void execute(Server&, Client&);

@@ -289,7 +289,7 @@ void Server::handleClientData(int clientIndex)
             // delete the command that has been extracted from the client readbuffer
             client->getReceiveBuffer().erase(0, pos + 2);
             // parse and create the appropriate command, NULL is returned if a faillure has happen
-            ACommand* cmd = parseCommand(*this, *client, line);
+            ICommand* cmd = parseCommand(*this, *client, line);
             if (cmd) {
                 cmd->execute(*this, *client);
                 delete cmd;
@@ -310,7 +310,7 @@ void Server::handleClientData(int clientIndex)
         //         // otherwise it can be a partial message with CTRL+D -> we append and wait \r\n
         //         if (hasCommandEnding(buffer)) {
         //             // parse to command and execute
-        //             // ACommand* cmd = parseCommand(buffer)
+        //             // ICommand* cmd = parseCommand(buffer)
         //             // cmd->execute(*this, client)
         //             // delete cmd;
         //
@@ -403,13 +403,13 @@ void Server::listenToSocket(Socket toListen, uint32_t flags)
  @brief make and return a command object from the command line if valid command;
  @return NULL if command has failed amd print
  */
-ACommand* Server::parseCommand(Server& server, Client& client, std::string line)
+ICommand* Server::parseCommand(Server& server, Client& client, std::string line)
 {
 
     LOG_CMD.debug("Parsing of the command: " + line);
     CmdFactory command_builder; // The command_builder throw exception if the command or params are not valid
                                 // (std::invalid_argument for now...)
-    ACommand* cmd = NULL;
+    ICommand* cmd = NULL;
     try {
         cmd = command_builder.makeCommand(server, client, line);
     } catch (std::exception& e) {
