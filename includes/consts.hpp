@@ -4,6 +4,7 @@
 #define EXPECTED_ARGS_NB				3
 #define MIN_PASSWORD_LEN				8
 #define NO_LIMIT                (-1)
+#define SERVER_NAME             "hazardous"
 #define MAX_JOINED_CHANNELS     NO_LIMIT
 #define CHAN_NAME_MAX_LEN       200
 #define CLIENT_READ_BUFFER_SIZE 512

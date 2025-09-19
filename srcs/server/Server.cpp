@@ -175,7 +175,7 @@ static bool hasCommandEnding(char* msg)
     char                          last = *it;
     char                          beforeLast = *(++it);
     if (beforeLast != '\r' || last != '\n')
-        return false;
+        return true;
     return true;
 }
 
@@ -220,10 +220,10 @@ void Server::handleClientData(int clientIndex)
             // ICommand* cmd = parseCommand(buffer)
             // cmd->execute(*this, client)
             // delete cmd;
-            std::string response = "sECHO: ";
-            response += buffer;
+
+            ReplyHandler& rh = ReplyHandler::getInstance(this);
+            rh.sendErrNeedMoreParams(clientIndex, "ECHO");
             _fds[clientIndex].events |= POLLOUT;
-            sendToClient(clientIndex, response);
         } else
             client->appendToReceiveBuffer(std::string(buffer));
     }
@@ -235,7 +235,7 @@ void Server::sendToClient(int clientIndex, const std::string& response)
     Socket  clientSocket = _fds[clientIndex].fd;
     Client* client = _clients[clientSocket];
 
-    int     bytesSent = send(clientSocket, response.c_str(), response.length(), 0);
+    int bytesSent = send(clientSocket, response.c_str(), response.length(), 0);
 
     if (bytesSent == -1) {
         if (errno == EAGAIN || errno == EWOULDBLOCK) {
@@ -249,7 +249,6 @@ void Server::sendToClient(int clientIndex, const std::string& response)
     } else if (bytesSent < (int)response.length()) {
         // send partial
         LOG_SOCKET.warning("Partial sending (" + TO_STRING(bytesSent) + "/" + TO_STRING(response.length()) + ")");
-        client->appendToSendBuffer(response.substr(bytesSent));
         // _fds[clientIndex].events |= POLLOUT;
     } else {
         LOG_SERVER.info("Message sent completely");

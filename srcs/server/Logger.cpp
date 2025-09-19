@@ -41,12 +41,12 @@ void Logger::log(LogLevel level, const std::string& message)
     }
 }
 
-void        Logger::debug(const std::string& message) { log(DEBUG, message); }
-void        Logger::info(const std::string& message) { log(INFO, message); }
-void        Logger::warning(const std::string& message) { log(WARN, message); }
-void        Logger::error(const std::string& message) { log(ERROR, message); }
+void Logger::debug(const std::string& message) { log(DEBUG, message); }
+void Logger::info(const std::string& message) { log(INFO, message); }
+void Logger::warning(const std::string& message) { log(WARN, message); }
+void Logger::error(const std::string& message) { log(ERROR, message); }
 
-void        Logger::setMinLevel(LogLevel level) { _minLevel = level; }
+void Logger::setMinLevel(LogLevel level) { _minLevel = level; }
 
 std::string Logger::levelToString(LogLevel level)
 {
