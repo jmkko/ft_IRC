@@ -21,6 +21,7 @@ SRCS			:=	srcs/main.cpp\
 					srcs/server/TcpSocket.cpp\
 					srcs/server/Logger.cpp \
 					srcs/server/LogManager.cpp\
+					srcs/commands/ACommand.cpp\
 					srcs/commands/CmdFactory.cpp\
 					srcs/commands/Nick.cpp\
 					srcs/server/ReplyHandler.cpp\

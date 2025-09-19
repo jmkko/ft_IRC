@@ -7,6 +7,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <stdexcept>
 
 bool checkArgs(int ac, char** av, int* port);
 bool checkPort(const std::string& s, int* port);
@@ -22,7 +23,16 @@ template <typename T> std::string toString(const T& value)
 }
 
 long stringToULong(const std::string& str);
-} // namespace utils
+
+template<size_t N>
+char&	safeAt(char (&arr)[N], size_t index)
+{
+	if (index >= N)
+		throw std::out_of_range(("out of array range"));
+	return arr[index];
+}
+
+}
 
 #define TO_STRING utils::toString
 

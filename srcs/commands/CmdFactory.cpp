@@ -18,7 +18,7 @@ CmdFactory::~CmdFactory(void) {}
 
 // Return a NICK command object if the nickname is valid
 // throw an exception if not with appropriate error code (to be improved)
-ICommand* CmdFactory::nickCmd(Server& server, Client& client, std::string& params)
+ACommand* CmdFactory::nickCmd(Server& server, Client& client, std::string& params)
 {
     (void)client;
     std::istringstream iss(params);
@@ -46,7 +46,7 @@ ICommand* CmdFactory::nickCmd(Server& server, Client& client, std::string& param
 }
 
 // NOT IMPLEMENTED YET
-ICommand* CmdFactory::userCmd(Server& server, Client& client, std::string& line)
+ACommand* CmdFactory::userCmd(Server& server, Client& client, std::string& line)
 {
     (void)client;
     (void)server;
@@ -54,7 +54,7 @@ ICommand* CmdFactory::userCmd(Server& server, Client& client, std::string& line)
     LOG_CMD.debug("Build USER (not implemented)");
     return NULL;
 };
-ICommand* CmdFactory::passCmd(Server& server, Client& client, std::string& line)
+ACommand* CmdFactory::passCmd(Server& server, Client& client, std::string& line)
 {
     (void)client;
     (void)server;
@@ -62,7 +62,7 @@ ICommand* CmdFactory::passCmd(Server& server, Client& client, std::string& line)
     LOG_CMD.debug("Build PASS (not implemented)");
     return NULL;
 };
-ICommand* CmdFactory::quitCmd(Server& server, Client& client, std::string& line)
+ACommand* CmdFactory::quitCmd(Server& server, Client& client, std::string& line)
 {
     (void)client;
     (void)server;
@@ -70,7 +70,7 @@ ICommand* CmdFactory::quitCmd(Server& server, Client& client, std::string& line)
     LOG_CMD.debug("Build QUIT (not implemented)");
     return NULL;
 };
-ICommand* CmdFactory::joinCmd(Server& server, Client& client, std::string& line)
+ACommand* CmdFactory::joinCmd(Server& server, Client& client, std::string& line)
 {
     (void)client;
     (void)server;
@@ -78,7 +78,7 @@ ICommand* CmdFactory::joinCmd(Server& server, Client& client, std::string& line)
     LOG_CMD.debug("Build JOIN (not implemented)");
     return NULL;
 };
-ICommand* CmdFactory::partCmd(Server& server, Client& client, std::string& line)
+ACommand* CmdFactory::partCmd(Server& server, Client& client, std::string& line)
 {
     (void)client;
     (void)server;
@@ -86,7 +86,7 @@ ICommand* CmdFactory::partCmd(Server& server, Client& client, std::string& line)
     LOG_CMD.debug("Build PART (not implemented)");
     return NULL;
 };
-ICommand* CmdFactory::modeCmd(Server& server, Client& client, std::string& line)
+ACommand* CmdFactory::modeCmd(Server& server, Client& client, std::string& line)
 {
     (void)client;
     (void)server;
@@ -94,7 +94,7 @@ ICommand* CmdFactory::modeCmd(Server& server, Client& client, std::string& line)
     LOG_CMD.debug("Build MODE (not implemented)");
     return NULL;
 };
-ICommand* CmdFactory::operCmd(Server& server, Client& client, std::string& line)
+ACommand* CmdFactory::operCmd(Server& server, Client& client, std::string& line)
 {
     (void)client;
     (void)server;
@@ -102,7 +102,7 @@ ICommand* CmdFactory::operCmd(Server& server, Client& client, std::string& line)
     LOG_CMD.debug("Build OPER (not implemented)");
     return NULL;
 };
-ICommand* CmdFactory::inviteCmd(Server& server, Client& client, std::string& line)
+ACommand* CmdFactory::inviteCmd(Server& server, Client& client, std::string& line)
 {
     (void)client;
     (void)server;
@@ -111,24 +111,24 @@ ICommand* CmdFactory::inviteCmd(Server& server, Client& client, std::string& lin
     return NULL;
 };
 
-ICommand* CmdFactory::makeCommand(Server& server, Client& client, std::string& line)
+ACommand* CmdFactory::makeCommand(Server& server, Client& client, std::string& line)
 {
 
     std::string        command_line;
     std::istringstream iss(line);
-    std::string        available[9] = {"USER", "PASS", "NICK", "QUIT", "INVITE", "JOIN", "PART", "MODE", "OPER"};
-    ICommand* (CmdFactory::*ptr[9])(Server&, Client&, std::string&) = {
+    std::string        available[COMMANDS_NB] = {"USER", "PASS", "NICK", "QUIT", "INVITE", "JOIN", "PART", "MODE", "OPER"};
+    ACommand* (CmdFactory::*ptr[COMMANDS_NB])(Server&, Client&, std::string&) = {
         &CmdFactory::userCmd, &CmdFactory::passCmd, &CmdFactory::nickCmd, &CmdFactory::quitCmd, &CmdFactory::inviteCmd,
         &CmdFactory::joinCmd, &CmdFactory::partCmd, &CmdFactory::modeCmd, &CmdFactory::operCmd};
     iss >> command_line;
-    for (size_t i = 0; i < 9; i++) {
-        if (command_line == available[i]) {
+    for (size_t i = 0; i < COMMANDS_NB; i++) {
+        if (command_line == available[i]) { // NOLINT(cppcoreguidelines-pro-bounds-constant-array-index)
             std::string params;
             std::getline(iss, params);
             if (!params.empty() && params[0] == ' ') {
                 params = params.substr(1);
             }
-            return (this->*ptr[i])(server, client, params);
+            return (this->*ptr[i])(server, client, params); // NOLINT(cppcoreguidelines-pro-bounds-constant-array-index)
         }
     }
     throw std::invalid_argument("Command not handled");

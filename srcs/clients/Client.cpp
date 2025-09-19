@@ -51,7 +51,7 @@ std::ostream& operator<<(std::ostream& os, const Client& c)
 		<< "socket_fd = " << c.getSocket()
 		<< " address = " << c.getAddress()
     	<< " status=" << (c.getStatus() == REGISTERED ? "registered" : "unauthenticated")
-		<< " nick=" << c.getNickName() 
+		<< " nick=" << c.getNickName()
 		<< " to receive=" << c.getReceiveBuffer().size()
 		<< " to send=" << c.getSendBuffer().size()
 		<< " joined channels=" << c.getNbJoinedChannels()
@@ -93,7 +93,7 @@ bool               Client::hasDataToSend() const { return _sendBuffer.empty(); }
 
 bool               Client::isRegistered() const { return _status == REGISTERED; }
 
-int                Client::getNbJoinedChannels() const { return _joinedChannels.size(); }
+int                Client::getNbJoinedChannels() const { return static_cast<int>(_joinedChannels.size()); }
 
 void               Client::setNickName(const std::string& nick) { _nickName = nick; }
 

@@ -2,6 +2,7 @@
 #define LOGGER_HPP
 
 #include "colors.hpp"
+#include "consts.hpp"
 
 #include <ctime>
 #include <fstream>

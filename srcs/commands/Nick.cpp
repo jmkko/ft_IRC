@@ -2,12 +2,12 @@
 #include "Client.hpp"
 #include "LogManager.hpp"
 // Default constructor
-Nick::Nick(void) {}
+Nick::Nick(void) : ACommand() {}
 
-Nick::Nick(const std::string& nickname) : _nickname(nickname) {}
+Nick::Nick(const std::string& nickname) : ACommand(), _nickname(nickname) {}
 
 // Copy constructor
-Nick::Nick(const Nick& other) { (void)other; }
+Nick::Nick(const Nick& other) : ACommand() { (void)other; }
 
 // Assignment operator overload
 Nick& Nick::operator=(const Nick& other)

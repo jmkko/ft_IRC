@@ -80,7 +80,7 @@ Server& Server::operator=(const Server& inst)
 void Server::start()
 {
     while (true) {
-        int pollResult = poll(_fds.data(), _fds.size(), 1000); // Timeout 1 second
+        int pollResult = poll(_fds.data(), _fds.size(), POLL_TIMEOUT); // Timeout 1 second
         if (pollResult == -1) {
             LOG_ERR.error("Poll failed: " + TO_STRING(strerror(errno)));
             LOG_SERVER.error("Critical: Poll system failed");
@@ -140,10 +140,10 @@ void Server::handleNewConnection(int i)
         pollEvent.append("POLLERR ");
     LOG_SOCKET.debug("Socket " + utils::toString(_fds[i].fd) + " events: " + pollEvent);
 
-    sockaddr_in clientAddr;
+    sockaddr_in clientAddr = {};
     memset(&clientAddr, 0, sizeof(clientAddr));
     socklen_t addrLen = sizeof(clientAddr);
-    Socket    clientSocket = accept(_serverSocket.getSocket(), (sockaddr*)&clientAddr, &addrLen);
+    Socket    clientSocket = accept(_serverSocket.getSocket(), reinterpret_cast<sockaddr*>(&clientAddr), &addrLen);
 
     //	// Read first command send by client NICK & USER
     //	char buffer[512];
@@ -207,14 +207,14 @@ void Server::handleClientDisconnection(int clientIndex)
         return;
     }
 
-    socklen_t err;
+    socklen_t err = 0;
     socklen_t errsize = sizeof(err);
-    if (getsockopt(clientSocket, SOL_SOCKET, SO_ERROR, (char*)&err, &errsize) == 0) {
+    if (getsockopt(clientSocket, SOL_SOCKET, SO_ERROR, reinterpret_cast<char*>(&err), &errsize) == 0) {
         if (err == 0) {
             LOG_SERVER.debug("connection has been closed by client");
         } else {
-            LOG_ERR.error(std::string("socket error : ") + strerror(err));
-            LOG_SOCKET.error(std::string("socket error : ") + strerror(err));
+            LOG_ERR.error(std::string("socket error : ") + strerror(static_cast<int>(err)));
+            LOG_SOCKET.error(std::string("socket error : ") + strerror(static_cast<int>(err)));
         }
     }
     LOG_CONN.info(std::string("Client at ") + client->getAddress() + ":" + utils::toString(client->getPort()) +
@@ -255,8 +255,8 @@ void Server::handleClientData(int clientIndex)
     }
 
     char buffer[CLIENT_READ_BUFFER_SIZE];
-    memset(buffer, 0, sizeof(buffer));
-    int bytesReceived = recv(clientSocket, buffer, sizeof(buffer) - 1, 0);
+    memset(static_cast<char*>(buffer), 0, CLIENT_READ_BUFFER_SIZE);
+    ssize_t bytesReceived = recv(clientSocket, static_cast<char*>(buffer), CLIENT_READ_BUFFER_SIZE - 1, 0);
 
     if (bytesReceived == 0) {
         LOG_CONN.warning("Connection closed properly");
@@ -269,19 +269,19 @@ void Server::handleClientData(int clientIndex)
         }
         return;
     } else {
-        if (buffer[bytesReceived])
-            buffer[bytesReceived] = '\0';
+        if (utils::safeAt(buffer, bytesReceived))
+            utils::safeAt(buffer, bytesReceived) = '\0';
 
-        LOG_CMD.debug("Client RAW DATA: " + std::string(buffer));
+        LOG_CMD.debug("Client RAW DATA: " + std::string(static_cast<char*>(buffer)));
 
         // append what is read in the client socket to the client read buffer immediatly
-        client->appendToReceiveBuffer(std::string(buffer));
+        client->appendToReceiveBuffer(std::string(static_cast<char*>(buffer)));
 
         LOG_CMD.debug("Client read buffer BEFORE parsing: " + client->getReceiveBuffer());
         LOG_SERVER.debug(std::string("[") + client->getAddress() + ":" + utils::toString(client->getPort()) +
-                         "] : " + buffer); // Doesnt log anything !!
+                         "] : " + static_cast<char*>(buffer)); // Doesnt log anything !!
 
-        size_t pos;
+        size_t pos = 0;
         // tant qu'il y a un \r\n dans le readbuffer du client, executer les commandes
         while ((pos = client->getReceiveBuffer().find("\r\n")) != std::string::npos) {
             // extract the first command from the readBuffer
@@ -289,7 +289,7 @@ void Server::handleClientData(int clientIndex)
             // delete the command that has been extracted from the client readbuffer
             client->getReceiveBuffer().erase(0, pos + 2);
             // parse and create the appropriate command, NULL is returned if a faillure has happen
-            ICommand* cmd = parseCommand(*this, *client, line);
+            ACommand* cmd = parseCommand(*this, *client, line);
             if (cmd) {
                 cmd->execute(*this, *client);
                 delete cmd;
@@ -298,7 +298,7 @@ void Server::handleClientData(int clientIndex)
         LOG_CMD.debug("Client read buffer AFTER PARSING: " + client->getReceiveBuffer());
 
         std::string response = "sECHO: ";
-        response += buffer;
+        response += static_cast<char*>(buffer);
         _fds[clientIndex].events |= POLLOUT;
         sendToClient(clientIndex, response);
         _fds[clientIndex].events &= ~POLLOUT; // not sure about this
@@ -310,7 +310,7 @@ void Server::handleClientData(int clientIndex)
         //         // otherwise it can be a partial message with CTRL+D -> we append and wait \r\n
         //         if (hasCommandEnding(buffer)) {
         //             // parse to command and execute
-        //             // ICommand* cmd = parseCommand(buffer)
+        //             // ACommand* cmd = parseCommand(buffer)
         //             // cmd->execute(*this, client)
         //             // delete cmd;
         //
@@ -328,9 +328,9 @@ void Server::sendToClient(int clientIndex, const std::string& response)
     Client* client = _clients[clientSocket];
     LOG_SOCKET.debug(std::string("sending response : " + response));
 
-    int bytesSent = send(clientSocket, response.c_str(), response.length(), 0);
+    size_t bytesSent = send(clientSocket, response.c_str(), response.length(), 0);
 
-    if (bytesSent == -1) {
+    if (bytesSent == static_cast<size_t>(-1)) {
         if (errno == EAGAIN || errno == EWOULDBLOCK) {
             LOG_SOCKET.warning("Socket not ready, adding to queue");
             client->appendToSendBuffer(response);
@@ -339,7 +339,7 @@ void Server::sendToClient(int clientIndex, const std::string& response)
             LOG_ERR.error("Sending failed: " + TO_STRING(errno));
             handleClientDisconnection(clientIndex);
         }
-    } else if (bytesSent < (int)response.length()) {
+    } else if (bytesSent < response.length()) {
         // send partial
         LOG_SOCKET.warning("Partial sending (" + TO_STRING(bytesSent) + "/" + TO_STRING(response.length()) + ")");
         // _fds[clientIndex].events |= POLLOUT;
@@ -368,9 +368,9 @@ void Server::handleClientOutput(int clientIndex)
 
     if (client->hasDataToSend()) {
 
-        int bytesSent = send(clientSocket, sendBuffer.c_str(), sendBuffer.length(), 0);
+        size_t bytesSent = send(clientSocket, sendBuffer.c_str(), sendBuffer.length(), 0);
 
-        if (bytesSent == -1) {
+        if (bytesSent == static_cast<size_t>(-1)) {
             if (errno != EAGAIN && errno != EWOULDBLOCK) {
                 LOG_SERVER.warning(std::string("Socket is not ready for sending ... trying later"));
 
@@ -378,7 +378,7 @@ void Server::handleClientOutput(int clientIndex)
                 LOG_SERVER.error(std::string("Error sending to client"));
                 handleClientDisconnection(clientIndex);
             }
-        } else if (bytesSent < static_cast<int>(sendBuffer.length())) {
+        } else if (bytesSent < sendBuffer.length()) {
             LOG_SERVER.warning(std::string("Queue has been partially sent (") + utils::toString(bytesSent) + "/" +
                                utils::toString(sendBuffer.length()) + ")");
             client->setSendBuffer(sendBuffer.substr(bytesSent));
@@ -395,7 +395,7 @@ void Server::handleClientOutput(int clientIndex)
 
 void Server::listenToSocket(Socket toListen, uint32_t flags)
 {
-    pollfd newPollFd = {.fd = toListen, .events = flags, .revents = 0};
+    pollfd newPollFd = {.fd = toListen, .events = static_cast<short>(flags), .revents = 0};
     _fds.push_back(newPollFd);
 }
 
@@ -403,13 +403,13 @@ void Server::listenToSocket(Socket toListen, uint32_t flags)
  @brief make and return a command object from the command line if valid command;
  @return NULL if command has failed amd print
  */
-ICommand* Server::parseCommand(Server& server, Client& client, std::string line)
+ACommand* Server::parseCommand(Server& server, Client& client, std::string line)
 {
 
     LOG_CMD.debug("Parsing of the command: " + line);
     CmdFactory command_builder; // The command_builder throw exception if the command or params are not valid
                                 // (std::invalid_argument for now...)
-    ICommand* cmd;
+    ACommand* cmd = NULL;
     try {
         cmd = command_builder.makeCommand(server, client, line);
     } catch (std::exception& e) {

@@ -43,4 +43,4 @@ long stringToULong(const std::string& str)
     }
     return result;
 }
-} // namespace utils
+}

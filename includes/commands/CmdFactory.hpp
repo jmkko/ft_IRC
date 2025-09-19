@@ -18,16 +18,16 @@ class CmdFactory
     CmdFactory& operator=(const CmdFactory& other);
     ~CmdFactory();
 
-    ICommand* makeCommand(Server&, Client&, std::string&);
-    ICommand* userCmd(Server&, Client&, std::string&);
-    ICommand* passCmd(Server&, Client&, std::string&);
-    ICommand* nickCmd(Server&, Client&, std::string&);
-    ICommand* quitCmd(Server&, Client&, std::string&);
-    ICommand* joinCmd(Server&, Client&, std::string&);
-    ICommand* partCmd(Server&, Client&, std::string&);
-    ICommand* modeCmd(Server&, Client&, std::string&);
-    ICommand* operCmd(Server&, Client&, std::string&);
-    ICommand* inviteCmd(Server&, Client&, std::string&);
+    ACommand* makeCommand(Server&, Client&, std::string&);
+    ACommand* userCmd(Server&, Client&, std::string&);
+    ACommand* passCmd(Server&, Client&, std::string&);
+    ACommand* nickCmd(Server&, Client&, std::string&);
+    ACommand* quitCmd(Server&, Client&, std::string&);
+    ACommand* joinCmd(Server&, Client&, std::string&);
+    ACommand* partCmd(Server&, Client&, std::string&);
+    ACommand* modeCmd(Server&, Client&, std::string&);
+    ACommand* operCmd(Server&, Client&, std::string&);
+    ACommand* inviteCmd(Server&, Client&, std::string&);
 };
 
 #endif

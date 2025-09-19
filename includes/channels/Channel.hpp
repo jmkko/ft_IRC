@@ -2,7 +2,7 @@
 #define CHANNEL_HPP
 
 #include "Client.hpp"
-#include "ICommand.hpp"
+#include "ACommand.hpp"
 #include "colors.hpp"
 #include "consts.hpp"
 
