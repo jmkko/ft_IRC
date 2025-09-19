@@ -8,7 +8,10 @@ class LogManager
   private:
     std::map<std::string, Logger*> _loggers;
 
-    LogManager() {};
+		LogManager(const LogManager& inst);
+
+		LogManager& 			operator=(const LogManager& inst);
+    LogManager(){};
 
   public:
     static LogManager& getInstance();

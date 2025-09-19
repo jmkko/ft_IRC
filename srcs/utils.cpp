@@ -5,14 +5,14 @@ bool checkPort(const std::string& s, int* port)
     long n = utils::stringToULong(s.c_str());
     if (!(n > WELL_KNOWN_PORT_MAX && n < DYNAMIC_PORT_MIN))
         return false;
-    *port = n;
+    *port = static_cast<int>(n);
     return true;
 }
 
 bool checkPassword(const std::string& s)
 {
-    if (s.length() < 8) {
-        LOG_SERVER.warning("password must be 8 characters long at least");
+    if (s.length() < MIN_PASSWORD_LEN) {
+        LOG_SERVER.warning(std::string("password must be ") + TO_STRING(MIN_PASSWORD_LEN) + " long at least");
         return false;
     }
     return true;
@@ -20,7 +20,7 @@ bool checkPassword(const std::string& s)
 
 bool checkArgs(int ac, char** av, int* port)
 {
-    if (ac != 3) {
+    if (ac != EXPECTED_ARGS_NB) {
         LOG_SERVER.warning("usage: ./ircserv <port> <password>");
         return false;
     }
@@ -36,11 +36,11 @@ namespace utils
 long stringToULong(const std::string& str)
 {
     std::stringstream ss(str);
-    long              result;
+    long              result = 0;
     ss >> result;
     if (ss.fail()) {
         return -1;
     }
     return result;
 }
-} // namespace utils
+}

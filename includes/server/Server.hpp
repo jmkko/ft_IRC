@@ -16,6 +16,7 @@
 #include "Client.hpp"
 #include "ICommand.hpp"
 #include "LogManager.hpp"
+#include "ReplyHandler.hpp"
 #include "TcpSocket.hpp"
 #include "consts.hpp"
 
@@ -53,11 +54,13 @@ class Server
     void                           listenToSocket(Socket, uint32_t);
     ICommand*                  		parseCommand(Server&, Client&, std::string);
 
+
   public:
     Server(const unsigned short port, const std::string& psswd);
     ~Server();
     void start();
 	Client*							findClientByNickname(std::string&); // added
+    void sendToClient(int, const std::string&);
 };
 
 #endif

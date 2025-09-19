@@ -23,7 +23,7 @@ class Client
     Client(const Client& other);
     virtual ~Client();
 
-    Client&            operator=(const Client& other);
+    Client& operator=(const Client& other);
 
     Socket             getSocket() const;
     const std::string& getAddress() const;
@@ -33,24 +33,24 @@ class Client
     std::string        getReceiveBuffer() const;
     bool               hasDataToSend() const;
 
-    std::string        getNickName() const;
-    std::string        getUserName() const;
-    std::string        getRealName() const;
-    ClientStatus       getStatus() const;
+    std::string  getNickName() const;
+    std::string  getUserName() const;
+    std::string  getRealName() const;
+    ClientStatus getStatus() const;
 
-    bool               isRegistered() const;
-    int                getNbJoinedChannels() const;
+    bool isRegistered() const;
+    int  getNbJoinedChannels() const;
 
-    void               setNickName(const std::string& nick);
-    void               setUserName(const std::string& userName);
-    void               setRealName(const std::string& realName);
-    void               setStatus(ClientStatus status);
-    void               addJoinedChannel(Channel& channel);
-    void               removeJoinedChannel(Channel& channel);
-    void               setSendBuffer(const std::string& buffer);
+    void setNickName(const std::string& nick);
+    void setUserName(const std::string& userName);
+    void setRealName(const std::string& realName);
+    void setStatus(ClientStatus status);
+    void addJoinedChannel(Channel& channel);
+    void removeJoinedChannel(Channel& channel);
+    void setSendBuffer(const std::string& buffer);
 
-    void               appendToSendBuffer(const std::string& msg);
-    void               appendToReceiveBuffer(const std::string& msg);
+    void appendToSendBuffer(const std::string& msg);
+    void appendToReceiveBuffer(const std::string& msg);
 
   private:
     TcpSocket                       _socket;

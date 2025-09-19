@@ -179,6 +179,7 @@ void Server::handleClientDisconnection(int clientIndex)
 }
 
 // TODO change return true if we find a way to pass \r through netcat
+
 // What if /r/n is not at the end ??
 // static bool hasCommandEnding(char* msg)
 // {
@@ -192,6 +193,7 @@ void Server::handleClientDisconnection(int clientIndex)
 //         return false;
 //     return true;
 // }
+
 
 /// @brief attempt receiving bytes from client, parse into a command and execute it
 /// enable write notification on client socket if a response has to be sent
@@ -225,6 +227,7 @@ void Server::handleClientData(int clientIndex)
         if (buffer[bytesReceived])
             buffer[bytesReceived] = '\0';
 
+
 		LOG_CMD.debug("Client RAW DATA: " + std::string(buffer));
 
 		//append what is read in the client socket to the client read buffer immediatly
@@ -254,6 +257,24 @@ void Server::handleClientData(int clientIndex)
 		_fds[clientIndex].events |= POLLOUT;
 		sendToClient(clientIndex, response);
 		_fds[clientIndex].events &= ~POLLOUT; // not sure about this
+//conflict merging
+//        LOG_SERVER.debug(std::string("[") + client->getAddress() + ":" + utils::toString(client->getPort()) +
+//                         "] : " + buffer);
+//
+//        // if the buffer ends with \r\n -> parse as command
+//        // otherwise it can be a partial message with CTRL+D -> we append and wait \r\n
+//        if (hasCommandEnding(buffer)) {
+//            // parse to command and execute
+//            // ICommand* cmd = parseCommand(buffer)
+//            // cmd->execute(*this, client)
+//            // delete cmd;
+//
+//            ReplyHandler& rh = ReplyHandler::getInstance(this);
+//            rh.sendErrNeedMoreParams(clientIndex, "ECHO");
+//            _fds[clientIndex].events |= POLLOUT;
+//        } else
+//            client->appendToReceiveBuffer(std::string(buffer));
+
     }
 }
 
@@ -263,7 +284,7 @@ void Server::sendToClient(int clientIndex, const std::string& response)
     Client* client = _clients[clientSocket];
     LOG_SOCKET.debug(std::string("sending response : " + response));
 
-    int     bytesSent = send(clientSocket, response.c_str(), response.length(), 0);
+    int bytesSent = send(clientSocket, response.c_str(), response.length(), 0);
 
     if (bytesSent == -1) {
         if (errno == EAGAIN || errno == EWOULDBLOCK) {
@@ -277,7 +298,6 @@ void Server::sendToClient(int clientIndex, const std::string& response)
     } else if (bytesSent < (int)response.length()) {
         // send partial
         LOG_SOCKET.warning("Partial sending (" + TO_STRING(bytesSent) + "/" + TO_STRING(response.length()) + ")");
-        client->appendToSendBuffer(response.substr(bytesSent));
         // _fds[clientIndex].events |= POLLOUT;
     } else {
         LOG_SERVER.info("Message sent completely");

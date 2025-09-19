@@ -101,7 +101,7 @@ void TcpSocket::tcpListen()
 
 std::string TcpSocket::getAddress(const sockaddr_in& addr) { return inet_ntoa(addr.sin_addr); }
 
-int         TcpSocket::setNonBlockingSocket() { return fcntl(_sckt, F_SETFL, O_NONBLOCK); }
+int TcpSocket::setNonBlockingSocket() { return fcntl(_sckt, F_SETFL, O_NONBLOCK); }
 
 /*****************************************************************************
  * first send data size

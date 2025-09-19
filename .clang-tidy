@@ -1,8 +1,10 @@
 Checks: >
+  clang-diagnostic-*,
+  cppcoreguidelines-*,
+  -cppcoreguidelines-pro-bounds-pointer-arithmetic,
   bugprone-*,
   performance-*,
-  readability-*,
-  cppcoreguidelines-*,
 WarningsAsErrors: '*'
 HeaderFilterRegex: '.*'
-FormatStyle:     none
+# do not interfere with clang format
+FormatStyle: none

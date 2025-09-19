@@ -23,6 +23,7 @@ SRCS			:=	srcs/main.cpp\
 					srcs/server/LogManager.cpp\
 					srcs/commands/CmdFactory.cpp\
 					srcs/commands/Nick.cpp\
+					srcs/server/ReplyHandler.cpp\
 
 OBJS_DIR		:=	.objs
 OBJS			:=	$(SRCS:%.cpp=$(OBJS_DIR)/%.o)
@@ -78,11 +79,11 @@ endif
 $(OBJ_DIRS) :
 	@mkdir -p $@
 
-format-check:
+forminette:
 	@echo "$(YELLOW)=== Checking code format ===$(NOC)"
 	@clang-format --dry-run --Werror -style=file:./.clang-format $(FILES_TO_FORMAT)
 
-format:
+formator:
 	@echo "$(YELLOW)=== Formatting code ===$(NOC)"
 	@clang-format -style=file:./.clang-format -i $(FILES_TO_FORMAT)
 
@@ -92,7 +93,7 @@ tidy:
 
 debug-files:
 	@echo "SRCS: $(SRCS)"
-	@echo "HEADERS: $(HEADERS)" 
+	@echo "HEADERS: $(HEADERS)"
 	@echo "FILES_TO_FORMAT: $(FILES_TO_FORMAT)"
 
 clean :
@@ -104,7 +105,7 @@ fclean : clean
 	@rm -rf logs
 	@echo "$(BOLD)=== Fully cleaned ===$(NC)"
 
-re : fclean 
+re : fclean
 	@make
 
 .PHONY : all clean fclean re
