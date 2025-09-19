@@ -80,10 +80,10 @@ TcpSocket& TcpSocket::operator=(const TcpSocket& inst)
 bool TcpSocket::tcpConnect(const std::string& ipaddress, unsigned short port)
 {
     sockaddr_in addr = {};
-	memset(&addr, 0, sizeof(addr));
-	addr.sin_addr.s_addr = inet_addr(ipaddress.c_str());
-	addr.sin_family = AF_INET;
-	addr.sin_port = htons(port);
+    memset(&addr, 0, sizeof(addr));
+    addr.sin_addr.s_addr = inet_addr(ipaddress.c_str());
+    addr.sin_family = AF_INET;
+    addr.sin_port = htons(port);
     return connect(_sckt, reinterpret_cast<const sockaddr*>(&addr), sizeof(addr)) == 0;
 }
 
@@ -97,15 +97,15 @@ bool TcpSocket::tcpConnect(const std::string& ipaddress, unsigned short port)
 void TcpSocket::tcpBind(unsigned short port)
 {
     sockaddr_in addr = {};
-	memset(&addr, 0, sizeof(addr));
-	addr.sin_addr.s_addr = INADDR_ANY;
-	addr.sin_family = AF_INET;
-	addr.sin_port = htons(port);
+    memset(&addr, 0, sizeof(addr));
+    addr.sin_addr.s_addr = INADDR_ANY;
+    addr.sin_family = AF_INET;
+    addr.sin_port = htons(port);
 
     int yes = 1;
     setsockopt(_sckt, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes));
-    int         res = 0;
-	res = bind(_sckt, reinterpret_cast<const sockaddr*>(&addr), sizeof(addr));
+    int res = 0;
+    res = bind(_sckt, reinterpret_cast<const sockaddr*>(&addr), sizeof(addr));
     std::string error = strerror(errno);
     if (res != 0) {
         LOG_SOCKET.error("Bind:" + error);
@@ -153,7 +153,7 @@ int TcpSocket::Send(const unsigned char* data, unsigned short len)
 int TcpSocket::Receive(std::vector<unsigned char>& buffer)
 {
     unsigned short expectedSize = 0;
-    size_t            pending = recv(_sckt, reinterpret_cast<char*>(&expectedSize), sizeof(expectedSize), 0);
+    size_t         pending = recv(_sckt, reinterpret_cast<char*>(&expectedSize), sizeof(expectedSize), 0);
     if (pending <= 0 || pending != sizeof(unsigned short)) {
         //!< Erreur
         return false;
@@ -164,7 +164,7 @@ int TcpSocket::Receive(std::vector<unsigned char>& buffer)
     ssize_t receivedSize = 0;
     do {
         ssize_t ret = recv(_sckt, reinterpret_cast<char*>(&buffer[receivedSize]),
-                       (expectedSize - receivedSize) * sizeof(unsigned char), 0);
+                           (expectedSize - receivedSize) * sizeof(unsigned char), 0);
         if (ret <= 0) {
             //!< Erreur
             buffer.clear();

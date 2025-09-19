@@ -15,12 +15,12 @@ class Nick : public ACommand
     void execute(Server&, Client&);
 
   private:
-  	std::string _nickname;
+    std::string _nickname;
 
-	Nick();
+    Nick();
     Nick(const Nick& other);
 
-	Nick& operator=(const Nick& other);
+    Nick& operator=(const Nick& other);
 };
 
 #endif

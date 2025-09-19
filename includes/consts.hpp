@@ -13,12 +13,12 @@
 #ifndef CONSTS_HPP
 #define CONSTS_HPP
 
-#define COMMANDS_NB				9
+#define COMMANDS_NB             9
 #define EXPECTED_ARGS_NB        3
 #define MIN_PASSWORD_LEN        8
-#define POLL_TIMEOUT			1000
-#define PERM_755				755
-#define EPOCH_TIME_START		1900
+#define POLL_TIMEOUT            1000
+#define PERM_755                755
+#define EPOCH_TIME_START        1900
 #define NO_LIMIT                (-1)
 #define SERVER_NAME             "hazardous"
 #define DEFAULT_PASSWORD        "password"

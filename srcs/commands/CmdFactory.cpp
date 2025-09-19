@@ -116,7 +116,7 @@ ACommand* CmdFactory::makeCommand(Server& server, Client& client, std::string& l
 
     std::string        command_line;
     std::istringstream iss(line);
-    std::string        available[COMMANDS_NB] = {"USER", "PASS", "NICK", "QUIT", "INVITE", "JOIN", "PART", "MODE", "OPER"};
+    std::string available[COMMANDS_NB] = {"USER", "PASS", "NICK", "QUIT", "INVITE", "JOIN", "PART", "MODE", "OPER"};
     ACommand* (CmdFactory::*ptr[COMMANDS_NB])(Server&, Client&, std::string&) = {
         &CmdFactory::userCmd, &CmdFactory::passCmd, &CmdFactory::nickCmd, &CmdFactory::quitCmd, &CmdFactory::inviteCmd,
         &CmdFactory::joinCmd, &CmdFactory::partCmd, &CmdFactory::modeCmd, &CmdFactory::operCmd};

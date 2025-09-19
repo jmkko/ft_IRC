@@ -85,9 +85,9 @@ std::string Logger::getCurrentTime()
     std::time_t        now = std::time(0);
     struct std::tm*    tm_ptr = std::localtime(&now);
     std::ostringstream oss;
-    oss << "[" << (tm_ptr->tm_year + EPOCH_TIME_START) << "-" << std::setfill('0') << std::setw(2) << (tm_ptr->tm_mon + 1) << "-"
-        << std::setfill('0') << std::setw(2) << tm_ptr->tm_mday << " " << std::setfill('0') << std::setw(2)
-        << tm_ptr->tm_hour << ":" << std::setfill('0') << std::setw(2) << tm_ptr->tm_min << ":" << std::setfill('0')
-        << std::setw(2) << tm_ptr->tm_sec << "]";
+    oss << "[" << (tm_ptr->tm_year + EPOCH_TIME_START) << "-" << std::setfill('0') << std::setw(2)
+        << (tm_ptr->tm_mon + 1) << "-" << std::setfill('0') << std::setw(2) << tm_ptr->tm_mday << " "
+        << std::setfill('0') << std::setw(2) << tm_ptr->tm_hour << ":" << std::setfill('0') << std::setw(2)
+        << tm_ptr->tm_min << ":" << std::setfill('0') << std::setw(2) << tm_ptr->tm_sec << "]";
     return oss.str();
 }

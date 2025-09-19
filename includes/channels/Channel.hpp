@@ -1,8 +1,8 @@
 #ifndef CHANNEL_HPP
 #define CHANNEL_HPP
 
-#include "Client.hpp"
 #include "ACommand.hpp"
+#include "Client.hpp"
 #include "colors.hpp"
 #include "consts.hpp"
 
