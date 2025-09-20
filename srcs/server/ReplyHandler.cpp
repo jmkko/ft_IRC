@@ -19,7 +19,8 @@ static const std::string codeToStr(ReplyCode code)
 }
 
 // TODO pass clientIndex in args ?
-void ReplyHandler::sendReply(int clientIndex, ReplyCode code, const std::string& target, const std::string& trailing)
+void ReplyHandler::sendReply(int clientIndex, ReplyCode code, const std::string& target,
+                             const std::string& trailing)
 {
     std::string reply = std::string(": ") + SERVER_NAME + codeToStr(code) + " " + target;
     if (!trailing.empty()) {

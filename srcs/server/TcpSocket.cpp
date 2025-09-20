@@ -142,7 +142,8 @@ int TcpSocket::setNonBlockingSocket() { return fcntl(_sckt, F_SETFL, O_NONBLOCK)
 int TcpSocket::Send(const unsigned char* data, unsigned short len)
 {
     unsigned short networkLen = htons(len);
-    return send(_sckt, reinterpret_cast<const char*>(&networkLen), sizeof(networkLen), 0) == sizeof(networkLen) &&
+    return send(_sckt, reinterpret_cast<const char*>(&networkLen), sizeof(networkLen), 0) ==
+               sizeof(networkLen) &&
            send(_sckt, reinterpret_cast<const char*>(data), len, 0) == len;
 }
 
@@ -153,7 +154,7 @@ int TcpSocket::Send(const unsigned char* data, unsigned short len)
 int TcpSocket::Receive(std::vector<unsigned char>& buffer)
 {
     unsigned short expectedSize = 0;
-    size_t         pending = recv(_sckt, reinterpret_cast<char*>(&expectedSize), sizeof(expectedSize), 0);
+    size_t pending = recv(_sckt, reinterpret_cast<char*>(&expectedSize), sizeof(expectedSize), 0);
     if (pending <= 0 || pending != sizeof(unsigned short)) {
         //!< Erreur
         return false;
@@ -163,8 +164,10 @@ int TcpSocket::Receive(std::vector<unsigned char>& buffer)
     buffer.resize(expectedSize);
     ssize_t receivedSize = 0;
     do {
-        ssize_t ret = recv(_sckt, reinterpret_cast<char*>(&buffer[receivedSize]),
-                           (expectedSize - receivedSize) * sizeof(unsigned char), 0);
+        ssize_t ret = recv(_sckt,
+                           reinterpret_cast<char*>(&buffer[receivedSize]),
+                           (expectedSize - receivedSize) * sizeof(unsigned char),
+                           0);
         if (ret <= 0) {
             //!< Erreur
             buffer.clear();

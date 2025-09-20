@@ -16,8 +16,8 @@ class LogManager
 
   public:
     static LogManager& getInstance();
-    Logger&            getLogger(const std::string& name, const std::string& filename, LogLevel level);
-    void               setGlobalLevel(LogLevel level);
+    Logger& getLogger(const std::string& name, const std::string& filename, LogLevel level);
+    void    setGlobalLevel(LogLevel level);
     ~LogManager();
 };
 

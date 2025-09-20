@@ -29,7 +29,8 @@ void Logger::log(LogLevel level, const std::string& message)
     std::string timestamp = getCurrentTime();
     std::string levelStr = levelToString(level);
     std::string color = getColorForLevel(level);
-    std::string terminalMessage = timestamp + " " + color + "[" + levelStr + "]" + RESET + " " + message;
+    std::string terminalMessage =
+        timestamp + " " + color + "[" + levelStr + "]" + RESET + " " + message;
     std::string fileMessage = timestamp + " [" + levelStr + "] " + message;
     if (level == ERROR)
         std::cerr << terminalMessage << std::endl;
@@ -86,8 +87,9 @@ std::string Logger::getCurrentTime()
     struct std::tm*    tm_ptr = std::localtime(&now);
     std::ostringstream oss;
     oss << "[" << (tm_ptr->tm_year + EPOCH_TIME_START) << "-" << std::setfill('0') << std::setw(2)
-        << (tm_ptr->tm_mon + 1) << "-" << std::setfill('0') << std::setw(2) << tm_ptr->tm_mday << " "
-        << std::setfill('0') << std::setw(2) << tm_ptr->tm_hour << ":" << std::setfill('0') << std::setw(2)
-        << tm_ptr->tm_min << ":" << std::setfill('0') << std::setw(2) << tm_ptr->tm_sec << "]";
+        << (tm_ptr->tm_mon + 1) << "-" << std::setfill('0') << std::setw(2) << tm_ptr->tm_mday
+        << " " << std::setfill('0') << std::setw(2) << tm_ptr->tm_hour << ":" << std::setfill('0')
+        << std::setw(2) << tm_ptr->tm_min << ":" << std::setfill('0') << std::setw(2)
+        << tm_ptr->tm_sec << "]";
     return oss.str();
 }

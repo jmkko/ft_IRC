@@ -34,7 +34,8 @@ class Logger
     std::string getColorForLevel(LogLevel level);
 
   public:
-    Logger(const std::string& logName, const std::string& filename = "irc_server.log", LogLevel level = INFO);
+    Logger(const std::string& logName, const std::string& filename = "irc_server.log",
+           LogLevel level = INFO);
     ~Logger();
 
     void                       log(LogLevel level, const std::string& message);

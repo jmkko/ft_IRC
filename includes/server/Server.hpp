@@ -13,8 +13,8 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
-#include "ICommand.hpp"
 #include "Client.hpp"
+#include "ICommand.hpp"
 #include "LogManager.hpp"
 #include "ReplyHandler.hpp"
 #include "TcpSocket.hpp"

@@ -28,7 +28,8 @@ Logger& LogManager::getLogger(const std::string& name, const std::string& filena
             struct stat st = {};
             if (stat("logs", &st) == -1) {
                 if (mkdir("logs", PERM_755) == -1) {
-                    std::cerr << "Warning: Could not create logs directory: " << strerror(errno) << std::endl;
+                    std::cerr << "Warning: Could not create logs directory: " << strerror(errno)
+                              << std::endl;
                 }
             }
         }

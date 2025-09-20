@@ -9,13 +9,15 @@
  ************************************************************/
 
 /**
- * @brief initialize server, assign a socket binding a port with an address, and adds it to the monitored pollfd
+ * @brief initialize server, assign a socket binding a port with an address, and adds it to the
+ * monitored pollfd
  * @pre the `psswd` argument should have been checked with `utils::checkPassword()`
  * @pre the `port`argument should have been checked with `utils::checkPort()`
  * @param port valid port number
  * @param psswd valid password
  */
-Server::Server(const unsigned short port, const std::string& psswd) : _psswd(psswd), _name(SERVER_NAME)
+Server::Server(const unsigned short port, const std::string& psswd) :
+    _psswd(psswd), _name(SERVER_NAME)
 {
     try {
         _serverSocket.tcpBind(port);
@@ -59,7 +61,8 @@ void Server::start()
             continue;
         }
         std::cout << "New Event detected: " << pollResult << "\n";
-        LOG_SERVER.debug(utils::toString(pollResult) + "event(s) detected"); // /!\ THIS DOESNT LOG ANYTHING ?? /!\
+        LOG_SERVER.debug(utils::toString(pollResult) +
+                         "event(s) detected"); // /!\ THIS DOESNT LOG ANYTHING ?? /!\
 
         // review each client socket
         for (int i = 0; i < static_cast<int>(_fds.size()); i++) {
@@ -111,7 +114,8 @@ void Server::handleNewConnection(int i)
     sockaddr_in clientAddr = {};
     memset(&clientAddr, 0, sizeof(clientAddr));
     socklen_t addrLen = sizeof(clientAddr);
-    Socket    clientSocket = accept(_serverSocket.getSocket(), reinterpret_cast<sockaddr*>(&clientAddr), &addrLen);
+    Socket    clientSocket =
+        accept(_serverSocket.getSocket(), reinterpret_cast<sockaddr*>(&clientAddr), &addrLen);
 
     //	// Read first command send by client NICK & USER
     //	char buffer[512];
@@ -126,13 +130,15 @@ void Server::handleNewConnection(int i)
 
     if (clientSocket != -1) {
         if (fcntl(clientSocket, F_SETFL, O_NONBLOCK) == -1) {
-            LOG_ERR.error(std::string("Error while setting a non blocking client socket") + strerror(errno));
-            LOG_SOCKET.error(std::string("Error while setting a non blocking client socket") + strerror(errno));
+            LOG_ERR.error(std::string("Error while setting a non blocking client socket") +
+                          strerror(errno));
+            LOG_SOCKET.error(std::string("Error while setting a non blocking client socket") +
+                             strerror(errno));
             close(clientSocket);
         } else {
             Client* newClient = new Client(clientSocket, clientAddr);
-            LOG_CONN.info(std::string("New connection accepted on socket ") + utils::toString(clientSocket) + " => " +
-                          utils::toString(*newClient));
+            LOG_CONN.info(std::string("New connection accepted on socket ") +
+                          utils::toString(clientSocket) + " => " + utils::toString(*newClient));
             _clients[clientSocket] = newClient;
 
             listenToSocket(clientSocket, POLLIN);
@@ -177,7 +183,8 @@ void Server::handleClientDisconnection(int clientIndex)
 
     socklen_t err = 0;
     socklen_t errsize = sizeof(err);
-    if (getsockopt(clientSocket, SOL_SOCKET, SO_ERROR, reinterpret_cast<char*>(&err), &errsize) == 0) {
+    if (getsockopt(clientSocket, SOL_SOCKET, SO_ERROR, reinterpret_cast<char*>(&err), &errsize) ==
+        0) {
         if (err == 0) {
             LOG_SERVER.debug("connection has been closed by client");
         } else {
@@ -185,8 +192,8 @@ void Server::handleClientDisconnection(int clientIndex)
             LOG_SOCKET.error(std::string("socket error : ") + strerror(static_cast<int>(err)));
         }
     }
-    LOG_CONN.info(std::string("Client at ") + client->getAddress() + ":" + utils::toString(client->getPort()) +
-                  " disconnected");
+    LOG_CONN.info(std::string("Client at ") + client->getAddress() + ":" +
+                  utils::toString(client->getPort()) + " disconnected");
     cleanupSocket(clientIndex);
 }
 
@@ -224,7 +231,8 @@ void Server::handleClientData(int clientIndex)
 
     char buffer[CLIENT_READ_BUFFER_SIZE];
     memset(static_cast<char*>(buffer), 0, CLIENT_READ_BUFFER_SIZE);
-    ssize_t bytesReceived = recv(clientSocket, static_cast<char*>(buffer), CLIENT_READ_BUFFER_SIZE - 1, 0);
+    ssize_t bytesReceived =
+        recv(clientSocket, static_cast<char*>(buffer), CLIENT_READ_BUFFER_SIZE - 1, 0);
 
     if (bytesReceived == 0) {
         LOG_CONN.warning("Connection closed properly");
@@ -246,7 +254,8 @@ void Server::handleClientData(int clientIndex)
         client->appendToReceiveBuffer(std::string(static_cast<char*>(buffer)));
 
         LOG_CMD.debug("Client read buffer BEFORE parsing: " + client->getReceiveBuffer());
-        LOG_SERVER.debug(std::string("[") + client->getAddress() + ":" + utils::toString(client->getPort()) +
+        LOG_SERVER.debug(std::string("[") + client->getAddress() + ":" +
+                         utils::toString(client->getPort()) +
                          "] : " + static_cast<char*>(buffer)); // Doesnt log anything !!
 
         size_t pos = 0;
@@ -271,7 +280,8 @@ void Server::handleClientData(int clientIndex)
         sendToClient(clientIndex, response);
         _fds[clientIndex].events &= ~POLLOUT; // not sure about this
                                               // conflict merging
-        //         LOG_SERVER.debug(std::string("[") + client->getAddress() + ":" + utils::toString(client->getPort()) +
+        //         LOG_SERVER.debug(std::string("[") + client->getAddress() + ":" +
+        //         utils::toString(client->getPort()) +
         //                          "] : " + buffer);
         //
         //         // if the buffer ends with \r\n -> parse as command
@@ -309,7 +319,8 @@ void Server::sendToClient(int clientIndex, const std::string& response)
         }
     } else if (bytesSent < response.length()) {
         // send partial
-        LOG_SOCKET.warning("Partial sending (" + TO_STRING(bytesSent) + "/" + TO_STRING(response.length()) + ")");
+        LOG_SOCKET.warning("Partial sending (" + TO_STRING(bytesSent) + "/" +
+                           TO_STRING(response.length()) + ")");
         // _fds[clientIndex].events |= POLLOUT;
     } else {
         LOG_SERVER.info("Message sent completely");
@@ -347,7 +358,8 @@ void Server::handleClientOutput(int clientIndex)
                 handleClientDisconnection(clientIndex);
             }
         } else if (bytesSent < sendBuffer.length()) {
-            LOG_SERVER.warning(std::string("Queue has been partially sent (") + utils::toString(bytesSent) + "/" +
+            LOG_SERVER.warning(std::string("Queue has been partially sent (") +
+                               utils::toString(bytesSent) + "/" +
                                utils::toString(sendBuffer.length()) + ")");
             client->setSendBuffer(sendBuffer.substr(bytesSent));
         } else {
@@ -375,13 +387,14 @@ ICommand* Server::parseCommand(Server& server, Client& client, std::string line)
 {
 
     LOG_CMD.debug("Parsing of the command: " + line);
-    CmdFactory command_builder; // The command_builder throw exception if the command or params are not valid
-                                // (std::invalid_argument for now...)
+    CmdFactory command_builder; // The command_builder throw exception if the command or params are
+                                // not valid (std::invalid_argument for now...)
     ICommand* cmd = NULL;
     try {
         cmd = command_builder.makeCommand(server, client, line);
     } catch (std::exception& e) {
-        // should response to client here from the errors code returned (maybe using return int instead of exception
+        // should response to client here from the errors code returned (maybe using return int
+        // instead of exception
         // ???)
         LOG_CMD.error(e.what());
         return NULL;

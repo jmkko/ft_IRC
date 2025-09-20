@@ -116,10 +116,24 @@ ICommand* CmdFactory::makeCommand(Server& server, Client& client, std::string& l
 
     std::string        command_line;
     std::istringstream iss(line);
-    std::string available[COMMANDS_NB] = {"USER", "PASS", "NICK", "QUIT", "INVITE", "JOIN", "PART", "MODE", "OPER"};
-    ICommand* (CmdFactory::*ptr[COMMANDS_NB])(Server&, Client&, std::string&) = {
-        &CmdFactory::userCmd, &CmdFactory::passCmd, &CmdFactory::nickCmd, &CmdFactory::quitCmd, &CmdFactory::inviteCmd,
-        &CmdFactory::joinCmd, &CmdFactory::partCmd, &CmdFactory::modeCmd, &CmdFactory::operCmd};
+    std::string        available[COMMANDS_NB] = {"USER",
+                                                 "PASS",
+                                                 "NICK",
+                                                 "QUIT",
+                                                 "INVITE",
+                                                 "JOIN",
+                                                 "PART",
+                                                 "MODE",
+                                                 "OPER"}; // clang-format off
+    ICommand* (CmdFactory::*ptr[COMMANDS_NB])(Server&, Client&, std::string&) = {&CmdFactory::userCmd,
+                                                                                 &CmdFactory::passCmd,
+                                                                                 &CmdFactory::nickCmd,
+                                                                                 &CmdFactory::quitCmd,
+                                                                                 &CmdFactory::inviteCmd,
+                                                                                 &CmdFactory::joinCmd,
+                                                                                 &CmdFactory::partCmd,
+                                                                                 &CmdFactory::modeCmd,
+                                                                                 &CmdFactory::operCmd};
     iss >> command_line;
     for (size_t i = 0; i < COMMANDS_NB; i++) {
         if (command_line == available[i]) { // NOLINT(cppcoreguidelines-pro-bounds-constant-array-index)
