@@ -2,6 +2,9 @@ Checks: >
   clang-diagnostic-*,
   cppcoreguidelines-*,
   -cppcoreguidelines-pro-bounds-pointer-arithmetic,
+  -cppcoreguidelines-non-private-member-variables-in-classes,
+  -cppcoreguidelines-pro-type-reinterpret-cast,
+  -cppcoreguidelines-pro-type-vararg,
   bugprone-*,
   performance-*,
 WarningsAsErrors: '*'

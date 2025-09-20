@@ -37,7 +37,8 @@ class Channel
     void setIsInviteOnly(bool isInviteOnly);
     void setIsTopicChangeRestricted(bool isRestricted);
     void inviteClient(Client& client);
-    void addMember(Client& client); // should implement different logics whether it is or not invite-only
+    void
+    addMember(Client& client); // should implement different logics whether it is or not invite-only
     void removeMember(Client& client);
     void makeOperator(Client& client);
 

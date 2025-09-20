@@ -8,8 +8,16 @@ class Client;
 class ICommand
 {
   public:
-    virtual ~ICommand() {};
-	virtual void execute(Server&, Client&) = 0;
+    virtual ~ICommand() {}
+    virtual void execute(Server&, Client&) = 0;
+
+  protected:
+    ICommand() {}
+
+  private:
+    ICommand(const ICommand& inst);
+
+    ICommand& operator=(const ICommand& inst);
 };
 
 #endif
