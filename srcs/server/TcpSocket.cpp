@@ -24,12 +24,16 @@
 #include <string.h>
 #include <unistd.h> // close
 
-/******************************************************************************
- * Create a socket
+/************************************************************
+ *		🥚 CONSTRUCTORS & DESTRUCTOR						*
+ ************************************************************/
+
+/**
+ * @brief create a socket
  * AF_INET IPv4 familly
  * SOCK_STREAM tcp type
  * IPPROTO_TCP tcp protocol
- ******************************************************************************/
+ */
 TcpSocket::TcpSocket()
 {
     _sckt = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
@@ -40,11 +44,33 @@ TcpSocket::TcpSocket()
     }
 }
 
+/**
+ * @brief create a socket
+ * @param socketFd
+ */
 TcpSocket::TcpSocket(Socket socketFd) : _sckt(socketFd) {}
+
+TcpSocket::TcpSocket(const TcpSocket& inst) : _sckt(inst._sckt) {}
 
 TcpSocket::~TcpSocket() { close(_sckt); }
 
 Socket TcpSocket::getSocket() const { return _sckt; }
+
+/************************************************************
+ *		➕ OPERATORS											*
+ ************************************************************/
+
+TcpSocket& TcpSocket::operator=(const TcpSocket& inst)
+{
+    if (this != &inst) {
+        _sckt = inst._sckt;
+    }
+    return *this;
+}
+
+/*************************************************************
+ *		🛠️ FUNCTIONS											*
+ *************************************************************/
 
 /******************************************************************************
  * Connect a socket to a server
@@ -53,27 +79,33 @@ Socket TcpSocket::getSocket() const { return _sckt; }
  ******************************************************************************/
 bool TcpSocket::tcpConnect(const std::string& ipaddress, unsigned short port)
 {
-    sockaddr_in addr;
+    sockaddr_in addr = {};
+    memset(&addr, 0, sizeof(addr));
     addr.sin_addr.s_addr = inet_addr(ipaddress.c_str());
     addr.sin_family = AF_INET;
     addr.sin_port = htons(port);
-    return connect(_sckt, (const sockaddr*)&addr, sizeof(addr)) == 0;
+    return connect(_sckt, reinterpret_cast<const sockaddr*>(&addr), sizeof(addr)) == 0;
 }
 
-/// @brief assign a local address to a socket
-/// INADDR_ANY = all sources
-/// AF_INET = IPV4
-/// @param port port to bind
-/// @throw exception if bind error
+/**
+ * @brief assign a local address to a socket
+ * INADDR_ANY = all sources
+ * AF_INET = IPV4
+ * @param port port to bind
+ * @throw exception if bind error
+ */
 void TcpSocket::tcpBind(unsigned short port)
 {
-    sockaddr_in addr;
+    sockaddr_in addr = {};
+    memset(&addr, 0, sizeof(addr));
     addr.sin_addr.s_addr = INADDR_ANY;
     addr.sin_family = AF_INET;
     addr.sin_port = htons(port);
+
     int yes = 1;
     setsockopt(_sckt, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes));
-    int         res = bind(_sckt, (const sockaddr*)&addr, sizeof(addr));
+    int res = 0;
+    res = bind(_sckt, reinterpret_cast<const sockaddr*>(&addr), sizeof(addr));
     std::string error = strerror(errno);
     if (res != 0) {
         LOG_SOCKET.error("Bind:" + error);
@@ -110,7 +142,8 @@ int TcpSocket::setNonBlockingSocket() { return fcntl(_sckt, F_SETFL, O_NONBLOCK)
 int TcpSocket::Send(const unsigned char* data, unsigned short len)
 {
     unsigned short networkLen = htons(len);
-    return send(_sckt, reinterpret_cast<const char*>(&networkLen), sizeof(networkLen), 0) == sizeof(networkLen) &&
+    return send(_sckt, reinterpret_cast<const char*>(&networkLen), sizeof(networkLen), 0) ==
+               sizeof(networkLen) &&
            send(_sckt, reinterpret_cast<const char*>(data), len, 0) == len;
 }
 
@@ -120,8 +153,8 @@ int TcpSocket::Send(const unsigned char* data, unsigned short len)
  ******************************************************************************/
 int TcpSocket::Receive(std::vector<unsigned char>& buffer)
 {
-    unsigned short expectedSize;
-    int            pending = recv(_sckt, reinterpret_cast<char*>(&expectedSize), sizeof(expectedSize), 0);
+    unsigned short expectedSize = 0;
+    size_t pending = recv(_sckt, reinterpret_cast<char*>(&expectedSize), sizeof(expectedSize), 0);
     if (pending <= 0 || pending != sizeof(unsigned short)) {
         //!< Erreur
         return false;
@@ -129,10 +162,12 @@ int TcpSocket::Receive(std::vector<unsigned char>& buffer)
 
     expectedSize = ntohs(expectedSize);
     buffer.resize(expectedSize);
-    int receivedSize = 0;
+    ssize_t receivedSize = 0;
     do {
-        int ret = recv(_sckt, reinterpret_cast<char*>(&buffer[receivedSize]),
-                       (expectedSize - receivedSize) * sizeof(unsigned char), 0);
+        ssize_t ret = recv(_sckt,
+                           reinterpret_cast<char*>(&buffer[receivedSize]),
+                           (expectedSize - receivedSize) * sizeof(unsigned char),
+                           0);
         if (ret <= 0) {
             //!< Erreur
             buffer.clear();

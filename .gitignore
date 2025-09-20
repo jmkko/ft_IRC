@@ -39,3 +39,10 @@
 
 # debug information files
 *.dwo
+
+# macos related
+.DS_Store
+
+# IDE related
+.clangd
+.vs-code

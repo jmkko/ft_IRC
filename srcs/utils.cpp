@@ -12,7 +12,8 @@ bool checkPort(const std::string& s, int* port)
 bool checkPassword(const std::string& s)
 {
     if (s.length() < MIN_PASSWORD_LEN) {
-        LOG_SERVER.warning(std::string("password must be ") + TO_STRING(MIN_PASSWORD_LEN) + " long at least");
+        LOG_SERVER.warning(std::string("password must be ") + TO_STRING(MIN_PASSWORD_LEN) +
+                           " long at least");
         return false;
     }
     return true;
@@ -43,4 +44,4 @@ long stringToULong(const std::string& str)
     }
     return result;
 }
-}
+} // namespace utils

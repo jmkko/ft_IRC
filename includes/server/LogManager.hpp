@@ -2,21 +2,22 @@
 #define LOGMANAGER
 
 #include "Logger.hpp"
+#include "consts.hpp"
 
 class LogManager
 {
   private:
     std::map<std::string, Logger*> _loggers;
 
-		LogManager(const LogManager& inst);
+    LogManager(const LogManager& inst);
 
-		LogManager& 			operator=(const LogManager& inst);
+    LogManager& operator=(const LogManager& inst);
     LogManager(){};
 
   public:
     static LogManager& getInstance();
-    Logger&            getLogger(const std::string& name, const std::string& filename, LogLevel level);
-    void               setGlobalLevel(LogLevel level);
+    Logger& getLogger(const std::string& name, const std::string& filename, LogLevel level);
+    void    setGlobalLevel(LogLevel level);
     ~LogManager();
 };
 
