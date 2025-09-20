@@ -10,6 +10,7 @@ class ICommand
   public:
     virtual ~ICommand() {};
 	virtual void execute(Server&, Client&) = 0;
+	//virtual int checkArgs(Server&, Client&, std::string&) = 0;
 };
 
 #endif

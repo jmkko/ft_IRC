@@ -1,5 +1,7 @@
 #include "CmdFactory.hpp"
 #include "Server.hpp"
+#include "reply_codes.hpp"
+
 // Default constructor
 CmdFactory::CmdFactory(void) {}
 
@@ -16,34 +18,43 @@ CmdFactory::~CmdFactory(void) {}
 // throw an exception if not with appropriate error code (to be improved)
 ICommand* CmdFactory::nickCmd(Server& server, Client& client, std::string& params) 
 {
-	(void)client;
-	std::istringstream	iss(params);
-	std::string			nickname;
-
-	LOG_CMD.debug("Create NICK command");
-	iss >> nickname;
-	if (nickname.empty()) {
-		// server.sendToClient(client.getFd(), response);
-		throw std::invalid_argument("431 No nickname given" );
-	} else if (!std::isalpha(nickname[0])) {
-		// server.sendToClient(client.getFd(), response);
-		throw std::invalid_argument("432 No nickname given" );
-	}
-	// silently shorten nickname if too long
-	if (nickname.length() > NICKNAME_MAX_LEN)
-		nickname = nickname.substr(0, NICKNAME_MAX_LEN);
-	if (server.findClientByNickname(nickname)) {
-		// Should send a responde :server.name 433 * dan :Nickname is already in use 
-		// server.sendToClient(client.getFd(), response);
-		throw std::invalid_argument("433 ERR_NICKNAMEINUSE");
-	}
-
-	return new Nick(nickname);
+	(void)server;
+	int replyCode = Nick::checkArgs(server, client, params);
+	if (replyCode == RPL_SUCCESS || replyCode == RPL_WELCOME)
+		return new Nick(params);
+	return NULL;
 }
 
 // NOT IMPLEMENTED YET
-ICommand* CmdFactory::userCmd(Server& server, Client& client, std::string& line) {(void)client; (void)server; (void)line; LOG_CMD.debug("Build USER (not implemented)");return NULL;};
-ICommand* CmdFactory::passCmd(Server& server, Client& client, std::string& line) {(void)client; (void)server; (void)line; LOG_CMD.debug("Build PASS (not implemented)");return NULL;};
+ICommand* CmdFactory::userCmd(Server& server, Client& client, std::string& params) 
+{
+	(void)client;
+	(void)server;
+	std::string username, realname;
+	int replyCode = User::checkArgs(server, client, params);
+	if (replyCode == RPL_WELCOME || replyCode == RPL_SUCCESS) {
+		std::istringstream iss(params);
+		iss >> username;
+		std::getline(iss, realname);
+		if (!realname.empty() && realname[0] == ' ') {
+			realname = realname.substr(1);
+		}
+		return (new User(username, realname));
+	}
+	return NULL;
+};
+
+ICommand* CmdFactory::passCmd(Server& server, Client& client, std::string& params)
+{
+	(void)client;
+	(void)server;
+	int replyCode = Pass::checkArgs(server, client, params);
+	if (replyCode == RPL_SUCCESS || replyCode == RPL_WELCOME) {
+		return new Pass(params);
+	}
+	return NULL;
+};
+
 ICommand* CmdFactory::quitCmd(Server& server, Client& client, std::string& line) {(void)client; (void)server; (void)line; LOG_CMD.debug("Build QUIT (not implemented)");return NULL;};
 ICommand* CmdFactory::joinCmd(Server& server, Client& client, std::string& line) {(void)client; (void)server; (void)line; LOG_CMD.debug("Build JOIN (not implemented)"); return NULL;};
 ICommand* CmdFactory::partCmd(Server& server, Client& client, std::string& line) {(void)client; (void)server; (void)line; LOG_CMD.debug("Build PART (not implemented)"); return NULL;};
@@ -51,20 +62,20 @@ ICommand* CmdFactory::modeCmd(Server& server, Client& client, std::string& line)
 ICommand* CmdFactory::operCmd(Server& server, Client& client, std::string& line) {(void)client; (void)server; (void)line; LOG_CMD.debug("Build OPER (not implemented)"); return NULL;};
 ICommand* CmdFactory::inviteCmd(Server& server, Client& client, std::string& line) {(void)client; (void)server; (void)line; LOG_CMD.debug("Build INVITE (not implemented)"); return NULL;};
 
-ICommand* CmdFactory::makeCommand(Server& server, Client& client, std::string& line) {
-
+ICommand* CmdFactory::makeCommand(Server& server, Client& client, std::string& line)
+{
 	std::string			command_line;
 	std::istringstream	iss(line);
-	std::string			available[9] = {	"USER", 
-											"PASS", 
-											"NICK", 
-											"QUIT", 
-											"INVITE", 
-											"JOIN", 
-											"PART",
-											"MODE", 
-											"OPER"};
-	ICommand* (CmdFactory::*ptr[9])(Server&, Client&, std::string&) = {		&CmdFactory::userCmd, 
+	std::string			available[NB_AVAILABLE_CMD] = {	"USER", 
+														"PASS", 
+														"NICK", 
+														"QUIT", 
+														"INVITE", 
+														"JOIN", 
+														"PART",
+														"MODE", 
+														"OPER"};
+	ICommand* (CmdFactory::*ptr[NB_AVAILABLE_CMD])(Server&, Client&, std::string&) = {		&CmdFactory::userCmd, 
 																			&CmdFactory::passCmd,
 																			&CmdFactory::nickCmd,
 																			&CmdFactory::quitCmd,
@@ -74,15 +85,16 @@ ICommand* CmdFactory::makeCommand(Server& server, Client& client, std::string& l
 																			&CmdFactory::modeCmd,
 																			&CmdFactory::operCmd };
 	iss >> command_line;
-	for (size_t i = 0; i < 9; i++) {
-		if (command_line == available[i]) {
+	for (size_t i = 0; i < NB_AVAILABLE_CMD; i++) {
+		if (command_line == available[i]) {					//NOLINT(cppcoreguidelines-pro-bounds-constant-array-index)
 			std::string params;
 			std::getline(iss, params);
 			if (!params.empty() && params[0] == ' ') {
 				params = params.substr(1);
 			}
-			return (this->*ptr[i])(server, client, params);
+			return (this->*ptr[i])(server, client, params);	//NOLINT(cppcoreguidelines-pro-bounds-constant-array-index)
 		}
 	}
-	throw std::invalid_argument("Command not handled");
+	LOG_CMD.error("421 ERR_UNKNOWNCOMMAND");
+	return NULL;
 }

@@ -2,6 +2,8 @@
 # define CMDFACTORY_HPP
 # include <iostream>
 # include "Nick.hpp"
+# include "Pass.hpp"
+# include "User.hpp"
 # include <sstream>
 # include "LogManager.hpp"
 # include "consts.hpp"

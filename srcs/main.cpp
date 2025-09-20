@@ -8,6 +8,8 @@ int main(int ac, char** av)
 {
     int port;
 
+	LOG_SERVER.debug("IAM HERE SERVER LOGGER -> debug");
+	LOG_SERVER.info("IAM HERE SERVER LOGGER -> info");
     LOG_ERR.setMinLevel(ERROR); // Seulement les erreurs dans ce log
     if (!checkArgs(ac, av, &port))
         return 1;

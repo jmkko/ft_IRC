@@ -53,14 +53,16 @@ class Server
     void                           handleClientOutput(int);
     void                           listenToSocket(Socket, uint32_t);
     ICommand*                  		parseCommand(Server&, Client&, std::string);
+	void							handleCommand(Client&);
 
 
   public:
     Server(const unsigned short port, const std::string& psswd);
     ~Server();
     void start();
-	Client*							findClientByNickname(std::string&); // added
-    void sendToClient(int, const std::string&);
+	Client*							findClientByNickname(std::string&); // added for NICK command to check if allready in use
+	std::string 					getPassW() const;					// added for PASS
+    void 							sendToClient(int, const std::string&);
 };
 
 #endif
