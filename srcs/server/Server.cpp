@@ -9,11 +9,6 @@
  ************************************************************/
 
 /**
- * @brief private function - should not be used
- */
-Server::Server() : _psswd(DEFAULT_PASSWORD), _name(SERVER_NAME) {}
-
-/**
  * @brief initialize server, assign a socket binding a port with an address, and adds it to the monitored pollfd
  * @pre the `psswd` argument should have been checked with `utils::checkPassword()`
  * @pre the `port`argument should have been checked with `utils::checkPort()`
@@ -36,38 +31,11 @@ Server::Server(const unsigned short port, const std::string& psswd) : _psswd(pss
     listenToSocket(_serverSocket.getSocket(), POLLIN);
 }
 
-Server::Server(const Server& inst) :
-    _serverSocket(inst._serverSocket),
-    _fds(inst._fds),
-    _clients(inst._clients),
-    _clientsByNick(inst._clientsByNick),
-    _psswd(inst._psswd),
-    _name(inst._name)
-{
-}
-
 Server::~Server()
 {
     for (int i = 0; i < (int)_fds.size(); ++i) {
         cleanupSocket(i);
     }
-}
-
-/************************************************************
- *		➕ OPERATORS											*
- ************************************************************/
-
-Server& Server::operator=(const Server& inst)
-{
-    if (this != &inst) {
-        _serverSocket = inst._serverSocket;
-        _fds = inst._fds;
-        _clients = inst._clients;
-        _clientsByNick = inst._clientsByNick;
-        _psswd = inst._psswd;
-        _name = inst._name;
-    }
-    return *this;
 }
 
 /*************************************************************
@@ -184,7 +152,7 @@ void Server::handleNewConnection(int i)
 void Server::cleanupSocket(int i)
 {
     Client* c = _clients[_fds[i].fd];
-    close(_fds[i].fd);
+    // close(_fds[i].fd); // handled by ~TcpSocket
     _clients.erase(_fds[i].fd);
     if (c) {
         if (!c->getNickName().empty())
