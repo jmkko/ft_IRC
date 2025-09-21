@@ -13,7 +13,7 @@ class Nick : public ICommand
     ~Nick();
 
     void execute(Server&, Client&);
-
+	static int checkArgs(Server&, Client&, std::string&);
   private:
     std::string _nickname;
 

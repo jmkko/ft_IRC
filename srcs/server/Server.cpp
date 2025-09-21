@@ -60,13 +60,13 @@ void Server::start()
             // std::cout << "Timeout - aucune activite" << std::endl;
             continue;
         }
-        std::cout << "New Event detected: " << pollResult << "\n";
+
+        // review each client socket
         LOG_SERVER.debug(utils::toString(pollResult) +
                          "event(s) detected"); // /!\ THIS DOESNT LOG ANYTHING ?? /!\
 
         // review each client socket
         for (int i = 0; i < static_cast<int>(_fds.size()); i++) {
-            std::cout << "Check socket " << i << std::endl;
             // new connection
             if (i == 0 && (_fds[i].revents & POLLIN)) {
                 handleNewConnection(i);
@@ -116,17 +116,6 @@ void Server::handleNewConnection(int i)
     socklen_t addrLen = sizeof(clientAddr);
     Socket    clientSocket =
         accept(_serverSocket.getSocket(), reinterpret_cast<sockaddr*>(&clientAddr), &addrLen);
-
-    //	// Read first command send by client NICK & USER
-    //	char buffer[512];
-    //	int bytesRead = recv(clientSocket, buffer, sizeof(buffer) - 1, 0);
-    //
-    //	if (bytesRead > 0) {
-    //		buffer[bytesRead] = '\0'; // null-terminate
-    //		std::string msg(buffer);
-    //		std::cout << "Length :" << bytesRead << std::endl;
-    //		std::cout << "Received: " << msg << std::endl;
-    //	}
 
     if (clientSocket != -1) {
         if (fcntl(clientSocket, F_SETFL, O_NONBLOCK) == -1) {
@@ -197,28 +186,11 @@ void Server::handleClientDisconnection(int clientIndex)
     cleanupSocket(clientIndex);
 }
 
-// TODO change return true if we find a way to pass \r through netcat
+/// @brief attempt receiving bytes from client, parse into a command and execute it
+/// enable write notification on client socket if a response has to be sent
+/// in case of partial reception (message not ending with \r\n), add to receive buffer
+/// @param clientIndex index of monitored fd
 
-// What if /r/n is not at the end ??
-// static bool hasCommandEnding(char* msg)
-// {
-//     std::string s(msg);
-//     if (s.size() < 2)
-//         return false;
-//     std::string::reverse_iterator it = s.rbegin();
-//     char                          last = *it;
-//     char                          beforeLast = *(++it);
-//     if (beforeLast != '\r' || last != '\n')
-//         return false;
-//     return true;
-// }
-
-/**
- @brief attempt receiving bytes from client, parse into a command and execute it
- enable write notification on client socket if a response has to be sent
- in case of partial reception (message not ending with \r\n), add to receive buffer
- @param clientIndex index of monitored fd
- */
 void Server::handleClientData(int clientIndex)
 {
     LOG_SERVER.debug("Server#handleClientData");
@@ -248,55 +220,20 @@ void Server::handleClientData(int clientIndex)
         if (utils::safeAt(buffer, bytesReceived))
             utils::safeAt(buffer, bytesReceived) = '\0';
 
-        LOG_CMD.debug("Client RAW DATA: " + std::string(static_cast<char*>(buffer)));
+		//append what is read in the client socket to the client read buffer immediatly
+		client->appendToReceiveBuffer(std::string(buffer));
 
-        // append what is read in the client socket to the client read buffer immediatly
-        client->appendToReceiveBuffer(std::string(static_cast<char*>(buffer)));
+		//LOG_CMD.debug("Client read buffer BEFORE parsing: " + client->getReceiveBuffer());
+        LOG_SERVER.debug(std::string("[") + client->getAddress() + ":" + utils::toString(client->getPort()) +  "] : " + buffer); // Doesnt log anything !!
 
-        LOG_CMD.debug("Client read buffer BEFORE parsing: " + client->getReceiveBuffer());
-        LOG_SERVER.debug(std::string("[") + client->getAddress() + ":" +
-                         utils::toString(client->getPort()) +
-                         "] : " + static_cast<char*>(buffer)); // Doesnt log anything !!
+		this->handleCommand(*client);
+		//LOG_CMD.debug("Client read buffer AFTER PARSING: " + client->getReceiveBuffer());
 
-        size_t pos = 0;
-        // tant qu'il y a un \r\n dans le readbuffer du client, executer les commandes
-        while ((pos = client->getReceiveBuffer().find("\r\n")) != std::string::npos) {
-            // extract the first command from the readBuffer
-            std::string line = client->getReceiveBuffer().substr(0, pos);
-            // delete the command that has been extracted from the client readbuffer
-            client->getReceiveBuffer().erase(0, pos + 2);
-            // parse and create the appropriate command, NULL is returned if a faillure has happen
-            ICommand* cmd = parseCommand(*this, *client, line);
-            if (cmd) {
-                cmd->execute(*this, *client);
-                delete cmd;
-            }
-        }
-        LOG_CMD.debug("Client read buffer AFTER PARSING: " + client->getReceiveBuffer());
-
-        std::string response = "sECHO: ";
-        response += static_cast<char*>(buffer);
-        _fds[clientIndex].events |= POLLOUT;
-        sendToClient(clientIndex, response);
-        _fds[clientIndex].events &= ~POLLOUT; // not sure about this
-                                              // conflict merging
-        //         LOG_SERVER.debug(std::string("[") + client->getAddress() + ":" +
-        //         utils::toString(client->getPort()) +
-        //                          "] : " + buffer);
-        //
-        //         // if the buffer ends with \r\n -> parse as command
-        //         // otherwise it can be a partial message with CTRL+D -> we append and wait \r\n
-        //         if (hasCommandEnding(buffer)) {
-        //             // parse to command and execute
-        //             // ICommand* cmd = parseCommand(buffer)
-        //             // cmd->execute(*this, client)
-        //             // delete cmd;
-        //
-        //             ReplyHandler& rh = ReplyHandler::getInstance(this);
-        //             rh.sendErrNeedMoreParams(clientIndex, "ECHO");
-        //             _fds[clientIndex].events |= POLLOUT;
-        //         } else
-        //             client->appendToReceiveBuffer(std::string(buffer));
+		std::string response = "sECHO: ";
+		response += buffer;
+		_fds[clientIndex].events |= POLLOUT;
+		//sendToClient(clientIndex, response);
+		_fds[clientIndex].events &= ~POLLOUT; // not sure about this
     }
 }
 
@@ -379,27 +316,33 @@ void Server::listenToSocket(Socket toListen, uint32_t flags)
     _fds.push_back(newPollFd);
 }
 
-/**
- @brief make and return a command object from the command line if valid command;
- @return NULL if command has failed amd print
- */
+void	Server::handleCommand(Client& client)
+{
+		size_t pos = std::string::npos;
+		// tant qu'il y a un \r\n dans le readbuffer du client, executer les commandes
+		while ((pos = client.getReceiveBuffer().find("\r\n")) != std::string::npos) {
+			//extract the first command from the readBuffer
+			std::string line = client.getReceiveBuffer().substr(0, pos);
+			//delete the command that has been extracted from the client readbuffer
+			client.getReceiveBuffer().erase(0, pos + 2); 
+			// parse and create the appropriate command, NULL is returned if a faillure has happen
+			ICommand* cmd = parseCommand(*this, client, line);
+			if (cmd) {
+				cmd->execute(*this, client);
+				delete cmd;
+			}
+		}
+}
+
+// Make and return a command object from the command line if valid command;
+// return NULL if command has failed amd print
 ICommand* Server::parseCommand(Server& server, Client& client, std::string line)
 {
+	LOG_CMD.debug("Parsing of the command: " + line);
+	CmdFactory command_builder;
+	ICommand *cmd = command_builder.makeCommand(server, client, line);
 
-    LOG_CMD.debug("Parsing of the command: " + line);
-    CmdFactory command_builder; // The command_builder throw exception if the command or params are
-                                // not valid (std::invalid_argument for now...)
-    ICommand* cmd = NULL;
-    try {
-        cmd = command_builder.makeCommand(server, client, line);
-    } catch (std::exception& e) {
-        // should response to client here from the errors code returned (maybe using return int
-        // instead of exception
-        // ???)
-        LOG_CMD.error(e.what());
-        return NULL;
-    }
-    return cmd;
+	return cmd;
 }
 
 Client* Server::findClientByNickname(std::string& nickname)
@@ -410,3 +353,5 @@ Client* Server::findClientByNickname(std::string& nickname)
     }
     return NULL;
 }
+
+std::string Server::getPassW() const {return _psswd;}

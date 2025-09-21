@@ -4,6 +4,9 @@
 /// @brief https://datatracker.ietf.org/doc/html/rfc2812#section-5
 enum ReplyCode {
 
+	// general success code
+	RPL_SUCCESS = 0,
+
     // post registration
     RPL_WELCOME = 001,
 

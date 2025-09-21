@@ -28,7 +28,8 @@
 #define CLIENT_READ_BUFFER_SIZE 512
 #define WELL_KNOWN_PORT_MAX     1024
 #define DYNAMIC_PORT_MIN        49152
-#define NICKNAME_MAX_LEN        9
+#define NICKNAME_MAX_LEN		9
+#define	NB_AVAILABLE_CMD		9
 typedef int Socket;
 
 #endif

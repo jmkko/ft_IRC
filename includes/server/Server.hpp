@@ -36,6 +36,15 @@
 
 class Server
 {
+  public:
+    Server(const unsigned short port, const std::string& psswd);
+    ~Server();
+
+    void				start();
+	std::string 		getPassW() const;					// added for PASS
+    Client*				findClientByNickname(std::string&);
+    void				sendToClient(int, const std::string&);
+
   private:
     TcpSocket                      _serverSocket;
     std::vector<pollfd>            _fds;
@@ -46,27 +55,17 @@ class Server
 
     Server();
     Server(const Server&);
-
     Server& operator=(const Server& inst);
 
-    void handleNewConnection(int);
-    void cleanupSocket(int);
-    void removeClient(Socket);
-    void handleClientDisconnection(int);
-    void handleClientData(int);
-    // void                           sendToClient(int, const std::string&);
-    void      handleClientOutput(int);
-    void      listenToSocket(Socket, uint32_t);
-    ICommand* parseCommand(Server&, Client&, std::string);
-
-  public:
-    Server(const unsigned short port, const std::string& psswd);
-    ~Server();
-
-    void start();
-
-    Client* findClientByNickname(std::string&);
-    void    sendToClient(int, const std::string&);
+    void 		handleNewConnection(int);
+    void 		cleanupSocket(int);
+    void 		removeClient(Socket);
+    void 		handleClientDisconnection(int);
+    void		handleClientData(int);
+    void		handleClientOutput(int);
+	void     	listenToSocket(Socket, uint32_t);
+    ICommand*	parseCommand(Server&, Client&, std::string);
+	void		handleCommand(Client&);
 };
 
 #endif
