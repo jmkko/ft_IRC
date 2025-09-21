@@ -15,4 +15,3 @@ jobs:
       run: make
     - name: format
       run: make formator
-```
