@@ -6,7 +6,7 @@
 /*   By: fpetit <fpetit@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/11 08:55:19 by jhervoch          #+#    #+#             */
-/*   Updated: 2025/09/18 23:44:30 by npolack          ###   ########.fr       */
+/*   Updated: 2025/09/22 19:33:29 by fpetit           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 #include "ReplyHandler.hpp"
 #include "TcpSocket.hpp"
 #include "consts.hpp"
+#include "utils.hpp"
 
 #include "CmdFactory.hpp"
 #include <arpa/inet.h> // hton*, ntoh*, inet_addr
@@ -33,15 +34,21 @@
 #include <sys/poll.h>
 #include <sys/socket.h>
 #include <unistd.h> // close
+#include <cstring>
+#include <sstream>
+#include <signal.h>
 
 class Server
 {
   public:
-    Server(const unsigned short port, const std::string& psswd);
     ~Server();
+    Server(const unsigned short port, const std::string& psswd);
+
+    // static Server&		getInstance(const unsigned short port = DEFAULT_PORT, const std::string& password = DEFAULT_PASSWORD);
 
     void				start();
-	std::string 		getPassW() const;					// added for PASS
+    void                stop();
+    std::string 		getPassW() const;					// added for PASS
     Client*				findClientByNickname(std::string&);
     void				sendToClient(int, const std::string&);
 
@@ -52,20 +59,22 @@ class Server
     std::map<std::string, Client*> _clientsByNick;
     std::string                    _psswd;
     std::string                    _name;
+    // static Server*                 _instance;
 
     Server();
     Server(const Server&);
-    Server& operator=(const Server& inst);
+
+    Server&     operator=(const Server& inst);
 
     void 		handleNewConnection(int);
-    void 		cleanupSocket(int);
+    void 		cleanupSocketAndClients(int);
     void 		removeClient(Socket);
     void 		handleClientDisconnection(int);
     void		handleClientData(int);
     void		handleClientOutput(int);
-	void     	listenToSocket(Socket, uint32_t);
+    void     	listenToSocket(Socket, uint32_t);
     ICommand*	parseCommand(Server&, Client&, std::string);
-	void		handleCommand(Client&);
+    void		handleCommand(Client&);
 };
 
 #endif

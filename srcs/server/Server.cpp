@@ -1,8 +1,4 @@
 #include "Server.hpp"
-#include "LogManager.hpp"
-#include "utils.hpp"
-#include <cstring>
-#include <sstream>
 
 /************************************************************
  *		🥚 CONSTRUCTORS & DESTRUCTOR						*
@@ -35,9 +31,8 @@ Server::Server(const unsigned short port, const std::string& psswd) :
 
 Server::~Server()
 {
-    for (int i = 0; i < (int)_fds.size(); ++i) {
-        cleanupSocket(i);
-    }
+    LOG_SERVER.debug("Server dtor");
+    stop();
 }
 
 /*************************************************************
@@ -50,10 +45,11 @@ Server::~Server()
 void Server::start()
 {
     while (true) {
+        if (globalSignal == SIGINT || globalSignal == SIGABRT)
+            stop();
         int pollResult = poll(_fds.data(), _fds.size(), POLL_TIMEOUT); // Timeout 1 second
         if (pollResult == -1) {
-            LOG_ERR.error("Poll failed: " + TO_STRING(strerror(errno)));
-            LOG_SERVER.error("Critical: Poll system failed");
+            LOG_SERVER.error("Poll failed: " + TO_STRING(strerror(errno)));
             break;
         }
         if (pollResult == 0) {
@@ -76,7 +72,7 @@ void Server::start()
                 std::map<Socket, Client*>::iterator clientIt = _clients.find(_fds[i].fd);
                 // orphelan socket
                 if (clientIt == _clients.end()) {
-                    cleanupSocket(i);
+                    cleanupSocketAndClients(i);
                     --i;
                     continue;
                 }
@@ -144,10 +140,9 @@ void Server::handleNewConnection(int i)
  remove entry from _fds (the pollfd list)
  @param i index of monitored fd
 */
-void Server::cleanupSocket(int i)
+void Server::cleanupSocketAndClients(int i)
 {
     Client* c = _clients[_fds[i].fd];
-    // close(_fds[i].fd); // handled by ~TcpSocket
     _clients.erase(_fds[i].fd);
     if (c) {
         if (!c->getNickName().empty())
@@ -155,6 +150,13 @@ void Server::cleanupSocket(int i)
         delete c;
     }
     _fds.erase(_fds.begin() + i);
+}
+
+void    Server::stop()
+{
+    LOG_SERVER.debug(std::string("cleaning ") + TO_STRING(_fds.size()) + " sockets and their associated clients");
+    for (size_t i = 0; i < _fds.size(); ++i)
+        cleanupSocketAndClients(i);
 }
 
 /**
@@ -183,14 +185,14 @@ void Server::handleClientDisconnection(int clientIndex)
     }
     LOG_CONN.info(std::string("Client at ") + client->getAddress() + ":" +
                   utils::toString(client->getPort()) + " disconnected");
-    cleanupSocket(clientIndex);
+    cleanupSocketAndClients(clientIndex);
 }
-
-/// @brief attempt receiving bytes from client, parse into a command and execute it
-/// enable write notification on client socket if a response has to be sent
-/// in case of partial reception (message not ending with \r\n), add to receive buffer
-/// @param clientIndex index of monitored fd
-
+/**
+ * @brief attempt receiving bytes from client, parse into a command and execute it
+ enable write notification on client socket if a response has to be sent
+ in case of partial reception (message not ending with \r\n), add to receive buffer
+ * @param clientIndex index of monitored fd
+ */
 void Server::handleClientData(int clientIndex)
 {
     LOG_SERVER.debug("Server#handleClientData");
