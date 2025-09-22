@@ -12,8 +12,9 @@ class Nick : public ICommand
     explicit Nick(const std::string& nickname);
     ~Nick();
 
-    void execute(Server&, Client&);
-	static int checkArgs(Server&, Client&, std::string&);
+    void       execute(Server&, Client&);
+    static int checkArgs(Server&, Client&, std::string&);
+
   private:
     std::string _nickname;
 

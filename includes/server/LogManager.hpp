@@ -12,7 +12,7 @@ class LogManager
     LogManager(const LogManager& inst);
 
     LogManager& operator=(const LogManager& inst);
-    LogManager(){};
+    LogManager() {};
 
   public:
     static LogManager& getInstance();

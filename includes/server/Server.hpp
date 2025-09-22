@@ -23,20 +23,20 @@
 
 #include "CmdFactory.hpp"
 #include <arpa/inet.h> // hton*, ntoh*, inet_addr
+#include <cstring>
 #include <exception>
 #include <fcntl.h>
 #include <iostream>
 #include <map>
 #include <netinet/in.h>
 #include <poll.h>
+#include <signal.h>
+#include <sstream>
 #include <string.h>
 #include <string>
 #include <sys/poll.h>
 #include <sys/socket.h>
 #include <unistd.h> // close
-#include <cstring>
-#include <sstream>
-#include <signal.h>
 
 class Server
 {
@@ -44,13 +44,14 @@ class Server
     ~Server();
     Server(const unsigned short port, const std::string& psswd);
 
-    // static Server&		getInstance(const unsigned short port = DEFAULT_PORT, const std::string& password = DEFAULT_PASSWORD);
+    // static Server&		getInstance(const unsigned short port = DEFAULT_PORT, const std::string&
+    // password = DEFAULT_PASSWORD);
 
-    void				start();
-    void                stop();
-    std::string 		getPassW() const;					// added for PASS
-    Client*				findClientByNickname(std::string&);
-    void				sendToClient(int, const std::string&);
+    void        start();
+    void        stop();
+    std::string getPassW() const; // added for PASS
+    Client*     findClientByNickname(std::string&);
+    void        sendToClient(int, const std::string&);
 
   private:
     TcpSocket                      _serverSocket;
@@ -64,17 +65,17 @@ class Server
     Server();
     Server(const Server&);
 
-    Server&     operator=(const Server& inst);
+    Server& operator=(const Server& inst);
 
-    void 		handleNewConnection(int);
-    void 		cleanupSocketAndClients(int);
-    void 		removeClient(Socket);
-    void 		handleClientDisconnection(int);
-    void		handleClientData(int);
-    void		handleClientOutput(int);
-    void     	listenToSocket(Socket, uint32_t);
-    ICommand*	parseCommand(Server&, Client&, std::string);
-    void		handleCommand(Client&);
+    void      handleNewConnection(int);
+    void      cleanupSocketAndClients(int);
+    void      removeClient(Socket);
+    void      handleClientDisconnection(int);
+    void      handleClientData(int);
+    void      handleClientOutput(int);
+    void      listenToSocket(Socket, uint32_t);
+    ICommand* parseCommand(Server&, Client&, std::string);
+    void      handleCommand(Client&);
 };
 
 #endif

@@ -2,13 +2,10 @@
 #include "Server.hpp"
 #include "utils.hpp"
 
-#include <signal.h>
 #include <exception>
+#include <signal.h>
 
-void handleSignal(int signal)
-{
-    globalSignal = signal;
-}
+void handleSignal(int signal) { globalSignal = signal; }
 
 int main(int ac, char** av)
 {
