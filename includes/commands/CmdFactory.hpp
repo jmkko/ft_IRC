@@ -1,12 +1,12 @@
 #ifndef CMDFACTORY_HPP
 #define CMDFACTORY_HPP
-# include "Pass.hpp"
-# include "User.hpp"
-# include "Nick.hpp"
-# include "LogManager.hpp"
-# include "consts.hpp"
-# include <iostream>
-# include <sstream>
+#include "LogManager.hpp"
+#include "Nick.hpp"
+#include "Pass.hpp"
+#include "User.hpp"
+#include "consts.hpp"
+#include <iostream>
+#include <sstream>
 
 class Server;
 class Client;

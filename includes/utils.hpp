@@ -4,10 +4,13 @@
 #include "LogManager.hpp"
 #include "consts.hpp"
 
+#include <csignal>
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
 #include <string>
+
+extern volatile sig_atomic_t globalSignal;
 
 bool checkArgs(int ac, char** av, int* port);
 bool checkPort(const std::string& s, int* port);
@@ -30,7 +33,6 @@ template <size_t N> char& safeAt(char (&arr)[N], size_t index)
         throw std::out_of_range(("out of array range"));
     return arr[index];
 }
-
 } // namespace utils
 
 #define TO_STRING utils::toString

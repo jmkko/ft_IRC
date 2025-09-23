@@ -1,8 +1,4 @@
 #include "Server.hpp"
-#include "LogManager.hpp"
-#include "utils.hpp"
-#include <cstring>
-#include <sstream>
 
 /************************************************************
  *		🥚 CONSTRUCTORS & DESTRUCTOR						*
@@ -35,9 +31,8 @@ Server::Server(const unsigned short port, const std::string& psswd) :
 
 Server::~Server()
 {
-    for (int i = 0; i < (int)_fds.size(); ++i) {
-        cleanupSocket(i);
-    }
+    LOG_SERVER.debug("Server dtor");
+    stop();
 }
 
 /*************************************************************
@@ -50,10 +45,11 @@ Server::~Server()
 void Server::start()
 {
     while (true) {
+        if (globalSignal == SIGINT || globalSignal == SIGABRT)
+            stop();
         int pollResult = poll(_fds.data(), _fds.size(), POLL_TIMEOUT); // Timeout 1 second
         if (pollResult == -1) {
-            LOG_ERR.error("Poll failed: " + TO_STRING(strerror(errno)));
-            LOG_SERVER.error("Critical: Poll system failed");
+            LOG_SERVER.error("Poll failed: " + TO_STRING(strerror(errno)));
             break;
         }
         if (pollResult == 0) {
@@ -76,7 +72,7 @@ void Server::start()
                 std::map<Socket, Client*>::iterator clientIt = _clients.find(_fds[i].fd);
                 // orphelan socket
                 if (clientIt == _clients.end()) {
-                    cleanupSocket(i);
+                    cleanupSocketAndClients(i);
                     --i;
                     continue;
                 }
@@ -144,10 +140,9 @@ void Server::handleNewConnection(int i)
  remove entry from _fds (the pollfd list)
  @param i index of monitored fd
 */
-void Server::cleanupSocket(int i)
+void Server::cleanupSocketAndClients(int i)
 {
     Client* c = _clients[_fds[i].fd];
-    // close(_fds[i].fd); // handled by ~TcpSocket
     _clients.erase(_fds[i].fd);
     if (c) {
         if (!c->getNickName().empty())
@@ -155,6 +150,14 @@ void Server::cleanupSocket(int i)
         delete c;
     }
     _fds.erase(_fds.begin() + i);
+}
+
+void Server::stop()
+{
+    LOG_SERVER.debug(std::string("cleaning ") + TO_STRING(_fds.size()) +
+                     " sockets and their associated clients");
+    for (size_t i = 0; i < _fds.size(); ++i)
+        cleanupSocketAndClients(i);
 }
 
 /**
@@ -183,14 +186,14 @@ void Server::handleClientDisconnection(int clientIndex)
     }
     LOG_CONN.info(std::string("Client at ") + client->getAddress() + ":" +
                   utils::toString(client->getPort()) + " disconnected");
-    cleanupSocket(clientIndex);
+    cleanupSocketAndClients(clientIndex);
 }
-
-/// @brief attempt receiving bytes from client, parse into a command and execute it
-/// enable write notification on client socket if a response has to be sent
-/// in case of partial reception (message not ending with \r\n), add to receive buffer
-/// @param clientIndex index of monitored fd
-
+/**
+ * @brief attempt receiving bytes from client, parse into a command and execute it
+ enable write notification on client socket if a response has to be sent
+ in case of partial reception (message not ending with \r\n), add to receive buffer
+ * @param clientIndex index of monitored fd
+ */
 void Server::handleClientData(int clientIndex)
 {
     LOG_SERVER.debug("Server#handleClientData");
@@ -220,20 +223,22 @@ void Server::handleClientData(int clientIndex)
         if (utils::safeAt(buffer, bytesReceived))
             utils::safeAt(buffer, bytesReceived) = '\0';
 
-		//append what is read in the client socket to the client read buffer immediatly
-		client->appendToReceiveBuffer(std::string(buffer));
+        // append what is read in the client socket to the client read buffer immediatly
+        client->appendToReceiveBuffer(std::string(buffer));
 
-		//LOG_CMD.debug("Client read buffer BEFORE parsing: " + client->getReceiveBuffer());
-        LOG_SERVER.debug(std::string("[") + client->getAddress() + ":" + utils::toString(client->getPort()) +  "] : " + buffer); // Doesnt log anything !!
+        // LOG_CMD.debug("Client read buffer BEFORE parsing: " + client->getReceiveBuffer());
+        LOG_SERVER.debug(std::string("[") + client->getAddress() + ":" +
+                         utils::toString(client->getPort()) +
+                         "] : " + buffer); // Doesnt log anything !!
 
-		this->handleCommand(*client);
-		//LOG_CMD.debug("Client read buffer AFTER PARSING: " + client->getReceiveBuffer());
+        this->handleCommand(*client);
+        // LOG_CMD.debug("Client read buffer AFTER PARSING: " + client->getReceiveBuffer());
 
-		std::string response = "sECHO: ";
-		response += buffer;
-		_fds[clientIndex].events |= POLLOUT;
-		//sendToClient(clientIndex, response);
-		_fds[clientIndex].events &= ~POLLOUT; // not sure about this
+        std::string response = "sECHO: ";
+        response += buffer;
+        _fds[clientIndex].events |= POLLOUT;
+        // sendToClient(clientIndex, response);
+        _fds[clientIndex].events &= ~POLLOUT; // not sure about this
     }
 }
 
@@ -316,33 +321,33 @@ void Server::listenToSocket(Socket toListen, uint32_t flags)
     _fds.push_back(newPollFd);
 }
 
-void	Server::handleCommand(Client& client)
+void Server::handleCommand(Client& client)
 {
-		size_t pos = std::string::npos;
-		// tant qu'il y a un \r\n dans le readbuffer du client, executer les commandes
-		while ((pos = client.getReceiveBuffer().find("\r\n")) != std::string::npos) {
-			//extract the first command from the readBuffer
-			std::string line = client.getReceiveBuffer().substr(0, pos);
-			//delete the command that has been extracted from the client readbuffer
-			client.getReceiveBuffer().erase(0, pos + 2); 
-			// parse and create the appropriate command, NULL is returned if a faillure has happen
-			ICommand* cmd = parseCommand(*this, client, line);
-			if (cmd) {
-				cmd->execute(*this, client);
-				delete cmd;
-			}
-		}
+    size_t pos = std::string::npos;
+    // tant qu'il y a un \r\n dans le readbuffer du client, executer les commandes
+    while ((pos = client.getReceiveBuffer().find("\r\n")) != std::string::npos) {
+        // extract the first command from the readBuffer
+        std::string line = client.getReceiveBuffer().substr(0, pos);
+        // delete the command that has been extracted from the client readbuffer
+        client.getReceiveBuffer().erase(0, pos + 2);
+        // parse and create the appropriate command, NULL is returned if a faillure has happen
+        ICommand* cmd = parseCommand(*this, client, line);
+        if (cmd) {
+            cmd->execute(*this, client);
+            delete cmd;
+        }
+    }
 }
 
 // Make and return a command object from the command line if valid command;
 // return NULL if command has failed amd print
 ICommand* Server::parseCommand(Server& server, Client& client, std::string line)
 {
-	LOG_CMD.debug("Parsing of the command: " + line);
-	CmdFactory command_builder;
-	ICommand *cmd = command_builder.makeCommand(server, client, line);
+    LOG_CMD.debug("Parsing of the command: " + line);
+    CmdFactory command_builder;
+    ICommand*  cmd = command_builder.makeCommand(server, client, line);
 
-	return cmd;
+    return cmd;
 }
 
 Client* Server::findClientByNickname(std::string& nickname)
@@ -354,4 +359,4 @@ Client* Server::findClientByNickname(std::string& nickname)
     return NULL;
 }
 
-std::string Server::getPassW() const {return _psswd;}
+std::string Server::getPassW() const { return _psswd; }

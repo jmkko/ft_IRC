@@ -80,6 +80,7 @@ endif
 
 $(OBJ_DIRS) :
 	@mkdir -p $@
+	@mkdir -p logs
 
 forminette:
 	@echo "$(YELLOW)=== Checking code format ===$(NOC)"

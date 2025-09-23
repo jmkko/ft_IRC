@@ -12,7 +12,7 @@ class LogManager
     LogManager(const LogManager& inst);
 
     LogManager& operator=(const LogManager& inst);
-    LogManager(){};
+    LogManager() {};
 
   public:
     static LogManager& getInstance();
@@ -23,8 +23,8 @@ class LogManager
 
 // Macros for easy usage
 #define LOG_SOCKET LogManager::getInstance().getLogger("SOCKET", "", DEBUG)
-#define LOG_SERVER LogManager::getInstance().getLogger("SERVER", "", INFO)
-#define LOG_CONN   LogManager::getInstance().getLogger("CONNECTION", "", INFO)
+#define LOG_SERVER LogManager::getInstance().getLogger("SERVER", "", DEBUG)
+#define LOG_CONN   LogManager::getInstance().getLogger("CONNECTION", "", DEBUG)
 #define LOG_CMD    LogManager::getInstance().getLogger("COMMAND", "", DEBUG)
 #define LOG_ERR    LogManager::getInstance().getLogger("ERROR", "", ERROR)
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   consts.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npolack <npolack@student.42angouleme.fr>   +#+  +:+       +#+        */
+/*   By: fpetit <fpetit@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 23:38:52 by npolack           #+#    #+#             */
-/*   Updated: 2025/09/18 23:39:18 by npolack          ###   ########.fr       */
+/*   Updated: 2025/09/22 19:04:16 by fpetit           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,9 @@
 #define CLIENT_READ_BUFFER_SIZE 512
 #define WELL_KNOWN_PORT_MAX     1024
 #define DYNAMIC_PORT_MIN        49152
-#define NICKNAME_MAX_LEN		9
-#define	NB_AVAILABLE_CMD		9
+#define NICKNAME_MAX_LEN        9
+#define NB_AVAILABLE_CMD        9
+
 typedef int Socket;
 
 #endif
