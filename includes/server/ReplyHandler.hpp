@@ -15,8 +15,8 @@ class Server;
 class ReplyHandler
 {
   public:
-    void sendReply(int, ReplyCode, const std::string& target, const std::string& trailing = "");
-    void sendErrNeedMoreParams(int, const std::string& commandName);
+    void sendReply(Client&, ReplyCode, const std::string& target, const std::string& trailing = "");
+    void sendErrNeedMoreParams(Client&, const std::string& commandName);
     static ReplyHandler& getInstance(Server*);
 
   private:

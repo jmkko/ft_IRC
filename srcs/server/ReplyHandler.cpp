@@ -14,25 +14,27 @@ static const std::string codeToStr(ReplyCode code)
 {
     std::stringstream ss;
     std::string       codeStr;
-    ss << std::setw(3) << std::setfill('c') << code;
+    ss << " " << std::setw(3) << std::setfill('0') << code;
+	ss << " ";
     return ss.str();
 }
 
 // TODO pass clientIndex in args ?
-void ReplyHandler::sendReply(int clientIndex, ReplyCode code, const std::string& target,
+void ReplyHandler::sendReply(Client& client, ReplyCode code, const std::string& target,
                              const std::string& trailing)
 {
-    std::string reply = std::string(": ") + SERVER_NAME + codeToStr(code) + " " + target;
+    std::string reply = std::string(":") + SERVER_NAME + codeToStr(code) + target;
     if (!trailing.empty()) {
         reply += " :" + trailing;
     }
-    reply + "\r\n";
-    _server->sendToClient(clientIndex, reply);
+    reply += "\r\n";
+	client.appendToSendBuffer(reply);
+	_server->addEventsOf(client, POLLOUT);
 }
 
-void ReplyHandler::sendErrNeedMoreParams(int clientIndex, const std::string& commandName)
+void ReplyHandler::sendErrNeedMoreParams(Client& client, const std::string& commandName)
 {
-    sendReply(clientIndex, ERR_NEEDMOREPARAMS, commandName, "Not enough parameters");
+    sendReply(client, ERR_NEEDMOREPARAMS, commandName, "Not enough parameters");
 }
 
 /*************************************************************

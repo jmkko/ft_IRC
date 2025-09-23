@@ -29,6 +29,7 @@ class Client
     const std::string& getAddress() const;
     unsigned short     getPort() const;
     std::string        getSendBuffer() const;
+    std::string&       getSendBuffer();
     std::string&       getReceiveBuffer(); // added for cleaning command that has executed
     std::string        getReceiveBuffer() const;
     bool               hasDataToSend() const;

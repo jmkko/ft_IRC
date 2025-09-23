@@ -23,15 +23,15 @@ void Nick::execute(Server& server, Client& client)
     (void)server;
     std::string old_nickname = client.getNickName();
     client.setNickName(_nickname);
+	ReplyHandler& rh = ReplyHandler::getInstance(&server);
     if (old_nickname.empty() && !client.getUserName().empty() && client.getStatus() == REGISTERED) {
         LOG_CMD.info("001 RPL_WELCOME");
-        server.sendToClient(001,
-                            "SERVER_NAME 001 " + client.getNickName() + " :You are most welcom " +
-                                client.getNickName() + "!" + client.getUserName() +
-                                "@hazardous.com");
+		rh.sendReply(client, RPL_WELCOME, client.getNickName(), "Welcome to Hasardous IRC SeRVER");
+    } else if (!old_nickname.empty() && !client.getUserName().empty() && client.getStatus() == REGISTERED) {
+		rh.sendReply(client, RPL_SUCCESS, old_nickname + "!" + client.getUserName() + "@" + SERVER_NAME + " NICK " + _nickname, "");
     } else {
         LOG_CMD.info("??? RPL_NICK");
-    }
+	}
 }
 
 int Nick::checkArgs(Server& server, Client& client, std::string& params)
