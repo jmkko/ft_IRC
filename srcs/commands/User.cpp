@@ -22,7 +22,6 @@ void User::execute(Server& server, Client& client) {
 	client.setRealName(_realname);
 	if (!client.getNickName().empty() && client.getStatus() == REGISTERED) {
 		LOG_CMD.info("001 RPL_WELCOME");
-		server.sendToClient(001, "SERVER_NAME 001 " + client.getNickName() + " :You are most welcom " + client.getNickName() + "!" + client.getUserName() + "@hazardous.com");
 	} else {
 		LOG_CMD.info("??? RPL_USER");
 	}

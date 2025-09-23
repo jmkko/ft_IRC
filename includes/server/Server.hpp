@@ -19,7 +19,7 @@
 #include "ReplyHandler.hpp"
 #include "TcpSocket.hpp"
 #include "consts.hpp"
-
+#include <list>
 #include "CmdFactory.hpp"
 #include <arpa/inet.h> // hton*, ntoh*, inet_addr
 #include <exception>
@@ -37,18 +37,22 @@
 class Server
 {
   public:
+	typedef std::map<Socket, Client*>::iterator clients_socket;
+	typedef std::list<Client*>::iterator it_client;
     Server(const unsigned short port, const std::string& psswd);
     ~Server();
 
     void				start();
 	std::string 		getPassW() const;					// added for PASS
     Client*				findClientByNickname(std::string&);
-    void				sendToClient(int, const std::string&);
+    void				sendTo(Client *, const std::string&);
 
   private:
+	std::list<Client*>				_clients; // added
     TcpSocket                      _serverSocket;
-    std::vector<pollfd>            _fds;
-    std::map<Socket, Client*>      _clients;
+    std::vector<pollfd>            _pfds;
+	pollfd							_server_pfd; // added
+    //std::map<Socket, Client*>      _clients;
     std::map<std::string, Client*> _clientsByNick;
     std::string                    _psswd;
     std::string                    _name;
@@ -57,15 +61,16 @@ class Server
     Server(const Server&);
     Server& operator=(const Server& inst);
 
-    void 		handleNewConnection(int);
-    void 		cleanupSocket(int);
+    void 		handleNewConnection();
+	void 		cleanupSocket(it_client*);
     void 		removeClient(Socket);
-    void 		handleClientDisconnection(int);
-    void		handleClientData(int);
-    void		handleClientOutput(int);
+    void 		handleClientDisconnection(it_client*);
+    void		handleClientData(it_client*);
+    void		handleClientOutput(it_client*);
 	void     	listenToSocket(Socket, uint32_t);
-    ICommand*	parseCommand(Server&, Client&, std::string);
-	void		handleCommand(Client&);
+    ICommand*	parseCommand(Client&, std::string);
+	void		handleCommand(it_client *);
+	int			findInPfds(Socket socket_fd);
 };
 
 #endif

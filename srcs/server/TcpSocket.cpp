@@ -48,7 +48,12 @@ TcpSocket::TcpSocket()
  * @brief create a socket
  * @param socketFd
  */
-TcpSocket::TcpSocket(Socket socketFd) : _sckt(socketFd) {}
+TcpSocket::TcpSocket(Socket socks) : _sckt(socks) {
+//	_pfd.fd = socks;
+ // /  _pfd.events = 0;      // Set events later as needed
+ //   _pfd.revents = 0;
+
+}
 
 TcpSocket::TcpSocket(const TcpSocket& inst) : _sckt(inst._sckt) {}
 
@@ -64,6 +69,7 @@ TcpSocket& TcpSocket::operator=(const TcpSocket& inst)
 {
     if (this != &inst) {
         _sckt = inst._sckt;
+//		_pfd = inst._pfd;
     }
     return *this;
 }
@@ -178,3 +184,8 @@ int TcpSocket::Receive(std::vector<unsigned char>& buffer)
     } while (receivedSize < expectedSize);
     return true;
 }
+
+//short TcpSocket::getRevents() const {return (_pfd.revents);}
+//short TcpSocket::setRevents(short event) {_pfd.revents = event;}
+//short TcpSocket::getEvents() const {return (_pfd.events);}
+//short TcpSocket::setEvents(short event) {_pfd.events = event;}

@@ -19,7 +19,7 @@ static const std::string codeToStr(ReplyCode code)
 }
 
 // TODO pass clientIndex in args ?
-void ReplyHandler::sendReply(int clientIndex, ReplyCode code, const std::string& target,
+void ReplyHandler::sendReply(Client* client, ReplyCode code, const std::string& target,
                              const std::string& trailing)
 {
     std::string reply = std::string(": ") + SERVER_NAME + codeToStr(code) + " " + target;
@@ -27,12 +27,12 @@ void ReplyHandler::sendReply(int clientIndex, ReplyCode code, const std::string&
         reply += " :" + trailing;
     }
     reply + "\r\n";
-    _server->sendToClient(clientIndex, reply);
+    _server->sendTo(client, reply);
 }
 
-void ReplyHandler::sendErrNeedMoreParams(int clientIndex, const std::string& commandName)
+void ReplyHandler::sendErrNeedMoreParams(Client *client, const std::string& commandName)
 {
-    sendReply(clientIndex, ERR_NEEDMOREPARAMS, commandName, "Not enough parameters");
+    sendReply(client, ERR_NEEDMOREPARAMS, commandName, "Not enough parameters");
 }
 
 /*************************************************************

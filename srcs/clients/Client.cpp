@@ -4,9 +4,10 @@
  *		🥚 CONSTRUCTORS & DESTRUCTOR						*
  ************************************************************/
 
-Client::Client(Socket socket, sockaddr_in addr) :
-    _socket(socket), _addr(addr), _addrStr(TcpSocket::getAddress(_addr)), _status(UNAUTHENTICATED)
+Client::Client(Socket socks, sockaddr_in addr) :
+    _socket(socks), _addr(addr), _addrStr(TcpSocket::getAddress(_addr)), _status(UNAUTHENTICATED)
 {
+	//_socket.setEvents(POLLIN);
 }
 
 Client::Client(const Client& inst) :
@@ -20,6 +21,8 @@ Client::Client(const Client& inst) :
     _sendBuffer(inst._sendBuffer),
     _receiveBuffer(inst._receiveBuffer)
 {
+	//+socket.setEvents(inst.getEvents());
+	//_socket.setRevents(inst.getRevent());
 }
 
 Client::~Client(void) {}
@@ -108,3 +111,11 @@ void               Client::addJoinedChannel(Channel& channel) { _joinedChannels[
 void               Client::removeJoinedChannel(Channel& channel) { _joinedChannels.erase(channel.getName()); }
 
 void               Client::setSendBuffer(const std::string& buffer) { _sendBuffer = buffer; }
+
+// NIL //
+//short		Client::getRevents() const {_socket.getRevents();};
+//void		Client::setRevents(short event) {_socket.setRevents(event);};
+//
+//short		Client::getEvents() const {_socket.getEvents();};
+//void		Client::setEvents(short event) {_socket.setEvents(event);};
+

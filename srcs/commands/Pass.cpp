@@ -21,7 +21,6 @@ void Pass::execute(Server& server, Client& client) {
 	client.setStatus(REGISTERED);
 	if (!client.getUserName().empty() && !client.getNickName().empty()) {
 		LOG_CMD.info("001 RPL_WELCOME");
-		server.sendToClient(001, "SERVER_NAME 001 " + client.getNickName() + " :You are most welcom " + client.getNickName() + "!" + client.getUserName() + "@hazardous.com");
 	} else {
 		LOG_CMD.info("??? RPL_PASS");
 	}

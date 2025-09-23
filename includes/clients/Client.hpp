@@ -4,8 +4,8 @@
 #include "Channel.hpp"
 #include "TcpSocket.hpp"
 #include "consts.hpp"
-
 #include <iostream>
+#include <poll.h> // added
 #include <map>
 #include <string>
 
@@ -19,7 +19,8 @@ enum ClientStatus {
 class Client
 {
   public:
-    Client(Socket socket, sockaddr_in addr);
+    //Client(Socket socket, sockaddr_in addr);
+    Client(Socket, sockaddr_in addr);
     Client(const Client& other);
     virtual ~Client();
 
@@ -38,6 +39,9 @@ class Client
     std::string  getRealName() const;
     ClientStatus getStatus() const;
 
+	//
+//	short revents();
+//	void  resetRevents();
     bool isRegistered() const;
     int  getNbJoinedChannels() const;
 
@@ -52,6 +56,10 @@ class Client
     void appendToSendBuffer(const std::string& msg);
     void appendToReceiveBuffer(const std::string& msg);
 
+//	short		getRevents() const;
+//	void		setRevents(short event);
+//	short		getEvents() const;
+//	void		setEvents(short event);
   private:
     TcpSocket                       _socket;
     sockaddr_in                     _addr;

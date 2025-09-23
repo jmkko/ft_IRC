@@ -7,12 +7,13 @@
 #include <netinet/in.h> // sockaddr_in, IPPROTO_TCP
 #include <string>
 #include <vector>
+#include <poll.h>
 
 class TcpSocket
 {
   public:
     TcpSocket();
-    TcpSocket(Socket socketFd);
+    TcpSocket(Socket);
     TcpSocket(const TcpSocket& inst);
 
     ~TcpSocket();
@@ -30,8 +31,14 @@ class TcpSocket
     int  Send(const unsigned char* data, unsigned short len);
     int  Receive(std::vector<unsigned char>& buffer);
 
+    short  getRevents() const;
+    short  setRevents(short);
+
+    short  getEvents() const;
+    short  setEvents(short);
   private:
     Socket _sckt;
+//	pollfd							_pfd;
 };
 
 #endif
