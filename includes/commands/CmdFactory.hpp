@@ -30,6 +30,7 @@ class CmdFactory
     ICommand* modeCmd(Server&, Client&, std::string&);
     ICommand* operCmd(Server&, Client&, std::string&);
     ICommand* inviteCmd(Server&, Client&, std::string&);
+	
 };
 
 #endif

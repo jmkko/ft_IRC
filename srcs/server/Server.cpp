@@ -47,12 +47,14 @@ void Server::start()
     while (true) {
         if (globalSignal == SIGINT || globalSignal == SIGABRT)
             stop();
+		LOG_SERVER.info("waiting event");
         int pollResult = poll(_fds.data(), _fds.size(), POLL_TIMEOUT); // Timeout 1 second
         if (pollResult == -1) {
             LOG_SERVER.error("Poll failed: " + TO_STRING(strerror(errno)));
             break;
         }
         if (pollResult == 0) {
+			std::cout << "size: : " << _fds.size() << std::endl;
             // std::cout << "Timeout - aucune activite" << std::endl;
             continue;
         }
@@ -110,23 +112,23 @@ void Server::handleNewConnection(int i)
     sockaddr_in clientAddr = {};
     memset(&clientAddr, 0, sizeof(clientAddr));
     socklen_t addrLen = sizeof(clientAddr);
-    Socket    clientSocket =
+    Socket    socket =
         accept(_serverSocket.getSocket(), reinterpret_cast<sockaddr*>(&clientAddr), &addrLen);
 
-    if (clientSocket != -1) {
-        if (fcntl(clientSocket, F_SETFL, O_NONBLOCK) == -1) {
+    if (socket != -1) {
+        if (fcntl(socket, F_SETFL, O_NONBLOCK) == -1) {
             LOG_ERR.error(std::string("Error while setting a non blocking client socket") +
                           strerror(errno));
             LOG_SOCKET.error(std::string("Error while setting a non blocking client socket") +
                              strerror(errno));
-            close(clientSocket);
+            close(socket);
         } else {
-            Client* newClient = new Client(clientSocket, clientAddr);
+            Client* newClient = new Client(socket, clientAddr);
             LOG_CONN.info(std::string("New connection accepted on socket ") +
-                          utils::toString(clientSocket) + " => " + utils::toString(*newClient));
-            _clients[clientSocket] = newClient;
+                          utils::toString(socket) + " => " + utils::toString(*newClient));
+            _clients[socket] = newClient;
 
-            listenToSocket(clientSocket, POLLIN);
+            listenToSocket(socket, POLLIN);
         }
     }
 }
@@ -162,12 +164,12 @@ void Server::stop()
 
 /**
  @brief removes client
- @param clientIndex
+ @param pfd_index
 */
-void Server::handleClientDisconnection(int clientIndex)
+void Server::handleClientDisconnection(int pfd_index)
 {
-    Socket  clientSocket = _fds[clientIndex].fd;
-    Client* client = _clients[clientSocket];
+    Socket  socket = _fds[pfd_index].fd;
+    Client* client = _clients[socket];
     if (!client) {
         LOG_SERVER.error("client not found");
         return;
@@ -175,7 +177,7 @@ void Server::handleClientDisconnection(int clientIndex)
 
     socklen_t err = 0;
     socklen_t errsize = sizeof(err);
-    if (getsockopt(clientSocket, SOL_SOCKET, SO_ERROR, reinterpret_cast<char*>(&err), &errsize) ==
+    if (getsockopt(socket, SOL_SOCKET, SO_ERROR, reinterpret_cast<char*>(&err), &errsize) ==
         0) {
         if (err == 0) {
             LOG_SERVER.debug("connection has been closed by client");
@@ -186,19 +188,19 @@ void Server::handleClientDisconnection(int clientIndex)
     }
     LOG_CONN.info(std::string("Client at ") + client->getAddress() + ":" +
                   utils::toString(client->getPort()) + " disconnected");
-    cleanupSocketAndClients(clientIndex);
+    cleanupSocketAndClients(pfd_index);
 }
 /**
  * @brief attempt receiving bytes from client, parse into a command and execute it
  enable write notification on client socket if a response has to be sent
  in case of partial reception (message not ending with \r\n), add to receive buffer
- * @param clientIndex index of monitored fd
+ * @param pfd_index index of monitored fd
  */
-void Server::handleClientData(int clientIndex)
+void Server::handleClientData(int pfd_index)
 {
     LOG_SERVER.debug("Server#handleClientData");
-    Socket  clientSocket = _fds[clientIndex].fd;
-    Client* client = _clients[clientSocket];
+    Socket  socket = _fds[pfd_index].fd;
+    Client* client = _clients[socket];
     if (!client) {
         LOG_ERR.error("handle receive... client not found");
         return;
@@ -207,89 +209,48 @@ void Server::handleClientData(int clientIndex)
     char buffer[CLIENT_READ_BUFFER_SIZE];
     memset(static_cast<char*>(buffer), 0, CLIENT_READ_BUFFER_SIZE);
     ssize_t bytesReceived =
-        recv(clientSocket, static_cast<char*>(buffer), CLIENT_READ_BUFFER_SIZE - 1, 0);
+        recv(socket, static_cast<char*>(buffer), CLIENT_READ_BUFFER_SIZE - 1, 0);
 
     if (bytesReceived == 0) {
         LOG_CONN.warning("Connection closed properly");
-        handleClientDisconnection(clientIndex);
+        handleClientDisconnection(pfd_index);
         return;
     } else if (bytesReceived == -1) {
         if (errno != EAGAIN && errno != EWOULDBLOCK) {
             LOG_ERR.error("Reception failed:" + TO_STRING(strerror(errno)));
-            handleClientDisconnection(clientIndex);
+            handleClientDisconnection(pfd_index);
         }
         return;
     } else {
         if (utils::safeAt(buffer, bytesReceived))
             utils::safeAt(buffer, bytesReceived) = '\0';
-
-        // append what is read in the client socket to the client read buffer immediatly
         client->appendToReceiveBuffer(std::string(buffer));
-
-        // LOG_CMD.debug("Client read buffer BEFORE parsing: " + client->getReceiveBuffer());
-        LOG_SERVER.debug(std::string("[") + client->getAddress() + ":" +
-                         utils::toString(client->getPort()) +
-                         "] : " + buffer); // Doesnt log anything !!
-
-        this->handleCommand(*client);
-        // LOG_CMD.debug("Client read buffer AFTER PARSING: " + client->getReceiveBuffer());
-
-        std::string response = "sECHO: ";
-        response += buffer;
-        _fds[clientIndex].events |= POLLOUT;
-        // sendToClient(clientIndex, response);
-        _fds[clientIndex].events &= ~POLLOUT; // not sure about this
+        this->handleCommand(pfd_index);
     }
 }
 
-void Server::sendToClient(int clientIndex, const std::string& response)
-{
-    Socket  clientSocket = _fds[clientIndex].fd;
-    Client* client = _clients[clientSocket];
-    LOG_SOCKET.debug(std::string("sending response : " + response));
-
-    size_t bytesSent = send(clientSocket, response.c_str(), response.length(), 0);
-
-    if (bytesSent == static_cast<size_t>(-1)) {
-        if (errno == EAGAIN || errno == EWOULDBLOCK) {
-            LOG_SOCKET.warning("Socket not ready, adding to queue");
-            client->appendToSendBuffer(response);
-            _fds[clientIndex].events |= POLLOUT;
-        } else {
-            LOG_ERR.error("Sending failed: " + TO_STRING(errno));
-            handleClientDisconnection(clientIndex);
-        }
-    } else if (bytesSent < response.length()) {
-        // send partial
-        LOG_SOCKET.warning("Partial sending (" + TO_STRING(bytesSent) + "/" +
-                           TO_STRING(response.length()) + ")");
-        // _fds[clientIndex].events |= POLLOUT;
-    } else {
-        LOG_SERVER.info("Message sent completely");
-        _fds[clientIndex].events &= ~POLLOUT;
-    }
-}
 /**
- @brief attempt sending the queued messages
- if a message is partially sent, updates send buffer accordingly
- if a message is completely sent, disable write notification for the client fd
- in case of send error, either retry or disconnect the client
- @param clientIndex monitored fd for client
- */
-void Server::handleClientOutput(int clientIndex)
+@brief attempt sending the queued messages
+if a message is partially sent, updates send buffer accordingly
+if a message is completely sent, disable write notification for the client fd
+in case of send error, either retry or disconnect the client
+@param pfd_index monitored fd for client
+*/
+void Server::handleClientOutput(int pfd_index)
 {
-    LOG_SERVER.debug("Server#handleClientOutput");
-    Socket  clientSocket = _fds[clientIndex].fd;
-    Client* client = _clients[clientSocket];
+    LOG_SERVER.info("Server#handleClientOutput");
+    Socket  socket = _fds[pfd_index].fd;
+    Client* client = _clients[socket];
     if (!client) {
         LOG_SERVER.error("client not found");
         return;
     }
+
     std::string sendBuffer = client->getSendBuffer();
+    if (!sendBuffer.empty()) {
 
-    if (client->hasDataToSend()) {
-
-        size_t bytesSent = send(clientSocket, sendBuffer.c_str(), sendBuffer.length(), 0);
+    	LOG_SERVER.info("Send message:" + sendBuffer);
+        size_t bytesSent = send(socket, sendBuffer.c_str(), sendBuffer.length(), 0);
 
         if (bytesSent == static_cast<size_t>(-1)) {
             if (errno != EAGAIN && errno != EWOULDBLOCK) {
@@ -297,7 +258,7 @@ void Server::handleClientOutput(int clientIndex)
 
             } else {
                 LOG_SERVER.error(std::string("Error sending to client"));
-                handleClientDisconnection(clientIndex);
+                handleClientDisconnection(pfd_index);
             }
         } else if (bytesSent < sendBuffer.length()) {
             LOG_SERVER.warning(std::string("Queue has been partially sent (") +
@@ -307,11 +268,11 @@ void Server::handleClientOutput(int clientIndex)
         } else {
             LOG_SERVER.debug(std::string("Message sent normally ... unsubscribing from POLLOUT"));
             client->setSendBuffer("");
-            _fds[clientIndex].events &= ~POLLOUT;
+            _fds[pfd_index].events &= ~POLLOUT;
         }
     } else {
         LOG_SERVER.debug(std::string("No data to send ... unsubscribing from POLLOUT"));
-        _fds[clientIndex].events &= ~POLLOUT;
+        _fds[pfd_index].events &= ~POLLOUT;
     }
 }
 
@@ -321,19 +282,22 @@ void Server::listenToSocket(Socket toListen, uint32_t flags)
     _fds.push_back(newPollFd);
 }
 
-void Server::handleCommand(Client& client)
+void Server::handleCommand(int pfd_index)
 {
+    Socket  socket = _fds[pfd_index].fd;
+    Client* client = _clients[socket];
+
     size_t pos = std::string::npos;
     // tant qu'il y a un \r\n dans le readbuffer du client, executer les commandes
-    while ((pos = client.getReceiveBuffer().find("\r\n")) != std::string::npos) {
+    while ((pos = client->getReceiveBuffer().find("\r\n")) != std::string::npos) {
         // extract the first command from the readBuffer
-        std::string line = client.getReceiveBuffer().substr(0, pos);
+        std::string line = client->getReceiveBuffer().substr(0, pos);
         // delete the command that has been extracted from the client readbuffer
-        client.getReceiveBuffer().erase(0, pos + 2);
+        client->getReceiveBuffer().erase(0, pos + 2);
         // parse and create the appropriate command, NULL is returned if a faillure has happen
-        ICommand* cmd = parseCommand(*this, client, line);
+        ICommand* cmd = parseCommand(*client, line);
         if (cmd) {
-            cmd->execute(*this, client);
+            cmd->execute(*this, *client);
             delete cmd;
         }
     }
@@ -341,11 +305,11 @@ void Server::handleCommand(Client& client)
 
 // Make and return a command object from the command line if valid command;
 // return NULL if command has failed amd print
-ICommand* Server::parseCommand(Server& server, Client& client, std::string line)
+ICommand* Server::parseCommand(Client& client, std::string line)
 {
     LOG_CMD.debug("Parsing of the command: " + line);
     CmdFactory command_builder;
-    ICommand*  cmd = command_builder.makeCommand(server, client, line);
+    ICommand*  cmd = command_builder.makeCommand(*this, client, line);
 
     return cmd;
 }
@@ -360,3 +324,21 @@ Client* Server::findClientByNickname(std::string& nickname)
 }
 
 std::string Server::getPassW() const { return _psswd; }
+
+int	Server::indexOf(Socket socket) {
+	if (socket == -1)
+		return -1;
+	for (size_t i = 0; i < _fds.size(); ++i ) {
+		if (_fds[i].fd == socket)
+			return static_cast<int>(i);
+	}
+	return -1;
+}
+
+void Server::addEventsOf(Client& client, short event) {
+    Socket socket = client.getSocket();
+    int index = indexOf(socket);
+    if (index >= 0) {
+        _fds[index].events |= event;  // ADD to existing events
+    }
+}

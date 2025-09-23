@@ -51,7 +51,8 @@ class Server
     void        stop();
     std::string getPassW() const; // added for PASS
     Client*     findClientByNickname(std::string&);
-    void        sendToClient(int, const std::string&);
+	int			indexOf(Socket);
+	void		addEventsOf(Client&, short);
 
   private:
     TcpSocket                      _serverSocket;
@@ -74,8 +75,8 @@ class Server
     void      handleClientData(int);
     void      handleClientOutput(int);
     void      listenToSocket(Socket, uint32_t);
-    ICommand* parseCommand(Server&, Client&, std::string);
-    void      handleCommand(Client&);
+    ICommand* parseCommand(Client&, std::string);
+    void      handleCommand(int);
 };
 
 #endif
