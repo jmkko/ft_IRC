@@ -24,17 +24,19 @@ void Nick::execute(Server& server, Client& client)
     std::string old_nickname = client.getNickName();
     client.setNickName(_nickname);
 	ReplyHandler& rh = ReplyHandler::getInstance(&server);
-    if (old_nickname.empty() && !client.getUserName().empty() && client.getStatus() == REGISTERED) {
+	// welcome sequence complete for first time
+    if (old_nickname.empty() && !client.getUserName().empty() && client.isRegistered()) {
         LOG_CMD.info("001 RPL_WELCOME");
-		rh.sendReply(client, RPL_WELCOME, client.getNickName(), "Welcome to Hasardous IRC SeRVER");
-    } else if (!old_nickname.empty() && !client.getUserName().empty() && client.getStatus() == REGISTERED) {
-		rh.sendReply(client, RPL_SUCCESS, old_nickname + "!" + client.getUserName() + "@" + irc_config.get_name() + " NICK " + _nickname, "");
-    } else {
-        LOG_CMD.info("??? RPL_NICK");
+		rh.processResponse(client, RPL_WELCOME);
+	// normal success behavior
+    } else if (!old_nickname.empty() && !client.getUserName().empty() && client.isRegistered()) {
+        LOG_CMD.info("204 RPL_NICK");
+		rh.processResponse(client, RPL_NICK, old_nickname);
+		rh.processResponse(client, RPL_NOTICE, "Your nickname has changed"); // DOESNT NEED TO BE THERE (just for fun)
 	}
 }
 
-int Nick::checkArgs(Server& server, Client& client, std::string& params)
+ReplyCode Nick::checkArgs(Server& server, Client& client, std::string& params)
 {
     (void)client;
     std::istringstream iss(params);
@@ -45,7 +47,7 @@ int Nick::checkArgs(Server& server, Client& client, std::string& params)
         LOG_CMD.error("431 ERR_NONICKNAMEGIVEN");
         return (ERR_NONICKNAMEGIVEN);
     } else if (!std::isalpha(nickname[0])) {
-        LOG_CMD.error("431 ERR_ERRONEUSNICKNAME");
+        LOG_CMD.error("432 ERR_ERRONEUSNICKNAME");
         return (ERR_ERRONEUSNICKNAME);
     } else if (nickname.length() > irc_config.get_nicknameMaxLen()) {
         nickname = nickname.substr(0, irc_config.get_nicknameMaxLen());
@@ -56,7 +58,7 @@ int Nick::checkArgs(Server& server, Client& client, std::string& params)
     }
     params = nickname;
     if (client.getNickName().empty() && !client.getUserName().empty() &&
-        client.getStatus() == REGISTERED) {
+        client.isRegistered()) {
         return (RPL_WELCOME);
     }
     return (RPL_SUCCESS);

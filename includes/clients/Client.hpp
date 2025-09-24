@@ -35,10 +35,10 @@ class Client
     std::string        getReceiveBuffer() const;
     bool               hasDataToSend() const;
 
-    std::string  getNickName() const;
-    std::string  getUserName() const;
-    std::string  getRealName() const;
-    ClientStatus getStatus() const;
+	std::string		getNickName() const;
+    std::string		getUserName() const;
+    std::string		getRealName() const;
+    ClientStatus	getStatus() const;
 
     bool isRegistered() const;
     int  getNbJoinedChannels() const;

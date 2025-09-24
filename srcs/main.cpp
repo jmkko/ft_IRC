@@ -9,7 +9,7 @@ void handleSignal(int signal) {  globalSignal = signal; }
 
 int main(int ac, char** av)
 {
-    int port;
+    int port = 0;
 
     LOG_ERR.setMinLevel(ERROR); // Seulement les erreurs dans ce log
     if (!checkArgs(ac, av, &port))
@@ -20,7 +20,7 @@ int main(int ac, char** av)
     try {
         newServer.start();
     } catch (std::exception& e) {
-        std::cout << e.what() << std::endl;
+        std::cout << e.what() << "\n";
         LOG_ERR.error("Server error: " + std::string(e.what()));
     }
     return 0;
