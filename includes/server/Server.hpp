@@ -6,7 +6,7 @@
 /*   By: fpetit <fpetit@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/11 08:55:19 by jhervoch          #+#    #+#             */
-/*   Updated: 2025/09/24 11:57:41 by fpetit           ###   ########.fr       */
+/*   Updated: 2025/09/24 14:15:26 by fpetit           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ class Server
     std::string getPassW() const; // added for PASS
     Client*     findClientByNickname(std::string&);
 	int			indexOf(Socket);
-	void		addEventsOf(Client&, short);
+	void		addEventsOf(Client&, int event);
 
   private:
     TcpSocket                      _serverSocket;
