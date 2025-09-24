@@ -1,7 +1,7 @@
 #include "Server.hpp"
 
 /************************************************************
- *		🥚 CONSTRUCTORS & DESTRUCTOR						*
+ *		🥚 CONSTRUCTORS & DESTRUCTOR	            *
  ************************************************************/
 
 /**
@@ -20,7 +20,7 @@ Server::Server(const unsigned short port, const std::string& psswd) :
         _serverSocket.tcpListen();
     } catch (std::exception& e) {
         std::cout << e.what();
-        return; // need improve for exit program
+        exit (1); // need improve for exit program
     }
     LOG_SERVER.info("Server " + _name + " start at port :" + utils::toString(port));
     std::cout << "\n";
@@ -59,7 +59,7 @@ void Server::start()
 
         // review each client socket
         LOG_SERVER.debug(utils::toString(pollResult) +
-                         "event(s) detected"); // /!\ THIS DOESNT LOG ANYTHING ?? /!\
+                         " event(s) detected"); // /!\ THIS DOESNT LOG ANYTHING ?? /!\
 
         // review each client socket
         for (int i = 0; i < static_cast<int>(_fds.size()); i++) {
@@ -247,7 +247,7 @@ void Server::handleClientOutput(int pfd_index)
     std::string sendBuffer = client->getSendBuffer();
     if (!sendBuffer.empty()) {
 
-    	LOG_SERVER.info("Send message:" + sendBuffer);
+    	LOG_SERVER.info("Send message: " + sendBuffer);
         size_t bytesSent = send(socket, sendBuffer.c_str(), sendBuffer.length(), 0);
 
         if (bytesSent == static_cast<size_t>(-1)) {

@@ -32,6 +32,13 @@
 #define NICKNAME_MAX_LEN        9
 #define NB_AVAILABLE_CMD        9
 
+#define CHANMODE_OP      0x01
+#define CHANMODE_TOPIC   0x02
+#define CHANMODE_KEY     0x04
+#define CHANMODE_INVITE  0x08
+#define CHANMODE_LIMIT   0x10
+
+
 typedef int Socket;
 
 #endif

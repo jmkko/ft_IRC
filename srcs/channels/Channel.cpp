@@ -16,7 +16,8 @@ bool Channel::_isValidChannelName(const std::string& name)
 
 /// @throw exception if name is invalid
 Channel::Channel(const std::string& name) :
-    _topic("this is the topic. please update it with TOPIC"),
+    _topic("No topic is set"),
+    _mode(0),
     _userLimit(NO_LIMIT),
     _isInviteOnly(false),
     _isTopicChangeRestricted(false),
@@ -30,6 +31,7 @@ Channel::Channel(const std::string& name) :
 Channel::Channel(const Channel& inst) :
     _name(inst._name),
     _topic(inst._topic),
+    _mode(inst._mode),
     _userLimit(inst._userLimit),
     _isInviteOnly(inst._isInviteOnly),
     _isTopicChangeRestricted(inst._isTopicChangeRestricted),
@@ -41,7 +43,8 @@ Channel::Channel(const Channel& inst) :
 
 Channel::Channel(void) :
     _name(""),
-    _topic("this is the topic. please update it with TOPIC"),
+    _topic("No topic is set"),
+    _mode(0),
     _userLimit(NO_LIMIT),
     _isInviteOnly(false),
     _isTopicChangeRestricted(false),
