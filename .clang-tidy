@@ -10,6 +10,9 @@ Checks: >
   -cppcoreguidelines-pro-bounds-constant-array-index,
   bugprone-*,
   performance-*,
+CheckOptions:
+    - key: cppcoreguidelines-avoid-non-const-global-variables.AllowInternalLinkage
+      value: 'true'
 WarningsAsErrors: '*'
 HeaderFilterRegex: '.*'
 # do not interfere with clang format

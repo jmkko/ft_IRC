@@ -1,4 +1,5 @@
 #include "Server.hpp"
+#include "signal_handler.hpp"
 
 /************************************************************
  *		🥚 CONSTRUCTORS & DESTRUCTOR						*

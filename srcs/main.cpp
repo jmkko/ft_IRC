@@ -1,11 +1,9 @@
 #include "LogManager.hpp"
 #include "Server.hpp"
+#include "signal_handler.hpp"
 #include "utils.hpp"
 
 #include <exception>
-#include <signal.h>
-
-void handleSignal(int signal) {  globalSignal = signal; }
 
 int main(int ac, char** av)
 {
@@ -15,8 +13,7 @@ int main(int ac, char** av)
     if (!checkArgs(ac, av, &port))
         return 1;
     Server newServer(port, av[2]);
-    signal(SIGINT, handleSignal);
-    signal(SIGABRT, handleSignal);
+    setupSignalHandlers();
     try {
         newServer.start();
     } catch (std::exception& e) {

@@ -6,7 +6,7 @@
 /*   By: fpetit <fpetit@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/11 08:55:19 by jhervoch          #+#    #+#             */
-/*   Updated: 2025/09/22 19:33:29 by fpetit           ###   ########.fr       */
+/*   Updated: 2025/09/24 11:57:41 by fpetit           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ class Server
     Server(const unsigned short port, const std::string& psswd);
 
     // static Server&		getInstance(const unsigned short port = DEFAULT_PORT, const std::string&
-    // password = DEFAULT_PASSWORD);
+    // password = DEFAULT_PASSWORD)
 
     void        start();
     void        stop();

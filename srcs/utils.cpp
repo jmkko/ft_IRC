@@ -1,7 +1,5 @@
 #include "utils.hpp"
 
-volatile sig_atomic_t globalSignal = 0;
-
 bool checkPort(const std::string& s, int* port)
 {
     long n = utils::stringToULong(s.c_str());
