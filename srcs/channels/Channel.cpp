@@ -7,7 +7,7 @@
 /// @brief checks validity according to RFC
 bool Channel::_isValidChannelName(const std::string& name)
 {
-    return name.length() > 1 && name[0] == '#' && name.length() < CHAN_NAME_MAX_LEN;
+    return name.length() > 1 && name[0] == '#' && name.length() < irc_config.get_chanNameMaxLen();
 }
 
 /************************************************************
@@ -152,7 +152,7 @@ void Channel::addMember(Client& client)
         else
             throw std::runtime_error("client was not invited");
     }
-    if (MAX_JOINED_CHANNELS == NO_LIMIT || client.getNbJoinedChannels() < MAX_JOINED_CHANNELS)
+    if (irc_config.get_maxJoinedChannels() == NO_LIMIT || client.getNbJoinedChannels() < irc_config.get_maxJoinedChannels())
         _members.insert(&client);
     else
         throw std::runtime_error("joined channels limit reached");

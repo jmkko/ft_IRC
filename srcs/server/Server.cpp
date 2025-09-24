@@ -13,17 +13,17 @@
  * @param psswd valid password
  */
 Server::Server(const unsigned short port, const std::string& psswd) :
-    _psswd(psswd), _name(SERVER_NAME)
+    _psswd(psswd), _name(irc_config.get_name())
 {
     try {
         _serverSocket.tcpBind(port);
         _serverSocket.tcpListen();
     } catch (std::exception& e) {
-        std::cout << e.what() << std::endl;
+        std::cout << e.what();
         return; // need improve for exit program
     }
     LOG_SERVER.info("Server " + _name + "start at port :" + utils::toString(port));
-    std::cout << std::endl;
+    std::cout << "\n";
 
     // Socket serveur : surveiller nouvelles connexions
     listenToSocket(_serverSocket.getSocket(), POLLIN);

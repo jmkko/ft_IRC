@@ -1,0 +1,69 @@
+// #include "Config.hpp"
+#include "Config.hpp"
+
+const Config irc_config(SERVER_CONF_FILE);
+
+Config::Config() :
+    _name(SERVER_NAME),
+    _psswd(DEFAULT_PASSWORD),
+    _maxJoinedChannels(MAX_JOINED_CHANNELS),
+    _chanNameMaxLen(CHAN_NAME_MAX_LEN),
+    _nicknameMaxLen(NICKNAME_MAX_LEN)
+{
+}
+
+Config::Config(const std::string& fileName) :
+    _name(SERVER_NAME),
+    _psswd(DEFAULT_PASSWORD),
+    _maxJoinedChannels(MAX_JOINED_CHANNELS),
+    _chanNameMaxLen(CHAN_NAME_MAX_LEN),
+    _nicknameMaxLen(NICKNAME_MAX_LEN)
+{
+    if (!_parse_config_file(fileName)) {
+        LOG_SERVER.warning("Conf file not loaded!");
+    }
+}
+Config::~Config() {}
+
+
+bool Config::_parse_config_file(const std::string& fileName)
+{
+    std::ifstream file(fileName.c_str());
+    if (!file.is_open())
+        return false;
+    std::string line;
+    while (std::getline(file, line)) {
+        size_t pos = line.find('=');
+        if (pos != std::string::npos) {
+            std::string key = line.substr(0, pos);
+            std::string value = line.substr(pos + 1);
+            _set_key_value(key, value);
+        }
+    }
+    return true;
+}
+
+void Config::_set_key_value(const std::string& key, std::string& value)
+{
+    const size_t nbParam = 5;
+    std::array<std::string, nbParam>  keyList = {"server_name", "password", "max_joined_channels", "chan_name_max_len", "nickname_max_len"};
+    std::array<void (Config::*)(std::string&), nbParam> functions = {&Config::_set_name, &Config::_set_psswd, &Config::_set_maxJoinedChannels, &Config::_set_chanNameMaxLen, &Config::_set_nicknameMaxLen};
+    for (size_t i = 0; i < nbParam; i++) {
+        if (key == keyList.at(i)) {
+            (this->*functions.at(i))(value);
+            return;
+        }
+    }
+}
+
+void Config::_set_name(std::string& value) { _name = value; }
+void Config::_set_psswd(std::string& value) { _psswd = value; }
+void Config::_set_maxJoinedChannels(std::string& value) { _maxJoinedChannels = static_cast<int>(atoi(value.c_str())); }
+void Config::_set_chanNameMaxLen(std::string& value) { _chanNameMaxLen = static_cast<int>(atoi(value.c_str())); }
+void Config::_set_nicknameMaxLen(std::string& value) { _nicknameMaxLen = static_cast<int>(atoi(value.c_str())); }
+
+const std::string& Config::get_name() const { return _name; }
+const std::string& Config::get_psswd() const { return _psswd; }
+int Config::get_maxJoinedChannels() const { return _maxJoinedChannels; }
+size_t Config::get_chanNameMaxLen() const { return _chanNameMaxLen; }
+size_t Config::get_nicknameMaxLen() const { return _nicknameMaxLen; }

@@ -28,7 +28,7 @@ void Nick::execute(Server& server, Client& client)
         LOG_CMD.info("001 RPL_WELCOME");
 		rh.sendReply(client, RPL_WELCOME, client.getNickName(), "Welcome to Hasardous IRC SeRVER");
     } else if (!old_nickname.empty() && !client.getUserName().empty() && client.getStatus() == REGISTERED) {
-		rh.sendReply(client, RPL_SUCCESS, old_nickname + "!" + client.getUserName() + "@" + SERVER_NAME + " NICK " + _nickname, "");
+		rh.sendReply(client, RPL_SUCCESS, old_nickname + "!" + client.getUserName() + "@" + irc_config.get_name() + " NICK " + _nickname, "");
     } else {
         LOG_CMD.info("??? RPL_NICK");
 	}
@@ -47,8 +47,8 @@ int Nick::checkArgs(Server& server, Client& client, std::string& params)
     } else if (!std::isalpha(nickname[0])) {
         LOG_CMD.error("431 ERR_ERRONEUSNICKNAME");
         return (ERR_ERRONEUSNICKNAME);
-    } else if (nickname.length() > NICKNAME_MAX_LEN) {
-        nickname = nickname.substr(0, NICKNAME_MAX_LEN);
+    } else if (nickname.length() > irc_config.get_nicknameMaxLen()) {
+        nickname = nickname.substr(0, irc_config.get_nicknameMaxLen());
     }
     if (server.findClientByNickname(nickname)) {
         LOG_CMD.error("431 ERR_NICKNAMEINUSE");

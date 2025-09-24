@@ -5,6 +5,7 @@ Checks: >
   -cppcoreguidelines-non-private-member-variables-in-classes,
   -cppcoreguidelines-pro-type-reinterpret-cast,
   -cppcoreguidelines-pro-type-vararg,
+  -cppcoreguidelines-special-member-functions,
   bugprone-*,
   performance-*,
 WarningsAsErrors: '*'

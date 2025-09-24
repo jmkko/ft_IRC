@@ -18,6 +18,7 @@ SRCS			:=	srcs/main.cpp\
 					srcs/clients/Client.cpp\
 					srcs/channels/Channel.cpp\
 					srcs/server/Server.cpp\
+					srcs/server/Config.cpp\
 					srcs/server/TcpSocket.cpp\
 					srcs/server/Logger.cpp \
 					srcs/server/LogManager.cpp\

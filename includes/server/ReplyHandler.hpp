@@ -4,6 +4,7 @@
 #include "Client.hpp"
 #include "Server.hpp"
 #include "reply_codes.hpp"
+#include "Config.hpp"
 
 #include <iomanip>
 #include <iostream>

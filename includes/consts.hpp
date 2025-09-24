@@ -20,7 +20,8 @@
 #define PERM_755                755
 #define EPOCH_TIME_START        1900
 #define NO_LIMIT                (-1)
-#define SERVER_NAME             "hazardous"
+#define SERVER_NAME             "hazardous.irc"
+#define SERVER_CONF_FILE        "irc.conf"
 #define DEFAULT_PASSWORD        "password"
 #define DEFAULT_PORT            6667
 #define MAX_JOINED_CHANNELS     NO_LIMIT

@@ -5,6 +5,7 @@
 #include "ICommand.hpp"
 #include "colors.hpp"
 #include "consts.hpp"
+#include "Config.hpp"
 
 #include <iostream>
 #include <set>

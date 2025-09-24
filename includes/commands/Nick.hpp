@@ -2,6 +2,7 @@
 #define NICK_HPP
 #include "ICommand.hpp"
 #include <iostream>
+#include "Config.hpp"
 
 class Server;
 class Client;

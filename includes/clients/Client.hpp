@@ -4,6 +4,7 @@
 #include "Channel.hpp"
 #include "TcpSocket.hpp"
 #include "consts.hpp"
+#include "Config.hpp"
 
 #include <iostream>
 #include <map>

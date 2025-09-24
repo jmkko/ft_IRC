@@ -20,6 +20,7 @@
 #include "TcpSocket.hpp"
 #include "consts.hpp"
 #include "utils.hpp"
+#include "Config.hpp"
 
 #include "CmdFactory.hpp"
 #include <arpa/inet.h> // hton*, ntoh*, inet_addr

@@ -23,7 +23,7 @@ static const std::string codeToStr(ReplyCode code)
 void ReplyHandler::sendReply(Client& client, ReplyCode code, const std::string& target,
                              const std::string& trailing)
 {
-    std::string reply = std::string(":") + SERVER_NAME + codeToStr(code) + target;
+    std::string reply = std::string(":") + irc_config.get_name() + codeToStr(code) + target;
     if (!trailing.empty()) {
         reply += " :" + trailing;
     }
