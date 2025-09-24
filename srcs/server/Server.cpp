@@ -22,7 +22,7 @@ Server::Server(const unsigned short port, const std::string& psswd) :
         std::cout << e.what();
         return; // need improve for exit program
     }
-    LOG_SERVER.info("Server " + _name + "start at port :" + utils::toString(port));
+    LOG_SERVER.info("Server " + _name + " start at port :" + utils::toString(port));
     std::cout << "\n";
 
     // Socket serveur : surveiller nouvelles connexions
@@ -47,15 +47,13 @@ void Server::start()
     while (true) {
         if (globalSignal == SIGINT || globalSignal == SIGABRT)
             stop();
-		LOG_SERVER.info("waiting event");
+		// LOG_SERVER.info("waiting event");
         int pollResult = poll(_fds.data(), _fds.size(), POLL_TIMEOUT); // Timeout 1 second
         if (pollResult == -1) {
             LOG_SERVER.error("Poll failed: " + TO_STRING(strerror(errno)));
             break;
         }
         if (pollResult == 0) {
-			std::cout << "size: : " << _fds.size() << std::endl;
-            // std::cout << "Timeout - aucune activite" << std::endl;
             continue;
         }
 

@@ -4,8 +4,11 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <vector>
 #include "consts.hpp"
 #include "LogManager.hpp"
+#include <string>
+#include <cstdlib>
 
 class Config
 {

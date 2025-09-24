@@ -33,10 +33,11 @@ bool Config::_parse_config_file(const std::string& fileName)
         return false;
     std::string line;
     while (std::getline(file, line)) {
-        size_t pos = line.find('=');
-        if (pos != std::string::npos) {
-            std::string key = line.substr(0, pos);
-            std::string value = line.substr(pos + 1);
+        size_t posAssign = line.find('=');
+        size_t posComment = line.find('#');
+        if (posAssign != std::string::npos && posComment == std::string::npos) {
+            std::string key = line.substr(0, posAssign);
+            std::string value = line.substr(posAssign + 1);
             _set_key_value(key, value);
         }
     }
@@ -46,11 +47,11 @@ bool Config::_parse_config_file(const std::string& fileName)
 void Config::_set_key_value(const std::string& key, std::string& value)
 {
     const size_t nbParam = 5;
-    std::array<std::string, nbParam>  keyList = {"server_name", "password", "max_joined_channels", "chan_name_max_len", "nickname_max_len"};
-    std::array<void (Config::*)(std::string&), nbParam> functions = {&Config::_set_name, &Config::_set_psswd, &Config::_set_maxJoinedChannels, &Config::_set_chanNameMaxLen, &Config::_set_nicknameMaxLen};
+    std::string  keyList[nbParam] = {"server_name", "password", "max_joined_channels", "chan_name_max_len", "nickname_max_len"};
+    void (Config::* functions[nbParam])(std::string&) = {&Config::_set_name, &Config::_set_psswd, &Config::_set_maxJoinedChannels, &Config::_set_chanNameMaxLen, &Config::_set_nicknameMaxLen};
     for (size_t i = 0; i < nbParam; i++) {
-        if (key == keyList.at(i)) {
-            (this->*functions.at(i))(value);
+        if (key == keyList[i]) {
+            (this->*functions[i])(value);
             return;
         }
     }
