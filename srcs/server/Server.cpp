@@ -196,7 +196,7 @@ void Server::handleClientDisconnection(int pfd_index)
  */
 void Server::handleClientData(int pfd_index)
 {
-    LOG_SERVER.debug("Server#handleClientData");
+    LOG_SERVER.debug("Server #handleClientData");
     Socket  socket = _fds[pfd_index].fd;
     Client* client = _clients[socket];
     if (!client) {

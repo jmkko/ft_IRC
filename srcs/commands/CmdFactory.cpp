@@ -36,17 +36,21 @@ ICommand* CmdFactory::makeCommand(Server& server, Client& client, std::string& l
         &CmdFactory::operCmd};
     iss >> command_line;
     for (size_t i = 0; i < NB_AVAILABLE_CMD; i++) {
-        if (command_line ==
-            available[i]) { // NOLINT(cppcoreguidelines-pro-bounds-constant-array-index)
+        if (command_line == available[i]) {
+            LOG_CMD.debug("command line" + command_line);
+            if (!client.isRegistered() && command_line != "NICK" && command_line != "USER" &&
+                command_line != "PASS" && command_line != "QUIT") {
+                LOG_CMD.error(TO_STRING(ERR_NOTREGISTERED) + " ERR_NOTREGISTERED");
+                ReplyHandler& rh = ReplyHandler::getInstance(&server);
+                rh.sendSimpleReply(
+                    client, ERR_NOTREGISTERED, "* " + command_line + " :You have not registered");
+            }
             std::string params;
             std::getline(iss, params);
             if (!params.empty() && params[0] == ' ') {
                 params = params.substr(1);
             }
-            return (this->*ptr[i])(
-                server,
-                client,
-                params); // NOLINT(cppcoreguidelines-pro-bounds-constant-array-index)
+            return (this->*ptr[i])(server, client, params);
         }
     }
     LOG_CMD.error("421 ERR_UNKNOWNCOMMAND");

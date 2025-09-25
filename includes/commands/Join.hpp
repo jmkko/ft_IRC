@@ -3,6 +3,7 @@
 
 #include "ICommand.hpp"
 #include "Channel.hpp"
+#include <vector>
 
 
 class Join : public ICommand{
@@ -11,5 +12,8 @@ class Join : public ICommand{
     void       execute(Server&, Client&);
     static int checkArgs(Server&, Client&, std::string&);
   private:
-    
+    std::vector<std::string> _channels;
+    std::vector<std::string> _keys;
 };
+
+#endif

@@ -32,6 +32,17 @@ void ReplyHandler::sendReply(Client& client, ReplyCode code, const std::string& 
 	_server->addEventsOf(client, POLLOUT);
 }
 
+void ReplyHandler::sendSimpleReply(Client& client, ReplyCode code, const std::string& trailing)
+{
+    std::string reply = std::string(":") + irc_config.get_name() + codeToStr(code);
+    if (!trailing.empty()) {
+        reply +=  trailing;
+    }
+    reply += "\r\n";
+	client.appendToSendBuffer(reply);
+	_server->addEventsOf(client, POLLOUT);
+}
+
 void ReplyHandler::sendErrNeedMoreParams(Client& client, const std::string& commandName)
 {
     sendReply(client, ERR_NEEDMOREPARAMS, commandName, "Not enough parameters");

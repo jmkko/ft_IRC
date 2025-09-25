@@ -17,6 +17,7 @@ class ReplyHandler
 {
   public:
     void sendReply(Client&, ReplyCode, const std::string& target, const std::string& trailing = "");
+    void sendSimpleReply(Client&, ReplyCode, const std::string& trailing = "");
     void sendErrNeedMoreParams(Client&, const std::string& commandName);
     static ReplyHandler& getInstance(Server*);
 
