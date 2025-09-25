@@ -1,7 +1,7 @@
 #include "ReplyHandler.hpp"
 #include "reply_codes.hpp"
-#include <string>
 #include <cstdio>
+#include <string>
 
 /************************************************************
  *		🥚 CONSTRUCTORS & DESTRUCTOR						*
@@ -18,7 +18,7 @@ static const std::string codeToStr(ReplyCode code)
     std::stringstream ss;
     std::string       codeStr;
     ss << " " << std::setw(3) << std::setfill('0') << code;
-	ss << " ";
+    ss << " ";
     return ss.str();
 }
 
@@ -33,7 +33,7 @@ static const std::string codeToStr(ReplyCode code)
                or NUL or CR or LF, the first of which may not be ':'>
 <trailing> ::= <Any, possibly *empty*, sequence of octets not including
                  NUL or CR or LF>
- 
+
 <crlf>     ::= CR LF
 
   1)    <SPACE> is consists only of SPACE character(s) (0x20).
@@ -61,7 +61,6 @@ static const std::string codeToStr(ReplyCode code)
         from without the need for additional queries.
 */
 
-
 /**
  * @brief [TODO:return the id sequence <nick|parameter>!<user>@<host>]
  *
@@ -69,79 +68,98 @@ static const std::string codeToStr(ReplyCode code)
  * @param nickname [TODO:if not given, id will be contruct with client.getNickName()]
  * @return [TODO: string <nick>!<user>@<host>]
  */
-std::string ReplyHandler::getIdOf(Client& client, std::string nickname) {
-	std::string identity(":");
+std::string ReplyHandler::getIdOf(Client& client, std::string nickname)
+{
+    std::string identity(":");
 
-	if (nickname.empty()) {
-		identity += client.getNickName();
-	} else {
-		identity += nickname;
-	}
-	identity += "!" + client.getUserName() + "@" + irc_config.get_name();
+    if (nickname.empty()) {
+        identity += client.getNickName();
+    } else {
+        identity += nickname;
+    }
+    identity += "!" + client.getUserName() + "@" + irc_config.get_name();
 
-	return (identity);
+    return (identity);
 }
 
-std::string	ReplyHandler::selectResponse(Client& client, ReplyCode code, const std::string& parameters)
+std::string ReplyHandler::selectResponse(Client& client, ReplyCode code,
+                                         const std::string& parameters)
 {
-	std::string response(":" + irc_config.get_name());
+    std::string response(":" + irc_config.get_name());
 
-	switch (code) {
-		case RPL_WELCOME:
-			return (response + codeToStr(code) + client.getNickName() + RPL_WELCOME_MSG);
-		case RPL_NICK:
-			return (getIdOf(client, parameters) + " NICK " + client.getNickName());
-		case RPL_NOTICE:
-			return (response + " NOTICE " + client.getNickName() + " :" + parameters);
-		case RPL_KICK:
-			return "";
-		case RPL_INVITING:
-			return "";
-		case RPL_MODE:
-			return "";
-		case RPL_TOPIC:
-			return "";
-		case RPL_PRIVMSG:
-			return "";
-		case ERR_UNKNOWNCOMMAND:
-			return (std::string("421") + ERR_UNKNOWNCOMMAND_MSG + parameters);
-		case ERR_NEEDMOREPARAMS:
-			return (std::string("461") + ERR_NEEDMOREPARAMS_MSG + parameters);
-		case ERR_NONICKNAMEGIVEN:
-			return (std::string("431") + ERR_NONICKNAMEGIVEN_MSG);
-		case ERR_ERRONEUSNICKNAME:
-			return (std::string("432") + ERR_ERRONEUSNICKNAME_MSG);
-		case ERR_NICKNAMEINUSE:
-			return (std::string("433") + ERR_ERRONEUSNICKNAME_MSG + parameters);
-		case ERR_PASSWDMISMATCH:
-			return (std::string("464") + ERR_PASSWDMISMATCH_MSG);
-		case ERR_NOTREGISTERED :
-			return(TO_STRING(ERR_NOTREGISTERED) + "* " + parameters + " :You have not registered");
-		case ERR_ALREADYREGISTERED:
-			return (std::string("464") + ERR_ALREADYREGISTERED_MSG);
-		default:
-			return ("");
-	}
+    switch (code) {
+    case RPL_WELCOME:
+        return (response + codeToStr(code) + client.getNickName() + RPL_WELCOME_MSG);
+    case RPL_NICK:
+        return (getIdOf(client, parameters) + " NICK " + client.getNickName());
+    case RPL_JOIN:
+        return (getIdOf(client, "") + " JOIN :" + parameters);
+    case RPL_NOTICE:
+        return (response + " NOTICE " + client.getNickName() + " :" + parameters);
+    case RPL_KICK:
+        return "";
+    case RPL_INVITING:
+        return "";
+    case RPL_MODE:
+        return (response + " MODE " + parameters);
+    case RPL_TOPIC:
+        return (response + codeToStr(code) + client.getNickName() + " " + parameters);
+    case RPL_NAMREPLY:
+        return (response + codeToStr(code) + client.getNickName() + " = " + parameters + " :" +
+                client.getNickName());
+    case RPL_ENDOFNAMES:
+        return (response + codeToStr(code) + client.getNickName() + " " + parameters + RPL_ENDOFNAMES_MSG);
+    case RPL_NOTOPIC:
+        return (response + codeToStr(code) + client.getNickName() + " " + parameters + RPL_NOTOPIC_MSG);
+    case RPL_PRIVMSG:
+        return "";
+    case ERR_UNKNOWNCOMMAND:
+        return (std::string("421") + ERR_UNKNOWNCOMMAND_MSG + parameters);
+    case ERR_NEEDMOREPARAMS:
+        return (std::string("461") + ERR_NEEDMOREPARAMS_MSG + parameters);
+    case ERR_NONICKNAMEGIVEN:
+        return (std::string("431") + ERR_NONICKNAMEGIVEN_MSG);
+    case ERR_ERRONEUSNICKNAME:
+        return (std::string("432") + ERR_ERRONEUSNICKNAME_MSG);
+    case ERR_NICKNAMEINUSE:
+        return (std::string("433") + ERR_ERRONEUSNICKNAME_MSG + parameters);
+    case ERR_PASSWDMISMATCH:
+        return (std::string("464") + ERR_PASSWDMISMATCH_MSG);
+    case ERR_NOTREGISTERED:
+        return (TO_STRING(ERR_NOTREGISTERED) + "* " + parameters + " :You have not registered");
+    case ERR_ALREADYREGISTERED:
+        return (std::string("464") + ERR_ALREADYREGISTERED_MSG);
+    case ERR_BADCHANMASK:
+        return (response + codeToStr(code) + client.getNickName() + " " + parameters + ERR_BADCHANMASK_MSG);
+    case ERR_CHANNELISFULL:
+        return (response + codeToStr(code) + client.getNickName() + " " + parameters + ERR_CHANNELISFULL_MSG);
+    case ERR_INVITEONLYCHAN:
+        return (response + codeToStr(code) + client.getNickName() + " " + parameters + ERR_INVITEONLYCHAN_MSG);
+    case ERR_BANNEDFROMCHAN:
+        return (response + codeToStr(code) + client.getNickName() + " " + parameters + ERR_BANNEDFROMCHAN_MSG);
+    default:
+        return ("");
+    }
 }
 
 int ReplyHandler::processResponse(Client& client, ReplyCode code, const std::string& parameters)
 {
-	std::string response = selectResponse(client, code, parameters);
+    std::string response = selectResponse(client, code, parameters);
 
-	//to be implemented
-	//if (code == RPL_NICK | code == RPL_TOPIC)
-	//	broadcast(response, chanel);
-	if (!response.empty()) {
-		LOG_CMD.debug("add to sendBuffer: " + response);
-		sendReply(client, response);
-	}
-	return (code);
+    // to be implemented
+    // if (code == RPL_NICK | code == RPL_TOPIC)
+    //	broadcast(response, chanel);
+    if (!response.empty()) {
+        LOG_CMD.debug("add to sendBuffer: " + response);
+        sendReply(client, response);
+    }
+    return (code);
 }
 
 void ReplyHandler::sendReply(Client& client, std::string& msg)
 {
-	client.appendToSendBuffer(msg + "\r\n");
-	_server->addEventsOf(client, POLLOUT);
+    client.appendToSendBuffer(msg + "\r\n");
+    _server->addEventsOf(client, POLLOUT);
 }
 
 /*************************************************************

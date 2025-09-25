@@ -153,7 +153,9 @@ void Channel::inviteClient(Client& client) { _invites.insert(&client); }
 
 void Channel::addMember(Client& client)
 {
-    if (_userLimit == NO_LIMIT || _members.size() < static_cast<size_t>(_userLimit))
+    if (isMember(client))
+        return;
+    if (_userLimit != NO_LIMIT && _members.size() >= static_cast<size_t>(_userLimit))
         throw std::runtime_error("channel max capacity reached");
     if (_isInviteOnly) {
         if (isInvited(client))
@@ -161,10 +163,9 @@ void Channel::addMember(Client& client)
         else
             throw std::runtime_error("client was not invited");
     }
-    if (irc_config.get_maxJoinedChannels() == NO_LIMIT || client.getNbJoinedChannels() < irc_config.get_maxJoinedChannels())
-        _members.insert(&client);
-    else
+    if (irc_config.get_maxJoinedChannels() != NO_LIMIT && client.getNbJoinedChannels() >= irc_config.get_maxJoinedChannels())
         throw std::runtime_error("joined channels limit reached");
+    _members.insert(&client);
 }
 
 void Channel::removeMember(Client& client) { _members.erase(&client); }

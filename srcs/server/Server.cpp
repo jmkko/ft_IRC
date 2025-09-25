@@ -1,5 +1,6 @@
 #include "Server.hpp"
 #include "signal_handler.hpp"
+#include "Channel.hpp"
 
 /************************************************************
  *		🥚 CONSTRUCTORS & DESTRUCTOR	            *
@@ -324,6 +325,13 @@ void Server::stop()
                      " sockets and their associated clients");
     for (size_t i = 0; i < _pfds.size(); ++i)
         cleanupSocketAndClients(i);
+    
+    // Clean up channels
+    LOG_SERVER.debug(std::string("cleaning ") + TO_STRING(channels.size()) + " channels");
+    for (std::map<std::string, Channel*>::iterator it = channels.begin(); it != channels.end(); ++it) {
+        delete it->second;
+    }
+    channels.clear();
 }
 
 /**

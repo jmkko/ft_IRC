@@ -5,14 +5,15 @@
 #include "Channel.hpp"
 #include "reply_codes.hpp"
 #include "utils.hpp"
+
 #include <vector>
 
 struct ChannelParam {
     std::string channel;
     std::string key;
-    bool        isValid = true;
-    ChannelParam(const std::string& a, std::string& b) : channel(a), key(b) {}
-    ChannelParam(const std::string& a) : channel(a) {}
+    bool        isValid;
+    ChannelParam(const std::string& a, std::string& b) : channel(a), key(b),isValid(true) {}
+    ChannelParam(const std::string& a) : channel(a), isValid(true) {}
     ChannelParam(const std::string& a, bool valid) : channel(a), isValid(valid) {}
 };
 

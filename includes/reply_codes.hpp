@@ -50,6 +50,7 @@
 // Success Responses
 // JOIN message: :<nick>!<user>@<host> JOIN <channel>
 #define RPL_TOPIC_MSG        ""                    // <channel> :topic
+#define RPL_NOTOPIC_MSG        " :No topic is set"                    // <channel> :topic
 #define RPL_TOPICWHOTIME_MSG ""                    // <channel> <nick> <time>
 #define RPL_NAMREPLY_MSG     ""                    // <channel> :nick1 nick2 nick3...
 #define RPL_ENDOFNAMES_MSG   " :End of NAMES list" // <channel>
@@ -170,6 +171,8 @@ enum ReplyCode {
     RPL_NOTOPIC = 331,   // TOPIC
     RPL_TOPIC = 332,     // TOPIC
     RPL_INVITING = 341,  // INVITE
+    RPL_NAMREPLY = 353, //JOIN
+    RPL_ENDOFNAMES = 366, //JOIN
     RPL_YOUREOPER = 381, // OPER
     RPL_TIME = 391,      // TIME
 

@@ -55,12 +55,14 @@ class Server
     int         indexOf(Client& client);
     void        addEventsOf(Client&, int event);
 
+  public:
+    std::map<std::string, Channel*> channels;
+
   private:
     TcpSocket                       _serverSocket;
     std::vector<pollfd>             _pfds;
     std::map<Socket, Client*>       _clients;
     std::map<std::string, Client*>  _clientsByNick;
-    std::map<std::string, Channel*> _channels;
     std::string                     _psswd;
     std::string                     _name;
     // satic Server*                 _instance;
