@@ -48,8 +48,7 @@ void Server::start()
     while (true) {
         if (globalSignal == SIGINT || globalSignal == SIGABRT)
             stop();
-		// LOG_SERVER.info("waiting event");
-        int pollResult = poll(_fds.data(), _fds.size(), POLL_TIMEOUT); // Timeout 1 second
+        int pollResult = poll(_pfds.data(), _pfds.size(), POLL_TIMEOUT); // Timeout 1 second
         if (pollResult == -1) {
             LOG_SERVER.error("Poll failed: " + TO_STRING(strerror(errno)));
             break;
@@ -59,34 +58,30 @@ void Server::start()
         }
 
         // review each client socket
-        LOG_SERVER.debug(utils::toString(pollResult) +
-                         "event(s) detected"); // /!\ THIS DOESNT LOG ANYTHING ?? /!\
+        LOG_SERVER.debug(utils::toString(pollResult) + "event(s) detected");
 
-        // review each client socket
-        for (int i = 0; i < static_cast<int>(_fds.size()); i++) {
+        for (int i = 0; i < static_cast<int>(_pfds.size()); i++) {
             // new connection
-            if (i == 0 && (_fds[i].revents & POLLIN)) {
+            if (i == 0 && (_pfds[i].revents & POLLIN)) {
                 handleNewConnection(i);
             }
             // Client socket : data or disconnection
             else if (i > 0) {
-                std::map<Socket, Client*>::iterator clientIt = _clients.find(_fds[i].fd);
+                std::map<Socket, Client*>::iterator clientIt = _clients.find(_pfds[i].fd);
                 // orphelan socket
                 if (clientIt == _clients.end()) {
-                    cleanupSocketAndClients(i);
-                    --i;
+                    cleanupSocketAndClients(i--);
                     continue;
                 }
-                if (_fds[i].revents & (POLLHUP | POLLNVAL | POLLERR)) {
-                    handleClientDisconnection(i);
-                    --i;
-                } else if (_fds[i].revents & POLLIN) {
+                if (_pfds[i].revents & (POLLHUP | POLLNVAL | POLLERR)) {
+                    handleClientDisconnection(i--);
+                } else if (_pfds[i].revents & POLLIN) {
                     handleClientData(i);
-                } else if (_fds[i].revents & POLLOUT) {
+                } else if (_pfds[i].revents & POLLOUT) {
                     handleClientOutput(i);
                 }
             }
-            _fds[i].revents = 0; // Reset events
+            _pfds[i].revents = 0; // Reset events
         }
     }
 }
@@ -98,15 +93,15 @@ void Server::start()
 void Server::handleNewConnection(int i)
 {
     std::string pollEvent;
-    if (_fds[i].revents & POLLIN)
+    if (_pfds[i].revents & POLLIN)
         pollEvent.append("POLLIN ");
-    if (_fds[i].revents & POLLOUT)
+    if (_pfds[i].revents & POLLOUT)
         pollEvent.append("POLLOUT ");
-    if (_fds[i].revents & POLLHUP)
+    if (_pfds[i].revents & POLLHUP)
         pollEvent.append("POLLHUP ");
-    if (_fds[i].revents & POLLERR)
+    if (_pfds[i].revents & POLLERR)
         pollEvent.append("POLLERR ");
-    LOG_SOCKET.debug("Socket " + utils::toString(_fds[i].fd) + " events: " + pollEvent);
+    LOG_SOCKET.debug("Socket " + utils::toString(_pfds[i].fd) + " events: " + pollEvent);
 
     sockaddr_in clientAddr = {};
     memset(&clientAddr, 0, sizeof(clientAddr));
@@ -133,41 +128,12 @@ void Server::handleNewConnection(int i)
 }
 
 /**
- @brief cleanup a socket and associated Client
- close the socket fd
- remove entry from _clients
- remove entry from _clientsByNick
- delete client instance
- remove entry from _fds (the pollfd list)
- @param i index of monitored fd
-*/
-void Server::cleanupSocketAndClients(int i)
-{
-    Client* c = _clients[_fds[i].fd];
-    _clients.erase(_fds[i].fd);
-    if (c) {
-        if (!c->getNickName().empty())
-            _clientsByNick.erase(c->getNickName());
-        delete c;
-    }
-    _fds.erase(_fds.begin() + i);
-}
-
-void Server::stop()
-{
-    LOG_SERVER.debug(std::string("cleaning ") + TO_STRING(_fds.size()) +
-                     " sockets and their associated clients");
-    for (size_t i = 0; i < _fds.size(); ++i)
-        cleanupSocketAndClients(static_cast<int>(i));
-}
-
-/**
  @brief removes client
  @param pfd_index
 */
 void Server::handleClientDisconnection(int pfd_index)
 {
-    Socket  socket = _fds[pfd_index].fd;
+    Socket  socket = _pfds[pfd_index].fd;
     Client* client = _clients[socket];
     if (!client) {
         LOG_SERVER.error("client not found");
@@ -189,6 +155,7 @@ void Server::handleClientDisconnection(int pfd_index)
                   utils::toString(client->getPort()) + " disconnected");
     cleanupSocketAndClients(pfd_index);
 }
+
 /**
  * @brief attempt receiving bytes from client, parse into a command and execute it
  enable write notification on client socket if a response has to be sent
@@ -198,7 +165,7 @@ void Server::handleClientDisconnection(int pfd_index)
 void Server::handleClientData(int pfd_index)
 {
     LOG_SERVER.debug("Server#handleClientData");
-    Socket  socket = _fds[pfd_index].fd;
+    Socket  socket = _pfds[pfd_index].fd;
     Client* client = _clients[socket];
     if (!client) {
         LOG_ERR.error("handle receive... client not found");
@@ -238,7 +205,7 @@ void Server::handleClientData(int pfd_index)
 void Server::handleClientOutput(int pfd_index)
 {
     LOG_SERVER.info("Server#handleClientOutput");
-    Socket  socket = _fds[pfd_index].fd;
+    Socket  socket = _pfds[pfd_index].fd;
     Client* client = _clients[socket];
     if (!client) {
         LOG_SERVER.error("client not found");
@@ -248,10 +215,10 @@ void Server::handleClientOutput(int pfd_index)
     std::string sendBuffer = client->getSendBuffer();
     if (!sendBuffer.empty()) {
 
-    	LOG_SERVER.info("Send message:" + sendBuffer);
-        size_t bytesSent = send(socket, sendBuffer.c_str(), sendBuffer.length(), 0);
+    	LOG_SERVER.info("Client.Buffer: " + sendBuffer);
+        int bytesSent = send(socket, sendBuffer.c_str(), sendBuffer.length(), 0);
 
-        if (bytesSent == static_cast<size_t>(-1)) {
+        if (bytesSent == -1) {
             if (errno != EAGAIN && errno != EWOULDBLOCK) {
                 LOG_SERVER.warning(std::string("Socket is not ready for sending ... trying later"));
 
@@ -259,31 +226,25 @@ void Server::handleClientOutput(int pfd_index)
                 LOG_SERVER.error(std::string("Error sending to client"));
                 handleClientDisconnection(pfd_index);
             }
-        } else if (bytesSent < sendBuffer.length()) {
+        } else if (static_cast<size_t>(bytesSent) < sendBuffer.length()) {
             LOG_SERVER.warning(std::string("Queue has been partially sent (") +
                                utils::toString(bytesSent) + "/" +
                                utils::toString(sendBuffer.length()) + ")");
             client->setSendBuffer(sendBuffer.substr(bytesSent));
         } else {
             LOG_SERVER.debug(std::string("Message sent normally ... unsubscribing from POLLOUT"));
-            client->setSendBuffer("");
-            _fds[pfd_index].events &= ~POLLOUT;
+            client->getSendBuffer().clear();
+            _pfds[pfd_index].events &= ~POLLOUT;
         }
     } else {
         LOG_SERVER.debug(std::string("No data to send ... unsubscribing from POLLOUT"));
-        _fds[pfd_index].events &= ~POLLOUT;
+        _pfds[pfd_index].events &= ~POLLOUT;
     }
-}
-
-void Server::listenToSocket(Socket toListen, uint32_t flags)
-{
-    pollfd newPollFd = {.fd = toListen, .events = static_cast<short>(flags), .revents = 0};
-    _fds.push_back(newPollFd);
 }
 
 void Server::handleCommand(int pfd_index)
 {
-    Socket  socket = _fds[pfd_index].fd;
+    Socket  socket = _pfds[pfd_index].fd;
     Client* client = _clients[socket];
 
     size_t pos = std::string::npos;
@@ -306,7 +267,6 @@ void Server::handleCommand(int pfd_index)
 // return NULL if command has failed amd print
 ICommand* Server::parseCommand(Client& client, std::string line)
 {
-    LOG_CMD.debug("Parsing of the command: " + line);
     CmdFactory command_builder;
     ICommand*  cmd = command_builder.makeCommand(*this, client, line);
 
@@ -324,20 +284,65 @@ Client* Server::findClientByNickname(std::string& nickname)
 
 std::string Server::getPassW() const { return _psswd; }
 
-int	Server::indexOf(Socket socket) {
+/**
+ * @brief [TODO:return index of client in _pfds[]]
+ *
+ * @param client [TODO:parameter]
+ * @return [TODO:-1 if not found or bad socket]
+ */
+int	Server::indexOf(Client& client) {
+	Socket socket = client.getSocket();
+
 	if (socket == -1)
 		return -1;
-	for (size_t i = 0; i < _fds.size(); ++i ) {
-		if (_fds[i].fd == socket)
+	for (size_t i = 0; i < _pfds.size(); ++i ) {
+		if (_pfds[i].fd == socket)
 			return static_cast<int>(i);
 	}
 	return -1;
 }
 
 void Server::addEventsOf(Client& client, int event) {
-    Socket socket = client.getSocket();
-    int index = indexOf(socket);
+    int index = indexOf(client);
     if (index >= 0) {
-        _fds[index].events = static_cast<short>( _fds[index].events | event);  // ADD to existing events
+        _pfds[index].events = static_cast<short>( _pfds[index].events | event);  // ADD to existing events
     }
+}
+
+void Server::listenToSocket(Socket toListen, uint32_t flags)
+{
+    pollfd newPollFd = {.fd = toListen, .events = static_cast<short>(flags), .revents = 0};
+    _pfds.push_back(newPollFd);
+}
+
+/**
+ * @brief [TODO:description]
+ */
+void Server::stop()
+{
+    LOG_SERVER.debug(std::string("cleaning ") + TO_STRING(_pfds.size()) +
+                     " sockets and their associated clients");
+    for (size_t i = 0; i < _pfds.size(); ++i)
+        cleanupSocketAndClients(i);
+}
+
+/**
+ @brief cleanup a socket and associated Client
+ close the socket fd
+ remove entry from _clients
+ remove entry from _clientsByNick
+ delete client instance
+ remove entry from _fds (the pollfd list)
+ @param i index of monitored fd
+*/
+void Server::cleanupSocketAndClients(int i)
+{
+    Client* c = _clients[_pfds[i].fd];
+    _clients.erase(_pfds[i].fd);
+    if (c) {
+        if (!c->getNickName().empty())
+            _clientsByNick.erase(c->getNickName());
+        delete c;
+    }
+    _pfds.erase(_pfds.begin() + i);
 }

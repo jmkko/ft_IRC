@@ -17,7 +17,7 @@ int main(int ac, char** av)
     try {
         newServer.start();
     } catch (std::exception& e) {
-        std::cout << e.what() << std::endl;
+        std::cout << e.what() << "\n";
         LOG_ERR.error("Server error: " + std::string(e.what()));
     }
     return 0;

@@ -27,18 +27,23 @@ void Pass::execute(Server& server, Client& client)
 	ReplyHandler& rh = ReplyHandler::getInstance(&server);
     if (!client.getUserName().empty() && !client.getNickName().empty()) {
         LOG_CMD.info("001 RPL_WELCOME");
-		rh.sendReply(client, RPL_WELCOME, client.getNickName(), "Welcome to Hasardous IRC SeRVER");
+		rh.processResponse(client, RPL_WELCOME);
     } else {
-        LOG_CMD.info("??? RPL_PASS");
+        LOG_CMD.info("201 RPL_PASS");
+		rh.processResponse(client, RPL_PASS);
     }
 }
 
-int Pass::checkArgs(Server& server, Client& client, std::string& params)
+ReplyCode Pass::checkArgs(Server& server, Client& client, std::string& params)
 {
     std::string        pass;
     std::istringstream iss(params);
 
     iss >> pass;
+	if (pass.empty()) {
+        LOG_CMD.error("461 ERR_NEEDMOREPARAMS");
+		return (ERR_NEEDMOREPARAMS);
+	}
     if (server.getPassW() != pass) {
         LOG_CMD.error("464 ERR_PASSWDMISMATCH");
         return (ERR_PASSWDMISMATCH);

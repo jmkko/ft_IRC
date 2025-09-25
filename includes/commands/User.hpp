@@ -1,7 +1,8 @@
 #ifndef USER_HPP
-#define USER_HPP
-#include "ICommand.hpp"
-#include <iostream>
+# define USER_HPP
+# include "ICommand.hpp"
+# include <iostream>
+# include "reply_codes.hpp"
 
 class Server;
 class Client;
@@ -15,8 +16,8 @@ class User : public ICommand
     User& operator=(const User& other);
     ~User();
 
-    void       execute(Server&, Client&);
-    static int checkArgs(Server&, Client&, std::string&);
+    void				execute(Server&, Client&);
+    static ReplyCode	checkArgs(Server&, Client&, std::string&);
 
   private:
     std::string _username;
