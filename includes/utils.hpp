@@ -4,13 +4,10 @@
 #include "LogManager.hpp"
 #include "consts.hpp"
 
-#include <csignal>
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
 #include <string>
-
-extern volatile sig_atomic_t globalSignal;
 
 bool checkArgs(int ac, char** av, int* port);
 bool checkPort(const std::string& s, int* port);

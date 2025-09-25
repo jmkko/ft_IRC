@@ -10,6 +10,20 @@ Checks: >
   -cppcoreguidelines-pro-bounds-constant-array-index,
   bugprone-*,
   performance-*,
+  readability-named-parameter,
+  readability-identifier-naming,
+  readability-inconsistent-declaration-parameter-name,
+CheckOptions:
+    - key: cppcoreguidelines-avoid-non-const-global-variables.AllowInternalLinkage
+      value: 'true'
+    - key: readability-identifier-naming.ClassCase
+      value: CamelCase
+    - key: readability-identifier-naming.VariableCase
+      value: camelBack
+    - key: readability-identifier-naming.MemberCase
+      value: camelBack
+    - key: readability-identifier-naming.FunctionCase
+      value: lower_case
 WarningsAsErrors: '*'
 HeaderFilterRegex: '.*'
 # do not interfere with clang format

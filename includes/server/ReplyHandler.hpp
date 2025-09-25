@@ -16,9 +16,11 @@ class Server;
 class ReplyHandler
 {
   public:
-    void sendReply(Client&, ReplyCode, const std::string& target, const std::string& trailing = "");
-    void sendSimpleReply(Client&, ReplyCode, const std::string& trailing = "");
-    void sendErrNeedMoreParams(Client&, const std::string& commandName);
+	std::string		selectResponse(Client& client, ReplyCode code, const std::string& parameter);
+	std::string		getIdOf(Client& client, std::string name = "");
+	int 			processResponse(Client& client, ReplyCode code, const std::string& parameters = "");
+    void			sendReply(Client&, std::string& msg);
+
     static ReplyHandler& getInstance(Server*);
 
   private:

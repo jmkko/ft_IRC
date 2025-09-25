@@ -20,9 +20,10 @@ CmdFactory::~CmdFactory(void) {}
 
 ICommand* CmdFactory::makeCommand(Server& server, Client& client, std::string& line)
 {
-    std::string        command_line;
-    std::istringstream iss(line);
-    std::string        available[NB_AVAILABLE_CMD] = {
+	ReplyHandler& 		rh 	= ReplyHandler::getInstance(&server);
+    std::string			command_line;
+    std::istringstream	iss(line);
+    std::string			available[NB_AVAILABLE_CMD] = {
         "USER", "PASS", "NICK", "QUIT", "INVITE", "JOIN", "PART", "MODE", "OPER"};
     ICommand* (CmdFactory::* ptr[NB_AVAILABLE_CMD])(Server&, Client&, std::string&) = {
         &CmdFactory::userCmd,
@@ -34,6 +35,7 @@ ICommand* CmdFactory::makeCommand(Server& server, Client& client, std::string& l
         &CmdFactory::partCmd,
         &CmdFactory::modeCmd,
         &CmdFactory::operCmd};
+
     iss >> command_line;
     for (size_t i = 0; i < NB_AVAILABLE_CMD; i++) {
         if (command_line == available[i]) {
@@ -54,25 +56,32 @@ ICommand* CmdFactory::makeCommand(Server& server, Client& client, std::string& l
         }
     }
     LOG_CMD.error("421 ERR_UNKNOWNCOMMAND");
+	rh.processResponse(client, ERR_UNKNOWNCOMMAND, line);
+
     return NULL;
 }
 
 // Return a NICK command object if the nickname is valid
 ICommand* CmdFactory::nickCmd(Server& server, Client& client, std::string& params)
 {
-    (void)server;
-    int replyCode = Nick::checkArgs(server, client, params);
+	ReplyHandler&	rh = ReplyHandler::getInstance(&server);
+    ReplyCode		replyCode = Nick::checkArgs(server, client, params);
+
     if (replyCode == RPL_SUCCESS || replyCode == RPL_WELCOME)
         return (new Nick(params));
+	else {
+		rh.processResponse(client, replyCode, params);
+	}
+
     return NULL;
 }
 
 ICommand* CmdFactory::userCmd(Server& server, Client& client, std::string& params)
 {
-    (void)client;
-    (void)server;
-    std::string username, realname;
-    int         replyCode = User::checkArgs(server, client, params);
+    std::string		username, realname;
+    ReplyCode		replyCode = User::checkArgs(server, client, params);
+	ReplyHandler&	rh = ReplyHandler::getInstance(&server);
+
     if (replyCode == RPL_WELCOME || replyCode == RPL_SUCCESS) {
         std::istringstream iss(params);
         iss >> username;
@@ -81,18 +90,24 @@ ICommand* CmdFactory::userCmd(Server& server, Client& client, std::string& param
             realname = realname.substr(1);
         }
         return (new User(username, realname));
-    }
+    } else {
+		rh.processResponse(client, replyCode, params);
+	}
+
     return NULL;
 };
 
 ICommand* CmdFactory::passCmd(Server& server, Client& client, std::string& params)
 {
-    (void)client;
-    (void)server;
-    int replyCode = Pass::checkArgs(server, client, params);
+	ReplyHandler&	rh = ReplyHandler::getInstance(&server);
+    ReplyCode		replyCode = Pass::checkArgs(server, client, params);
+
     if (replyCode == RPL_SUCCESS || replyCode == RPL_WELCOME) {
         return new Pass(params);
-    }
+    } else {
+		rh.processResponse(client, replyCode, params);
+	}
+
     return NULL;
 };
 

@@ -31,17 +31,18 @@ void User::execute(Server& server, Client& client)
 	ReplyHandler& rh = ReplyHandler::getInstance(&server);
     if (!client.getNickName().empty() && client.getStatus() == REGISTERED) {
         LOG_CMD.info("001 RPL_WELCOME");
-		rh.sendReply(client, RPL_WELCOME, client.getNickName(), "Welcome to Hasardous IRC SeRVER");
+		rh.processResponse(client, RPL_WELCOME);
     } else {
-        LOG_CMD.info("??? RPL_USER");
+        LOG_CMD.info("202 RPL_USER");
     }
 }
 
-int User::checkArgs(Server& server, Client& client, std::string& params)
+ReplyCode User::checkArgs(Server& server, Client& client, std::string& params)
 {
     (void)server;
     std::istringstream iss(params);
     std::string        username, hostname, servername, realname;
+
 
     iss >> username;
     if (username.empty()) {
@@ -73,8 +74,9 @@ int User::checkArgs(Server& server, Client& client, std::string& params)
     size_t end = realname.find_last_not_of(" \t\r\n");
     realname = realname.substr(start, end - start + 1);
 
-    if (!client.getUserName().empty() && !client.getNickName().empty()) {
+    if (!client.getUserName().empty() && !client.getNickName().empty() && client.isRegistered()) {
         LOG_CMD.error("462 ERR_ALREADYREGISTRED");
+		params = "";
         return (ERR_ALREADYREGISTERED);
     }
     params = username + " " + realname;

@@ -6,7 +6,7 @@
 /*   By: fpetit <fpetit@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/11 08:55:19 by jhervoch          #+#    #+#             */
-/*   Updated: 2025/09/22 19:33:29 by fpetit           ###   ########.fr       */
+/*   Updated: 2025/09/24 14:15:26 by fpetit           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,24 +46,24 @@ class Server
     Server(const unsigned short port, const std::string& psswd);
 
     // static Server&		getInstance(const unsigned short port = DEFAULT_PORT, const std::string&
-    // password = DEFAULT_PASSWORD);
+    // password = DEFAULT_PASSWORD)
 
     void        start();
     void        stop();
     std::string getPassW() const; // added for PASS
     Client*     findClientByNickname(std::string&);
-    int         indexOf(Socket);
-    void        addEventsOf(Client&, short);
+	int			indexOf(Client& client);
+	void		addEventsOf(Client&, int event);
+
 
   private:
-    TcpSocket                       _serverSocket;
-    std::vector<pollfd>             _fds;
-    std::map<Socket, Client*>       _clients;
-    std::map<std::string, Channel*> _channels;
-    std::map<std::string, Client*>  _clientsByNick;
-    std::string                     _psswd;
-    std::string                     _name;
-    // static Server*                 _instance;
+    TcpSocket                      _serverSocket;
+    std::vector<pollfd>            _pfds;
+    std::map<Socket, Client*>      _clients;
+    std::map<std::string, Client*> _clientsByNick;
+    std::string                    _psswd;
+    std::string                    _name;
+    // satic Server*                 _instance;
 
     Server();
     Server(const Server&);
