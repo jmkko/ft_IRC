@@ -4,6 +4,7 @@
 #include "Nick.hpp"
 #include "Pass.hpp"
 #include "User.hpp"
+#include "Join.hpp"
 #include "consts.hpp"
 #include <iostream>
 #include <sstream>

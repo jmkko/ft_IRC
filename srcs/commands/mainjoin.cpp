@@ -8,7 +8,7 @@
 int main()
 {
 
-    std::string              params = "#channel1, &channel2 key1";
+    std::string              params = "#chan1, #chan2 key1";
     std::istringstream       iss(params);
     std::vector<std::string> channels;
     std::vector<std::string> keys;
@@ -20,6 +20,8 @@ int main()
     iss >> keysList;
     if (iss >> std::ws && !iss.eof())
         std::cout << "to many params\n";
+    if (channelsList[channelsList.size()-1] == ',')
+        std::cout << "empty last chan" << std::endl;
     std::cout << "first token : " << channelsList << std::endl;
     std::istringstream issChannels(channelsList);
     while (std::getline(issChannels, value, ',')) {
@@ -28,7 +30,7 @@ int main()
         else
          std::cout << "Bad Channel Mask\n";
     }
-    std::cout << "second token : " << value << std::endl;
+    std::cout << "second token : " << keysList << std::endl;
     std::istringstream issKeys(keysList);
     while (std::getline(issKeys, value, ',')) {
         keys.push_back(value);

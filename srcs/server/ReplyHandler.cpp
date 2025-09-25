@@ -115,6 +115,8 @@ std::string	ReplyHandler::selectResponse(Client& client, ReplyCode code, const s
 			return (std::string("433") + ERR_ERRONEUSNICKNAME_MSG + parameters);
 		case ERR_PASSWDMISMATCH:
 			return (std::string("464") + ERR_PASSWDMISMATCH_MSG);
+		case ERR_NOTREGISTERED :
+			return(TO_STRING(ERR_NOTREGISTERED) + "* " + parameters + " :You have not registered");
 		case ERR_ALREADYREGISTERED:
 			return (std::string("464") + ERR_ALREADYREGISTERED_MSG);
 		default:

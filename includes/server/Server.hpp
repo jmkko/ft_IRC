@@ -52,17 +52,17 @@ class Server
     void        stop();
     std::string getPassW() const; // added for PASS
     Client*     findClientByNickname(std::string&);
-	int			indexOf(Client& client);
-	void		addEventsOf(Client&, int event);
-
+    int         indexOf(Client& client);
+    void        addEventsOf(Client&, int event);
 
   private:
-    TcpSocket                      _serverSocket;
-    std::vector<pollfd>            _pfds;
-    std::map<Socket, Client*>      _clients;
-    std::map<std::string, Client*> _clientsByNick;
-    std::string                    _psswd;
-    std::string                    _name;
+    TcpSocket                       _serverSocket;
+    std::vector<pollfd>             _pfds;
+    std::map<Socket, Client*>       _clients;
+    std::map<std::string, Client*>  _clientsByNick;
+    std::map<std::string, Channel*> _channels;
+    std::string                     _psswd;
+    std::string                     _name;
     // satic Server*                 _instance;
 
     Server();

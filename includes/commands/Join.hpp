@@ -3,17 +3,31 @@
 
 #include "ICommand.hpp"
 #include "Channel.hpp"
+#include "reply_codes.hpp"
+#include "utils.hpp"
 #include <vector>
+
+struct ChannelParam {
+    std::string channel;
+    std::string key;
+    bool        isValid = true;
+    ChannelParam(const std::string& a, std::string& b) : channel(a), key(b) {}
+    ChannelParam(const std::string& a) : channel(a) {}
+    ChannelParam(const std::string& a, bool valid) : channel(a), isValid(valid) {}
+};
 
 
 class Join : public ICommand{
   public:
-    Join(const std::string& name);
+    Join(std::vector<ChannelParam> channelsLst);
+    ~Join();
     void       execute(Server&, Client&);
-    static int checkArgs(Server&, Client&, std::string&);
+    static std::vector<ChannelParam> checkArgs(Server&, Client&, std::string&);
   private:
-    std::vector<std::string> _channels;
-    std::vector<std::string> _keys;
+    std::vector<ChannelParam> _channelsLst;
+    Join();
+    Join(const Join& mother);
+    Join& operator=(const Join& other);
 };
 
 #endif

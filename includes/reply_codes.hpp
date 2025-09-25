@@ -1,5 +1,5 @@
 #ifndef REPLY_CODES_HPP
-# define REPLY_CODES_HPP
+#define REPLY_CODES_HPP
 
 // IRC Response Code Defines
 
@@ -8,15 +8,15 @@
 // =============================================================================
 
 // Success Responses
-#define RPL_WELCOME_MSG " :Welcome to the IRC HazADoU& SerVerRrrr"               // <nick>!<user>@<host>
-#define RPL_YOURHOST_MSG " :Your host is"                                       // <servername>, running version <ver>
-#define RPL_CREATED_MSG " :This server was created"                             // <date>
-#define RPL_MYINFO_MSG ""                                                       // <servername> <version> <available user modes> <available channel modes>
+#define RPL_WELCOME_MSG  " :Welcome to the IRC HazADoU& SerVerRrrr" // <nick>!<user>@<host>
+#define RPL_YOURHOST_MSG " :Your host is"            // <servername>, running version <ver>
+#define RPL_CREATED_MSG  " :This server was created" // <date>
+#define RPL_MYINFO_MSG   "" // <servername> <version> <available user modes> <available channel modes>
 
 // Error Responses
-#define ERR_NEEDMOREPARAMS_MSG " :Not enough parameters "
+#define ERR_NEEDMOREPARAMS_MSG    " :Not enough parameters "
 #define ERR_ALREADYREGISTERED_MSG " :Unauthorized command (already registered)"
-#define ERR_UNKNOWNCOMMAND_MSG " :Command is not handled (sorry guys) "
+#define ERR_UNKNOWNCOMMAND_MSG    " :Command is not handled (sorry guys) "
 // =============================================================================
 // PASS Command Responses
 // =============================================================================
@@ -36,12 +36,12 @@
 // Success: RPL_WELCOME series (001-004) if this completes registration
 
 // Error Responses
-#define ERR_NONICKNAMEGIVEN_MSG " :No nickname given"
-#define ERR_ERRONEUSNICKNAME_MSG " :Erroneous nickname "                         // <nick>
-#define ERR_NICKNAMEINUSE_MSG " :Nickname is already in use (bad choice)"                    // <nick>
-#define ERR_NICKCOLLISION_MSG " :Nickname collision KILL from "                  // <nick>, <user>@<host>
-#define ERR_UNAVAILRESOURCE_MSG " :Nick/channel is temporarily unavailable"     // <nick/channel>
-#define ERR_RESTRICTED_MSG " :Your connection is restricted!"
+#define ERR_NONICKNAMEGIVEN_MSG  " :No nickname given"
+#define ERR_ERRONEUSNICKNAME_MSG " :Erroneous nickname "                     // <nick>
+#define ERR_NICKNAMEINUSE_MSG    " :Nickname is already in use (bad choice)" // <nick>
+#define ERR_NICKCOLLISION_MSG    " :Nickname collision KILL from " // <nick>, <user>@<host>
+#define ERR_UNAVAILRESOURCE_MSG  " :Nick/channel is temporarily unavailable" // <nick/channel>
+#define ERR_RESTRICTED_MSG       " :Your connection is restricted!"
 
 // =============================================================================
 // JOIN Command Responses
@@ -49,37 +49,37 @@
 
 // Success Responses
 // JOIN message: :<nick>!<user>@<host> JOIN <channel>
-#define RPL_TOPIC_MSG ""                                                        // <channel> :topic
-#define RPL_TOPICWHOTIME_MSG ""                                                 // <channel> <nick> <time>
-#define RPL_NAMREPLY_MSG ""                                                     // <channel> :nick1 nick2 nick3...
-#define RPL_ENDOFNAMES_MSG " :End of NAMES list"                               // <channel>
+#define RPL_TOPIC_MSG        ""                    // <channel> :topic
+#define RPL_TOPICWHOTIME_MSG ""                    // <channel> <nick> <time>
+#define RPL_NAMREPLY_MSG     ""                    // <channel> :nick1 nick2 nick3...
+#define RPL_ENDOFNAMES_MSG   " :End of NAMES list" // <channel>
 
 // Error Responses
-#define ERR_NOSUCHCHANNEL_MSG " :No such channel"                              // <channel>
-#define ERR_CANNOTSENDTOCHAN_MSG " :Cannot send to channel"                     // <channel>
-#define ERR_TOOMANYCHANNELS_MSG " :You have joined too many channels"          // <channel>
-#define ERR_TOOMANYTARGETS_MSG " recipients."                                   // <target> :<error code>, <abort message>
-#define ERR_CHANNELISFULL_MSG " :Cannot join channel (+l)"                     // <channel>
-#define ERR_INVITEONLYCHAN_MSG " :Cannot join channel (+i)"                    // <channel>
-#define ERR_BANNEDFROMCHAN_MSG " :Cannot join channel (+b)"                    // <channel>
-#define ERR_BADCHANNELKEY_MSG " :Cannot join channel (+k)"                     // <channel>
-#define ERR_BADCHANMASK_MSG " :Bad Channel Mask"                               // <channel>
-#define ERR_NOCHANMODES_MSG " :Channel doesn't support modes"                  // <channel>
+#define ERR_NOSUCHCHANNEL_MSG    " :No such channel"                   // <channel>
+#define ERR_CANNOTSENDTOCHAN_MSG " :Cannot send to channel"            // <channel>
+#define ERR_TOOMANYCHANNELS_MSG  " :You have joined too many channels" // <channel>
+#define ERR_TOOMANYTARGETS_MSG   " recipients." // <target> :<error code>, <abort message>
+#define ERR_CHANNELISFULL_MSG    " :Cannot join channel (+l)"      // <channel>
+#define ERR_INVITEONLYCHAN_MSG   " :Cannot join channel (+i)"      // <channel>
+#define ERR_BANNEDFROMCHAN_MSG   " :Cannot join channel (+b)"      // <channel>
+#define ERR_BADCHANNELKEY_MSG    " :Cannot join channel (+k)"      // <channel>
+#define ERR_BADCHANMASK_MSG      " :Bad Channel Mask"              // <channel>
+#define ERR_NOCHANMODES_MSG      " :Channel doesn't support modes" // <channel>
 
 // =============================================================================
 // INVITE Command Responses
 // =============================================================================
 
 // Success Responses
-#define RPL_INVITING_MSG ""                                                     // <channel> <nick>
+#define RPL_INVITING_MSG "" // <channel> <nick>
 // INVITE message to target: :<nick>!<user>@<host> INVITE <target> <channel>
 
 // Error Responses
-#define ERR_NOSUCHNICK_MSG " :No such nick/channel"                            // <nickname>
+#define ERR_NOSUCHNICK_MSG " :No such nick/channel" // <nickname>
 // ERR_NOSUCHCHANNEL_MSG (reused)                                              // <channel>
-#define ERR_NOTONCHANNEL_MSG " :You're not on that channel"                    // <channel>
-#define ERR_USERONCHANNEL_MSG " :is already on channel"                        // <user> <channel>
-#define ERR_CHANOPRIVSNEEDED_MSG " :You're not channel operator"               // <channel>
+#define ERR_NOTONCHANNEL_MSG     " :You're not on that channel"  // <channel>
+#define ERR_USERONCHANNEL_MSG    " :is already on channel"       // <user> <channel>
+#define ERR_CHANOPRIVSNEEDED_MSG " :You're not channel operator" // <channel>
 
 // =============================================================================
 // QUIT Command Responses
@@ -88,7 +88,7 @@
 // Success Responses
 // QUIT message: :<nick>!<user>@<host> QUIT :reason (broadcast to channels)
 // Connection closes - No numeric response to quitting client
-#define ERROR_CLOSING_LINK_MSG " :Closing Link:"                               // <host> (reason)
+#define ERROR_CLOSING_LINK_MSG " :Closing Link:" // <host> (reason)
 
 // Error Responses: Generally no error responses - QUIT is almost always successful
 
@@ -108,12 +108,12 @@
 // =============================================================================
 
 // Success Responses (User Mode)
-#define RPL_UMODEIS_MSG ""                                                      // <user mode string>
+#define RPL_UMODEIS_MSG "" // <user mode string>
 // MODE message: :<nick>!<user>@<host> MODE <nick> <mode changes>
 
 // Success Responses (Channel Mode)
-#define RPL_CHANNELMODEIS_MSG ""                                                // <channel> <mode> <mode params>
-#define RPL_CREATIONTIME_MSG ""                                                 // <channel> <creation time>
+#define RPL_CHANNELMODEIS_MSG "" // <channel> <mode> <mode params>
+#define RPL_CREATIONTIME_MSG  "" // <channel> <creation time>
 // MODE message: :<nick>!<user>@<host> MODE <channel> <mode changes> <params>
 
 // Error Responses
@@ -121,12 +121,12 @@
 // ERR_NOSUCHCHANNEL_MSG (reused)                                              // <channel>
 // ERR_NOTONCHANNEL_MSG (reused)                                               // <channel>
 // ERR_NEEDMOREPARAMS_MSG (reused)
-#define ERR_KEYSET_MSG " :Channel key already set"                             // <channel>
-#define ERR_UNKNOWNMODE_MSG " :is unknown mode char to me for"                 // <char>, <channel>
+#define ERR_KEYSET_MSG       " :Channel key already set"        // <channel>
+#define ERR_UNKNOWNMODE_MSG  " :is unknown mode char to me for" // <char>, <channel>
 #define ERR_NOPRIVILEGES_MSG " :Permission Denied- You're not an IRC operator"
 // ERR_CHANOPRIVSNEEDED_MSG (reused)                                           // <channel>
 #define ERR_UMODEUNKNOWNFLAG_MSG " :Unknown MODE flag"
-#define ERR_USERSDONTMATCH_MSG " :Cannot change mode for other users"
+#define ERR_USERSDONTMATCH_MSG   " :Cannot change mode for other users"
 
 // =============================================================================
 // OPER Command Responses
@@ -149,21 +149,21 @@ enum ReplyCode {
 
     // post registration
     RPL_WELCOME = 001,
-	RPL_YOURHOST = 002,
-	RPL_CREATED  = 003,
-	RPL_MYINFO  = 004,
+    RPL_YOURHOST = 002,
+    RPL_CREATED = 003,
+    RPL_MYINFO = 004,
 
-	// notification
-	RPL_NOTICE = 101,
+    // notification
+    RPL_NOTICE = 101,
 
-	// Commande
-	RPL_PASS = 201,
-	RPL_USER = 202,
-	RPL_JOIN = 203,
-	RPL_NICK = 204,
-	RPL_KICK = 205,
-	RPL_PRIVMSG = 206,
-	RPL_MODE = 207,
+    // Commande
+    RPL_PASS = 201,
+    RPL_USER = 202,
+    RPL_JOIN = 203,
+    RPL_NICK = 204,
+    RPL_KICK = 205,
+    RPL_PRIVMSG = 206,
+    RPL_MODE = 207,
 
     // channel info
     RPL_NONE = 300,      // used to mark no answer
