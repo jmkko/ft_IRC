@@ -15,6 +15,7 @@ INCLUDES		:=	-Iincludes\
 
 SRCS			:=	srcs/main.cpp\
 					srcs/utils.cpp\
+					srcs/signal_handler.cpp\
 					srcs/clients/Client.cpp\
 					srcs/channels/Channel.cpp\
 					srcs/server/Server.cpp\

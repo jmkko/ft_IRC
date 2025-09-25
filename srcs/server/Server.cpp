@@ -1,4 +1,5 @@
 #include "Server.hpp"
+#include "signal_handler.hpp"
 
 /************************************************************
  *		🥚 CONSTRUCTORS & DESTRUCTOR						*
@@ -126,7 +127,6 @@ void Server::handleNewConnection(int i)
     }
 }
 
-
 /**
  @brief removes client
  @param pfd_index
@@ -190,17 +190,17 @@ void Server::handleClientData(int pfd_index)
     } else {
         if (utils::safeAt(buffer, bytesReceived))
             utils::safeAt(buffer, bytesReceived) = '\0';
-        client->appendToReceiveBuffer(std::string(buffer));
+        client->appendToReceiveBuffer(std::string(static_cast<char *>(buffer)));
         this->handleCommand(pfd_index);
     }
 }
 
 /**
-@brief attempt sending the queued messages
-if a message is partially sent, updates send buffer accordingly
-if a message is completely sent, disable write notification for the client fd
-in case of send error, either retry or disconnect the client
-@param pfd_index monitored fd for client
+ *@brief attempt sending the queued messages
+ if a message is partially sent, updates send buffer accordingly
+ if a message is completely sent, disable write notification for the client fd
+ in case of send error, either retry or disconnect the client
+ @param pfd_index monitored fd for client
 */
 void Server::handleClientOutput(int pfd_index)
 {
@@ -302,10 +302,10 @@ int	Server::indexOf(Client& client) {
 	return -1;
 }
 
-void Server::addEventsOf(Client& client, short event) {
+void Server::addEventsOf(Client& client, int event) {
     int index = indexOf(client);
     if (index >= 0) {
-        _pfds[index].events |= event;
+        _pfds[index].events = static_cast<short>( _pfds[index].events | event);  // ADD to existing events
     }
 }
 
