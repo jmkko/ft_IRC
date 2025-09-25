@@ -8,29 +8,31 @@
 int main()
 {
 
-    std::string              params = "#channel1,&channel2 123,567,333";
+    std::string              params = "#channel1, &channel2 key1";
     std::istringstream       iss(params);
     std::vector<std::string> channels;
     std::vector<std::string> keys;
+    std::string              channelsList;
+    std::string              keysList;
     std::string              value;
 
-    iss >> value;
-    std::cout << "first token : " << value << std::endl;
-    std::istringstream issChannels(value);
+    iss >> channelsList;
+    iss >> keysList;
+    if (iss >> std::ws && !iss.eof())
+        std::cout << "to many params\n";
+    std::cout << "first token : " << channelsList << std::endl;
+    std::istringstream issChannels(channelsList);
     while (std::getline(issChannels, value, ',')) {
         if (value[0] == '#' || value[0] == '&')
             channels.push_back(value);
         else
          std::cout << "Bad Channel Mask\n";
     }
-    iss >> value;
     std::cout << "second token : " << value << std::endl;
-    std::istringstream issKeys(value);
+    std::istringstream issKeys(keysList);
     while (std::getline(issKeys, value, ',')) {
         keys.push_back(value);
     }
-    if (iss>> value)
-        std::cout << "to many params\n";
 
     std::vector<std::string>::iterator it = channels.begin();
     size_t                             rank = 0;

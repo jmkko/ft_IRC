@@ -45,6 +45,7 @@ class Channel
     void makeOperator(Client& client);
 
     void broadcast(const std::string& message, Client* sender = NULL) const;
+    static bool isValidChannelName(const std::string& name);
 
   private:
     std::string       _name;
@@ -58,7 +59,6 @@ class Channel
     std::set<Client*> _operators;
 
     Channel();
-    static bool _isValidChannelName(const std::string& name);
 };
 
 std::ostream& operator<<(std::ostream& os, const Channel& c);

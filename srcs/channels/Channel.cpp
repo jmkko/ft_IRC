@@ -5,9 +5,15 @@
  ************************************************************/
 
 /// @brief checks validity according to RFC
-bool Channel::_isValidChannelName(const std::string& name)
+bool Channel::isValidChannelName(const std::string& name)
 {
-    return name.length() > 1 && name[0] == '#' && name.length() < irc_config.get_chanNameMaxLen();
+    size_t posColon = name.find(':');
+    size_t posBell = name.find('\a');
+    if (posColon != std::string::npos && posBell != std::string::npos)
+        return false;
+    if (name[0] != '#' && name[0] != '&' && name[0] != '+' && name[0] != '!')
+        return false;
+    return name.length() > 1 && name.length() <= irc_config.get_chanNameMaxLen();
 }
 
 /************************************************************
@@ -17,7 +23,7 @@ bool Channel::_isValidChannelName(const std::string& name)
 /// @throw exception if name is invalid
 Channel::Channel(const std::string& name) :
     _topic("No topic is set"),
-    _mode(0),
+    _mode(CHANMODE_INIT),
     _userLimit(NO_LIMIT),
     _isInviteOnly(false),
     _isTopicChangeRestricted(false),
@@ -44,7 +50,7 @@ Channel::Channel(const Channel& inst) :
 Channel::Channel(void) :
     _name(""),
     _topic("No topic is set"),
-    _mode(0),
+    _mode(CHANMODE_INIT),
     _userLimit(NO_LIMIT),
     _isInviteOnly(false),
     _isTopicChangeRestricted(false),
@@ -123,7 +129,7 @@ bool               Channel::isTopicChangeRestricted() const { return _isTopicCha
 
 void               Channel::setName(const std::string& name)
 {
-    if (Channel::_isValidChannelName(name))
+    if (Channel::isValidChannelName(name))
         _name = name;
     else
         throw std::runtime_error("invalid channel name");
