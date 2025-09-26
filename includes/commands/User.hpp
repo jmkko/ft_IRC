@@ -1,8 +1,10 @@
 #ifndef USER_HPP
 #define USER_HPP
+
 #include "ICommand.hpp"
 #include "reply_codes.hpp"
-#include <iostream>
+
+#include <string>
 
 class Server;
 class Client;

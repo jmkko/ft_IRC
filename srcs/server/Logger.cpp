@@ -1,15 +1,21 @@
 #include "Logger.hpp"
 
+#include "colors.hpp"
+#include "consts.hpp"
+
+#include <ctime>
+#include <iomanip>
+#include <iostream>
+
 Logger::Logger(const std::string& logName, const std::string& filename, LogLevel level) :
 	_name(logName), _minLevel(level), _fileEnabled(false)
 {
-
 	_logFile.open(filename.c_str(), std::ios::app);
 	if (_logFile.is_open()) {
 		_fileEnabled = true;
 		log(INFO, "Logger initialized - file: " + filename);
 	} else {
-		std::cerr << "Warning: Could not open log file " << filename << std::endl;
+		std::cerr << "Warning: Could not open log file " << filename << '\n';
 	}
 }
 
@@ -32,11 +38,11 @@ void Logger::log(LogLevel level, const std::string& message)
 	std::string terminalMessage = timestamp + " " + color + "[" + levelStr + "]" + RESET + " " + message;
 	std::string fileMessage = timestamp + " [" + levelStr + "] " + message;
 	if (level == ERROR)
-		std::cerr << terminalMessage << std::endl;
+		std::cerr << terminalMessage << '\n';
 	else
-		std::cout << terminalMessage << std::endl;
+		std::cout << terminalMessage << '\n';
 	if (_fileEnabled) {
-		_logFile << fileMessage << std::endl;
+		_logFile << fileMessage << '\n';
 		_logFile.flush();
 	}
 }

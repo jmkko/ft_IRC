@@ -1,5 +1,13 @@
 #include "Channel.hpp"
 
+#include "Client.hpp"
+#include "Config.hpp"
+#include "ICommand.hpp"
+#include "colors.hpp"
+#include "consts.hpp"
+
+#include <iostream>
+
 /************************************************************
  *		📁 CLASS METHODS									*
  ************************************************************/

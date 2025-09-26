@@ -1,5 +1,11 @@
 #include "Client.hpp"
 
+#include "Channel.hpp"
+#include "Config.hpp"
+#include "consts.hpp"
+
+#include <iostream>
+
 /************************************************************
  *		🥚 CONSTRUCTORS & DESTRUCTOR						*
  ************************************************************/

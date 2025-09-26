@@ -1,17 +1,12 @@
 #ifndef REPLY_HANDLER_HPP
 #define REPLY_HANDLER_HPP
 
-#include "Client.hpp"
-#include "Config.hpp"
-#include "Server.hpp"
 #include "reply_codes.hpp"
 
-#include <iomanip>
-#include <iostream>
-#include <sstream>
 #include <string>
 
 class Server;
+class Client;
 
 class ReplyHandler
 {

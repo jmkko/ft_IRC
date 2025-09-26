@@ -1,6 +1,28 @@
 #include "Server.hpp"
+
 #include "Channel.hpp"
+#include "Client.hpp"
+#include "CmdFactory.hpp"
+#include "Config.hpp"
+#include "ICommand.hpp"
+#include "LogManager.hpp"
+#include "ReplyHandler.hpp"
+#include "consts.hpp"
 #include "signal_handler.hpp"
+#include "utils.hpp"
+
+#include <arpa/inet.h> // hton*, ntoh*, inet_addr
+#include <cstring>
+#include <exception>
+#include <fcntl.h>
+#include <iostream>
+#include <netinet/in.h>
+#include <signal.h>
+#include <sstream>
+#include <string>
+#include <sys/poll.h>
+#include <sys/socket.h>
+#include <unistd.h> // close
 
 /************************************************************
  *		🥚 CONSTRUCTORS & DESTRUCTOR	            *

@@ -102,7 +102,10 @@ formator:
 	@echo "$(YELLOW)=== Formatting code ===$(NOC)"
 	@clang-format -style=file:./.clang-format -i $(FILES_TO_FORMAT)
 
-tidy:
+comp-data:
+	@intercept-build make re
+
+tidy: comp-data
 	@echo "$(YELLOW)=== Code analysis ===$(NOC)"
 	@clang-tidy-12 $(FILES_TO_FORMAT) $(TIDYFLAGS) $(TIDYFLAGS_CPL)
 

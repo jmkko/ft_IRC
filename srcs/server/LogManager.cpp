@@ -1,5 +1,7 @@
 #include "LogManager.hpp"
 
+#include "consts.hpp"
+
 #include <cstring>
 #include <errno.h>
 #include <iostream>

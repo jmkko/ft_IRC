@@ -1,12 +1,8 @@
 #ifndef CLIENT_HPP
 #define CLIENT_HPP
 
-#include "Channel.hpp"
-#include "Config.hpp"
 #include "TcpSocket.hpp"
-#include "consts.hpp"
 
-#include <iostream>
 #include <map>
 #include <string>
 

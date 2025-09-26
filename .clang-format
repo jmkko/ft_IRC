@@ -22,3 +22,5 @@ AllowShortIfStatementsOnASingleLine: false
 PenaltyBreakBeforeFirstCallParameter: 0
 BinPackArguments: false
 BinPackParameters: false
+# includes
+IncludeBlocks: Regroup

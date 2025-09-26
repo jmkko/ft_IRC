@@ -6,39 +6,24 @@
 /*   By: fpetit <fpetit@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/11 08:55:19 by jhervoch          #+#    #+#             */
-/*   Updated: 2025/09/26 11:31:40 by fpetit           ###   ########.fr       */
+/*   Updated: 2025/09/26 15:53:12 by fpetit           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
-#include "Client.hpp"
-#include "Config.hpp"
-#include "ICommand.hpp"
-#include "LogManager.hpp"
-#include "ReplyHandler.hpp"
 #include "TcpSocket.hpp"
-#include "consts.hpp"
-#include "utils.hpp"
 
-#include "CmdFactory.hpp"
-#include <arpa/inet.h> // hton*, ntoh*, inet_addr
-#include <cstring>
-#include <exception>
-#include <fcntl.h>
-#include <iostream>
 #include <map>
-#include <netinet/in.h>
 #include <poll.h>
-#include <signal.h>
-#include <sstream>
-#include <string.h>
 #include <string>
-#include <sys/poll.h>
-#include <sys/socket.h>
-#include <unistd.h> // close
+#include <vector>
 
+class ICommand;
+class TcpSocket;
+class Client;
+class Channel;
 class Server
 {
   public:

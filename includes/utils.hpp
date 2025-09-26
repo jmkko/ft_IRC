@@ -1,9 +1,6 @@
 #ifndef UTILS_HPP
 #define UTILS_HPP
 
-#include "LogManager.hpp"
-#include "consts.hpp"
-
 #include <iostream>
 #include <sstream>
 #include <stdexcept>

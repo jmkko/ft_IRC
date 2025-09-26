@@ -1,6 +1,11 @@
 #include "Join.hpp"
+
+#include "Channel.hpp"
+#include "LogManager.hpp"
 #include "ReplyHandler.hpp"
 #include "Server.hpp"
+#include "reply_codes.hpp"
+#include "utils.hpp"
 
 Join::Join() {}
 Join::~Join() {}

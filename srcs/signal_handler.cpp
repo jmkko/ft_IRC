@@ -1,5 +1,7 @@
 #include "signal_handler.hpp"
 
+#include <signal.h>
+
 // NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables)
 volatile sig_atomic_t globalSignal = 0;
 

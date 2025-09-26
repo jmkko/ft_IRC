@@ -2,7 +2,6 @@
 #define LOGMANAGER
 
 #include "Logger.hpp"
-#include "consts.hpp"
 
 class LogManager
 {

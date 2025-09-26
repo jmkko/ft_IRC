@@ -1,6 +1,20 @@
 #include "CmdFactory.hpp"
+
+#include "Client.hpp"
+#include "ICommand.hpp"
+#include "Join.hpp"
+#include "LogManager.hpp"
+#include "Nick.hpp"
+#include "Pass.hpp"
+#include "ReplyHandler.hpp"
 #include "Server.hpp"
+#include "User.hpp"
+#include "consts.hpp"
 #include "reply_codes.hpp"
+#include "utils.hpp"
+
+#include <iostream>
+#include <sstream>
 
 // Default constructor
 CmdFactory::CmdFactory(void) {}
@@ -21,7 +35,7 @@ CmdFactory::~CmdFactory(void) {}
 ICommand* CmdFactory::make_command(Server& server, Client& client, std::string& params)
 {
 	ReplyHandler&	   rh = ReplyHandler::get_instance(&server);
-	std::string		   commandLine;
+	std::string		   commandLine = "";
 	std::istringstream iss(params); // NOLINT(clang-diagnostic-vexing-parse)
 	std::string		   available[NB_AVAILABLE_CMD]
 		= {"USER", "PASS", "NICK", "QUIT", "INVITE", "JOIN", "PART", "MODE", "OPER"};
@@ -78,7 +92,7 @@ ICommand* CmdFactory::nick_cmd(Server& server, Client& client, std::string& para
 
 ICommand* CmdFactory::user_cmd(Server& server, Client& client, std::string& params)
 {
-	std::string	  username, realname;
+	std::string	  username = "", realname = "";
 	ReplyCode	  replyCode = User::check_args(server, client, params);
 	ReplyHandler& rh = ReplyHandler::get_instance(&server);
 

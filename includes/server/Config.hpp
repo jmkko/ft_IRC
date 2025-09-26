@@ -1,11 +1,7 @@
 #ifndef CONFIG_HPP
 #define CONFIG_HPP
 
-#include "LogManager.hpp"
-#include "consts.hpp"
 #include <cstdlib>
-#include <fstream>
-#include <iostream>
 #include <string>
 #include <vector>
 

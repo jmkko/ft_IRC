@@ -1,7 +1,15 @@
 #include "ReplyHandler.hpp"
-#include "reply_codes.hpp"
+
+#include "Client.hpp"
+#include "Config.hpp"
+#include "LogManager.hpp"
+#include "Server.hpp"
+#include "utils.hpp"
+
 #include <cstdio>
-#include <string>
+#include <iomanip>
+#include <iostream>
+#include <sstream>
 
 /************************************************************
  *		🥚 CONSTRUCTORS & DESTRUCTOR						*
@@ -16,7 +24,6 @@ ReplyHandler::ReplyHandler(Server* server) : _server(server) {}
 static const std::string code_to_str(ReplyCode code)
 {
 	std::stringstream ss;
-	std::string		  codeStr;
 	ss << " " << std::setw(3) << std::setfill('0') << code;
 	ss << " ";
 	return ss.str();

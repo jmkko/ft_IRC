@@ -1,5 +1,10 @@
-// #include "Config.hpp"
 #include "Config.hpp"
+
+#include "LogManager.hpp"
+#include "consts.hpp"
+
+#include <fstream>
+#include <iostream>
 
 const Config ircConfig(SERVER_CONF_FILE);
 

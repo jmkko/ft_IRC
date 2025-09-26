@@ -1,7 +1,11 @@
 #include "Pass.hpp"
+
 #include "Client.hpp"
 #include "LogManager.hpp"
+#include "ReplyHandler.hpp"
 #include "Server.hpp"
+
+#include <iostream>
 
 // Default constructor
 Pass::Pass(void) {}

@@ -1,13 +1,6 @@
 #ifndef CHANNEL_HPP
 #define CHANNEL_HPP
 
-#include "Client.hpp"
-#include "Config.hpp"
-#include "ICommand.hpp"
-#include "colors.hpp"
-#include "consts.hpp"
-
-#include <iostream>
 #include <set>
 #include <string>
 

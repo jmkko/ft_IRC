@@ -3,7 +3,6 @@
 
 #include "consts.hpp"
 
-#include <errno.h>
 #include <netinet/in.h> // sockaddr_in, IPPROTO_TCP
 #include <string>
 #include <vector>

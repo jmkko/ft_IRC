@@ -1,12 +1,13 @@
 #ifndef JOIN_HPP
 #define JOIN_HPP
 
-#include "Channel.hpp"
 #include "ICommand.hpp"
-#include "reply_codes.hpp"
-#include "utils.hpp"
 
+#include <string>
 #include <vector>
+
+class Client;
+class Server;
 
 struct ChannelParam {
 	std::string channel;

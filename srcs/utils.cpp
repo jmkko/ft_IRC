@@ -1,5 +1,8 @@
 #include "utils.hpp"
 
+#include "LogManager.hpp"
+#include "consts.hpp"
+
 bool check_port(const std::string& s, int* port)
 {
 	long n = utils::string_to_ulong(s.c_str());

@@ -1,15 +1,8 @@
 #ifndef LOGGER_HPP
 #define LOGGER_HPP
 
-#include "colors.hpp"
-#include "consts.hpp"
-
-#include <ctime>
 #include <fstream>
-#include <iomanip>
-#include <iostream>
 #include <map>
-#include <memory>
 #include <sstream>
 #include <string>
 

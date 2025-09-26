@@ -1,7 +1,12 @@
 #include "User.hpp"
+
 #include "Client.hpp"
+#include "LogManager.hpp"
+#include "ReplyHandler.hpp"
 #include "Server.hpp"
 #include "reply_codes.hpp"
+
+#include <iostream>
 
 // Default constructor
 User::User(void) {}

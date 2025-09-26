@@ -1,6 +1,5 @@
 #ifndef ICOMMAND_HPP
 #define ICOMMAND_HPP
-#include <iostream>
 
 class Server;
 class Client;

@@ -1,9 +1,10 @@
 #ifndef NICK_HPP
 #define NICK_HPP
-#include "Config.hpp"
+
 #include "ICommand.hpp"
 #include "reply_codes.hpp"
-#include <iostream>
+
+#include <string>
 
 class Server;
 class Client;

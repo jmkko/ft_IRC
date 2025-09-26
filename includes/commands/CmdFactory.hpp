@@ -1,16 +1,11 @@
 #ifndef CMDFACTORY_HPP
 #define CMDFACTORY_HPP
-#include "Join.hpp"
-#include "LogManager.hpp"
-#include "Nick.hpp"
-#include "Pass.hpp"
-#include "User.hpp"
-#include "consts.hpp"
-#include <iostream>
-#include <sstream>
+
+#include <string>
 
 class Server;
 class Client;
+class ICommand;
 
 class CmdFactory
 {

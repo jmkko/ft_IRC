@@ -1,21 +1,15 @@
 #include "Nick.hpp"
+
 #include "Client.hpp"
+#include "Config.hpp"
 #include "LogManager.hpp"
+#include "ReplyHandler.hpp"
 #include "Server.hpp"
+
+#include <iostream>
 
 Nick::Nick(const std::string& nickname) : _nickname(nickname) {}
 
-// Copy constructor
-// Nick::Nick(const Nick& other) { (void)other; }
-
-// Assignment operator overload
-// Nick& Nick::operator=(const Nick& other)
-// {
-//     (void)other;
-//     return (*this);
-// }
-
-// Destructor
 Nick::~Nick(void) {}
 
 void Nick::execute(Server& server, Client& client)
