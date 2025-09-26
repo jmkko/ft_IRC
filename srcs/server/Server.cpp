@@ -1,8 +1,9 @@
 #include "Server.hpp"
 #include "signal_handler.hpp"
+#include "Channel.hpp"
 
 /************************************************************
- *		🥚 CONSTRUCTORS & DESTRUCTOR						*
+ *		🥚 CONSTRUCTORS & DESTRUCTOR	            *
  ************************************************************/
 
 /**
@@ -21,7 +22,7 @@ Server::Server(const unsigned short port, const std::string& psswd) :
         _serverSocket.tcpListen();
     } catch (std::exception& e) {
         std::cout << e.what();
-        return; // need improve for exit program
+        exit (1); // need improve for exit program
     }
     LOG_SERVER.info("Server " + _name + " start at port :" + utils::toString(port));
     std::cout << "\n";
@@ -164,7 +165,7 @@ void Server::handleClientDisconnection(int pfd_index)
  */
 void Server::handleClientData(int pfd_index)
 {
-    LOG_SERVER.debug("Server#handleClientData");
+    LOG_SERVER.debug("Server #handleClientData");
     Socket  socket = _pfds[pfd_index].fd;
     Client* client = _clients[socket];
     if (!client) {
@@ -324,6 +325,13 @@ void Server::stop()
                      " sockets and their associated clients");
     for (size_t i = 0; i < _pfds.size(); ++i)
         cleanupSocketAndClients(i);
+    
+    // Clean up channels
+    LOG_SERVER.debug(std::string("cleaning ") + TO_STRING(channels.size()) + " channels");
+    for (std::map<std::string, Channel*>::iterator it = channels.begin(); it != channels.end(); ++it) {
+        delete it->second;
+    }
+    channels.clear();
 }
 
 /**

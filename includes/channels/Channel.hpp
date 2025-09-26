@@ -2,10 +2,10 @@
 #define CHANNEL_HPP
 
 #include "Client.hpp"
+#include "Config.hpp"
 #include "ICommand.hpp"
 #include "colors.hpp"
 #include "consts.hpp"
-#include "Config.hpp"
 
 #include <iostream>
 #include <set>
@@ -25,6 +25,7 @@ class Channel
 
     const std::string& getName() const;
     const std::string& getTopic() const;
+    //void enable_mode(unsigned short mode);
     bool               isMember(Client& client) const;
     bool               isOperator(Client& client) const;
     bool               isInvited(Client& client) const;
@@ -44,10 +45,12 @@ class Channel
     void makeOperator(Client& client);
 
     void broadcast(const std::string& message, Client* sender = NULL) const;
+    static bool isValidChannelName(const std::string& name);
 
   private:
     std::string       _name;
     std::string       _topic;
+    unsigned short    _mode;
     int               _userLimit;               // -1 if -l not set
     bool              _isInviteOnly;            // true if -i is set
     bool              _isTopicChangeRestricted; // true if -t is set
@@ -56,7 +59,6 @@ class Channel
     std::set<Client*> _operators;
 
     Channel();
-    static bool _isValidChannelName(const std::string& name);
 };
 
 std::ostream& operator<<(std::ostream& os, const Channel& c);

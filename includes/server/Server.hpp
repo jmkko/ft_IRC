@@ -14,13 +14,13 @@
 #define SERVER_HPP
 
 #include "Client.hpp"
+#include "Config.hpp"
 #include "ICommand.hpp"
 #include "LogManager.hpp"
 #include "ReplyHandler.hpp"
 #include "TcpSocket.hpp"
 #include "consts.hpp"
 #include "utils.hpp"
-#include "Config.hpp"
 
 #include "CmdFactory.hpp"
 #include <arpa/inet.h> // hton*, ntoh*, inet_addr
@@ -52,18 +52,20 @@ class Server
     void        stop();
     std::string getPassW() const; // added for PASS
     Client*     findClientByNickname(std::string&);
-	int			indexOf(Client& client);
-	void		addEventsOf(Client&, int event);
+    int         indexOf(Client& client);
+    void        addEventsOf(Client&, int event);
 
+  public:
+    std::map<std::string, Channel*> channels;
 
   private:
-    TcpSocket                      _serverSocket;
-    std::vector<pollfd>            _pfds;
-    std::map<Socket, Client*>      _clients;
-    std::map<std::string, Client*> _clientsByNick;
-    std::string                    _psswd;
-    std::string                    _name;
-    // static Server*                 _instance;
+    TcpSocket                       _serverSocket;
+    std::vector<pollfd>             _pfds;
+    std::map<Socket, Client*>       _clients;
+    std::map<std::string, Client*>  _clientsByNick;
+    std::string                     _psswd;
+    std::string                     _name;
+    // satic Server*                 _instance;
 
     Server();
     Server(const Server&);

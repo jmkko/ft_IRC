@@ -6,7 +6,7 @@
 /*   By: fpetit <fpetit@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 23:38:52 by npolack           #+#    #+#             */
-/*   Updated: 2025/09/22 19:04:16 by fpetit           ###   ########.fr       */
+/*   Updated: 2025/09/25 09:40:47 by jhervoch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,12 +25,19 @@
 #define DEFAULT_PASSWORD        "password"
 #define DEFAULT_PORT            6667
 #define MAX_JOINED_CHANNELS     NO_LIMIT
-#define CHAN_NAME_MAX_LEN       200
-#define CLIENT_READ_BUFFER_SIZE 513
+#define CHAN_NAME_MAX_LEN       50
+#define CLIENT_READ_BUFFER_SIZE 512
 #define WELL_KNOWN_PORT_MAX     1024
 #define DYNAMIC_PORT_MIN        49152
 #define NICKNAME_MAX_LEN        9
 #define NB_AVAILABLE_CMD        9
+
+#define CHANMODE_INIT   0x00
+#define CHANMODE_OP     0x01
+#define CHANMODE_TOPIC  0x02
+#define CHANMODE_KEY    0x04
+#define CHANMODE_INVITE 0x08
+#define CHANMODE_LIMIT  0x10
 
 typedef int Socket;
 

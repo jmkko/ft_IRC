@@ -5,9 +5,15 @@
  ************************************************************/
 
 /// @brief checks validity according to RFC
-bool Channel::_isValidChannelName(const std::string& name)
+bool Channel::isValidChannelName(const std::string& name)
 {
-    return name.length() > 1 && name[0] == '#' && name.length() < irc_config.get_chanNameMaxLen();
+    size_t posColon = name.find(':');
+    size_t posBell = name.find('\a');
+    if (posColon != std::string::npos && posBell != std::string::npos)
+        return false;
+    if (name[0] != '#' && name[0] != '&' && name[0] != '+' && name[0] != '!')
+        return false;
+    return name.length() > 1 && name.length() <= irc_config.get_chanNameMaxLen();
 }
 
 /************************************************************
@@ -16,7 +22,8 @@ bool Channel::_isValidChannelName(const std::string& name)
 
 /// @throw exception if name is invalid
 Channel::Channel(const std::string& name) :
-    _topic("this is the topic. please update it with TOPIC"),
+    _topic("No topic is set"),
+    _mode(CHANMODE_INIT),
     _userLimit(NO_LIMIT),
     _isInviteOnly(false),
     _isTopicChangeRestricted(false),
@@ -30,6 +37,7 @@ Channel::Channel(const std::string& name) :
 Channel::Channel(const Channel& inst) :
     _name(inst._name),
     _topic(inst._topic),
+    _mode(inst._mode),
     _userLimit(inst._userLimit),
     _isInviteOnly(inst._isInviteOnly),
     _isTopicChangeRestricted(inst._isTopicChangeRestricted),
@@ -41,7 +49,8 @@ Channel::Channel(const Channel& inst) :
 
 Channel::Channel(void) :
     _name(""),
-    _topic("this is the topic. please update it with TOPIC"),
+    _topic("No topic is set"),
+    _mode(CHANMODE_INIT),
     _userLimit(NO_LIMIT),
     _isInviteOnly(false),
     _isTopicChangeRestricted(false),
@@ -120,7 +129,7 @@ bool               Channel::isTopicChangeRestricted() const { return _isTopicCha
 
 void               Channel::setName(const std::string& name)
 {
-    if (Channel::_isValidChannelName(name))
+    if (Channel::isValidChannelName(name))
         _name = name;
     else
         throw std::runtime_error("invalid channel name");
@@ -144,7 +153,9 @@ void Channel::inviteClient(Client& client) { _invites.insert(&client); }
 
 void Channel::addMember(Client& client)
 {
-    if (_userLimit == NO_LIMIT || _members.size() < static_cast<size_t>(_userLimit))
+    if (isMember(client))
+        return;
+    if (_userLimit != NO_LIMIT && _members.size() >= static_cast<size_t>(_userLimit))
         throw std::runtime_error("channel max capacity reached");
     if (_isInviteOnly) {
         if (isInvited(client))
@@ -152,10 +163,9 @@ void Channel::addMember(Client& client)
         else
             throw std::runtime_error("client was not invited");
     }
-    if (irc_config.get_maxJoinedChannels() == NO_LIMIT || client.getNbJoinedChannels() < irc_config.get_maxJoinedChannels())
-        _members.insert(&client);
-    else
+    if (irc_config.get_maxJoinedChannels() != NO_LIMIT && client.getNbJoinedChannels() >= irc_config.get_maxJoinedChannels())
         throw std::runtime_error("joined channels limit reached");
+    _members.insert(&client);
 }
 
 void Channel::removeMember(Client& client) { _members.erase(&client); }
