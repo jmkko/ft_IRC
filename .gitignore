@@ -47,5 +47,6 @@ ircserv
 # IDE related
 #.clangd
 .vs-code
+.vscode/settings.json
 
 
