@@ -16,6 +16,10 @@ Checks: >
 CheckOptions:
     - key: cppcoreguidelines-avoid-non-const-global-variables.AllowInternalLinkage
       value: 'true'
+    - key: readability-identifier-naming.PrivateMemberPrefix
+      value: '_'
+    - key: readability-identifier-naming.PrivateMethodPrefix
+      value: '_'
     - key: readability-identifier-naming.ClassCase
       value: CamelCase
     - key: readability-identifier-naming.VariableCase

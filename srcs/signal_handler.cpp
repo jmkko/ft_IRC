@@ -3,19 +3,16 @@
 // NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables)
 volatile sig_atomic_t globalSignal = 0;
 
-static void handleSignal(int signal)
-{
-    globalSignal = signal;
-}
+static void handle_signal(int signal) { globalSignal = signal; }
 
-void setupSignalHandlers()
+void setup_signal_handlers()
 {
-    struct sigaction sa = {};
-    // NOLINTNEXTLINE(cppcoreguidelines-pro-type-union-access)
-    sa.sa_handler = handleSignal;
-    sigemptyset(&sa.sa_mask);
-    sa.sa_flags = 0;
-    sigaction(SIGINT, &sa, NULL);
-    sigaction(SIGTERM, &sa, NULL);
-    sigaction(SIGABRT, &sa, NULL);
+	struct sigaction sa = {};
+	// NOLINTNEXTLINE(cppcoreguidelines-pro-type-union-access)
+	sa.sa_handler = handle_signal;
+	sigemptyset(&sa.sa_mask);
+	sa.sa_flags = 0;
+	sigaction(SIGINT, &sa, NULL);
+	sigaction(SIGTERM, &sa, NULL);
+	sigaction(SIGABRT, &sa, NULL);
 }

@@ -6,26 +6,27 @@
 
 class LogManager
 {
-  private:
-    std::map<std::string, Logger*> _loggers;
-
-    LogManager(const LogManager& inst);
-
-    LogManager& operator=(const LogManager& inst);
-    LogManager() {};
-
   public:
-    static LogManager& getInstance();
-    Logger& getLogger(const std::string& name, const std::string& filename, LogLevel level);
-    void    setGlobalLevel(LogLevel level);
-    ~LogManager();
+	~LogManager();
+
+	static LogManager& get_instance();
+	Logger&			   get_logger(const std::string& name, const std::string& filename, LogLevel level);
+	void			   set_global_level(LogLevel level);
+
+  private:
+	LogManager() {};
+	LogManager(const LogManager& inst);
+
+	LogManager& operator=(const LogManager& inst);
+
+	std::map<std::string, Logger*> _loggers;
 };
 
 // Macros for easy usage
-#define LOG_SOCKET LogManager::getInstance().getLogger("SOCKET", "", DEBUG)
-#define LOG_SERVER LogManager::getInstance().getLogger("SERVER", "", DEBUG)
-#define LOG_CONN   LogManager::getInstance().getLogger("CONNECTION", "", DEBUG)
-#define LOG_CMD    LogManager::getInstance().getLogger("COMMAND", "", DEBUG)
-#define LOG_ERR    LogManager::getInstance().getLogger("ERROR", "", ERROR)
+#define LOG_SOCKET LogManager::get_instance().get_logger("SOCKET", "", DEBUG)
+#define LOG_SERVER LogManager::get_instance().get_logger("SERVER", "", DEBUG)
+#define LOG_CONN   LogManager::get_instance().get_logger("CONNECTION", "", DEBUG)
+#define LOG_CMD	   LogManager::get_instance().get_logger("COMMAND", "", DEBUG)
+#define LOG_ERR	   LogManager::get_instance().get_logger("ERROR", "", ERROR)
 
 #endif

@@ -2,9 +2,9 @@
 #define REPLY_HANDLER_HPP
 
 #include "Client.hpp"
+#include "Config.hpp"
 #include "Server.hpp"
 #include "reply_codes.hpp"
-#include "Config.hpp"
 
 #include <iomanip>
 #include <iostream>
@@ -16,17 +16,18 @@ class Server;
 class ReplyHandler
 {
   public:
-	std::string		selectResponse(Client& client, ReplyCode code, const std::string& parameter);
-	std::string		getIdOf(Client& client, std::string name = "");
-	int 			processResponse(Client& client, ReplyCode code, const std::string& parameters = "");
-    void			sendReply(Client&, std::string& msg);
+	std::string get_id_of(Client& client, const std::string& name = "");
+	std::string select_response(Client& client, ReplyCode code, const std::string& parameter);
+	int			process_response(Client& client, ReplyCode code, const std::string& parameters = "");
 
-    static ReplyHandler& getInstance(Server*);
+	static ReplyHandler& get_instance(Server* s);
 
   private:
-    Server* _server;
+	Server* _server;
 
-    ReplyHandler(Server*);
+	ReplyHandler(Server* s);
+
+	void _send_reply(Client& c, const std::string& msg);
 };
 
 #endif

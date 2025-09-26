@@ -6,6 +6,6 @@
 
 extern volatile sig_atomic_t globalSignal; // NOLINT(cppcoreguidelines-avoid-non-const-global-variables)
 
-void setupSignalHandlers();
+void setup_signal_handlers();
 
 #endif

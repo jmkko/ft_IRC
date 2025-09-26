@@ -6,7 +6,7 @@
 /*   By: fpetit <fpetit@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/11 08:55:19 by jhervoch          #+#    #+#             */
-/*   Updated: 2025/09/24 14:15:26 by fpetit           ###   ########.fr       */
+/*   Updated: 2025/09/26 11:31:40 by fpetit           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,45 +42,41 @@
 class Server
 {
   public:
-    ~Server();
-    Server(const unsigned short port, const std::string& psswd);
+	~Server();
+	Server(const unsigned short port, const std::string& password);
 
-    // static Server&		getInstance(const unsigned short port = DEFAULT_PORT, const std::string&
-    // password = DEFAULT_PASSWORD)
-
-    void        start();
-    void        stop();
-    std::string getPassW() const; // added for PASS
-    Client*     findClientByNickname(std::string&);
-    int         indexOf(Client& client);
-    void        addEventsOf(Client&, int event);
+	std::string get_password() const; // added for PASS
+	void		start();
+	void		stop();
+	Client*		find_client_by_nickname(std::string& nick);
+	int			index_of(Client& client);
+	void		add_events_of(Client& client, int event);
 
   public:
-    std::map<std::string, Channel*> channels;
+	std::map<std::string, Channel*> channels;
 
   private:
-    TcpSocket                       _serverSocket;
-    std::vector<pollfd>             _pfds;
-    std::map<Socket, Client*>       _clients;
-    std::map<std::string, Client*>  _clientsByNick;
-    std::string                     _psswd;
-    std::string                     _name;
-    // satic Server*                 _instance;
+	TcpSocket					   _serverSocket;
+	std::vector<pollfd>			   _pfds;
+	std::map<Socket, Client*>	   _clients;
+	std::map<std::string, Client*> _clientsByNick;
+	std::string					   _psswd;
+	std::string					   _name;
 
-    Server();
-    Server(const Server&);
+	Server();
+	Server(const Server&);
 
-    Server& operator=(const Server& inst);
+	Server& operator=(const Server& inst);
 
-    void      handleNewConnection(int);
-    void      cleanupSocketAndClients(int);
-    void      removeClient(Socket);
-    void      handleClientDisconnection(int);
-    void      handleClientData(int);
-    void      handleClientOutput(int);
-    void      listenToSocket(Socket, uint32_t);
-    ICommand* parseCommand(Client&, std::string);
-    void      handleCommand(int);
+	void	  _handle_new_connection(int pfdIndex);
+	void	  _cleanup_socket_and_clients(int pfdIndex);
+	void	  _remove_client(Socket s);
+	void	  _handle_client_disconnection(int pfdIndex);
+	void	  _handle_client_input(int pfdIndex);
+	void	  _handle_client_output(int pfdIndex);
+	void	  _listen_to_socket(Socket toListen, uint32_t flags);
+	ICommand* _parse_command(Client& c, std::string line);
+	void	  _handle_command(int pfdIndex);
 };
 
 #endif
