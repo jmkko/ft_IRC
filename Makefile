@@ -95,7 +95,7 @@ formator:
 
 tidy:
 	@echo "$(YELLOW)=== Code analysis ===$(NOC)"
-	@clang-tidy-12 $(FILES_TO_FORMAT) $(TIDYFLAGS) $(TIDYFLAGS_CPL)
+	@clang-tidy $(FILES_TO_FORMAT) $(TIDYFLAGS) $(TIDYFLAGS_CPL)
 
 debug-files:
 	@echo "SRCS: $(SRCS)"
