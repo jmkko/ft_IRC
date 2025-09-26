@@ -15,7 +15,9 @@ jobs:
     - name: Install clang-tools
       run: |
         sudo apt-get update
-        sudo apt-get install -y clang-tools-14
+        sudo apt-get install -y clang
+        pip install scan-build
+        which scan-build
         scan-build --version
     
     - name: make
