@@ -6,7 +6,7 @@
 /*   By: fpetit <fpetit@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/13 14:12:49 by jhervoch          #+#    #+#             */
-/*   Updated: 2025/09/26 12:07:28 by fpetit           ###   ########.fr       */
+/*   Updated: 2025/09/27 12:23:31 by fpetit           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,9 +36,8 @@
  * SOCK_STREAM tcp type
  * IPPROTO_TCP tcp protocol
  */
-TcpSocket::TcpSocket()
+TcpSocket::TcpSocket() : _sckt(socket(AF_INET, SOCK_STREAM, IPPROTO_TCP))
 {
-	_sckt = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (_sckt == -1) {
 		std::ostringstream error;
 		LOG_SOCKET.error("init socket: [" + TO_STRING(errno) + "]");
