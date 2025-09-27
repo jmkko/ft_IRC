@@ -1,6 +1,6 @@
 Checks: >
-  -clang-diagnostic-*,
-  -cppcoreguidelines-*,
+  clang-diagnostic-*,
+  cppcoreguidelines-*,
   -cppcoreguidelines-pro-bounds-pointer-arithmetic,
   -cppcoreguidelines-non-private-member-variables-in-classes,
   -cppcoreguidelines-pro-type-reinterpret-cast,
@@ -8,14 +8,20 @@ Checks: >
   -cppcoreguidelines-special-member-functions,
   -cppcoreguidelines-avoid-c-arrays,
   -cppcoreguidelines-pro-bounds-constant-array-index,
-  -bugprone-*,
-  -performance-*,
-  -readability-named-parameter,
-  -readability-identifier-naming,
-  -readability-inconsistent-declaration-parameter-name,
+  bugprone-*,
+  -bugprone-easily-swappable-parameters,
+  performance-*,
+  readability-named-parameter,
+  readability-identifier-naming,
+  readability-inconsistent-declaration-parameter-name,
+  misc-include-cleaner
 CheckOptions:
     - key: cppcoreguidelines-avoid-non-const-global-variables.AllowInternalLinkage
       value: 'true'
+    - key: readability-identifier-naming.PrivateMemberPrefix
+      value: '_'
+    - key: readability-identifier-naming.PrivateMethodPrefix
+      value: '_'
     - key: readability-identifier-naming.ClassCase
       value: CamelCase
     - key: readability-identifier-naming.VariableCase

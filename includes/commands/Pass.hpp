@@ -1,8 +1,10 @@
 #ifndef PASS_HPP
-# define PASS_HPP
-# include "ICommand.hpp"
-# include <iostream>
-# include "reply_codes.hpp"
+#define PASS_HPP
+
+#include "ICommand.hpp"
+#include "reply_codes.hpp"
+
+#include <string>
 
 class Server;
 class Client;
@@ -10,17 +12,17 @@ class Client;
 class Pass : public ICommand
 {
   public:
-    Pass(void);
-    Pass(const std::string& pass);
-    Pass(const Pass& other);
-    Pass& operator=(const Pass& other);
-    ~Pass();
+	Pass(void);
+	Pass(const std::string& pass);
+	Pass(const Pass& other);
+	Pass& operator=(const Pass& other);
+	~Pass();
 
-    void       execute(Server&, Client&);
-    static ReplyCode checkArgs(Server&, Client&, std::string&);
+	void			 execute(Server& s, Client& c);
+	static ReplyCode check_args(Server& s, Client& c, std::string& params);
 
   private:
-    std::string _pass;
+	std::string _pass;
 };
 
 #endif

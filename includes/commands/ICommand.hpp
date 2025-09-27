@@ -1,6 +1,5 @@
 #ifndef ICOMMAND_HPP
 #define ICOMMAND_HPP
-#include <iostream>
 
 class Server;
 class Client;
@@ -8,16 +7,16 @@ class Client;
 class ICommand
 {
   public:
-    virtual ~ICommand() {}
-    virtual void execute(Server&, Client&) = 0;
+	virtual ~ICommand() {}
+	virtual void execute(Server& s, Client& c) = 0;
 
   protected:
-    ICommand() {}
+	ICommand() {}
 
   private:
-    ICommand(const ICommand& inst);
+	ICommand(const ICommand& inst);
 
-    ICommand& operator=(const ICommand& inst);
+	ICommand& operator=(const ICommand& inst);
 };
 
 #endif

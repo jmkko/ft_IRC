@@ -1,24 +1,30 @@
 #include "Client.hpp"
 
+#include "Channel.hpp"
+#include "Config.hpp"
+#include "consts.hpp"
+
+#include <iostream>
+
 /************************************************************
  *		🥚 CONSTRUCTORS & DESTRUCTOR						*
  ************************************************************/
 
 Client::Client(Socket socket, sockaddr_in addr) :
-    _socket(socket), _addr(addr), _addrStr(TcpSocket::getAddress(_addr)), _status(UNAUTHENTICATED)
+	_socket(socket), _addr(addr), _addrStr(TcpSocket::get_address(_addr)), _status(UNAUTHENTICATED)
 {
 }
 
-Client::Client(const Client& inst) :
-    _socket(inst._socket),
-    _addr(inst._addr),
-    _addrStr(inst._addrStr),
-    _nickName(inst._nickName),
-    _userName(inst._userName),
-    _realName(inst._realName),
-    _status(inst._status),
-    _sendBuffer(inst._sendBuffer),
-    _receiveBuffer(inst._receiveBuffer)
+Client::Client(const Client& other) :
+	_socket(other._socket),
+	_addr(other._addr),
+	_addrStr(other._addrStr),
+	_nickName(other._nickName),
+	_userName(other._userName),
+	_realName(other._realName),
+	_status(other._status),
+	_sendBuffer(other._sendBuffer),
+	_readBuffer(other._readBuffer)
 {
 }
 
@@ -28,33 +34,33 @@ Client::~Client(void) {}
  *		➕ OPERATORS											*
  ************************************************************/
 
-Client& Client::operator=(const Client& inst)
+Client& Client::operator=(const Client& other)
 {
-    if (this != &inst) {
-        _socket = inst._socket;
-        _addr = inst._addr;
-        _addrStr = inst._addrStr;
-        _status = inst._status;
-        _nickName = inst._nickName;
-        _userName = inst._userName;
-        _realName = inst._realName;
-        _sendBuffer = inst._sendBuffer;
-        _receiveBuffer = inst._receiveBuffer;
-    }
-    return (*this);
+	if (this != &other) {
+		_socket = other._socket;
+		_addr = other._addr;
+		_addrStr = other._addrStr;
+		_status = other._status;
+		_nickName = other._nickName;
+		_userName = other._userName;
+		_realName = other._realName;
+		_sendBuffer = other._sendBuffer;
+		_readBuffer = other._readBuffer;
+	}
+	return (*this);
 }
 
 // clang-format off
 std::ostream& operator<<(std::ostream& os, const Client& c)
 {
     return os << "Client" << "["
-		<< "socket_fd = " << c.getSocket()
-		<< " address = " << c.getAddress()
-    	<< " status=" << (c.getStatus() == REGISTERED ? "registered" : "unauthenticated")
-		<< " nick=" << c.getNickName()
-		<< " to receive=" << c.getReceiveBuffer().size()
-		<< " to send=" << c.getSendBuffer().size()
-		<< " joined channels=" << c.getNbJoinedChannels()
+		<< "socket_fd = " << c.get_socket()
+		<< " address = " << c.get_address()
+    	<< " status=" << (c.get_status() == REGISTERED ? "registered" : "unauthenticated")
+		<< " nick=" << c.get_nickname()
+		<< " to receive=" << c.get_read_buffer().size()
+		<< " to send=" << c.get_send_buffer().size()
+		<< " joined channels=" << c.get_nb_joined_channels()
 		<< "]";
 }
 
@@ -62,50 +68,50 @@ std::ostream& operator<<(std::ostream& os, const Client& c)
  *		🛠️ FUNCTIONS											*
  *************************************************************/
 
-void Client::appendToSendBuffer(const std::string& msg) { _sendBuffer += msg; }
+void Client::append_to_send_buffer(const std::string& msg) { _sendBuffer += msg; }
 
-void Client::appendToReceiveBuffer(const std::string& msg) { _receiveBuffer += msg; }
+void Client::append_to_read_buffer(const std::string& msg) { _readBuffer += msg; }
 
 /*************************************************************
  *		👁️‍ GETTERS and SETTERS				 				*
  *************************************************************/
 
-Socket             Client::getSocket() const { return _socket.getSocket(); }
+Socket             Client::get_socket() const { return _socket.get_socket(); }
 
-const std::string& Client::getAddress() const { return _addrStr; }
+const std::string& Client::get_address() const { return _addrStr; }
 
-unsigned short     Client::getPort() const { return ntohs(_addr.sin_port); }
+unsigned short     Client::get_port() const { return ntohs(_addr.sin_port); }
 
-std::string        Client::getNickName() const { return _nickName; }
+std::string        Client::get_nickname() const { return _nickName; }
 
-std::string        Client::getUserName() const { return _userName; }
+std::string        Client::get_user_name() const { return _userName; }
 
-std::string        Client::getRealName() const { return _realName; }
+std::string        Client::get_real_name() const { return _realName; }
 
-ClientStatus       Client::getStatus() const { return _status; }
+ClientStatus       Client::get_status() const { return _status; }
 
-std::string        Client::getSendBuffer() const { return _sendBuffer; }
-std::string&        Client::getSendBuffer() { return _sendBuffer; }
+std::string        Client::get_send_buffer() const { return _sendBuffer; }
+std::string&        Client::get_send_buffer() { return _sendBuffer; }
 
-std::string        Client::getReceiveBuffer() const { return _receiveBuffer; }
-std::string&        Client::getReceiveBuffer() { return _receiveBuffer; }
+std::string        Client::get_read_buffer() const { return _readBuffer; }
+std::string&        Client::get_read_buffer() { return _readBuffer; }
 
-bool               Client::hasDataToSend() const { return _sendBuffer.empty(); }
+bool               Client::has_data_to_send() const { return _sendBuffer.empty(); }
 
-bool               Client::isRegistered() const { return _status == REGISTERED; }
+bool               Client::is_registered() const { return _status == REGISTERED; }
 
-int                Client::getNbJoinedChannels() const { return static_cast<int>(_joinedChannels.size()); }
+int                Client::get_nb_joined_channels() const { return static_cast<int>(_joinedChannels.size()); }
 
-void               Client::setNickName(const std::string& nick) { _nickName = nick; }
+void               Client::set_nickname(const std::string& nick) { _nickName = nick; }
 
-void               Client::setUserName(const std::string& userName) { _userName = userName; }
+void               Client::set_user_name(const std::string& userName) { _userName = userName; }
 
-void               Client::setRealName(const std::string& realName) { _realName = realName; }
+void               Client::set_real_name(const std::string& realName) { _realName = realName; }
 
-void               Client::setStatus(ClientStatus status) { _status = status; }
+void               Client::set_status(ClientStatus status) { _status = status; }
 
-void               Client::addJoinedChannel(Channel& channel) { _joinedChannels[channel.getName()] = &channel; }
+void               Client::add_joined_channel(Channel& channel) { _joinedChannels[channel.get_name()] = &channel; }
 
-void               Client::removeJoinedChannel(Channel& channel) { _joinedChannels.erase(channel.getName()); }
+void               Client::remove_joined_channel(Channel& channel) { _joinedChannels.erase(channel.get_name()); }
 
-void               Client::setSendBuffer(const std::string& buffer) { _sendBuffer = buffer; }
+void               Client::set_send_buffer(const std::string& buffer) { _sendBuffer = buffer; }

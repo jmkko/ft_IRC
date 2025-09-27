@@ -1,70 +1,66 @@
 #ifndef CLIENT_HPP
 #define CLIENT_HPP
 
-#include "Channel.hpp"
 #include "TcpSocket.hpp"
-#include "consts.hpp"
-#include "Config.hpp"
 
-#include <iostream>
 #include <map>
 #include <string>
 
 class Channel;
 
 enum ClientStatus {
-    UNAUTHENTICATED, // before anything
-    REGISTERED,      // after PASS + NICK + USER
+	UNAUTHENTICATED, // before anything
+	REGISTERED,		 // after PASS + NICK + USER
 };
 
 class Client
 {
   public:
-    Client(Socket socket, sockaddr_in addr);
-    Client(const Client& other);
-    virtual ~Client();
+	Client(Socket socket, sockaddr_in addr);
+	Client(const Client& other);
+	virtual ~Client();
 
-    Client& operator=(const Client& other);
+	Client& operator=(const Client& other);
 
-    Socket             getSocket() const;
-    const std::string& getAddress() const;
-    unsigned short     getPort() const;
-    std::string        getSendBuffer() const;
-    std::string&       getSendBuffer();
-    std::string&       getReceiveBuffer(); // added for cleaning command that has executed
-    std::string        getReceiveBuffer() const;
-    bool               hasDataToSend() const;
+	Socket			   get_socket() const;
+	const std::string& get_address() const;
+	unsigned short	   get_port() const;
+	std::string		   get_send_buffer() const;
+	std::string&	   get_send_buffer();
+	std::string&	   get_read_buffer(); // added for cleaning command that has executed
+	std::string		   get_read_buffer() const;
+	bool			   has_data_to_send() const;
 
-	std::string		getNickName() const;
-    std::string		getUserName() const;
-    std::string		getRealName() const;
-    ClientStatus	getStatus() const;
+	std::string	 get_nickname() const;
+	std::string	 get_user_name() const;
+	std::string	 get_real_name() const;
+	ClientStatus get_status() const;
 
-    bool isRegistered() const;
-    int  getNbJoinedChannels() const;
+	bool is_registered() const;
+	int	 get_nb_joined_channels() const;
 
-    void setNickName(const std::string& nick);
-    void setUserName(const std::string& userName);
-    void setRealName(const std::string& realName);
-    void setStatus(ClientStatus status);
-    void addJoinedChannel(Channel& channel);
-    void removeJoinedChannel(Channel& channel);
-    void setSendBuffer(const std::string& buffer);
+	void set_nickname(const std::string& nick);
+	void set_user_name(const std::string& userName);
+	void set_real_name(const std::string& realName);
+	void set_status(ClientStatus status);
+	void add_joined_channel(Channel& channel);
+	void remove_joined_channel(Channel& channel);
+	void set_send_buffer(const std::string& buffer);
 
-    void appendToSendBuffer(const std::string& msg);
-    void appendToReceiveBuffer(const std::string& msg);
+	void append_to_send_buffer(const std::string& msg);
+	void append_to_read_buffer(const std::string& msg);
 
   private:
-    TcpSocket                       _socket;
-    sockaddr_in                     _addr;
-    std::string                     _addrStr;
-    std::string                     _nickName;
-    std::string                     _userName;
-    std::string                     _realName;
-    ClientStatus                    _status;
-    std::string                     _sendBuffer;
-    std::string                     _receiveBuffer;
-    std::map<std::string, Channel*> _joinedChannels;
+	TcpSocket						_socket;
+	sockaddr_in						_addr;
+	std::string						_addrStr;
+	std::string						_nickName;
+	std::string						_userName;
+	std::string						_realName;
+	ClientStatus					_status;
+	std::string						_sendBuffer;
+	std::string						_readBuffer;
+	std::map<std::string, Channel*> _joinedChannels;
 };
 
 std::ostream& operator<<(std::ostream& os, const Client& c);

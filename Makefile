@@ -37,14 +37,15 @@ OBJ_DIRS		:=	$(sort $(dir $(OBJS)))
 
 ################	LINTERS
 
-# Paths for clang-format / clang-tidy-12 if manually installed
-export PATH 	:=	$(HOME)/local/bin:$(PATH)
+# Paths for clang-format / clang-tidy-12 / intercept-build if manually installed
+export PATH 	:=	$(PATH):$(HOME)/local/bin:/usr/bin/:/usr/share/clang/scan-build-py-12/bin/
 
 HEADERS			:=	$(wildcard includes/*/*.hpp) $(wildcard includes/*.hpp)
 FILES_TO_FORMAT	:=	$(SRCS) $(HEADERS)
 
-TIDYFLAGS_CPL	:=	-- -std=c++98 -I./includes -I./includes/channels -I./includes/clients -I./includes/commands -I./includes/server -I./srcs
-TIDYFLAGS		:=	--use-color --config-file=.clang-tidy
+TIDYFLAGS_CPL	:=	-p .
+
+TIDYFLAGS		:=	--use-color --config-file=.clang-tidy --header-filter=.*
 
 ################	LOADER
 
@@ -70,9 +71,13 @@ $(OBJS) :$(OBJS_DIR)/%.o : %.cpp | $(OBJ_DIRS)
 ifeq ($(OS), Linux)
 	@if [ $(NB_COMP) -eq 1 ]; then echo "=== $(BOLD)Compilation of source files$(NOC) ===";fi
 	$(eval PERCENT=$(shell if [ $(TO_COMP) -eq 0 ]; then echo 100; else expr $(NB_COMP)00 "/" $(TO_COMP); fi))
-	@if [ $(PERCENT) -le 30 ]; then echo -n "$(RED)"; elif [ $(PERCENT) -le 66 ]; then echo -n "$(YELLOW)"; elif [ $(PERCENT) -gt 66 ]; then echo -n "$(GREEN)"; fi
+	@if [ $(PERCENT) -le 30 ]; then echo -n "$(RED)"; \
+	elif [ $(PERCENT) -le 66 ]; then echo -n "$(YELLOW)"; \
+	elif [ $(PERCENT) -gt 66 ]; then echo -n "$(GREEN)"; fi
 	@echo -n "\r"; for i in $$(seq 1 $$(/usr/bin/tput cols)); do echo -n " "; done
-	@echo -n "\r"; for i in $$(seq 1 25); do if [ $$(expr $$i "*" 4) -le $(PERCENT) ]; then echo -n "█"; else echo -n " "; fi; done; echo -n "";
+	@echo -n "\r"; for i in $$(seq 1 25); do if [ $$(expr $$i "*" 4) -le $(PERCENT) ]; then echo -n "█"; \
+	else echo -n " "; fi; \
+	done; echo -n "";
 	@printf " $(NB_COMP)/$(TO_COMP) - Compiling $<"
 	@echo -n "$(NOC)"
 	@$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
@@ -93,9 +98,12 @@ formator:
 	@echo "$(YELLOW)=== Formatting code ===$(NOC)"
 	@clang-format -style=file:./.clang-format -i $(FILES_TO_FORMAT)
 
-tidy:
+comp-data:
+	@intercept-build make re
+
+tidy: comp-data
 	@echo "$(YELLOW)=== Code analysis ===$(NOC)"
-	@clang-tidy $(FILES_TO_FORMAT) $(TIDYFLAGS) $(TIDYFLAGS_CPL)
+	@clang-tidy-12 $(FILES_TO_FORMAT) $(TIDYFLAGS) $(TIDYFLAGS_CPL)
 
 debug-files:
 	@echo "SRCS: $(SRCS)"

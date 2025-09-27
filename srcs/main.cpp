@@ -7,18 +7,18 @@
 
 int main(int ac, char** av)
 {
-    int port = DEFAULT_PORT;
+	int port = DEFAULT_PORT;
 
-    LOG_ERR.setMinLevel(ERROR); // Seulement les erreurs dans ce log
-    if (!checkArgs(ac, av, &port))
-        return 1;
-    Server newServer(port, av[2]);
-    setupSignalHandlers();
-    try {
-        newServer.start();
-    } catch (std::exception& e) {
-        std::cout << e.what() << "\n";
-        LOG_ERR.error("Server error: " + std::string(e.what()));
-    }
-    return 0;
+	LOG_ERR.set_min_level(ERROR); // Seulement les erreurs dans ce log
+	if (!check_args(ac, av, &port))
+		return 1;
+	Server newServer(port, av[2]);
+	setup_signal_handlers();
+	try {
+		newServer.start();
+	} catch (std::exception& e) {
+		std::cout << e.what() << "\n";
+		LOG_ERR.error("Server error: " + std::string(e.what()));
+	}
+	return 0;
 }
