@@ -16,7 +16,7 @@ User::User(const std::string& username, const std::string& realname) :
 {
 } // NOLINT(bugprone-easily-swappable-parameters)
 // Copy constructor
-User::User(const User& other) { (void)other; }
+User::User(const User& other) : ICommand() { (void)other; }
 
 // Assignment operator overload
 User& User::operator=(const User& other)

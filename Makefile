@@ -37,19 +37,15 @@ OBJ_DIRS		:=	$(sort $(dir $(OBJS)))
 
 ################	LINTERS
 
-# Paths for clang-format / clang-tidy-12 if manually installed
-export PATH 	:=	$(HOME)/local/bin:$(PATH)
+# Paths for clang-format / clang-tidy-12 / intercept-build if manually installed
+export PATH 	:=	$(PATH):$(HOME)/local/bin:/usr/bin/:/usr/share/clang/scan-build-py-12/bin/
 
 HEADERS			:=	$(wildcard includes/*/*.hpp) $(wildcard includes/*.hpp)
 FILES_TO_FORMAT	:=	$(SRCS) $(HEADERS)
 
-TIDYFLAGS_CPL	:=	-- -std=c++98 -I./includes \
-					-I./includes/channels \
-					-I./includes/clients \
-					-I./includes/commands \
-					-I./includes/server \
-					-I./srcs
-TIDYFLAGS		:=	--use-color --config-file=.clang-tidy
+TIDYFLAGS_CPL	:=	-p .
+
+TIDYFLAGS		:=	--use-color --config-file=.clang-tidy --header-filter=.*
 
 ################	LOADER
 

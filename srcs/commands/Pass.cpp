@@ -12,7 +12,7 @@ Pass::Pass(void) {}
 Pass::Pass(const std::string& pass) : _pass(pass) {}
 
 // Copy constructor
-Pass::Pass(const Pass& other) { (void)other; }
+Pass::Pass(const Pass& other) : ICommand() { (void)other; }
 
 // Assignment operator overload
 Pass& Pass::operator=(const Pass& other)

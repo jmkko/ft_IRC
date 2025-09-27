@@ -9,7 +9,7 @@
 
 Join::Join() {}
 Join::~Join() {}
-Join::Join(const Join& mother) : _channelsLst(mother._channelsLst) {}
+Join::Join(const Join& other) : ICommand(), _channelsLst(other._channelsLst) {}
 Join& Join::operator=(const Join& other)
 {
 	if (this != &other) {
