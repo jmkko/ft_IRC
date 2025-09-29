@@ -5,8 +5,8 @@
 
 bool is_special_abnf(char c) {
     unsigned char uc = (unsigned char)c;
-    return (uc >= 0x5B && uc <= 0x60) ||
-           (uc >= 0x7B && uc <= 0x7D);
+    return (uc >= '[' && uc <= '`') ||
+           (uc >= '{' && uc <= '}');
 }
 
 bool check_port(const std::string& s, int* port)
