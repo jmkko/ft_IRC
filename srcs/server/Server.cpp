@@ -12,6 +12,7 @@
 #include "utils.hpp"
 
 #include <arpa/inet.h> // hton*, ntoh*, inet_addr
+#include <csignal>
 #include <cstring>
 #include <exception>
 #include <fcntl.h>
@@ -70,7 +71,10 @@ void Server::start()
 {
 	while (true) {
 		if (globalSignal == SIGINT || globalSignal == SIGABRT)
+		{
 			stop();
+			break ;
+		}
 		int pollResult = poll(_pfds.data(), _pfds.size(), POLL_TIMEOUT); // Timeout 1 second
 		if (pollResult == -1) {
 			LOG_SERVER.error("Poll failed: " + TO_STRING(strerror(errno)));
@@ -340,6 +344,8 @@ void Server::_listen_to_socket(Socket toListen, uint32_t flags)
  */
 void Server::stop()
 {
+	if (globalSignal != SIGINT || globalSignal != SIGABRT)
+		globalSignal = SIGINT;
 	LOG_SERVER.debug(std::string("cleaning ") + TO_STRING(_pfds.size())
 					 + " sockets and their associated clients");
 	for (size_t i = 0; i < _pfds.size(); ++i)

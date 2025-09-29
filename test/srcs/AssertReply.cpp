@@ -38,7 +38,7 @@ AssertReply::~AssertReply(void) {}
 *		🛠️ FUNCTIONS											*
 *************************************************************/
 
-AssertReply&	AssertReply::hasCode(ReplyCode code) 
+AssertReply&	AssertReply::has_code(ReplyCode code) 
 {
 	std::ostringstream oss;
 	oss << std::setfill('0') << std::setw(3) << code;
@@ -50,7 +50,7 @@ AssertReply&	AssertReply::hasCode(ReplyCode code)
 	return *this;
 }
 
-AssertReply&	AssertReply::endsWith(const std::string& trailing) 
+AssertReply&	AssertReply::ends_with(const std::string& trailing) 
 {
 	if (_trailing != trailing)
 	{
@@ -64,6 +64,15 @@ AssertReply&	AssertReply::contains(const std::string& token)
 	if (_reply.find(token) == std::string::npos)
 	{
 		throw std::runtime_error("Expected token " + token + " not found ");
+	}
+	return *this;
+}
+
+AssertReply&	AssertReply::is_empty() 
+{
+	if (!_reply.empty())
+	{
+		throw std::runtime_error("Expected no reply ");
 	}
 	return *this;
 }

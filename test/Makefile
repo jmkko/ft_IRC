@@ -1,4 +1,4 @@
-include ../includes/colors.mk
+include ../colors.mk
 
 export PATH := $(HOME)/local/bin:$(PATH)
 
@@ -11,21 +11,35 @@ CXXFLAGS		:=	-Wall -Wextra -Werror -std=c++20
 MAKEFLAGS		:=	--no-print-directory
 
 IRC_DIR			:=	../srcs
-IRC_INCLUDE_DIR	:=	../include
+IRC_INCLUDE_DIR	:=	../includes
 
 SRC_DIR			:=	srcs
 INCLUDE_DIR		:=	include
 BUILD_DIR		:=	.build
 
-INC				:= 	-I$(INCLUDE_DIR) -I$(IRC_INCLUDE_DIR)
+INC				:= 	-I$(INCLUDE_DIR) -I$(IRC_INCLUDE_DIR) -I$(IRC_INCLUDE_DIR)/channels -I$(IRC_INCLUDE_DIR)/clients -I$(IRC_INCLUDE_DIR)/commands -I$(IRC_INCLUDE_DIR)/server
 
-SRCS_FILES		:= 	AssertUtils.cpp\
-					AssertReply.cpp\
+SRCS_FILES		:= 	main.cpp\
+					fakeClient.cpp\
+					AssertReply.cpp \
+					printUtils.cpp\
+					testNick.cpp\
 
-IRC_SRCS_FILES	:=	channels/Channel.cpp\
+IRC_SRCS_FILES	:=	utils.cpp\
+					signal_handler.cpp\
 					clients/Client.cpp\
+					channels/Channel.cpp\
 					server/Server.cpp\
 					server/TcpSocket.cpp\
+					server/Config.cpp\
+					server/Logger.cpp \
+					server/LogManager.cpp\
+					server/ReplyHandler.cpp\
+					commands/CmdFactory.cpp\
+					commands/Nick.cpp\
+					commands/Pass.cpp\
+					commands/User.cpp\
+					commands/Join.cpp\
 
 EXT				:= .cpp
 
@@ -36,7 +50,11 @@ SRCS			:=	$(TEST_SRCS) $(IRC_SRCS)
 OBJS			:=	$(patsubst %.cpp,$(BUILD_DIR)/%.o,$(notdir $(SRCS)))
 DIRS			:=	$(sort $(shell dirname $(OBJS)))
 
-vpath %.cc $(SRC_DIR) $(IRC_DIR) $(IRC_DIR)/commands
+vpath %.cpp $(SRC_DIR) $(IRC_DIR) $(IRC_DIR)/commands $(IRC_DIR)/clients $(IRC_DIR)/channels $(IRC_DIR)/server
+
+# Paths for clang-format / clang-tidy-12 / intercept-build if manually installed
+export PATH 	:=	$(PATH):$(HOME)/local/bin:/usr/bin/:/usr/share/clang/scan-build-py-12/bin/
+
 
 ###########
 # Targets #
@@ -54,6 +72,9 @@ $(NAME): $(OBJS)
 $(BUILD_DIR)/%.o: %.cpp | $(DIRS)
 	@mkdir -p $(BUILD_DIR)
 	@$(CXX) $(CXXFLAGS) $(INC) $< -c -o $@
+
+comp-data:
+	@intercept-build make re
 
 debug: CXXFLAGS += -g -DDEB=1
 debug: all

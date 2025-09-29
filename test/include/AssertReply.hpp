@@ -14,8 +14,9 @@ class AssertReply {
 		AssertReply(const std::string& reply);
 		virtual ~AssertReply();
 
-		AssertReply&				hasCode(ReplyCode code);
-		AssertReply&				endsWith(const std::string& trailing);
+		AssertReply&				has_code(ReplyCode code);
+		AssertReply&				ends_with(const std::string& trailing);
+		AssertReply&				is_empty();
 		AssertReply&				contains(const std::string& token);
 		
 	private:
