@@ -13,7 +13,7 @@ LogManager& LogManager::get_instance()
 	return instance;
 }
 
-LogManager::LogManager(): _globalLevel(DEBUG) {}
+LogManager::LogManager() : _globalLevel(DEBUG) {}
 
 LogManager::~LogManager()
 {

@@ -18,8 +18,8 @@ class LogManager
 
 	LogManager& operator=(const LogManager& inst);
 
-	std::map<std::string, Logger*>	_loggers;
-	LogLevel						_globalLevel;
+	std::map<std::string, Logger*> _loggers;
+	LogLevel					   _globalLevel;
 };
 
 // Macros for easy usage
