@@ -72,6 +72,15 @@ AssertReply&	AssertReply::contains(const std::string& token)
 	return *this;
 }
 
+AssertReply&	AssertReply::matches_entirely(const std::string& reply) 
+{
+	if (_reply != reply)
+	{
+		throw AssertFail("reply ", reply, _reply);
+	}
+	return *this;
+}
+
 AssertReply&	AssertReply::is_empty() 
 {
 	if (!_reply.empty())

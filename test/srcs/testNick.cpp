@@ -224,16 +224,17 @@ void	taken_should_err(Server& s)
 		authenticate(so);
 
 		send_valid_password(so2);
-		send_line(so, validNickMsg);
-		std::string reply = recv_line(so);
+		send_line(so2, validNickMsg);
+		std::string reply = recv_line(so2);
 		AssertReply ar(reply);
 		ar.has_code(ERR_NICKNAMEINUSE);
 
 		close(so);
-			
+		close(so2);
 	} catch (const std::runtime_error& e) {
 		LOG_TEST.error(e.what());
 		close(so);
+		close(so2);
 	}
 	runner.stop();
 }

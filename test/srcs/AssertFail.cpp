@@ -1,3 +1,6 @@
+#ifndef ASSERT_FAIL_HPP
+#define ASSERT_FAIL_HPP
+
 #include "AssertFail.hpp"
 
 AssertFail::AssertFail(
@@ -9,3 +12,5 @@ const char* AssertFail::what() const noexcept
 {
 	return _message.c_str();
 }
+
+#endif
