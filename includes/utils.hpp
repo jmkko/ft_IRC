@@ -15,6 +15,7 @@ namespace utils
 template <typename T> std::string to_string(const T& value)
 {
 	std::ostringstream oss;
+	//NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
 	oss << value;
 	return oss.str();
 }
