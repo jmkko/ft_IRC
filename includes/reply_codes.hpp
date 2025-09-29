@@ -157,7 +157,7 @@ enum ReplyCode {
 	// notification
 	RPL_NOTICE = 101,
 
-	// Commande
+	// Command (not in RFC)
 	RPL_PASS = 201,
 	RPL_USER = 202,
 	RPL_JOIN = 203,

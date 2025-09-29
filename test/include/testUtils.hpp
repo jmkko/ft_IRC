@@ -2,8 +2,9 @@
 #define TEST_UTILS_HPP
 
 #include "printUtils.hpp"
+#include "AssertFail.hpp"
 
-#define SERVER_PROCESS_TIME_MS 50
+#define SERVER_PROCESS_TIME_MS 10
 #define TEST_PORT 6668
 
 /**
@@ -20,9 +21,9 @@ void run_test(Func&& f, const char* name)
 {
 	try {
 		std::forward<Func>(f)();
-		print_success();
-	} catch (const std::exception& e) {
-		print_error(name);
+		print_success(name);
+	} catch (AssertFail& e) {
+		print_error(name, e.what());
 	}
 }
 

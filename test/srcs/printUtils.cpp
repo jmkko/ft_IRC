@@ -14,12 +14,12 @@ void	print_test_name(const std::string& testName)
 	std::cout << BCYAN << testName << NC << '\n';
 }
 
-void	print_success()
+void	print_success(const std::string& test_name)
 {
-	std::cout << " ✅ "; 
+	std::cout << " ✅ " << test_name << "\n"; 
 }
 
-void	print_error(const std::string& test_name)
+void	print_error(const std::string& test_name, const std::string& cause )
 {
-	std::cout << " ❌ [" << test_name << "] ";
+	std::cout << " ❌ " << test_name << " (" << cause << ")\n";
 }

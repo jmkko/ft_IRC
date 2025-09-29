@@ -3,21 +3,25 @@
 #include "colors.hpp"
 #include "consts.hpp"
 #include "LogManager.hpp"
+#include "testUtils.hpp"
+#include "utils.hpp"
 
+#include <cstddef>
 #include <string>
 #include <sys/socket.h>     // socket
 #include <sys/types.h>      // for getaddrinfo
+#include <sys/select.h>     // select
 #include <netdb.h>          // for getaddrinfo
 #include <unistd.h>         // close
 #include <cstring>          // memset
 #include <iostream>
+#include <thread>
+#include "LogManager.hpp"
 
 Socket make_client_socket(int port)
 {
 	std::string portStr = std::to_string(port);
-	std::cout << "portStr " << portStr << '\n';
-
-	LOG_TEST.debug(portStr);
+	LOG_TEST.debug(std::string("port is ") + portStr);
 
 	struct addrinfo hints = {};
 	struct addrinfo* result = nullptr;
@@ -27,7 +31,7 @@ Socket make_client_socket(int port)
 	hints.ai_socktype = SOCK_STREAM;
 
 	int status = getaddrinfo("localhost", portStr.c_str(), &hints, &result);
-	LOG_TEST.debug(std::to_string(status));
+	LOG_TEST.debug(std::string("status is ") + std::to_string(status));
 	if (status != 0)
 	{
 		LOG_TEST.error("getaddrinfo failed: " + std::string(gai_strerror(status)));
@@ -51,17 +55,55 @@ Socket make_client_socket(int port)
 	return fd;
 }
 
-bool send_line(int fd, const std::string& msg)
+/**
+ * @brief 
+ * 
+ * @param fd 
+ * @param msg 
+ * @throw if send error
+ */
+void send_line(int fd, const std::string& msg)
 {
-	return send(fd, msg.c_str(), msg.size(), 0) >= 0;
+	ssize_t sentBytes = send(fd, msg.c_str(), msg.size(), 0);
+	LOG_TEST.debug(std::string("sent bytes = " + TO_STRING(sentBytes)));
+	if (sentBytes <= 0)
+	{
+		close(fd);
+		throw std::runtime_error("can't send");
+	}
+	// Give time for server to process
+	std::this_thread::sleep_for(std::chrono::milliseconds(SERVER_PROCESS_TIME_MS));
 }
 
 std::string recv_line(int fd)
 {
 	char		buffer[RECEIVE_BUFFER];
-	ssize_t		bytesReceived = recv(fd, static_cast<char *>(buffer), sizeof(buffer) - 1, 0);
-	if (bytesReceived <= 0)
+	
+	// Try to receive data with a short timeout
+	fd_set readfds;
+	struct timeval timeout = {};
+	
+	FD_ZERO(&readfds);
+	FD_SET(fd, &readfds);
+	
+	timeout.tv_sec = 1;  // 1 second timeout
+	timeout.tv_usec = 0;
+	
+	int selectResult = select(fd + 1, &readfds, NULL, NULL, &timeout);
+	
+	if (selectResult <= 0) {
+		// no exception as all messages don't have to get a reply
+		LOG_TEST.debug("recv_line: timeout or error in select");
 		return {};
+	}
+	
+	ssize_t		bytesReceived = recv(fd, static_cast<char *>(buffer), sizeof(buffer) - 1, 0);
+	if (bytesReceived <= 0) {
+		LOG_TEST.debug("recv_line: no data received");
+		return {};
+	}
 	buffer[bytesReceived] = '\0';
-	return std::string(static_cast<char *>(buffer));
+	std::string result(static_cast<char *>(buffer));
+	LOG_TEST.debug("recv_line: received " + std::to_string(bytesReceived) + " bytes: " + result);
+	return result;
 }

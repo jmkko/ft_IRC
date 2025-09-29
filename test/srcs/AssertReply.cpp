@@ -1,4 +1,5 @@
 #include "AssertReply.hpp"
+#include "AssertFail.hpp"
 
 /************************************************************
 *		🥚 CONSTRUCTORS & DESTRUCTOR						*
@@ -45,7 +46,10 @@ AssertReply&	AssertReply::has_code(ReplyCode code)
 
 	if (_cmdOrCode != oss.str())
 	{
-		throw std::runtime_error("Expected code " + oss.str() + " not found ");
+		std::string& actual = _cmdOrCode;
+		if (_cmdOrCode.empty())
+			actual = "nothing";
+		throw AssertFail("code", oss.str(), actual);
 	}
 	return *this;
 }
@@ -54,7 +58,7 @@ AssertReply&	AssertReply::ends_with(const std::string& trailing)
 {
 	if (_trailing != trailing)
 	{
-		throw std::runtime_error("Expected trailing message " + trailing + " not found ");
+		throw AssertFail("trailing message ", trailing,  _trailing);
 	}
 	return *this;
 }
@@ -63,7 +67,7 @@ AssertReply&	AssertReply::contains(const std::string& token)
 {
 	if (_reply.find(token) == std::string::npos)
 	{
-		throw std::runtime_error("Expected token " + token + " not found ");
+		throw AssertFail("reply ", token, "no occurence");
 	}
 	return *this;
 }
@@ -72,7 +76,13 @@ AssertReply&	AssertReply::is_empty()
 {
 	if (!_reply.empty())
 	{
-		throw std::runtime_error("Expected no reply ");
+		throw AssertFail("reply ", "nothing", _reply);
 	}
+	return *this;
+}
+
+AssertReply&	AssertReply::handle_new_reply(const std::string& reply)
+{
+	_reply = reply;
 	return *this;
 }

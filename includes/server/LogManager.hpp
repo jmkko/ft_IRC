@@ -13,12 +13,13 @@ class LogManager
 	void			   set_global_level(LogLevel level);
 
   private:
-	LogManager() {};
+	LogManager();
 	LogManager(const LogManager& inst);
 
 	LogManager& operator=(const LogManager& inst);
 
-	std::map<std::string, Logger*> _loggers;
+	std::map<std::string, Logger*>	_loggers;
+	LogLevel						_globalLevel;
 };
 
 // Macros for easy usage

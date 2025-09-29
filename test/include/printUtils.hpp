@@ -5,7 +5,7 @@
 
 void	print_test_series(const std::string& seriesName);
 void	print_test_name(const std::string& testName);
-void	print_success();
-void	print_error(const std::string& test_name);
+void	print_success(const std::string& test_name);
+void	print_error(const std::string& test_name, const std::string& cause);
 
 #endif

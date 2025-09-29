@@ -21,8 +21,10 @@ INC				:= 	-I$(INCLUDE_DIR) -I$(IRC_INCLUDE_DIR) -I$(IRC_INCLUDE_DIR)/channels -
 
 SRCS_FILES		:= 	main.cpp\
 					fakeClient.cpp\
-					AssertReply.cpp \
+					AssertFail.cpp\
+					AssertReply.cpp\
 					printUtils.cpp\
+					ServerRunner.cpp\
 					testNick.cpp\
 
 IRC_SRCS_FILES	:=	utils.cpp\
@@ -32,7 +34,7 @@ IRC_SRCS_FILES	:=	utils.cpp\
 					server/Server.cpp\
 					server/TcpSocket.cpp\
 					server/Config.cpp\
-					server/Logger.cpp \
+					server/Logger.cpp\
 					server/LogManager.cpp\
 					server/ReplyHandler.cpp\
 					commands/CmdFactory.cpp\
@@ -86,6 +88,7 @@ clean:
 fclean: clean
 	@echo "$(RED)Remove binary$(NOC)"
 	@rm -f $(NAME)
+	@rm -rf ../logs
 
 re: fclean
 	@make

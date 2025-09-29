@@ -10,110 +10,240 @@
 #include "reply_codes.hpp"
 #include "testUtils.hpp"
 #include "utils.hpp"
+#include "ServerRunner.hpp"
 #include "signal_handler.hpp"
+
 #include <memory>
+#include <stdexcept>
 #include <string>
 #include <iostream>
 #include <thread>
 #include <chrono>
 #include <csignal>
 
+const std::string& validUserMsg = "USER roro 0 * :Ronnie Reagan\r\n";
+const std::string& validNickMsg = "NICK roro\r\n";
+const std::string& validNickSpecialMsg = "NICK [roro]\r\n";
+const std::string& validNickChangeMsg = "NICK rorotheboss\r\n";
+const std::string& invalidNickMissingArgMsg = "NICK \r\n";
+const std::string& invalidNick3oroMsg = "NICK 3oro\r\n";
+const std::string& validPassMsg = std::string("PASS ") + DEFAULT_PASSWORD + "\r\n";
+
+static void send_valid_password(Socket so)
+{
+	send_line(so, validPassMsg);		
+	std::string reply = recv_line(so);
+	AssertReply ar(reply);
+	ar.is_empty();
+}
+
+static void send_valid_nick(Socket so)
+{
+	send_line(so, validNickMsg);
+	std::string reply = recv_line(so);
+	AssertReply ar(reply);
+	ar.is_empty();
+}
+
+static void authenticate(Socket so)
+{
+	send_line(so, validPassMsg);		
+	send_line(so, validNickMsg);
+	send_line(so, validUserMsg);
+}
+
+/************************************************************
+*		✅  VALID											*
+************************************************************/
+
 /** 
  @brief integration test - normal case
 */
-void	no_previous_nick_and_valid_nick_should_send_nothing()
-{
-	// Reset global signal
-	globalSignal = 0;
-	
-	std::unique_ptr<Server> s;
-	std::thread serverThread;
+void	valid_nick_should_void(Server& s)
+{	
+	ServerRunner runner(s);
+	runner.start();
+
 	Socket so = -1;
-	
+	so = make_client_socket(TEST_PORT);
+	LOG_TEST.debug(std::string("so is ") + std::to_string(so));
+
+	if (so == -1)
+		throw std::runtime_error("Failed to connect to server");
 	try {
-		s = std::make_unique<Server>(TEST_PORT, DEFAULT_PASSWORD);
-		
-		// Start server in a separate thread
-		serverThread = std::thread([&s]() {
-			try {
-				s->start();
-			} catch (const std::exception& e) {
-				LOG_TEST.error("Server thread error: " + std::string(e.what()));
-			}
-		});
-		
-		// Give the server time to start
-		std::this_thread::sleep_for(std::chrono::milliseconds(SERVER_PROCESS_TIME_MS * 2));
-
-		const std::string& validPassMsg = std::string("PASS ") + DEFAULT_PASSWORD + "\r\n";
-		const std::string& validNickMsg = "NICK toto\r\n";
-
-		so = make_client_socket(TEST_PORT);
-		std::cout << "so is " << so << '\n';
-		LOG_TEST.debug(std::string("so is ") + std::to_string(so));
-		
-		if (so != -1) {
-			
-			if (!send_line(so, validPassMsg))
-				LOG_TEST.error("can't send");
-			// Give time for server to process
-			std::this_thread::sleep_for(std::chrono::milliseconds(SERVER_PROCESS_TIME_MS));
-			std::string reply = recv_line(so);
-			LOG_SERVER.debug("Reply: " + reply);
-			AssertReply ar(reply);
-			ar.has_code(RPL_PASS);
-
-			if (!send_line(so, validNickMsg))
-				LOG_TEST.error("can't send");
-			std::this_thread::sleep_for(std::chrono::milliseconds(SERVER_PROCESS_TIME_MS));
-			reply = recv_line(so);
-			LOG_TEST.debug("Reply: " + reply);
-			ar = AssertReply(reply);
-			ar.is_empty();
-			
-		} else {
-			LOG_TEST.error("Failed to connect to server");
-			throw std::runtime_error("Failed to connect to server");
-		}
-		
-	} catch (const std::exception& e) {
-		LOG_TEST.error("Test error: " + std::string(e.what()));
-		// Clean up socket if it was opened
-		if (so != -1) {
-			close(so);
-		}
-		// Signal the server to stop
-		globalSignal = SIGINT;
-		// Wait a bit for server to process the signal
-		std::this_thread::sleep_for(std::chrono::milliseconds(SERVER_PROCESS_TIME_MS));
-		if (serverThread.joinable()) {
-			serverThread.join();
-		}
-		throw; // Re-throw to be caught by run_test
-	}
-	
-	// Clean up socket
-	if (so != -1) {
+		send_valid_password(so);
+		send_valid_nick(so);
+		close(so);
+	} catch (const std::runtime_error& e) {
+		LOG_TEST.error(e.what());
 		close(so);
 	}
-	
-	// Signal the server to stop
-	globalSignal = SIGINT;
-	
-	// Wait a bit for server to process the signal
-	std::this_thread::sleep_for(std::chrono::milliseconds(SERVER_PROCESS_TIME_MS));
-	
-	// Wait for server thread to finish with timeout
-	if (serverThread.joinable()) {
-		serverThread.join();
-	}
+	runner.stop();
 }
 
-void	test_nick()
+/** 
+ @brief integration test - normal case
+*/
+void	valid_nick_special_should_void(Server& s)
+{	
+	ServerRunner runner(s);
+	runner.start();
+
+	Socket so = -1;
+	so = make_client_socket(TEST_PORT);
+	LOG_TEST.debug(std::string("so is ") + std::to_string(so));
+
+	if (so == -1)
+		throw std::runtime_error("Failed to connect to server");
+	try {
+		send_valid_password(so);
+		send_line(so, validNickSpecialMsg);
+		std::string reply = recv_line(so);
+		AssertReply ar(reply);
+		ar.is_empty();
+
+		close(so);
+	} catch (const std::runtime_error& e) {
+		LOG_TEST.error(e.what());
+		close(so);
+	}
+	runner.stop();
+}
+
+/** 
+ @brief integration test - error case
+*/
+void	valid_change_should_void(Server& s)
+{	
+	ServerRunner runner(s);
+	runner.start();
+
+	Socket so = -1;
+	so = make_client_socket(TEST_PORT);
+
+	if (so == -1)
+		throw std::runtime_error("Failed to connect to server");
+	try {
+		authenticate(so);
+
+		send_line(so, validNickChangeMsg);
+		std::string reply = recv_line(so);
+		AssertReply ar(reply);
+		ar.is_empty();
+
+		close(so);
+			
+	} catch (const std::runtime_error& e) {
+		LOG_TEST.error(e.what());
+		close(so);
+	}
+	runner.stop();
+}
+
+/************************************************************
+*		❌ ERRORS											*
+************************************************************/
+
+/** 
+ @brief integration test - error case
+*/
+void	no_arg_should_err(Server& s)
+{	
+	ServerRunner runner(s);
+	runner.start();
+
+	Socket so = -1;
+	so = make_client_socket(TEST_PORT);
+
+	if (so == -1)
+		throw std::runtime_error("Failed to connect to server");
+	try {
+		send_valid_password(so);
+
+		send_line(so, invalidNickMissingArgMsg);
+		std::string reply = recv_line(so);
+		AssertReply ar(reply);
+		ar.has_code(ERR_NONICKNAMEGIVEN);
+
+		close(so);
+			
+	} catch (const std::runtime_error& e) {
+		LOG_TEST.error(e.what());
+		close(so);
+	}
+	runner.stop();
+}
+
+/** 
+ @brief integration test - error case
+*/
+void	starting_with_number_should_err(Server& s)
+{	
+	ServerRunner runner(s);
+	runner.start();
+
+	Socket so = -1;
+	so = make_client_socket(TEST_PORT);
+
+	if (so == -1)
+		throw std::runtime_error("Failed to connect to server");
+	try {
+		send_valid_password(so);
+
+		send_line(so, invalidNick3oroMsg);
+		std::string reply = recv_line(so);
+		AssertReply ar(reply);
+		ar.has_code(ERR_ERRONEUSNICKNAME);
+
+		close(so);
+			
+	} catch (const std::runtime_error& e) {
+		LOG_TEST.error(e.what());
+		close(so);
+	}
+	runner.stop();
+}
+
+/** 
+ @brief integration test - error case
+*/
+void	taken_should_err(Server& s)
+{	
+	ServerRunner runner(s);
+	runner.start();
+
+	Socket so = -1;
+	so = make_client_socket(TEST_PORT);
+
+	Socket so2 = -1;
+	so2 = make_client_socket(TEST_PORT);
+
+	if (so == -1 || so2 == -1)
+		throw std::runtime_error("Failed to connect to server");
+	try {
+		authenticate(so);
+
+		send_valid_password(so2);
+		send_line(so, validNickMsg);
+		std::string reply = recv_line(so);
+		AssertReply ar(reply);
+		ar.has_code(ERR_NICKNAMEINUSE);
+
+		close(so);
+			
+	} catch (const std::runtime_error& e) {
+		LOG_TEST.error(e.what());
+		close(so);
+	}
+	runner.stop();
+}
+
+void	test_nick(Server& s)
 {
 	print_test_series("command NICK");
-	run_test(
-		[&] {
-			no_previous_nick_and_valid_nick_should_send_nothing();
-		 }, "first nick" );
+	run_test([&] {valid_nick_should_void(s);}, "roro" );
+	run_test([&] {valid_nick_special_should_void(s);}, "[roro]" );
+	run_test([&] {no_arg_should_err(s);}, "no arg" );
+	run_test([&] {starting_with_number_should_err(s);}, "3oro" );
+	run_test([&] {taken_should_err(s);}, "taken" );
 }

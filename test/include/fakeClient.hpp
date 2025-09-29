@@ -7,7 +7,7 @@
 #define RECEIVE_BUFFER 512
 
 Socket		make_client_socket(int port);
-bool		send_line(int fd, const std::string& msg);
+void		send_line(int fd, const std::string& msg);
 std::string recv_line(int fd);
 
 #endif

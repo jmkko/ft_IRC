@@ -1,6 +1,8 @@
 #ifndef TEST_LIST_HPP
 #define TEST_LIST_HPP
 
-void test_nick();
+class Server;
+
+void test_nick(Server& s);
 
 #endif
