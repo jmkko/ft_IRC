@@ -1,4 +1,5 @@
 #include "Nick.hpp"
+#include "utils.hpp"
 
 #include "Client.hpp"
 #include "Config.hpp"
@@ -42,7 +43,7 @@ ReplyCode Nick::check_args(Server& server, Client& client, std::string& params)
 	if (nickname.empty()) {
 		LOG_CMD.error("431 ERR_NONICKNAMEGIVEN");
 		return (ERR_NONICKNAMEGIVEN);
-	} else if (!std::isalpha(nickname[0])) {
+	} else if (!std::isalpha(nickname[0]) && !is_special_abnf(nickname[0])) {
 		LOG_CMD.error("432 ERR_ERRONEUSNICKNAME");
 		return (ERR_ERRONEUSNICKNAME);
 	} else if (nickname.length() > ircConfig.get_nickname_max_len()) {

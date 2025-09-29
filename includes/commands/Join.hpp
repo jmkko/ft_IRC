@@ -13,7 +13,7 @@ struct ChannelParam {
 	std::string channel;
 	std::string key;
 	bool		isValid;
-	ChannelParam(const std::string& a, std::string& b) : channel(a), key(b), isValid(true) {}
+	ChannelParam(const std::string& a, std::string& b) : channel(a), key(b), isValid(true) {} //to be define in .cpp ???
 	ChannelParam(const std::string& a) : channel(a), isValid(true) {}
 	ChannelParam(const std::string& a, bool valid) : channel(a), isValid(valid) {}
 };
