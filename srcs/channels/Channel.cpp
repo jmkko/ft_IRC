@@ -6,6 +6,7 @@
 #include "colors.hpp"
 #include "consts.hpp"
 
+#include <algorithm>
 #include <iostream>
 
 /************************************************************
@@ -15,13 +16,13 @@
 /// @brief checks validity according to RFC
 bool Channel::is_valid_channel_name(const std::string& name)
 {
-	size_t posColon = name.find(':');
-	size_t posBell = name.find('\a');
-	if (posColon != std::string::npos && posBell != std::string::npos)
-		return false;
-	if (name[0] != '#' && name[0] != '&' && name[0] != '+' && name[0] != '!')
-		return false;
-	return name.length() > 1 && name.length() <= ircConfig.get_chan_name_max_len();
+    size_t posColon = name.find(':');
+    size_t posBell = name.find('\a');
+    if (posColon != std::string::npos && posBell != std::string::npos)
+        return false;
+    if (name[0] != '#' && name[0] != '&' && name[0] != '+' && name[0] != '!')
+        return false;
+    return name.length() > 1 && name.length() <= ircConfig.get_chan_name_max_len();
 }
 
 /************************************************************
@@ -30,63 +31,63 @@ bool Channel::is_valid_channel_name(const std::string& name)
 
 /// @throw exception if name is invalid
 Channel::Channel(const std::string& name) :
-	_topic("No topic is set"),
-	_mode(CHANMODE_INIT),
-	_userLimit(NO_LIMIT),
-	_isInviteOnly(false),
-	_isTopicChangeRestricted(false),
-	_members(),
-	_invites(),
-	_operators()
+    _topic("No topic is set"),
+    _mode(CHANMODE_INIT),
+    _userLimit(NO_LIMIT),
+    // _isInviteOnly(false),
+    // _isTopicChangeRestricted(false),
+    _members(),
+    _invites(),
+    _operators()
 {
-	set_name(name);
+    set_name(name);
 }
 
 Channel::Channel(const Channel& other) :
-	_name(other._name),
-	_topic(other._topic),
-	_mode(other._mode),
-	_userLimit(other._userLimit),
-	_isInviteOnly(other._isInviteOnly),
-	_isTopicChangeRestricted(other._isTopicChangeRestricted),
-	_members(other._members),
-	_invites(other._invites),
-	_operators(other._operators)
+    _name(other._name),
+    _topic(other._topic),
+    _mode(other._mode),
+    _userLimit(other._userLimit),
+    // _isInviteOnly(other._isInviteOnly),
+    // _isTopicChangeRestricted(other._isTopicChangeRestricted),
+    _members(other._members),
+    _invites(other._invites),
+    _operators(other._operators)
 {
 }
 
 Channel::Channel(void) :
-	_name(""),
-	_topic("No topic is set"),
-	_mode(CHANMODE_INIT),
-	_userLimit(NO_LIMIT),
-	_isInviteOnly(false),
-	_isTopicChangeRestricted(false),
-	_members(),
-	_invites(),
-	_operators()
+    _name(""),
+    _topic("No topic is set"),
+    _mode(CHANMODE_INIT),
+    _userLimit(NO_LIMIT),
+    // _isInviteOnly(false),
+    // _isTopicChangeRestricted(false),
+    _members(),
+    _invites(),
+    _operators()
 {
 }
 
 Channel::~Channel() {}
 
 /************************************************************
- *		➕ OPERATORS											*
+ *		➕ OPERATORS 	*
  ************************************************************/
 
 Channel& Channel::operator=(const Channel& other)
 {
-	if (this != &other) {
-		_name = other._name;
-		_topic = other._topic;
-		_userLimit = other._userLimit;
-		_isInviteOnly = other._isInviteOnly;
-		_isTopicChangeRestricted = other._isTopicChangeRestricted;
-		_members = other._members;
-		_operators = other._operators;
-		_invites = other._invites;
-	}
-	return (*this);
+    if (this != &other) {
+        _name = other._name;
+        _topic = other._topic;
+        _userLimit = other._userLimit;
+        // _isInviteOnly = other._isInviteOnly;
+        // _isTopicChangeRestricted = other._isTopicChangeRestricted;
+        _members = other._members;
+        _operators = other._operators;
+        _invites = other._invites;
+    }
+    return (*this);
 }
 
 // clang-format off
@@ -96,8 +97,8 @@ std::ostream&	operator<<(std::ostream& os, const Channel& c)
 	<< " name = " << c.get_name()
 	<< " topic=" << c.get_topic()
 	<< " userLimit=" << c.get_user_limit()
-	<< " invite only=" << (c.is_invite_only() ? "true" : "false")
-	<< " topic change restricted=" << (c.is_topic_change_restricted() ? "true" : "false")
+	// << " invite only=" << (c.is_invite_only() ? "true" : "false")
+	// << " topic change restricted=" << (c.is_topic_change_restricted() ? "true" : "false")
 	<< "]";
 }
 
@@ -131,19 +132,26 @@ bool               Channel::is_invited(Client& client) const { return _invites.f
 
 int                Channel::get_user_limit() const { return _userLimit; }
 
-bool               Channel::is_invite_only() const { return _isInviteOnly; }
+bool               Channel::is_invite_only() const { return _mode & CHANMODE_INVITE; }
 
-bool               Channel::is_topic_change_restricted() const { return _isTopicChangeRestricted; }
+bool               Channel::is_topic_change_restricted() const { return _mode & CHANMODE_TOPIC; }
 
-void               Channel::set_name(const std::string& name)
+ReplyCode               Channel::set_name(const std::string& name)
 {
     if (Channel::is_valid_channel_name(name))
         _name = name;
     else
-        throw std::runtime_error("invalid channel name");
+	return ERR_BADCHANMASK;
+    return RPL_SUCCESS;
 }
 
-void Channel::set_topic(const std::string& topic) { _topic = topic; }
+ReplyCode Channel::set_topic(Client& client, const std::string& topic) { 
+    if ((_mode & CHANMODE_TOPIC && is_operator(client)) ||  (!(_mode & CHANMODE_TOPIC)))
+	_topic = topic;
+    else
+	return ERR_CHANOPRIVSNEEDED;
+    return RPL_SUCCESS;
+}
 
 void Channel::set_user_limit(int limit)
 {
@@ -153,36 +161,73 @@ void Channel::set_user_limit(int limit)
         _userLimit = limit;
 }
 
-void Channel::set_is_invite_only(bool is_invite_only) { _isInviteOnly = is_invite_only; }
+// void Channel::set_is_invite_only(bool is_invite_only) { _isInviteOnly = is_invite_only; }
 
-void Channel::set_is_topic_change_restricted(bool isRestricted) { _isTopicChangeRestricted = isRestricted; }
+// void Channel::set_is_topic_change_restricted(bool isRestricted) { _isTopicChangeRestricted = isRestricted; }
 
 void Channel::invite_client(Client& client) { _invites.insert(&client); }
+//Can we invite a banned client ?
+//Or when we invite a banned client it's remove it from banned list ?
 
-void Channel::add_member(Client& client)
+ReplyCode Channel::add_member(Client& client)
 {
     if (is_member(client))
-        return;
+        return RPL_SUCCESS;
     if (_userLimit != NO_LIMIT && _members.size() >= static_cast<size_t>(_userLimit))
-        throw std::runtime_error("channel max capacity reached");
-    if (_isInviteOnly) {
+	return ERR_CHANNELISFULL;
+    if (_mode & CHANMODE_INVITE) {
         if (is_invited(client))
             _invites.erase(&client);
         else
-            throw std::runtime_error("client was not invited");
+	    return ERR_INVITEONLYCHAN;
     }
     if (ircConfig.get_max_joined_channels() != NO_LIMIT
 		&& client.get_nb_joined_channels() >= ircConfig.get_max_joined_channels())
-        throw std::runtime_error("joined channels limit reached");
+	return ERR_CHANNELISFULL;
+    if (is_banned(client))
+	return ERR_BANNEDFROMCHAN;
     _members.insert(&client);
+    return RPL_SUCCESS;
 }
 
 void Channel::remove_member(Client& client) { _members.erase(&client); }
 
-void Channel::make_operator(Client& client)
+ReplyCode Channel::ban_member(Client& client){
+    if (is_member(client)) {
+        _banList.insert(&client);
+	return RPL_SUCCESS;
+    }
+    return ERR_USERNOTINCHANNEL; 
+}
+
+bool               Channel::is_banned(Client& client) const { return _banList.find(&client) != _banList.end(); }
+
+ReplyCode Channel::make_operator(Client& client)
 {
     if (is_member(client)) {
         _operators.insert(&client);
-    } else
-        throw std::runtime_error("client can't be made operator as it is not a channel member");
+	return RPL_SUCCESS;
+    }
+    return ERR_USERNOTINCHANNEL; 
 }
+
+void Channel::set_mode(unsigned short mode){
+    _mode = _mode | mode;
+}
+unsigned short Channel::get_mode() const {
+    return _mode;
+}
+
+size_t Channel::get_nb_members() const { return _members.size();}
+
+// std::string Channel::get_members_list() const {
+//     std::string list;
+//     std::set<Client*>::iterator it = _members.begin();
+//
+//     while (it < _members.end()){
+// 	if (is_operator(it))
+// 	    list.append("@");
+// 	list.append(it->get_nickname()+ " ");
+//     }
+//     return (list);
+// }
