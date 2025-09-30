@@ -26,6 +26,13 @@ void authenticate(Socket so)
     send_line(so, validUserMsg);
 }
 
+void authenticate_second_user(Socket so)
+{
+    send_line(so, validPassMsg);
+    send_line(so, validNick2Msg);
+    send_line(so, validUser2Msg);
+}
+
 void make_op(Socket so)
 {
     send_line(so, validPassMsg);
