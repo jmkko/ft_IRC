@@ -216,3 +216,6 @@ void Channel::set_mode(unsigned short mode){
 unsigned short Channel::get_mode() const {
     return _mode;
 }
+
+size_t Channel::get_nb_members() const { return _members.size();}
+

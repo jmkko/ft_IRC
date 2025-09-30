@@ -42,6 +42,7 @@ class Channel
     void set_mode(unsigned short mode);
     unsigned short get_mode() const;
     std::vector<std::string> get_members_list() const;
+    size_t get_nb_members()const;
 
     void	broadcast(const std::string& message, Client* sender = NULL) const;
     static bool is_valid_channel_name(const std::string& name);

@@ -80,7 +80,7 @@ void Join::execute(Server& server, Client& client)
     std::vector<std::string>::iterator it = _channelsLst.begin();
     std::string                        chanName;
     std::string                        chanKey;
-    ReplyCode                          replyCode;
+    ReplyCode                          replyCode = RPL_SUCCESS;
 
     while (it != _channelsLst.end()) {
         std::istringstream iss(*it);
@@ -108,8 +108,8 @@ void Join::execute(Server& server, Client& client)
             rh.process_response(client, replyCode, channel->get_name());
             continue;
         }
-        if (existingChannel == server.channels.end()) {
-            replyCode = channel->make_operator(client);
+        if (channel->get_nb_members() == 1) {
+            channel->make_operator(client);
             rh.process_response(client, RPL_MODE, channel->get_name() + " +o ");
         }
         if (channel->get_topic() == "No topic is set") {
