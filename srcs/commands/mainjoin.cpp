@@ -8,10 +8,11 @@
 int main()
 {
 
-    std::string              params = "#chan1, #chan2 key1";
+    std::string              params = "#chan1,#chan2,#chan3 key1,key2";
     std::istringstream       iss(params);
     std::vector<std::string> channels;
     std::vector<std::string> keys;
+    std::vector<std::string> cLst;
     std::string              channelsList;
     std::string              keysList;
     std::string              value;
@@ -39,10 +40,25 @@ int main()
     std::vector<std::string>::iterator it = channels.begin();
     size_t                             rank = 0;
     for (; it < channels.end(); it++) {
-        std::cout << "channels : " << *it;
+        std::cout << "channels : " << *it << std::endl;
         if (rank < keys.size())
-            std::cout << "--is key : " << keys[rank];
+            cLst.push_back(*it + " "+ keys[rank]);
+        else
+            cLst.push_back(*it);
         rank++;
-        std::cout << std::endl;
+    }
+    std::vector<std::string>::iterator ite = cLst.begin();
+    std::string chan;
+    std::string psswd;
+    while (ite != cLst.end())
+    {
+        std::istringstream isschan(*ite);
+        std::cout << *ite << std::endl;
+        isschan >> chan;
+        isschan >> psswd;
+        if (psswd.empty())
+            std::cout << "no key channel\n";
+        chan.clear(); psswd.clear();
+        ite++;
     }
 }
