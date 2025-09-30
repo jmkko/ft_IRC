@@ -17,7 +17,7 @@
 bool Channel::is_valid_channel_name(const std::string& name)
 {
     size_t posColon = name.find(':');
-    size_t posBell = name.find('\a');
+    size_t posBell  = name.find('\a');
     if (posColon != std::string::npos && posBell != std::string::npos)
         return false;
     if (name[0] != '#' && name[0] != '&' && name[0] != '+' && name[0] != '!')
@@ -78,14 +78,14 @@ Channel::~Channel() {}
 Channel& Channel::operator=(const Channel& other)
 {
     if (this != &other) {
-        _name = other._name;
-        _topic = other._topic;
+        _name      = other._name;
+        _topic     = other._topic;
         _userLimit = other._userLimit;
         // _isInviteOnly = other._isInviteOnly;
         // _isTopicChangeRestricted = other._isTopicChangeRestricted;
-        _members = other._members;
+        _members   = other._members;
         _operators = other._operators;
-        _invites = other._invites;
+        _invites   = other._invites;
     }
     return (*this);
 }

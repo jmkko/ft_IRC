@@ -10,6 +10,7 @@ ColumnLimit: 110
 PointerAlignment: Left
 AlignConsecutiveMacros: true
 AlignConsecutiveDeclarations: true
+AlignConsecutiveAssignments: true
 AlignTrailingComments: true
 # ctor alignment
 ConstructorInitializerAllOnOneLineOrOnePerLine: true

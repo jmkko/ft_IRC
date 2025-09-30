@@ -30,6 +30,7 @@ SRCS			:=	srcs/main.cpp\
 					srcs/commands/Join.cpp\
 					srcs/server/ReplyHandler.cpp\
 
+HEADERS			:=	$(wildcard INCLUDES)/*.hpp)
 OBJS_DIR		:=	.objs
 OBJS			:=	$(SRCS:%.cpp=$(OBJS_DIR)/%.o)
 DEPS			:=	$(OBJS:%.o=%.d)
