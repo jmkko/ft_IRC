@@ -12,6 +12,7 @@
 #include "utils.hpp"
 
 #include <arpa/inet.h> // hton*, ntoh*, inet_addr
+#include <csignal>
 #include <cstring>
 #include <exception>
 #include <fcntl.h>
@@ -56,7 +57,7 @@ Server::Server(const unsigned short port, const std::string& password) :
 Server::~Server()
 {
 	LOG_SERVER.debug("Server dtor");
-	stop();
+	_clean();
 }
 
 /*************************************************************
@@ -68,9 +69,7 @@ Server::~Server()
  */
 void Server::start()
 {
-	while (true) {
-		if (globalSignal == SIGINT || globalSignal == SIGABRT)
-			stop();
+	while (globalSignal != SIGINT && globalSignal != SIGABRT) {
 		int pollResult = poll(_pfds.data(), _pfds.size(), POLL_TIMEOUT); // Timeout 1 second
 		if (pollResult == -1) {
 			LOG_SERVER.error("Poll failed: " + TO_STRING(strerror(errno)));
@@ -107,6 +106,7 @@ void Server::start()
 			_pfds[i].revents = 0; // Reset events
 		}
 	}
+	_clean();
 }
 
 /**
@@ -324,6 +324,7 @@ int Server::index_of(Client& client)
 void Server::add_events_of(Client& client, int event)
 {
 	int index = index_of(client);
+	LOG_SERVER.debug(TO_STRING("index of client : ") + TO_STRING(index));
 	if (index >= 0) {
 		_pfds[index].events = static_cast<short>(_pfds[index].events | event); // ADD to existing events
 	}
@@ -338,8 +339,10 @@ void Server::_listen_to_socket(Socket toListen, uint32_t flags)
 /**
  * @brief [TODO:description]
  */
-void Server::stop()
+void Server::_clean()
 {
+	if (globalSignal != SIGINT || globalSignal != SIGABRT)
+		globalSignal = SIGINT;
 	LOG_SERVER.debug(std::string("cleaning ") + TO_STRING(_pfds.size())
 					 + " sockets and their associated clients");
 	for (size_t i = 0; i < _pfds.size(); ++i)
@@ -351,6 +354,12 @@ void Server::stop()
 		delete it->second;
 	}
 	channels.clear();
+}
+
+void Server::stop()
+{
+	if (globalSignal != SIGINT || globalSignal != SIGABRT)
+		globalSignal = SIGINT;
 }
 
 /**

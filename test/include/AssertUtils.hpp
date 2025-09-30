@@ -7,7 +7,7 @@
 #include <typeinfo>
 
 template<typename Condition>
-void	assertFalse(Condition cond) {
+void	assert_false(Condition cond) {
 	if (cond) {
 		std::ostringstream oss;
 		oss << cond;
@@ -16,7 +16,7 @@ void	assertFalse(Condition cond) {
 }
 
 template<typename Condition>
-void	assertTrue(Condition cond) {
+void	assert_true(Condition cond) {
 	if (!cond) {
 		std::ostringstream oss;
 		oss << cond;
@@ -25,7 +25,7 @@ void	assertTrue(Condition cond) {
 }
 
 template<typename A, typename B>
-void	assertEqual(const A& a, const B& b) {
+void	assert_equal(const A& a, const B& b) {
 	if (!(a == b))
 	{
 		std::ostringstream oss;
@@ -35,7 +35,7 @@ void	assertEqual(const A& a, const B& b) {
 }
 
 template<typename T>
-void	assertNull(const T* t) {
+void	assert_null(const T* t) {
 	if (t)
 	{
 		std::ostringstream oss;
@@ -45,7 +45,7 @@ void	assertNull(const T* t) {
 }
 
 template <typename Exception, typename Function>
-bool	assertThrows(Function&& f)
+bool	assert_throws(Function& f)
 {	
 	try {
 		f();

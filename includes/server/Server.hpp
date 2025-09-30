@@ -6,7 +6,7 @@
 /*   By: fpetit <fpetit@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/11 08:55:19 by jhervoch          #+#    #+#             */
-/*   Updated: 2025/09/26 15:53:12 by fpetit           ###   ########.fr       */
+/*   Updated: 2025/09/29 16:02:49 by fpetit           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ class Server
 
 	Server& operator=(const Server& inst);
 
+	void	  _clean();
 	void	  _handle_new_connection(int pfdIndex);
 	void	  _cleanup_socket_and_clients(int pfdIndex);
 	void	  _remove_client(Socket s);

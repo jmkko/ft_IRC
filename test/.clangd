@@ -31,10 +31,12 @@ Diagnostics:
     - missing-includes
 CompileFlags:
   Add:
-    - -Iincludes
-    - -Iincludes/channels
-    - -Iincludes/clients
-    - -Iincludes/commands
-    - -Iincludes/server
+    - -std=c++20
+    - -Iinclude
+    - -I../includes
+    - -I../includes/channels
+    - -I../includes/clients
+    - -I../includes/commands
+    - -I../includes/server
 InlayHints:
   Enabled: true
