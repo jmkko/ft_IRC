@@ -13,12 +13,13 @@ class LogManager
 	void			   set_global_level(LogLevel level);
 
   private:
-	LogManager() {};
+	LogManager();
 	LogManager(const LogManager& inst);
 
 	LogManager& operator=(const LogManager& inst);
 
 	std::map<std::string, Logger*> _loggers;
+	LogLevel					   _globalLevel;
 };
 
 // Macros for easy usage
@@ -27,5 +28,6 @@ class LogManager
 #define LOG_CONN   LogManager::get_instance().get_logger("CONNECTION", "", DEBUG)
 #define LOG_CMD	   LogManager::get_instance().get_logger("COMMAND", "", DEBUG)
 #define LOG_ERR	   LogManager::get_instance().get_logger("ERROR", "", ERROR)
+#define LOG_TEST   LogManager::get_instance().get_logger("TEST", "", DEBUG)
 
 #endif

@@ -13,6 +13,8 @@ LogManager& LogManager::get_instance()
 	return instance;
 }
 
+LogManager::LogManager() : _globalLevel(DEBUG) {}
+
 LogManager::~LogManager()
 {
 	std::map<std::string, Logger*>::iterator it;
@@ -30,11 +32,12 @@ Logger& LogManager::get_logger(const std::string& name, const std::string& filen
 			struct stat st = {};
 			if (stat("logs", &st) == -1) {
 				if (mkdir("logs", PERM_755) == -1) {
-					std::cerr << "Warning: Could not create logs directory: " << strerror(errno) << std::endl;
+					std::cerr << "Warning: Could not create logs directory: " << strerror(errno) << '\n';
 				}
 			}
 		}
-
+		if (level < _globalLevel)
+			level = _globalLevel;
 		_loggers[name] = new Logger(name, logFile, level);
 	}
 	return *_loggers[name];
@@ -42,6 +45,7 @@ Logger& LogManager::get_logger(const std::string& name, const std::string& filen
 
 void LogManager::set_global_level(LogLevel level)
 {
+	_globalLevel = level;
 	std::map<std::string, Logger*>::iterator it;
 	for (it = _loggers.begin(); it != _loggers.end(); ++it) {
 		it->second->set_min_level(level);

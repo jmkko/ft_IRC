@@ -35,6 +35,8 @@ void Logger::log(LogLevel level, const std::string& message)
 	std::string timestamp = _get_current_time();
 	std::string levelStr = _level_to_string(level);
 	std::string color = _get_color_for_level(level);
+	if (_name == "TEST")
+		color = PURPLEBACK;
 	std::string terminalMessage = timestamp + " " + color + "[" + levelStr + "]" + RESET + " " + message;
 	std::string fileMessage = timestamp + " [" + levelStr + "] " + message;
 	if (level == ERROR)
