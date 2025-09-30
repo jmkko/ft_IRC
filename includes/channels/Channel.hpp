@@ -3,6 +3,7 @@
 
 #include <set>
 #include <string>
+#include <vector>
 #include "reply_codes.hpp"
 
 class Client;

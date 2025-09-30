@@ -92,30 +92,31 @@ std::string ReplyHandler::get_id_of(Client& client, const std::string& nickname)
 std::string ReplyHandler::select_response(Client& client, ReplyCode code, const std::string& parameters)
 {
 	std::string response(":" + ircConfig.get_name());
+	std::string nick = client.get_nickname();
 
 	switch (code) {
 	case RPL_WELCOME:
-		return (response + code_to_str(code) + client.get_nickname() + RPL_WELCOME_MSG);
+		return (response + code_to_str(code) + nick + RPL_WELCOME_MSG);
 	case RPL_NICK:
-		return (get_id_of(client, parameters) + " NICK " + client.get_nickname());
+		return (get_id_of(client, parameters) + " NICK " + nick);
 	case RPL_JOIN:
 		return (get_id_of(client, "") + " JOIN :" + parameters);
 	case RPL_NOTICE:
-		return (response + " NOTICE " + client.get_nickname() + " :" + parameters);
+		return (response + " NOTICE " + nick + " :" + parameters);
 	case RPL_KICK:
 	case RPL_INVITING:
 		return "";
 	case RPL_MODE:
-		return (response + " MODE " + parameters);
+		return (response + " MODE " + parameters + nick );
 	case RPL_TOPIC:
-		return (response + code_to_str(code) + client.get_nickname() + " " + parameters);
+		return (response + code_to_str(code) + nick + " " + parameters);
 	case RPL_NAMREPLY:
-		return (response + code_to_str(code) + client.get_nickname() + " = " + parameters + " :"
-				+ client.get_nickname());
+		return (response + code_to_str(code) + nick + " = " + parameters + " :"
+				+ nick);
 	case RPL_ENDOFNAMES:
-		return (response + code_to_str(code) + client.get_nickname() + " " + parameters + RPL_ENDOFNAMES_MSG);
+		return (response + code_to_str(code) + nick + " " + parameters + RPL_ENDOFNAMES_MSG);
 	case RPL_NOTOPIC:
-		return (response + code_to_str(code) + client.get_nickname() + " " + parameters + RPL_NOTOPIC_MSG);
+		return (response + code_to_str(code) + nick + " " + parameters + RPL_NOTOPIC_MSG);
 	case RPL_PRIVMSG:
 		return "";
 	case ERR_UNKNOWNCOMMAND:
@@ -135,16 +136,16 @@ std::string ReplyHandler::select_response(Client& client, ReplyCode code, const 
 	case ERR_ALREADYREGISTERED:
 		return (std::string("464") + ERR_ALREADYREGISTERED_MSG);
 	case ERR_BADCHANMASK:
-		return (response + code_to_str(code) + client.get_nickname() + " " + parameters
+		return (response + code_to_str(code) + nick + " " + parameters
 				+ ERR_BADCHANMASK_MSG);
 	case ERR_CHANNELISFULL:
-		return (response + code_to_str(code) + client.get_nickname() + " " + parameters
+		return (response + code_to_str(code) + nick + " " + parameters
 				+ ERR_CHANNELISFULL_MSG);
 	case ERR_INVITEONLYCHAN:
-		return (response + code_to_str(code) + client.get_nickname() + " " + parameters
+		return (response + code_to_str(code) + nick + " " + parameters
 				+ ERR_INVITEONLYCHAN_MSG);
 	case ERR_BANNEDFROMCHAN:
-		return (response + code_to_str(code) + client.get_nickname() + " " + parameters
+		return (response + code_to_str(code) + nick + " " + parameters
 				+ ERR_BANNEDFROMCHAN_MSG);
 	default:
 		return ("");

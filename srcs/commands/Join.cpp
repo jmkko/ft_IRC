@@ -12,114 +12,115 @@ Join::~Join() {}
 Join::Join(const Join& other) : ICommand(), _channelsLst(other._channelsLst) {}
 Join& Join::operator=(const Join& other)
 {
-	if (this != &other) {
-		_channelsLst = other._channelsLst;
-	}
-	return *this;
+    if (this != &other) {
+        _channelsLst = other._channelsLst;
+    }
+    return *this;
 }
 
-Join::Join(const std::vector<ChannelParam>& channelsLst) : _channelsLst(channelsLst) {}
+Join::Join(const std::vector<std::string>& channelsLst) : _channelsLst(channelsLst) {}
 
-std::vector<ChannelParam> Join::check_args(Server& server, Client& client, std::string& params)
+ReplyCode Join::check_args(Server& server, Client& client, std::vector<std::string>& params)
 {
-	(void)server;
-	(void)client;
-	std::istringstream		  iss(params);
-	std::vector<std::string>  channels;
-	std::vector<std::string>  keys;
-	std::vector<ChannelParam> channelsLst;
-	std::string				  tokenChannels;
-	std::string				  tokenKeys;
-	std::string				  value;
+    (void)server;
+    (void)client;
+    std::istringstream       iss(params[0]);
+    std::vector<std::string> channels;
+    std::vector<std::string> keys;
+    std::vector<std::string> channelsLst;
+    std::string              tokenChannels;
+    std::string              tokenKeys;
+    std::string              value;
 
-	iss >> tokenChannels;
-	iss >> tokenKeys;
-	if (tokenChannels.empty()) {
-		LOG_CMD.error(TO_STRING(ERR_NEEDMOREPARAMS) + " ERR_NEEDMOREPARAMS");
-		return channelsLst;
-	}
-	std::istringstream issChannels(tokenChannels);
-	while (std::getline(issChannels, value, ',')) {
-		channels.push_back(value);
-	}
-	std::istringstream issKeys(tokenKeys);
-	while (std::getline(issKeys, value, ',')) {
-		keys.push_back(value);
-	}
-	std::vector<std::string>::iterator it = channels.begin();
-	size_t							   rank = 0;
-	for (; it < channels.end(); it++) {
-		std::cout << "channels : " << *it;
-		if (Channel::is_valid_channel_name(*it)) {
-			if (rank < keys.size())
-				channelsLst.push_back(ChannelParam(*it, keys[rank]));
-			else
-				channelsLst.push_back(ChannelParam(*it));
-		} else {
-			channelsLst.push_back(ChannelParam(*it, false)); // mark as invalid
-		}
-		rank++;
-	}
-	return channelsLst;
+    iss >> tokenChannels;
+    iss >> tokenKeys;
+    if (tokenChannels.empty()) {
+        LOG_CMD.error(TO_STRING(ERR_NEEDMOREPARAMS) + " ERR_NEEDMOREPARAMS");
+        return (ERR_NEEDMOREPARAMS);
+    }
+    std::istringstream issChannels(tokenChannels);
+    while (std::getline(issChannels, value, ',')) {
+        channels.push_back(value);
+    }
+    std::istringstream issKeys(tokenKeys);
+    while (std::getline(issKeys, value, ',')) {
+        keys.push_back(value);
+    }
+    std::vector<std::string>::iterator it = channels.begin();
+    size_t                             rank = 0;
+    for (; it < channels.end(); it++) {
+        std::cout << "channels : " << *it;
+        if (rank < keys.size())
+            channelsLst.push_back(*it + " " + keys[rank]);
+        else
+            channelsLst.push_back(*it);
+        rank++;
+    }
+    params = channelsLst;
+    return (RPL_SUCCESS);
 }
 
+/**
+ * @brief Allows a client to join a channel or create it if it does not exist
+ *
+ * @param server
+ * @param client
+ *
+ * sending response sequence to client
+ *	:user1!~username@host JOIN :#chan1
+ *	:irc.example.com MODE #chan1 +o user1
+ *	:irc.example.com MODE #chan1 +k 123
+ *	:irc.example.com 331 user1 #chan1 :No topic is set
+ *	:irc.example.com 353 user1 = #chan1 :user1
+ *	:irc.example.com 366 user1 #chan1 :End of NAMES listV
+ */
 void Join::execute(Server& server, Client& client)
 {
-	ReplyHandler&						rh = ReplyHandler::get_instance(&server);
-	std::vector<ChannelParam>::iterator it = _channelsLst.begin();
+    ReplyHandler&                      rh = ReplyHandler::get_instance(&server);
+    std::vector<std::string>::iterator it = _channelsLst.begin();
+    std::string                        chanName;
+    std::string                        chanKey;
+    ReplyCode                          replyCode;
 
-	for (; it < _channelsLst.end(); it++) {
-		if (!it->isValid) {
-			LOG_CMD.error(TO_STRING(ERR_BADCHANMASK) + " ERR_BADCHANMASK");
-			rh.process_response(client, ERR_BADCHANMASK, it->channel);
-			continue;
-		}
-		Channel*								  channel = NULL;
-		std::map<std::string, Channel*>::iterator existingChannel = server.channels.find(it->channel);
+    while (it != _channelsLst.end()) {
+        std::istringstream iss(*it);
+        iss >> chanName;
+        iss >> chanKey;
+        if (!Channel::is_valid_channel_name(chanName)) {
+            LOG_CMD.error(TO_STRING(ERR_BADCHANMASK) + " ERR_BADCHANMASK");
+            rh.process_response(client, ERR_BADCHANMASK, chanName);
+            continue;
+        }
+        Channel*                                  channel = NULL;
+        std::map<std::string, Channel*>::iterator existingChannel = server.channels.find(chanName);
 
-		if (existingChannel == server.channels.end()) {
-			try {
-				channel = new Channel(it->channel);
-				server.channels[channel->get_name()] = channel;
-				LOG_CMD.info("Created new channel: " + channel->get_name());
-			} catch (std::exception& e) {
-				LOG_CMD.error("Failed to create channel: " + std::string(e.what()));
-				rh.process_response(client, ERR_BADCHANMASK, it->channel);
-				continue;
-			}
-		} else {
-			channel = existingChannel->second;
-		}
-
-		try {
-			channel->add_member(client);
-			rh.process_response(client, RPL_JOIN, channel->get_name());
-			if (channel->get_topic() == "No topic is set") {
-				rh.process_response(client, RPL_NOTOPIC, channel->get_name());
-			} else {
-				rh.process_response(client, RPL_TOPIC, channel->get_name() + " :" + channel->get_topic());
-			}
-			if (existingChannel == server.channels.end()) {
-				try {
-					channel->make_operator(client);
-				} catch (std::exception& e) {
-					LOG_CMD.debug("Could not make client operator: " + std::string(e.what()));
-				}
-			}
-			rh.process_response(client, RPL_NAMREPLY, channel->get_name());
-			rh.process_response(client, RPL_ENDOFNAMES, channel->get_name());
-
-		} catch (std::exception& e) {
-			LOG_CMD.error("Failed to add client to channel: " + std::string(e.what()));
-			if (std::string(e.what()).find("channel max capacity") != std::string::npos) {
-				rh.process_response(client, ERR_CHANNELISFULL, channel->get_name());
-			} else if (std::string(e.what()).find("not invited") != std::string::npos) {
-				rh.process_response(client, ERR_INVITEONLYCHAN, channel->get_name());
-			} else {
-				rh.process_response(client, ERR_BADCHANMASK, channel->get_name());
-			}
-		}
-	}
+        if (existingChannel == server.channels.end()) {
+            channel = new Channel(chanName);
+            server.channels[channel->get_name()] = channel;
+            LOG_CMD.info("Created new channel: " + channel->get_name());
+        } else {
+            channel = existingChannel->second;
+        }
+        replyCode = channel->add_member(client);
+        if (replyCode == RPL_SUCCESS)
+            rh.process_response(client, RPL_JOIN, channel->get_name());
+        else {
+            rh.process_response(client, replyCode, channel->get_name());
+            continue;
+        }
+        if (existingChannel == server.channels.end()) {
+            replyCode = channel->make_operator(client);
+            rh.process_response(client, RPL_MODE, channel->get_name() + " +o ");
+        }
+        if (channel->get_topic() == "No topic is set") {
+            rh.process_response(client, RPL_NOTOPIC, channel->get_name());
+        } else {
+            rh.process_response(client, RPL_TOPIC, channel->get_name() + " :" + channel->get_topic());
+        }
+        rh.process_response(client, RPL_NAMREPLY, channel->get_name());
+        rh.process_response(client, RPL_ENDOFNAMES, channel->get_name());
+        ++it;
+    }
 }
 
 // if no params

@@ -140,8 +140,16 @@ ICommand* CmdFactory::join_cmd(Server& server, Client& client, std::string& para
 {
 	(void)client;
 	(void)server;
-	std::vector<ChannelParam> channelLst = Join::check_args(server, client, params);
-	return new Join(channelLst);
+	ReplyHandler& rh = ReplyHandler::get_instance(&server);
+	std::vector<std::string> vectorParams;
+	vectorParams.push_back(params);
+	ReplyCode replyCode = Join::check_args(server, client, vectorParams);
+	if (replyCode == RPL_SUCCESS) {
+		return new Join(vectorParams);
+	} else {
+		rh.process_response(client, replyCode, params);
+	}
+	return NULL;
 };
 
 ICommand* CmdFactory::part_cmd(Server& server, Client& client, std::string& params)
