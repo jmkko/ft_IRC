@@ -6,6 +6,7 @@
 #include "colors.hpp"
 #include "consts.hpp"
 
+#include <algorithm>
 #include <iostream>
 
 /************************************************************
@@ -18,9 +19,9 @@ bool Channel::is_valid_channel_name(const std::string& name)
     size_t posColon = name.find(':');
     size_t posBell = name.find('\a');
     if (posColon != std::string::npos && posBell != std::string::npos)
-	return false;
+        return false;
     if (name[0] != '#' && name[0] != '&' && name[0] != '+' && name[0] != '!')
-	return false;
+        return false;
     return name.length() > 1 && name.length() <= ircConfig.get_chan_name_max_len();
 }
 
@@ -77,14 +78,14 @@ Channel::~Channel() {}
 Channel& Channel::operator=(const Channel& other)
 {
     if (this != &other) {
-	_name = other._name;
-	_topic = other._topic;
-	_userLimit = other._userLimit;
-	// _isInviteOnly = other._isInviteOnly;
-	// _isTopicChangeRestricted = other._isTopicChangeRestricted;
-	_members = other._members;
-	_operators = other._operators;
-	_invites = other._invites;
+        _name = other._name;
+        _topic = other._topic;
+        _userLimit = other._userLimit;
+        // _isInviteOnly = other._isInviteOnly;
+        // _isTopicChangeRestricted = other._isTopicChangeRestricted;
+        _members = other._members;
+        _operators = other._operators;
+        _invites = other._invites;
     }
     return (*this);
 }
@@ -219,3 +220,14 @@ unsigned short Channel::get_mode() const {
 
 size_t Channel::get_nb_members() const { return _members.size();}
 
+// std::string Channel::get_members_list() const {
+//     std::string list;
+//     std::set<Client*>::iterator it = _members.begin();
+//
+//     while (it < _members.end()){
+// 	if (is_operator(it))
+// 	    list.append("@");
+// 	list.append(it->get_nickname()+ " ");
+//     }
+//     return (list);
+// }

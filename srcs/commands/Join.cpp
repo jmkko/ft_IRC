@@ -67,11 +67,12 @@ ReplyCode Join::check_args(Server& server, Client& client, std::vector<std::stri
  * @param client
  *
  * sending response sequence to client
- *	:user1!~username@host JOIN :#chan1
+ *	:user1!~username@host JOIN :#chan1 123
  *	:irc.example.com MODE #chan1 +o user1
  *	:irc.example.com MODE #chan1 +k 123
  *	:irc.example.com 331 user1 #chan1 :No topic is set
- *	:irc.example.com 353 user1 = #chan1 :user1
+ *	:irc.example.com 353 user1 = #chan1 :@user1 user2 user3 user4 user5
+ *	:irc.example.com 353 user1 = #chan1 :user6 @user1 user7 user8 user9
  *	:irc.example.com 366 user1 #chan1 :End of NAMES listV
  */
 void Join::execute(Server& server, Client& client)
@@ -136,4 +137,9 @@ void Join::execute(Server& server, Client& client)
 // #channel global -> multiserver
 // &channel local -> un seul serveur
 // +channel ->channel mode-less
-// !channel -> reçoit un id aleatoire de 5 char = !acfdechannel
+// !channel -> reçoit un id aleatoire de 5 char = !acfdechannela
+//
+//
+//
+// !!!!! banned list check
+// and list user channels

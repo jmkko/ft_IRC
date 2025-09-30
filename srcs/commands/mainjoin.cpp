@@ -61,4 +61,7 @@ int main()
         chan.clear(); psswd.clear();
         ite++;
     }
+    std::set<>
+
+    std::for_each(v.begin(), v.end(), [](int &n) { n++; });
 }
