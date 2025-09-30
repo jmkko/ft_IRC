@@ -38,6 +38,11 @@ void run_test(Func&& f, const char* name)
 	Messages names are suffixed with `CommandnameMsg`
 */
 
+static const std::string& userNick						= "roro";
+static const std::string& user2Nick						= "toto";
+static const std::string& channelName					= "#chan";
+static const std::string& channel2Name					= "#chan2";
+
 static const std::string& validPassMsg 					= std::string("PASS ") + DEFAULT_PASSWORD + "\r\n";
 
 static const std::string& validUserMsg 					= "USER roro 0 * :Ronnie Reagan\r\n";

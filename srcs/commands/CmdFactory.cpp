@@ -4,6 +4,7 @@
 #include "ICommand.hpp"
 #include "Join.hpp"
 #include "LogManager.hpp"
+#include "Kick.hpp"
 #include "Nick.hpp"
 #include "Pass.hpp"
 #include "ReplyHandler.hpp"
@@ -38,7 +39,7 @@ ICommand* CmdFactory::make_command(Server& server, Client& client, std::string& 
     std::string        commandLine = "";
     std::istringstream iss(params); // NOLINT(clang-diagnostic-vexing-parse)
     std::string        available[NB_AVAILABLE_CMD]
-        = {"USER", "PASS", "NICK", "QUIT", "INVITE", "JOIN", "PART", "MODE", "OPER"};
+        = {"USER", "PASS", "NICK", "QUIT", "INVITE", "JOIN", "PART", "MODE", "OPER", "KICK"};
     ICommand* (CmdFactory::* ptr[NB_AVAILABLE_CMD])(Server&, Client&, std::string&)
         = {&CmdFactory::user_cmd,
            &CmdFactory::pass_cmd,
@@ -48,7 +49,9 @@ ICommand* CmdFactory::make_command(Server& server, Client& client, std::string& 
            &CmdFactory::join_cmd,
            &CmdFactory::part_cmd,
            &CmdFactory::mode_cmd,
-           &CmdFactory::oper_cmd};
+           &CmdFactory::oper_cmd,
+           &CmdFactory::kick_cmd
+		};
 
     iss >> commandLine;
     for (size_t i = 0; i < NB_AVAILABLE_CMD; i++) {
@@ -125,6 +128,26 @@ ICommand* CmdFactory::pass_cmd(Server& server, Client& client, std::string& para
     return NULL;
 };
 
+ICommand* CmdFactory::kick_cmd(Server& server, Client& client, std::string& params)
+{
+	ReplyHandler&            rh = ReplyHandler::get_instance(&server);
+	std::vector<std::string> vectorParams;
+	std::istringstream iss(params);
+	std::string token;
+	while (std::getline(iss, token, ' '))
+	{
+		vectorParams.push_back(token);
+		LOG_CMD.debug("factory token", token);
+	}
+    ReplyCode replyCode = Kick::check_args(server, client, vectorParams);
+    if (replyCode == RPL_SUCCESS) {
+        return new Kick(vectorParams);
+    } else {
+        rh.process_response(client, replyCode, params);
+    }
+	return NULL;
+};
+
 // NOT IMPLEMENTED YET
 
 ICommand* CmdFactory::quit_cmd(Server& server, Client& client, std::string& params)
@@ -138,8 +161,6 @@ ICommand* CmdFactory::quit_cmd(Server& server, Client& client, std::string& para
 
 ICommand* CmdFactory::join_cmd(Server& server, Client& client, std::string& params)
 {
-    (void)client;
-    (void)server;
     ReplyHandler&            rh = ReplyHandler::get_instance(&server);
     std::vector<std::string> vectorParams;
     vectorParams.push_back(params);

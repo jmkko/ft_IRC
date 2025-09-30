@@ -153,12 +153,18 @@ int ReplyHandler::process_response(Client& client, ReplyCode code, const std::st
 
     // to be implemented
     // if (code == RPL_NICK | code == RPL_TOPIC)
-    //	broadcast(response, chanel);
+    //	broadcast(response, chanel); or Channel->broadcast ?
     if (!response.empty()) {
-        LOG_CMD.debug("add to sendBuffer: " + response);
+        LOG_CMD.debug("add reply to sendBuffer: " + response);
         _send_reply(client, response);
     }
     return (code);
+}
+
+void ReplyHandler::process_notice(Client& client, const std::string& msg)
+{
+	LOG_CMD.debug("add notice to sendBuffer: " + msg);
+	_send_reply(client, msg);
 }
 
 void ReplyHandler::_send_reply(Client& client, const std::string& msg)

@@ -88,6 +88,10 @@ std::string        Client::get_user_name() const { return _userName; }
 
 std::string        Client::get_real_name() const { return _realName; }
 
+std::string        Client::get_userhost() const { return _userName + "@" + ircConfig.get_name(); }
+
+std::string        Client::get_full_userhost() const { return _nickName + "!" + _userName + "@" + ircConfig.get_name(); }
+
 ClientStatus       Client::get_status() const { return _status; }
 
 std::string        Client::get_send_buffer() const { return _sendBuffer; }

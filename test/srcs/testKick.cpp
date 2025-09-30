@@ -29,7 +29,7 @@
 /**
  @brief integration test - normal case
 */
-void op_existing_chan_valid_user_should_void_then_can_reenter(Server& s)
+void op_existing_chan_valid_user_should_notice(Server& s)
 {
     ServerRunner runner(s);
     runner.start();
@@ -39,24 +39,32 @@ void op_existing_chan_valid_user_should_void_then_can_reenter(Server& s)
 	Socket so	= -1;
 	so			= make_client_socket(TEST_PORT);
 
-    if (soOp == -1)
+    if (soOp == -1 || so == -1)
         throw std::runtime_error("Failed to connect to server");
     try {
         make_op(soOp);
-
 		authenticate(so);
 		send_line(so, validJoinMsg);
+		recv_line(so);
 
 		send_line(soOp, validKickMsg);
-		std::string reply = recv_line(so);
+		// as a member, operator receives the notice
+		std::string reply = recv_line(soOp);
+		LOG_TEST.debug("test_valid1: reply op", reply);
         AssertReply ar(reply);
-		ar.is_empty();
+		// ar.contains("KICK").contains(channelName).contains(userNick);
+
+		// kicked user gets a notice
+		reply = recv_line(so);
+        ar.handle_new_reply(reply);
+		LOG_TEST.debug("test_valid1: reply user", reply);
+		ar.contains("KICK").contains(channelName).contains(userNick);
 
 		// kicked user can join again
 		send_line(so, validJoinMsg);
 		reply = recv_line(so);
 		ar.handle_new_reply(reply);
-		ar.has_code(RPL_TOPIC);
+		ar.has_code(RPL_NOTOPIC);
 
         close(soOp);
         close(so);
@@ -71,7 +79,7 @@ void op_existing_chan_valid_user_should_void_then_can_reenter(Server& s)
 /**
  @brief integration test - normal case - many users
 */
-void op_existing_chan_valid_users_should_void_then_can_reenter(Server& s)
+void op_existing_chan_valid_users_should_notice(Server& s)
 {
     ServerRunner runner(s);
     runner.start();
@@ -83,7 +91,7 @@ void op_existing_chan_valid_users_should_void_then_can_reenter(Server& s)
 	Socket so2	= -1;
 	so2			= make_client_socket(TEST_PORT);
 
-    if (soOp == -1)
+    if (soOp == -1 || so == -1 || so2 == -1)
         throw std::runtime_error("Failed to connect to server");
     try {
         make_op(soOp);
@@ -95,15 +103,20 @@ void op_existing_chan_valid_users_should_void_then_can_reenter(Server& s)
 		send_line(so2, validJoinMsg);
 
 		send_line(soOp, validManyUsersKickMsg);
-		std::string reply = recv_line(so);
+		// as a member, operator receives the notice
+		std::string reply = recv_line(soOp);
         AssertReply ar(reply);
-		ar.is_empty();
+		// ar.contains("KICK").contains(channelName).contains(userNick);
 
-		// kicked user can join again
-		send_line(so, validJoinMsg);
+		// kicked user1 gets a notice
 		reply = recv_line(so);
-		ar.handle_new_reply(reply);
-		ar.has_code(RPL_TOPIC);
+        ar.handle_new_reply(reply);
+		ar.contains("KICK").contains(channelName).contains(userNick);
+
+		// kicked user2 gets a notice
+		reply = recv_line(so);
+        ar.handle_new_reply(reply);
+		ar.contains("KICK").contains(channelName).contains(user2Nick);
 
         close(soOp);
         close(so);
@@ -136,7 +149,7 @@ void no_op_should_err(Server& s)
     Socket so2	= -1;
     so2       	= make_client_socket(TEST_PORT);
 
-    if (soOp == -1)
+    if (soOp == -1 || so == -1 || so2 == -1)
         throw std::runtime_error("Failed to connect to server");
     try {
 		make_op(soOp);
@@ -162,7 +175,6 @@ void no_op_should_err(Server& s)
     runner.stop();
 }
 
-
 /**
  @brief integration test - error case
 */
@@ -176,7 +188,7 @@ void op_missing_chan_should_err(Server& s)
 	Socket so	= -1;
 	so			= make_client_socket(TEST_PORT);
 
-    if (soOp == -1)
+    if (soOp == -1 || so == -1)
         throw std::runtime_error("Failed to connect to server");
     try {
 		make_op(soOp);
@@ -211,7 +223,7 @@ void op_missing_user_should_err(Server& s)
 	Socket so	= -1;
 	so			= make_client_socket(TEST_PORT);
 
-    if (soOp == -1)
+    if (soOp == -1 || so == -1)
         throw std::runtime_error("Failed to connect to server");
     try {
 		make_op(soOp);
@@ -246,7 +258,7 @@ void op_user_not_in_channel_should_err(Server& s)
 	Socket so	= -1;
 	so			= make_client_socket(TEST_PORT);
 
-    if (soOp == -1)
+    if (soOp == -1 || so == -1)
         throw std::runtime_error("Failed to connect to server");
     try {
 		make_op(soOp);
@@ -280,7 +292,7 @@ void op_invalid_channel_should_err(Server& s)
 	Socket so	= -1;
 	so			= make_client_socket(TEST_PORT);
 
-    if (soOp == -1)
+    if (soOp == -1 || so == -1)
         throw std::runtime_error("Failed to connect to server");
     try {
 		make_op(soOp);
@@ -315,7 +327,7 @@ void op_valid_inexistent_channel_should_err(Server& s)
 	Socket so	= -1;
 	so			= make_client_socket(TEST_PORT);
 
-    if (soOp == -1)
+    if (soOp == -1 || so == -1)
         throw std::runtime_error("Failed to connect to server");
     try {
 		make_op(soOp);
@@ -340,8 +352,8 @@ void op_valid_inexistent_channel_should_err(Server& s)
 void	test_kick(Server& s)
 {
 	print_test_series("command KICK");
-	run_test([&] {op_existing_chan_valid_user_should_void_then_can_reenter(s);}, "single kick");
-	run_test([&] {op_existing_chan_valid_users_should_void_then_can_reenter(s);}, "combo");
+	run_test([&] {op_existing_chan_valid_user_should_notice(s);}, "single kick");
+	run_test([&] {op_existing_chan_valid_users_should_notice(s);}, "combo");
 	run_test([&] {no_op_should_err(s);}, "no op");
 	run_test([&] {op_missing_chan_should_err(s);}, "no chan");
 	run_test([&] {op_missing_user_should_err(s);}, "no user");

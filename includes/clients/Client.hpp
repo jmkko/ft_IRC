@@ -34,6 +34,8 @@ class Client
     std::string  get_nickname() const;
     std::string  get_user_name() const;
     std::string  get_real_name() const;
+	std::string  get_userhost() const;
+	std::string  get_full_userhost() const;
     ClientStatus get_status() const;
 
     bool is_registered() const;

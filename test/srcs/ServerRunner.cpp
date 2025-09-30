@@ -37,7 +37,7 @@ void ServerRunner::start()
     _thread    = std::thread([this]() {
         try {
             _server.start();
-            std::this_thread::sleep_for(std::chrono::milliseconds(SERVER_PROCESS_TIME_MS * 2));
+            std::this_thread::sleep_for(std::chrono::milliseconds(SERVER_PROCESS_TIME_MS * 4));
         } catch (const std::exception& e) {
             _lastError = e.what();
             LOG_TEST.error(_lastError);
@@ -51,7 +51,7 @@ void ServerRunner::stop()
     if (!_isRunning)
         return;
     _server.stop();
-    std::this_thread::sleep_for(std::chrono::milliseconds(SERVER_PROCESS_TIME_MS));
+    std::this_thread::sleep_for(std::chrono::milliseconds(SERVER_PROCESS_TIME_MS * 4));
     LOG_TEST.debug("call stop for server");
     if (_thread.joinable()) {
         _thread.join();

@@ -14,6 +14,7 @@ class ReplyHandler
 	std::string get_id_of(Client& client, const std::string& name = "");
 	std::string select_response(Client& client, ReplyCode code, const std::string& parameter);
 	int			process_response(Client& client, ReplyCode code, const std::string& parameters = "");
+	void		process_notice(Client& client, const std::string& msg);
 
 	static ReplyHandler& get_instance(Server* s);
 

@@ -6,7 +6,7 @@
 /*   By: fpetit <fpetit@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 23:38:52 by npolack           #+#    #+#             */
-/*   Updated: 2025/09/25 09:40:47 by jhervoch         ###   ########.fr       */
+/*   Updated: 2025/09/30 22:03:28 by fpetit           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@
 #define WELL_KNOWN_PORT_MAX	1024
 #define DYNAMIC_PORT_MIN	49152
 #define NICKNAME_MAX_LEN	9
-#define NB_AVAILABLE_CMD	9
+#define NB_AVAILABLE_CMD	10
 
 #define CHANMODE_INIT	0x00
 #define CHANMODE_OP	0x01
@@ -39,6 +39,10 @@
 #define CHANMODE_INVITE 0x08
 #define CHANMODE_LIMIT	0x10
 
+#include <vector>
+#include <string>
+
 typedef int Socket;
+typedef std::vector<std::string> t_params;
 
 #endif

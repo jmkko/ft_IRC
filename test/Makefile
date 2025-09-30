@@ -41,6 +41,7 @@ IRC_SRCS_FILES	:=	utils.cpp\
 					server/ReplyHandler.cpp\
 					commands/CmdFactory.cpp\
 					commands/Nick.cpp\
+					commands/Kick.cpp\
 					commands/Pass.cpp\
 					commands/User.cpp\
 					commands/Join.cpp\

@@ -49,6 +49,7 @@ void Logger::log(LogLevel level, const std::string& message)
     }
 }
 
+void Logger::debug(const std::string& desc, const std::string& message) { log(DEBUG, desc + " -> " + message); }
 void Logger::debug(const std::string& message) { log(DEBUG, message); }
 void Logger::info(const std::string& message) { log(INFO, message); }
 void Logger::warning(const std::string& message) { log(WARN, message); }
