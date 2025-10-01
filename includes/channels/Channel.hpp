@@ -1,6 +1,8 @@
 #ifndef CHANNEL_HPP
 #define CHANNEL_HPP
 
+#include "LogManager.hpp"
+#include "ReplyHandler.hpp"
 #include "reply_codes.hpp"
 
 #include <set>
@@ -32,29 +34,26 @@ class Channel
     ReplyCode set_name(const std::string& name);
     ReplyCode set_topic(Client& client, const std::string& topic);
     void      set_user_limit(int limit);
-    // void set_is_invite_only(bool is_invite_only);
-    // void set_is_topic_change_restricted(bool isRestricted);
     void      invite_client(Client& client);
     ReplyCode add_member(Client& client);
     void      remove_member(Client& client);
     ReplyCode ban_member(Client& client);
     ReplyCode make_operator(Client& client);
 
-    void           set_mode(unsigned short mode);
-    unsigned short get_mode() const;
-    std::string    get_members_list() const;
-    size_t         get_nb_members() const;
+    void                     set_mode(unsigned short mode);
+    unsigned short           get_mode() const;
+    std::vector<std::string> get_members_list() const;
+    size_t                   get_nb_members() const;
 
-    void        broadcast(const std::string& message, Client* sender = NULL) const;
+    void
+    broadcast(Server& server, ReplyCode replyCode, const std::string& message, Client* sender = NULL) const;
     static bool is_valid_channel_name(const std::string& name);
 
   private:
-    std::string    _name;
-    std::string    _topic;
-    unsigned short _mode;
-    int            _userLimit; // -1 if -l not set
-    // bool	      _isInviteOnly;		// true if -i is set
-    // bool	      _isTopicChangeRestricted; // true if -t is set
+    std::string       _name;
+    std::string       _topic;
+    unsigned short    _mode;
+    int               _userLimit; // -1 if -l not set
     std::set<Client*> _members;
     std::set<Client*> _invites;
     std::set<Client*> _operators;

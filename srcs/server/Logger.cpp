@@ -1,5 +1,4 @@
 #include "Logger.hpp"
-
 #include "colors.hpp"
 #include "consts.hpp"
 
@@ -13,7 +12,7 @@ Logger::Logger(const std::string& logName, const std::string& filename, LogLevel
     _logFile.open(filename.c_str(), std::ios::app);
     if (_logFile.is_open()) {
         _fileEnabled = true;
-        log(INFO, "Logger initialized - file: " + filename);
+        log(INFO, _name + " Logger initialized - file: " + filename);
     } else {
         std::cerr << "Warning: Could not open log file " << filename << '\n';
     }
@@ -21,7 +20,7 @@ Logger::Logger(const std::string& logName, const std::string& filename, LogLevel
 
 Logger::~Logger()
 {
-    log(INFO, "Logger shutting down");
+    log(INFO, _name + " Logger shutting down");
     if (_fileEnabled) {
         _logFile.close();
     }

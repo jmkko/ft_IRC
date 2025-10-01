@@ -11,19 +11,18 @@ class Client;
 class ReplyHandler
 {
   public:
-	std::string get_id_of(Client& client, const std::string& name = "");
-	std::string select_response(Client& client, ReplyCode code, const std::string& parameter);
-	int			process_response(Client& client, ReplyCode code, const std::string& parameters = "");
-	void		process_notice(Client& client, const std::string& msg);
+    std::string get_id_of(Client& client, const std::string& name = "");
+    std::string select_response(Client& client, ReplyCode code, const std::string& parameter, Client* sender = NULL);
+    int         process_response(Client& client, ReplyCode code, const std::string& parameters = "", Client* sender = NULL);
 
-	static ReplyHandler& get_instance(Server* s);
+    static ReplyHandler& get_instance(Server* s);
 
   private:
-	Server* _server;
+    Server* _server;
 
-	ReplyHandler(Server* s);
+    ReplyHandler(Server* s);
 
-	void _send_reply(Client& c, const std::string& msg);
+    void _send_reply(Client& c, const std::string& msg);
 };
 
 #endif

@@ -1,6 +1,5 @@
-#include "CmdFactory.hpp"
-
 #include "Client.hpp"
+#include "CmdFactory.hpp"
 #include "ICommand.hpp"
 #include "Join.hpp"
 #include "LogManager.hpp"
@@ -81,7 +80,7 @@ ICommand* CmdFactory::make_command(Server& server, Client& client, std::string& 
 // Return a NICK command object if the nickname is valid
 ICommand* CmdFactory::nick_cmd(Server& server, Client& client, std::string& params)
 {
-    ReplyHandler& rh        = ReplyHandler::get_instance(&server);
+    ReplyHandler& rh = ReplyHandler::get_instance(&server);
     ReplyCode     replyCode = Nick::check_args(server, client, params);
 
     if (replyCode == RPL_SUCCESS || replyCode == RPL_WELCOME)
@@ -97,7 +96,7 @@ ICommand* CmdFactory::user_cmd(Server& server, Client& client, std::string& para
 {
     std::string   username = "", realname = "";
     ReplyCode     replyCode = User::check_args(server, client, params);
-    ReplyHandler& rh        = ReplyHandler::get_instance(&server);
+    ReplyHandler& rh = ReplyHandler::get_instance(&server);
 
     if (replyCode == RPL_WELCOME || replyCode == RPL_SUCCESS) {
         std::istringstream iss(params);
@@ -116,7 +115,7 @@ ICommand* CmdFactory::user_cmd(Server& server, Client& client, std::string& para
 
 ICommand* CmdFactory::pass_cmd(Server& server, Client& client, std::string& params)
 {
-    ReplyHandler& rh        = ReplyHandler::get_instance(&server);
+    ReplyHandler& rh = ReplyHandler::get_instance(&server);
     ReplyCode     replyCode = Pass::check_args(server, client, params);
 
     if (replyCode == RPL_SUCCESS || replyCode == RPL_WELCOME) {

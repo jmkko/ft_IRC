@@ -1,8 +1,7 @@
-#include "ReplyHandler.hpp"
-
 #include "Client.hpp"
 #include "Config.hpp"
 #include "LogManager.hpp"
+#include "ReplyHandler.hpp"
 #include "Server.hpp"
 #include "utils.hpp"
 
@@ -89,21 +88,24 @@ std::string ReplyHandler::get_id_of(Client& client, const std::string& nickname)
     return (identity);
 }
 
-std::string ReplyHandler::select_response(Client& client, ReplyCode code, const std::string& parameters)
+std::string ReplyHandler::select_response(Client& client, ReplyCode code, const std::string& parameters, Client* sender)
 {
     std::string response(":" + ircConfig.get_name());
     std::string nick = client.get_nickname();
 
+    if (!sender)
+        sender = &client;
     switch (code) {
     case RPL_WELCOME:
         return (response + code_to_str(code) + nick + RPL_WELCOME_MSG);
     case RPL_NICK:
         return (get_id_of(client, parameters) + " NICK " + nick);
     case RPL_JOIN:
-        return (get_id_of(client, "") + " JOIN :" + parameters);
+        return (get_id_of(*sender, "") + " JOIN :" + parameters);
     case RPL_NOTICE:
         return (response + " NOTICE " + nick + " :" + parameters);
     case RPL_KICK:
+		return (response + sender->get_full_userhost() + " KICK " + parameters);
     case RPL_INVITING:
         return "";
     case RPL_MODE:
@@ -147,24 +149,18 @@ std::string ReplyHandler::select_response(Client& client, ReplyCode code, const 
     }
 }
 
-int ReplyHandler::process_response(Client& client, ReplyCode code, const std::string& parameters)
+int ReplyHandler::process_response(Client& client, ReplyCode code, const std::string& parameters, Client* sender)
 {
-    std::string response = select_response(client, code, parameters);
+    std::string response = select_response(client, code, parameters, sender);
 
     // to be implemented
     // if (code == RPL_NICK | code == RPL_TOPIC)
-    //	broadcast(response, chanel); or Channel->broadcast ?
+    //	broadcast(response, chanel);
     if (!response.empty()) {
-        LOG_CMD.debug("add reply to sendBuffer: " + response);
+        LOG_CMD.debug("add to sendBuffer: " + response);
         _send_reply(client, response);
     }
     return (code);
-}
-
-void ReplyHandler::process_notice(Client& client, const std::string& msg)
-{
-	LOG_CMD.debug("add notice to sendBuffer: " + msg);
-	_send_reply(client, msg);
 }
 
 void ReplyHandler::_send_reply(Client& client, const std::string& msg)
