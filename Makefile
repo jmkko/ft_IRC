@@ -28,6 +28,7 @@ SRCS			:=	srcs/main.cpp\
 					srcs/commands/Pass.cpp\
 					srcs/commands/User.cpp\
 					srcs/commands/Join.cpp\
+					srcs/commands/Who.cpp\
 					srcs/server/ReplyHandler.cpp\
 
 OBJS_DIR		:=	.objs

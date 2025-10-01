@@ -8,6 +8,7 @@
 #include "ReplyHandler.hpp"
 #include "Server.hpp"
 #include "User.hpp"
+#include "Who.hpp"
 #include "consts.hpp"
 #include "reply_codes.hpp"
 #include "utils.hpp"
@@ -37,7 +38,7 @@ ICommand* CmdFactory::make_command(Server& server, Client& client, std::string& 
     std::string        commandLine = "";
     std::istringstream iss(params); // NOLINT(clang-diagnostic-vexing-parse)
     std::string        available[NB_AVAILABLE_CMD]
-        = {"USER", "PASS", "NICK", "QUIT", "INVITE", "JOIN", "PART", "MODE", "OPER"};
+        = {"USER", "PASS", "NICK", "QUIT", "INVITE", "JOIN", "PART", "MODE", "WHO", "OPER"};
     ICommand* (CmdFactory::* ptr[NB_AVAILABLE_CMD])(Server&, Client&, std::string&)
         = {&CmdFactory::user_cmd,
            &CmdFactory::pass_cmd,
@@ -47,6 +48,7 @@ ICommand* CmdFactory::make_command(Server& server, Client& client, std::string& 
            &CmdFactory::join_cmd,
            &CmdFactory::part_cmd,
            &CmdFactory::mode_cmd,
+           &CmdFactory::who_cmd,
            &CmdFactory::oper_cmd};
 
     iss >> commandLine;
@@ -184,5 +186,14 @@ ICommand* CmdFactory::invite_cmd(Server& server, Client& client, std::string& pa
     (void)server;
     (void)params;
     LOG_CMD.debug("Build INVITE (not implemented)");
+    return NULL;
+};
+
+ICommand* CmdFactory::who_cmd(Server& server, Client& client, std::string& params)
+{
+    (void)client;
+    (void)server;
+    (void)params;
+    LOG_CMD.debug("Build WHO (not implemented)");
     return NULL;
 };
