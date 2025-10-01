@@ -1,5 +1,6 @@
-#include "Channel.hpp"
 #include "Join.hpp"
+
+#include "Channel.hpp"
 #include "LogManager.hpp"
 #include "ReplyHandler.hpp"
 #include "Server.hpp"
@@ -128,23 +129,3 @@ void Join::execute(Server& server, Client& client)
         ++it;
     }
 }
-
-// if no params
-//     return no params
-// if chanel badmaks ERR_BADCHANMASK avoir # ou & max 50 char , char forbidden-> ' '   ,   :   \a
-// if channel exist
-// if chanel is protected ERR_BADCHANNELKEY
-// if chanel is full ERR_CHANNELISFULL
-// if chanel invite only ERR_INVITEONLYCHAN
-// if banned from channel ERR_BANNEDFROMCHAN
-//
-// 477 ERR_NOCHANMODES +channelname = channel mode less on peut mettre de mode
-// #channel global -> multiserver
-// &channel local -> un seul serveur
-// +channel ->channel mode-less
-// !channel -> reçoit un id aleatoire de 5 char = !acfdechannela
-//
-//
-//
-// !!!!! banned list check
-// and list user channels
