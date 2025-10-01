@@ -8,6 +8,6 @@
 
 Socket		make_client_socket(int port);
 void		send_line(int fd, const std::string& msg);
-std::string recv_line(int fd);
+std::string recv_lines(int fd);
 
 #endif

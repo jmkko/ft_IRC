@@ -67,7 +67,7 @@ void valid_nick_special_should_void(Server& s)
     try {
         send_valid_password_assert(so);
         send_line(so, validNickSpecialMsg);
-        std::string reply = recv_line(so);
+        std::string reply = recv_lines(so);
         AssertReply ar(reply);
         ar.is_empty();
 
@@ -96,7 +96,7 @@ void valid_change_should_void(Server& s)
         authenticate(so);
 
         send_line(so, validNickChangeMsg);
-        std::string reply = recv_line(so);
+        std::string reply = recv_lines(so);
         AssertReply ar(reply);
         ar.is_empty();
 
@@ -130,7 +130,7 @@ void no_arg_should_err(Server& s)
         send_valid_password_assert(so);
 
         send_line(so, invalidNickMissingArgMsg);
-        std::string reply = recv_line(so);
+        std::string reply = recv_lines(so);
         AssertReply ar(reply);
         ar.has_code(ERR_NONICKNAMEGIVEN);
 
@@ -160,7 +160,7 @@ void starting_with_number_should_err(Server& s)
         send_valid_password_assert(so);
 
         send_line(so, invalidNick3oroMsg);
-        std::string reply = recv_line(so);
+        std::string reply = recv_lines(so);
         AssertReply ar(reply);
         ar.has_code(ERR_ERRONEUSNICKNAME);
 
@@ -194,7 +194,7 @@ void taken_should_err(Server& s)
 
         send_valid_password_assert(so2);
         send_line(so2, validNickMsg);
-        std::string reply = recv_line(so2);
+        std::string reply = recv_lines(so2);
         AssertReply ar(reply);
         ar.has_code(ERR_NICKNAMEINUSE);
 

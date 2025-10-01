@@ -71,7 +71,7 @@ void send_line(int fd, const std::string& msg)
     std::this_thread::sleep_for(std::chrono::milliseconds(SERVER_PROCESS_TIME_MS));
 }
 
-std::string recv_line(int fd)
+std::string recv_lines(int fd)
 {
     char buffer[RECEIVE_BUFFER];
 

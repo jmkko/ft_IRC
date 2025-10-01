@@ -45,24 +45,24 @@ void op_existing_chan_valid_user_should_notice(Server& s)
         make_op(soOp);
 		authenticate(so);
 		send_line(so, validJoinMsg);
-		recv_line(so);
+		recv_lines(so);
 
 		send_line(soOp, validKickMsg);
 		// as a member, operator receives the notice
-		std::string reply = recv_line(soOp);
+		std::string reply = recv_lines(soOp);
 		LOG_TEST.debug("test_valid1: reply op", reply);
         AssertReply ar(reply);
 		// ar.contains("KICK").contains(channelName).contains(userNick);
 
 		// kicked user gets a notice
-		reply = recv_line(so);
+		reply = recv_lines(so);
         ar.handle_new_reply(reply);
 		LOG_TEST.debug("test_valid1: reply user", reply);
 		ar.contains("KICK").contains(channelName).contains(userNick);
 
 		// kicked user can join again
 		send_line(so, validJoinMsg);
-		reply = recv_line(so);
+		reply = recv_lines(so);
 		ar.handle_new_reply(reply);
 		ar.has_code(RPL_NOTOPIC);
 
@@ -98,23 +98,25 @@ void op_existing_chan_valid_users_should_notice(Server& s)
 
 		authenticate(so);
 		send_line(so, validJoinMsg);
-
+		recv_lines(so);
+		
 		authenticate_second_user(so2);
 		send_line(so2, validJoinMsg);
+		recv_lines(so2);
 
 		send_line(soOp, validManyUsersKickMsg);
 		// as a member, operator receives the notice
-		std::string reply = recv_line(soOp);
+		std::string reply = recv_lines(soOp);
         AssertReply ar(reply);
 		// ar.contains("KICK").contains(channelName).contains(userNick);
 
 		// kicked user1 gets a notice
-		reply = recv_line(so);
+		reply = recv_lines(so);
         ar.handle_new_reply(reply);
 		ar.contains("KICK").contains(channelName).contains(userNick);
 
 		// kicked user2 gets a notice
-		reply = recv_line(so);
+		reply = recv_lines(so);
         ar.handle_new_reply(reply);
 		ar.contains("KICK").contains(channelName).contains(user2Nick);
 
@@ -159,7 +161,7 @@ void no_op_should_err(Server& s)
 		send_line(so, validJoinMsg);
 		send_line(so2, validJoinMsg);
 		send_line(so2, validKickMsg);
-		std::string reply = recv_line(so);
+		std::string reply = recv_lines(so);
         AssertReply ar(reply);
 		ar.has_code(ERR_CHANOPRIVSNEEDED);
 
@@ -196,7 +198,7 @@ void op_missing_chan_should_err(Server& s)
 		send_line(so, validJoinMsg);
 		send_line(soOp, invalidNoChanKickMsg);
 
-		std::string reply = recv_line(so);
+		std::string reply = recv_lines(so);
         AssertReply ar(reply);
 		ar.has_code(ERR_NEEDMOREPARAMS);
 
@@ -231,7 +233,7 @@ void op_missing_user_should_err(Server& s)
 		send_line(so, validJoinMsg);
 		send_line(soOp, invalidNoUserKickMsg);
 
-		std::string reply = recv_line(so);
+		std::string reply = recv_lines(so);
         AssertReply ar(reply);
 		ar.has_code(ERR_NEEDMOREPARAMS);
 
@@ -265,7 +267,7 @@ void op_user_not_in_channel_should_err(Server& s)
 		authenticate(so);
 		send_line(soOp, validKickMsg);
 
-		std::string reply = recv_line(so);
+		std::string reply = recv_lines(so);
         AssertReply ar(reply);
 		ar.has_code(ERR_USERNOTINCHANNEL);
 
@@ -300,7 +302,7 @@ void op_invalid_channel_should_err(Server& s)
 		send_line(so, validJoinMsg);
 		send_line(soOp, invalidWrongChanKickMsg);
 
-		std::string reply = recv_line(so);
+		std::string reply = recv_lines(so);
         AssertReply ar(reply);
 		ar.has_code(ERR_BADCHANMASK);
 
@@ -335,7 +337,7 @@ void op_valid_inexistent_channel_should_err(Server& s)
 		send_line(so, validJoinMsg);
 		send_line(soOp, validInexistentKickMsg);
 
-		std::string reply = recv_line(so);
+		std::string reply = recv_lines(so);
         AssertReply ar(reply);
 		ar.has_code(ERR_NOSUCHCHANNEL);
 
