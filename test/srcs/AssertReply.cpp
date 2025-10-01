@@ -3,8 +3,10 @@
 #include "AssertFail.hpp"
 #include "LogManager.hpp"
 #include "consts.hpp"
+#include "utils.hpp"
 #include <algorithm>
 #include <sstream>
+#include <vector>
 
 /************************************************************
  *		🥚 CONSTRUCTORS & DESTRUCTOR						*
@@ -186,6 +188,19 @@ void	AssertReply::_process_reply()
 	std::string msgCmdOrCode;
 	std::string msgTrailing;
 	t_params	msgArgs;
+	if (_reply.empty())
+	{
+		Message msg = {
+			.args = msgArgs,
+			.cmdOrCode = "",
+			.prefix = "",
+			.trailing = "",
+			.raw = _reply
+		};
+		_messages.push_back(msg);
+		return;
+	}
+
 	while (std::getline(iss, rawMsg, '\n'))
 	{
 		LOG_TEST.debug("process_reply : parsing raw Msg ", rawMsg);

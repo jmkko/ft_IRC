@@ -114,7 +114,7 @@ void send_line(const TcpSocket& so, const std::string& msg)
 		}
 	}
     // Give time for server to process
-    std::this_thread::sleep_for(std::chrono::milliseconds(SERVER_PROCESS_TIME_MS * 10));
+    std::this_thread::sleep_for(std::chrono::milliseconds(SERVER_SEND_WAIT_MS));
 }
 
 std::string recv_lines(const TcpSocket& so)

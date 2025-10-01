@@ -60,7 +60,7 @@ void op_existing_chan_valid_user_should_notice(Server& s)
 		ar.contains("JOIN");
 
     } catch (const std::runtime_error& e) {
-        LOG_TEST.error(std::string("Exception caught in test") + e.what());
+        LOG_TEST.error(e.what());
     }
 }
 

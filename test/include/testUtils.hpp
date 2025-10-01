@@ -6,6 +6,7 @@
 #include "TcpSocket.hpp"
 
 #define SERVER_PROCESS_TIME_MS 10
+#define SERVER_SEND_WAIT_MS 50
 #define SERVER_START_WAIT_MS 1000
 #define SERVER_STOP_WAIT_MS 2000
 #define TEST_PORT 4343

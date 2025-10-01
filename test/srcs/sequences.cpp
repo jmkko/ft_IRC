@@ -1,4 +1,5 @@
 #include "AssertReply.hpp"
+#include "LogManager.hpp"
 #include "Server.hpp"
 #include "TcpSocket.hpp"
 #include "fakeClient.hpp"
