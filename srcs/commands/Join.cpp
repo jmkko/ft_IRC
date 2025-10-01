@@ -49,7 +49,7 @@ ReplyCode Join::check_args(Server& server, Client& client, std::vector<std::stri
     std::vector<std::string>::iterator it   = channels.begin();
     size_t                             rank = 0;
     for (; it < channels.end(); it++) {
-        std::cout << "channels : " << *it;
+        // std::cout << "channels : " << *it;
         if (rank < keys.size())
             channelsLst.push_back(*it + " " + keys[rank]);
         else

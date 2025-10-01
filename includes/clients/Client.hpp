@@ -17,10 +17,8 @@ class Client
 {
   public:
     Client(Socket socket, sockaddr_in addr);
-    Client(const Client& other);
     virtual ~Client();
 
-    Client& operator=(const Client& other);
 
     Socket             get_socket() const;
     const std::string& get_address() const;
@@ -53,6 +51,8 @@ class Client
     void append_to_read_buffer(const std::string& msg);
 
   private:
+    Client(const Client& other);
+    Client& operator=(const Client& other);
     TcpSocket                       _socket;
     sockaddr_in                     _addr;
     std::string                     _addrStr;

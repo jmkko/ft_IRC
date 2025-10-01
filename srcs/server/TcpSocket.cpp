@@ -6,7 +6,7 @@
 /*   By: fpetit <fpetit@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/13 14:12:49 by jhervoch          #+#    #+#             */
-/*   Updated: 2025/09/27 12:23:31 by fpetit           ###   ########.fr       */
+/*   Updated: 2025/10/01 19:08:16 by fpetit           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,6 +131,8 @@ void TcpSocket::tcp_listen()
         throw std::runtime_error("Error listen:" + error + "\n");
     }
 }
+
+bool TcpSocket::is_valid() const { return _sckt != -1; }
 
 std::string TcpSocket::get_address(const sockaddr_in& addr) { return inet_ntoa(addr.sin_addr); }
 

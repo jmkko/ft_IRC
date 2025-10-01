@@ -4,9 +4,11 @@ export PATH := $(HOME)/local/bin:$(PATH)
 
 NAME			:=	test
 
+IRC_EXEC		:=  ircserv
+
 CXX				:=	clang++
 
-CXXFLAGS		:=	-Wall -Wextra -Werror -std=c++20
+CXXFLAGS		:=	-Wall -Wextra -Werror -std=c++20 -g
 
 MAKEFLAGS		:=	--no-print-directory
 
@@ -26,6 +28,7 @@ SRCS_FILES		:= 	main.cpp\
 					printUtils.cpp\
 					ServerRunner.cpp\
 					sequences.cpp\
+					TestFixture.cpp\
 					testKick.cpp\
 					testNick.cpp\
 
@@ -67,7 +70,7 @@ FILES_TO_FORMAT	:=	$(SRCS) $(HEADERS)
 # Targets #
 ###########
 
-all: $(NAME)
+all:$(NAME)
 
 $(DIRS):
 	@mkdir -p $@
@@ -98,8 +101,16 @@ fclean: clean
 	@echo "$(RED)Remove binary$(NOC)"
 	@rm -f $(NAME)
 	@rm -rf ../logs
+	@rm -rf logs
 
 re: fclean
 	@make
+
+# run: $(NAME)
+# 	@make -C ..
+# 	@../$(IRC_EXEC) 4343 password > /dev/null 2>&1 & echo $$! > ircserv.pid
+# 	@valgrind --track-fds=yes ./$(NAME) || true
+# 	@pid=$$(cat ircserv.pid); if kill -0 $$pid 2>/dev/null; then kill $$pid; fi
+# 	@rm -f ircserv.pid
 
 .PHONY: all clean fclean re $(DIRS)

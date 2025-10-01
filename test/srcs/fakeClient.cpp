@@ -1,14 +1,18 @@
 #include "fakeClient.hpp"
 
 #include "LogManager.hpp"
+#include "TcpSocket.hpp"
 #include "colors.hpp"
 #include "consts.hpp"
 #include "testUtils.hpp"
 #include "utils.hpp"
 
+#include <cerrno>
 #include <cstddef>
+#include <cstdlib>
 #include <cstring> // memset
 #include <iostream>
+#include <memory>
 #include <netdb.h> // for getaddrinfo
 #include <string>
 #include <sys/select.h> // select
@@ -17,39 +21,58 @@
 #include <thread>
 #include <unistd.h> // close
 
-Socket make_client_socket(int port)
+#include <sys/poll.h>
+
+std::unique_ptr<TcpSocket> make_client_socket(int port)
 {
     std::string portStr = std::to_string(port);
     LOG_TEST.debug(std::string("port is ") + portStr);
 
-    struct addrinfo  hints  = {};
-    struct addrinfo* result = nullptr;
+	auto so = std::make_unique<TcpSocket>();
+	if (so->set_non_blocking_socket() == -1)
+	{
+		LOG_TEST.debug("make socket: set non blocking error", strerror(errno));
+	}
+	int yes = 1;
+    setsockopt(so->get_socket(), SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes));
 
-    std::memset(&hints, 0, sizeof(hints));
-    hints.ai_family   = AF_UNSPEC;
-    hints.ai_socktype = SOCK_STREAM;
-
-    int status = getaddrinfo("localhost", portStr.c_str(), &hints, &result);
-    LOG_TEST.debug(std::string("make_socket: status is ") + std::to_string(status));
-    if (status != 0) {
-        LOG_TEST.error("make_socket: getaddrinfo failed: " + std::string(gai_strerror(status)));
-        return -1;
-    }
-
-    int fd = -1;
-
-    // trying to get a working connection socket for localhost
-    for (struct addrinfo* test = result; test != nullptr; test = test->ai_next) {
-        fd = socket(test->ai_family, test->ai_socktype, test->ai_protocol);
-        if (fd == -1)
-            continue;
-        if (connect(fd, test->ai_addr, test->ai_addrlen) == 0)
-            break;
-        close(fd);
-        fd = -1;
-    }
-    freeaddrinfo(result);
-    return fd;
+	if (so->tcp_connect("127.0.0.1", port) == false && errno != EINPROGRESS)
+	{
+		LOG_TEST.debug("make socket: tcp connect error", strerror(errno));
+	}
+	pollfd pfd = {
+		.fd = so->get_socket(),
+		.events = POLLOUT | POLLIN,
+		.revents = 0
+	};
+	while (true)
+	{
+		int ret = poll(&pfd, 1, POLL_TIMEOUT);
+		if (ret == -1)
+		{
+			LOG_TEST.debug("make_socket: error poll", strerror(errno) );
+			break;
+		}
+		if (pfd.revents & POLLOUT)
+		{
+			LOG_TEST.debug(" make socket : connected");
+			break;
+		}
+		else if (pfd.revents & (POLLHUP | POLLNVAL)) {
+			LOG_TEST.debug(" make socket : disconnected");
+			break;
+        } else if (pfd.revents & POLLERR) {
+			socklen_t err = 0;
+			socklen_t errsize = sizeof(err);
+			if (getsockopt(so->get_socket(), SOL_SOCKET, SO_ERROR, reinterpret_cast<char *>(&err), &errsize) != 0)
+			{
+				LOG_TEST.debug(" make socket : unknown error", strerror(errno));
+			} else if (err != 0)
+				LOG_TEST.debug(" make socket : error", strerror(errno));
+			break;
+        }
+	}
+    return so;
 }
 
 /**
@@ -59,47 +82,91 @@ Socket make_client_socket(int port)
  * @param msg
  * @throw if send error
  */
-void send_line(int fd, const std::string& msg)
+void send_line(const TcpSocket& so, const std::string& msg)
 {
-    ssize_t sentBytes = send(fd, msg.c_str(), msg.size(), 0);
-    LOG_TEST.debug(std::string("send_line: sent bytes = " + TO_STRING(sentBytes)));
-    if (sentBytes <= 0) {
-        close(fd);
-        throw std::runtime_error("send_line: can't send");
+	if (!so.is_valid())
+		throw std::runtime_error("send_line: attempted to send on invalid socket");
+
+	pollfd pfd = {
+		.fd = so.get_socket(),
+		.events = POLLOUT,
+		.revents = 0
+	};
+
+	int ret = poll(&pfd, 1, POLL_TIMEOUT);
+	if (ret == -1)
+	{
+		LOG_TEST.debug("send_lines: error poll", strerror(errno) );
+		return ;
+	}
+
+	if (ret == 0) {
+        LOG_TEST.debug("send_lines: poll timeout waiting for data");
+        return ;
     }
+
+	if (pfd.revents & POLLOUT)
+	{
+		ssize_t sentBytes = send(so.get_socket(), msg.c_str(), msg.size(), 0);
+		LOG_TEST.debug(std::string("send_line: sent bytes = ") + TO_STRING(sentBytes) + ":" + msg);
+		if (sentBytes <= 0) {
+			throw std::runtime_error("send_line: can't send");
+		}
+	}
     // Give time for server to process
-    std::this_thread::sleep_for(std::chrono::milliseconds(SERVER_PROCESS_TIME_MS));
+    std::this_thread::sleep_for(std::chrono::milliseconds(SERVER_PROCESS_TIME_MS * 10));
 }
 
-std::string recv_lines(int fd)
+std::string recv_lines(const TcpSocket& so)
 {
     char buffer[RECEIVE_BUFFER];
 
-    // Try to receive data with a short timeout
-    fd_set         readfds;
-    struct timeval timeout = {};
+	std::string result = {};
+	if (!so.is_valid())
+		throw std::runtime_error("recv_line: attempted to send on invalid socket");
 
-    FD_ZERO(&readfds);
-    FD_SET(fd, &readfds);
+	for (int attempt = 0; attempt < MAX_RECV_ATTEMPTS; ++attempt)
+	{
+		LOG_TEST.debug("attempt" + TO_STRING(attempt + 1) + "/" + TO_STRING(MAX_RECV_ATTEMPTS));
+		pollfd pfd = {
+			.fd = so.get_socket(),
+			.events = POLLIN,
+			.revents = 0
+		};
 
-    timeout.tv_sec  = 1; // 1 second timeout
-    timeout.tv_usec = 0;
+		int ret = poll(&pfd, 1, POLL_TEST_TIMEOUT);
+		if (ret == -1)
+		{
+			LOG_TEST.debug("recv_lines: error poll", strerror(errno) );
+			return {};
+		}
 
-    int selectResult = select(fd + 1, &readfds, NULL, NULL, &timeout);
+		if (ret == 0) {
+			LOG_TEST.debug("recv_lines: poll timeout waiting for data");
+		}
 
-    if (selectResult <= 0) {
-        // no exception as all messages don't have to get a reply
-        LOG_TEST.debug("recv_line: timeout or error in select");
-        return {};
-    }
-
-    ssize_t bytesReceived = recv(fd, static_cast<char*>(buffer), sizeof(buffer) - 1, 0);
-    if (bytesReceived <= 0) {
-        LOG_TEST.debug("recv_line: no data received");
-        return {};
-    }
-    buffer[bytesReceived] = '\0';
-    std::string result(static_cast<char*>(buffer));
-    LOG_TEST.debug("recv_line: received " + std::to_string(bytesReceived) + " bytes: " + result);
-    return result;
+		if (pfd.revents & POLLIN)
+		{
+			ssize_t bytesReceived = recv(so.get_socket(), static_cast<char*>(buffer), sizeof(buffer) - 1, 0);
+			if (errno == EAGAIN || errno == EWOULDBLOCK)
+			{
+				LOG_TEST.debug("recv_line: would block - no data received", strerror(errno));
+			}
+			if (bytesReceived < 0)
+			{
+				LOG_TEST.debug("recv_line: error", strerror(errno));
+			}
+			else if (bytesReceived == 0) {
+				LOG_TEST.debug("recv_line: recv nothing to receive", strerror(errno));
+			}
+			else {			
+				buffer[bytesReceived] = '\0';
+				result = std::string(static_cast<char *>(buffer));
+				LOG_TEST.debug("recv_line: received " + std::to_string(bytesReceived) + " bytes: " + result);
+				if (result.find("\r\n") != std::string::npos)
+					break;
+			}
+		}
+	}
+	return result;
 }

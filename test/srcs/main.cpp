@@ -11,13 +11,13 @@
 int main()
 {
     LogManager& lm = LogManager::get_instance();
-    lm.set_global_level(DEBUG);
+    lm.set_global_level(ERROR);
 
     try {
         Server server(TEST_PORT, DEFAULT_PASSWORD);
         // test_nick(server);
         test_kick(server);
-    } catch (const std::exception e) {
+    } catch (const std::exception& e) {
         std::cerr << e.what() << '\n';
     }
     return 0;

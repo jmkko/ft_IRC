@@ -13,6 +13,7 @@
 
 #include <arpa/inet.h> // hton*, ntoh*, inet_addr
 #include <csignal>
+#include <cstddef>
 #include <cstring>
 #include <exception>
 #include <fcntl.h>
@@ -56,8 +57,9 @@ Server::Server(const unsigned short port, const std::string& password) :
 
 Server::~Server()
 {
-    LOG_SERVER.debug("Server dtor");
-    _clean();
+    LOG_SERVER.debug("Server destructor");
+	_clean();
+    // server socket should auto close
 }
 
 /*************************************************************
@@ -83,6 +85,8 @@ void Server::start()
         LOG_SERVER.debug(utils::to_string(pollResult) + "event(s) detected");
 
         for (int i = 0; i < static_cast<int>(_pfds.size()); i++) {
+			if (globalSignal == SIGINT && globalSignal == SIGABRT)
+				break ;
             // new connection
             if (i == 0 && (_pfds[i].revents & POLLIN)) {
                 _handle_new_connection(i);
@@ -92,7 +96,7 @@ void Server::start()
                 std::map<Socket, Client*>::iterator clientIt = _clients.find(_pfds[i].fd);
                 // orphelan socket
                 if (clientIt == _clients.end()) {
-                    _cleanup_socket_and_clients(i--);
+                    _cleanup_socket_and_client(i--);
                     continue;
                 }
                 if (_pfds[i].revents & (POLLHUP | POLLNVAL | POLLERR)) {
@@ -167,13 +171,13 @@ void Server::_handle_client_disconnection(int pfdIndex)
         if (err == 0) {
             LOG_SERVER.debug("connection has been closed by client");
         } else {
-            LOG_ERR.error(std::string("socket error : ") + strerror(static_cast<int>(err)));
-            LOG_SOCKET.error(std::string("socket error : ") + strerror(static_cast<int>(err)));
+            LOG_CONN.warning(std::string("socket error : ") + strerror(static_cast<int>(err)));
+            LOG_SOCKET.warning(std::string("socket error : ") + strerror(static_cast<int>(err)));
         }
     }
     LOG_CONN.info(std::string("Client at ") + client->get_address() + ":"
                   + utils::to_string(client->get_port()) + " disconnected");
-    _cleanup_socket_and_clients(pfdIndex);
+    _cleanup_socket_and_client(pfdIndex);
 }
 
 /**
@@ -341,12 +345,13 @@ void Server::_listen_to_socket(Socket toListen, uint32_t flags)
  */
 void Server::_clean()
 {
-    if (globalSignal != SIGINT || globalSignal != SIGABRT)
-        globalSignal = SIGINT;
-    LOG_SERVER.debug(std::string("cleaning ") + TO_STRING(_pfds.size())
-                     + " sockets and their associated clients");
-    for (size_t i = 0; i < _pfds.size(); ++i)
-        _cleanup_socket_and_clients(static_cast<int>(i));
+    LOG_SERVER.debug(std::string("cleaning ") + TO_STRING(_clients.size()) + " clients");
+    
+	// need to clean in reverse order (cf _pfds.erase in _cleanup_socket_and_client)
+	for (int i = static_cast<int>(_pfds.size()) - 1; i >= 1; --i)
+	{
+		_cleanup_socket_and_client(i);
+	}
 
     // Clean up channels
     LOG_SERVER.debug(std::string("cleaning ") + TO_STRING(channels.size()) + " channels");
@@ -354,16 +359,20 @@ void Server::_clean()
         delete it->second;
     }
     channels.clear();
+
+    // Reset signal
+    globalSignal = 0;
+    LOG_SERVER.debug("Server cleaned and ready for reuse");
 }
 
 void Server::stop()
 {
-    if (globalSignal != SIGINT || globalSignal != SIGABRT)
-        globalSignal = SIGINT;
+    LOG_SERVER.debug("Server stop requested");
+    globalSignal = SIGINT;
 }
 
 /**
- @brief cleanup a socket and associated Client
+ @brief cleanup everything associated to a specific client
  close the socket fd
  remove entry from _clients
  remove entry from _clientsByNick
@@ -371,9 +380,10 @@ void Server::stop()
  remove entry from _fds (the pollfd list)
  @param i index of monitored fd
 */
-void Server::_cleanup_socket_and_clients(int pfdIndex)
+void Server::_cleanup_socket_and_client(int pfdIndex)
 {
     Client* c = _clients[_pfds[pfdIndex].fd];
+	close(_pfds[pfdIndex].fd);
     _clients.erase(_pfds[pfdIndex].fd);
     if (c) {
         if (!c->get_nickname().empty())

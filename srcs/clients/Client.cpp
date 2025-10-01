@@ -15,40 +15,11 @@ Client::Client(Socket socket, sockaddr_in addr) :
 {
 }
 
-Client::Client(const Client& other) :
-    _socket(other._socket),
-    _addr(other._addr),
-    _addrStr(other._addrStr),
-    _nickName(other._nickName),
-    _userName(other._userName),
-    _realName(other._realName),
-    _status(other._status),
-    _sendBuffer(other._sendBuffer),
-    _readBuffer(other._readBuffer)
-{
-}
-
 Client::~Client(void) {}
 
 /************************************************************
  *		➕ OPERATORS											*
  ************************************************************/
-
-Client& Client::operator=(const Client& other)
-{
-    if (this != &other) {
-        _socket     = other._socket;
-        _addr       = other._addr;
-        _addrStr    = other._addrStr;
-        _status     = other._status;
-        _nickName   = other._nickName;
-        _userName   = other._userName;
-        _realName   = other._realName;
-        _sendBuffer = other._sendBuffer;
-        _readBuffer = other._readBuffer;
-    }
-    return (*this);
-}
 
 // clang-format off
 std::ostream& operator<<(std::ostream& os, const Client& c)

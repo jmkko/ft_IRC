@@ -47,23 +47,6 @@ static ReplyCode	parse_args(std::vector<std::string>& args, \
 	return RPL_SUCCESS;
 }
 
-/**
- * @brief build notice message
- * 
- * @param op 
- * @param kickedUser 
- * @param channel 
- * @param reason 
- * @return std::string formatted like :WiZ!user@host KICK #channel John :Spamming;
- */
-static std::string	build_kick_notice(Client& op, Client& kickedUser, Channel& channel, const std::string& reason)
-{
-	std::string msg = std::string(":") + op.get_full_userhost() + " KICK " + channel.get_name() + " " + kickedUser.get_nickname();
-	if (!reason.empty())
-		msg.append(" :").append(reason);
-	return msg;
-}
-
 /************************************************************
  *		📁 CLASS METHODS									*
  ************************************************************/
@@ -88,7 +71,7 @@ ReplyCode Kick::check_args(Server& server, Client& client, std::vector<std::stri
 	ReplyCode code = parse_args(args, &channelNames, &nicknames, &comment);
 	if (code != RPL_SUCCESS)
 	{
-		LOG_CMD.error(TO_STRING(code) + " = parsing error");
+		LOG_CMD.warning(TO_STRING(code) + " = parsing error");
 		return code;
 	}
 	(void) comment;
@@ -164,7 +147,7 @@ void Kick::execute(Server& server, Client& client)
 		if (!channel->is_operator(client))
 		{
 			LOG_CMD.warning("ERR_CHANOPRIVSNEEDED");
-			rh.process_response(client, ERR_CHANOPRIVSNEEDED);
+			rh.process_response(client, ERR_CHANOPRIVSNEEDED, channel->get_name());
 			continue;
 		}
 		for (t_params::iterator nickIt = nicknames.begin(); nickIt != nicknames.end(); ++nickIt)
@@ -178,9 +161,11 @@ void Kick::execute(Server& server, Client& client)
 			else 
 			{
 				channel->remove_member(*targetUser);
-				std::string message = build_kick_notice(client, *targetUser, *channel, comment);
-				channel->broadcast(message, &client);
-				rh.process_notice(*targetUser, message);
+				std::string messageParam = channel->get_name() + " " + targetUser->get_nickname();
+				if (!comment.empty())
+					messageParam.append(" :").append(comment);
+				channel->broadcast(server, RPL_KICK, messageParam, &client);
+				rh.process_response(*targetUser, RPL_KICK, messageParam, &client);
 			}
 		}
 	}

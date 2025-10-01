@@ -6,7 +6,9 @@
 #include "TcpSocket.hpp"
 
 #define SERVER_PROCESS_TIME_MS 10
-#define TEST_PORT 6668
+#define SERVER_START_WAIT_MS 1000
+#define SERVER_STOP_WAIT_MS 2000
+#define TEST_PORT 4343
 
 /**
  * @brief uses std::forward to preserve category of argument
@@ -65,12 +67,14 @@ static const std::string& validManyChansUsersKickMsg 	= "KICK #chan,#chan2 roro,
 static const std::string& invalidWrongChanKickMsg 		= "KICK *chan roro\r\n";
 static const std::string& invalidNoChanKickMsg 			= "KICK roro\r\n";
 static const std::string& invalidNoUserKickMsg 			= "KICK #chan\r\n";
-static const std::string& validInexistentKickMsg 		= "KICK #chanel\r\n";
+static const std::string& validInexistentChannelKickMsg = "KICK #chanel roro\r\n";
 
-void send_valid_password_assert(Socket so);
-void send_valid_nick_assert(Socket so);
-void authenticate(Socket so);
-void authenticate_second_user(Socket so);
-void make_op(Socket so);
+void send_valid_password_assert(const TcpSocket& so);
+void send_valid_nick_assert(const TcpSocket& so);
+void authenticate(const TcpSocket& so);
+void authenticate_second_user(const TcpSocket& so);
+void authenticate_and_join(const TcpSocket& so);
+void authenticate_and_join_second_user(const TcpSocket& so);
+void make_op(const TcpSocket& so);
 
 #endif

@@ -1,9 +1,10 @@
 #include "AssertReply.hpp"
 #include "Server.hpp"
+#include "TcpSocket.hpp"
 #include "fakeClient.hpp"
 #include "testUtils.hpp"
 
-void send_valid_password_assert(Socket so)
+void send_valid_password_assert(const TcpSocket& so)
 {
     send_line(so, validPassMsg);
     std::string reply = recv_lines(so);
@@ -11,7 +12,7 @@ void send_valid_password_assert(Socket so)
     ar.is_empty();
 }
 
-void send_valid_nick_assert(Socket so)
+void send_valid_nick_assert(const TcpSocket& so)
 {
     send_line(so, validNickMsg);
     std::string reply = recv_lines(so);
@@ -19,7 +20,7 @@ void send_valid_nick_assert(Socket so)
     ar.is_empty();
 }
 
-void authenticate(Socket so)
+void authenticate(const TcpSocket& so)
 {
     send_line(so, validPassMsg);
     send_line(so, validNickMsg);
@@ -27,7 +28,14 @@ void authenticate(Socket so)
 	recv_lines(so);
 }
 
-void authenticate_second_user(Socket so)
+void authenticate_and_join(const TcpSocket& so)
+{
+    authenticate(so);
+    send_line(so, validJoinMsg);
+	recv_lines(so);
+}
+
+void authenticate_second_user(const TcpSocket& so)
 {
     send_line(so, validPassMsg);
     send_line(so, validNick2Msg);
@@ -35,7 +43,14 @@ void authenticate_second_user(Socket so)
 	recv_lines(so);
 }
 
-void make_op(Socket so)
+void authenticate_and_join_second_user(const TcpSocket& so)
+{
+    authenticate_second_user(so);
+    send_line(so, validJoinMsg);
+	recv_lines(so);
+}
+
+void make_op(const TcpSocket& so)
 {
     send_line(so, validPassMsg);
     send_line(so, validNickOpMsg);

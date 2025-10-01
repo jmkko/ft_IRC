@@ -1,5 +1,6 @@
 #include "AssertReply.hpp"
 #include "LogManager.hpp"
+#include "TcpSocket.hpp"
 #include "consts.hpp"
 #include "Client.hpp"
 #include "Config.hpp"
@@ -12,6 +13,7 @@
 #include "utils.hpp"
 #include "ServerRunner.hpp"
 #include "signal_handler.hpp"
+#include "TestFixture.hpp"
 
 #include <memory>
 #include <stdexcept>
@@ -31,22 +33,14 @@
 */
 void op_existing_chan_valid_user_should_notice(Server& s)
 {
-    ServerRunner runner(s);
-    runner.start();
-
-    Socket soOp = -1;
-    soOp        = make_client_socket(TEST_PORT);
-	Socket so	= -1;
-	so			= make_client_socket(TEST_PORT);
-
-    if (soOp == -1 || so == -1)
-        throw std::runtime_error("Failed to connect to server");
     try {
+		TEST_SETUP(test, s, 2);
+		TcpSocket& soOp = *sockets.at(0);
+		TcpSocket& so = *sockets.at(1);
         make_op(soOp);
-		authenticate(so);
-		send_line(so, validJoinMsg);
-		recv_lines(so);
+		authenticate_and_join(so);
 
+		// test
 		send_line(soOp, validKickMsg);
 		// as a member, operator receives the notice
 		std::string reply = recv_lines(soOp);
@@ -57,23 +51,17 @@ void op_existing_chan_valid_user_should_notice(Server& s)
 		// kicked user gets a notice
 		reply = recv_lines(so);
         ar.handle_new_reply(reply);
-		LOG_TEST.debug("test_valid1: reply user", reply);
 		ar.contains("KICK").contains(channelName).contains(userNick);
 
 		// kicked user can join again
 		send_line(so, validJoinMsg);
-		reply = recv_lines(so);
-		ar.handle_new_reply(reply);
-		ar.has_code(RPL_NOTOPIC);
+		std::string joinReplies = recv_lines(so);
+		ar.handle_new_reply(joinReplies);
+		ar.contains("JOIN");
 
-        close(soOp);
-        close(so);
     } catch (const std::runtime_error& e) {
-        LOG_TEST.error(e.what());
-        close(soOp);
-        close(so);
+        LOG_TEST.error(std::string("Exception caught in test") + e.what());
     }
-    runner.stop();
 }
 
 /**
@@ -81,100 +69,67 @@ void op_existing_chan_valid_user_should_notice(Server& s)
 */
 void op_existing_chan_valid_users_should_notice(Server& s)
 {
-    ServerRunner runner(s);
-    runner.start();
-
-    Socket soOp = -1;
-    soOp        = make_client_socket(TEST_PORT);
-	Socket so	= -1;
-	so			= make_client_socket(TEST_PORT);
-	Socket so2	= -1;
-	so2			= make_client_socket(TEST_PORT);
-
-    if (soOp == -1 || so == -1 || so2 == -1)
-        throw std::runtime_error("Failed to connect to server");
     try {
-        make_op(soOp);
+		TEST_SETUP(test, s, 3);
+		TcpSocket& soOp = *sockets.at(0);
+		TcpSocket& so = *sockets.at(1);
+		TcpSocket& so2 = *sockets.at(2);
+		make_op(soOp);
+		authenticate_and_join(so);		
+		authenticate_and_join_second_user(so2);
 
-		authenticate(so);
-		send_line(so, validJoinMsg);
-		recv_lines(so);
-		
-		authenticate_second_user(so2);
-		send_line(so2, validJoinMsg);
-		recv_lines(so2);
-
+		// test
 		send_line(soOp, validManyUsersKickMsg);
 		// as a member, operator receives the notice
 		std::string reply = recv_lines(soOp);
-        AssertReply ar(reply);
+		AssertReply ar(reply);
+		LOG_TEST.debug("test 2 - reply Op after KICK", reply);
 		// ar.contains("KICK").contains(channelName).contains(userNick);
 
 		// kicked user1 gets a notice
 		reply = recv_lines(so);
-        ar.handle_new_reply(reply);
+		LOG_TEST.debug("test 2 - reply kicked user1 after KICK", reply);
+		ar.handle_new_reply(reply);
 		ar.contains("KICK").contains(channelName).contains(userNick);
 
 		// kicked user2 gets a notice
-		reply = recv_lines(so);
-        ar.handle_new_reply(reply);
+		reply = recv_lines(so2);
+		LOG_TEST.debug("test 2 - reply kicked user2 after KICK", reply);
+		ar.handle_new_reply(reply);
 		ar.contains("KICK").contains(channelName).contains(user2Nick);
-
-        close(soOp);
-        close(so);
-        close(so2);
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());
-        close(soOp);
-        close(so);
-        close(so2);
     }
-    runner.stop();
 }
 
-/************************************************************
-*		❌ ERRORS											*
-************************************************************/
+// /************************************************************
+// *		❌ ERRORS											*
+// ************************************************************/
 
 /**
  @brief integration test - error case
 */
 void no_op_should_err(Server& s)
 {
-    ServerRunner runner(s);
-    runner.start();
+	try {
 
-	Socket soOp	= -1;
-	soOp		= make_client_socket(TEST_PORT);
-	Socket so	= -1;
-	so			= make_client_socket(TEST_PORT);
-    Socket so2	= -1;
-    so2       	= make_client_socket(TEST_PORT);
-
-    if (soOp == -1 || so == -1 || so2 == -1)
-        throw std::runtime_error("Failed to connect to server");
-    try {
+		TEST_SETUP(test, s, 3);
+		TcpSocket& soOp = *sockets.at(0);
+		TcpSocket& so = *sockets.at(1);
+		TcpSocket& so2 = *sockets.at(2);
 		make_op(soOp);
-		authenticate(so);
-		authenticate_second_user(so2);
+		authenticate_and_join(so);
+		authenticate_and_join_second_user(so2);
 
-		send_line(so, validJoinMsg);
-		send_line(so2, validJoinMsg);
+		// test
 		send_line(so2, validKickMsg);
-		std::string reply = recv_lines(so);
+		std::string reply = recv_lines(so2);
         AssertReply ar(reply);
 		ar.has_code(ERR_CHANOPRIVSNEEDED);
 
-        close(so);
-        close(so2);
-        close(soOp);
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());
-        close(so);
-        close(so2);
-        close(soOp);
     }
-    runner.stop();
 }
 
 /**
@@ -182,34 +137,24 @@ void no_op_should_err(Server& s)
 */
 void op_missing_chan_should_err(Server& s)
 {
-    ServerRunner runner(s);
-    runner.start();
-
-	Socket soOp	= -1;
-	soOp		= make_client_socket(TEST_PORT);
-	Socket so	= -1;
-	so			= make_client_socket(TEST_PORT);
-
-    if (soOp == -1 || so == -1)
-        throw std::runtime_error("Failed to connect to server");
     try {
-		make_op(soOp);
-		authenticate(so);
-		send_line(so, validJoinMsg);
-		send_line(soOp, invalidNoChanKickMsg);
 
-		std::string reply = recv_lines(so);
+		TEST_SETUP(test, s, 3);
+		TcpSocket& soOp = *sockets.at(0);
+		TcpSocket& so = *sockets.at(1);
+		make_op(soOp);
+		authenticate_and_join(so);
+		recv_lines(soOp);
+
+		// test
+		send_line(soOp, invalidNoChanKickMsg);
+		std::string reply = recv_lines(soOp);
         AssertReply ar(reply);
 		ar.has_code(ERR_NEEDMOREPARAMS);
 
-        close(so);
-        close(soOp);
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());
-        close(so);
-        close(soOp);
     }
-    runner.stop();
 }
 
 /**
@@ -217,34 +162,24 @@ void op_missing_chan_should_err(Server& s)
 */
 void op_missing_user_should_err(Server& s)
 {
-    ServerRunner runner(s);
-    runner.start();
-
-	Socket soOp	= -1;
-	soOp		= make_client_socket(TEST_PORT);
-	Socket so	= -1;
-	so			= make_client_socket(TEST_PORT);
-
-    if (soOp == -1 || so == -1)
-        throw std::runtime_error("Failed to connect to server");
     try {
-		make_op(soOp);
-		authenticate(so);
-		send_line(so, validJoinMsg);
-		send_line(soOp, invalidNoUserKickMsg);
 
-		std::string reply = recv_lines(so);
+		TEST_SETUP(test, s, 3);
+		TcpSocket& soOp = *sockets.at(0);
+		TcpSocket& so = *sockets.at(1);
+		make_op(soOp);
+		authenticate_and_join(so);
+		recv_lines(soOp);
+
+		// test
+		send_line(soOp, invalidNoUserKickMsg);
+		std::string reply = recv_lines(soOp);
         AssertReply ar(reply);
 		ar.has_code(ERR_NEEDMOREPARAMS);
 
-        close(so);
-        close(soOp);
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());
-        close(so);
-        close(soOp);
     }
-    runner.stop();
 }
 
 /**
@@ -252,33 +187,23 @@ void op_missing_user_should_err(Server& s)
 */
 void op_user_not_in_channel_should_err(Server& s)
 {
-    ServerRunner runner(s);
-    runner.start();
-
-	Socket soOp	= -1;
-	soOp		= make_client_socket(TEST_PORT);
-	Socket so	= -1;
-	so			= make_client_socket(TEST_PORT);
-
-    if (soOp == -1 || so == -1)
-        throw std::runtime_error("Failed to connect to server");
     try {
+
+		TEST_SETUP(test, s, 3);
+		TcpSocket& soOp = *sockets.at(0);
+		TcpSocket& so = *sockets.at(1);
 		make_op(soOp);
 		authenticate(so);
-		send_line(soOp, validKickMsg);
 
-		std::string reply = recv_lines(so);
+		// test
+		send_line(soOp, validKickMsg);
+		std::string reply = recv_lines(soOp);
         AssertReply ar(reply);
 		ar.has_code(ERR_USERNOTINCHANNEL);
 
-        close(so);
-        close(soOp);
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());
-        close(so);
-        close(soOp);
     }
-    runner.stop();
 }
 
 /**
@@ -286,34 +211,24 @@ void op_user_not_in_channel_should_err(Server& s)
 */
 void op_invalid_channel_should_err(Server& s)
 {
-    ServerRunner runner(s);
-    runner.start();
-
-	Socket soOp	= -1;
-	soOp		= make_client_socket(TEST_PORT);
-	Socket so	= -1;
-	so			= make_client_socket(TEST_PORT);
-
-    if (soOp == -1 || so == -1)
-        throw std::runtime_error("Failed to connect to server");
     try {
-		make_op(soOp);
-		authenticate(so);
-		send_line(so, validJoinMsg);
-		send_line(soOp, invalidWrongChanKickMsg);
 
-		std::string reply = recv_lines(so);
+		TEST_SETUP(test, s, 3);
+		TcpSocket& soOp = *sockets.at(0);
+		TcpSocket& so = *sockets.at(1);
+		make_op(soOp);
+		authenticate_and_join(so);
+		recv_lines(soOp);
+
+		// test
+		send_line(soOp, invalidWrongChanKickMsg);
+		std::string reply = recv_lines(soOp);
         AssertReply ar(reply);
 		ar.has_code(ERR_BADCHANMASK);
 
-        close(so);
-        close(soOp);
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());
-        close(so);
-        close(soOp);
     }
-    runner.stop();
 }
 
 /**
@@ -321,41 +236,31 @@ void op_invalid_channel_should_err(Server& s)
 */
 void op_valid_inexistent_channel_should_err(Server& s)
 {
-    ServerRunner runner(s);
-    runner.start();
-
-	Socket soOp	= -1;
-	soOp		= make_client_socket(TEST_PORT);
-	Socket so	= -1;
-	so			= make_client_socket(TEST_PORT);
-
-    if (soOp == -1 || so == -1)
-        throw std::runtime_error("Failed to connect to server");
     try {
-		make_op(soOp);
-		authenticate(so);
-		send_line(so, validJoinMsg);
-		send_line(soOp, validInexistentKickMsg);
 
-		std::string reply = recv_lines(so);
+		TEST_SETUP(test, s, 3);
+		TcpSocket& soOp = *sockets.at(0);
+		TcpSocket& so = *sockets.at(1);
+		make_op(soOp);
+		authenticate_and_join(so);
+		recv_lines(soOp);
+
+		// test
+		send_line(soOp, validInexistentChannelKickMsg);
+		std::string reply = recv_lines(soOp);
         AssertReply ar(reply);
 		ar.has_code(ERR_NOSUCHCHANNEL);
 
-        close(so);
-        close(soOp);
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());
-        close(so);
-        close(soOp);
     }
-    runner.stop();
 }
 
 void	test_kick(Server& s)
 {
 	print_test_series("command KICK");
 	run_test([&] {op_existing_chan_valid_user_should_notice(s);}, "single kick");
-	run_test([&] {op_existing_chan_valid_users_should_notice(s);}, "combo");
+	run_test([&] {op_existing_chan_valid_users_should_notice(s);}, "combo double kick");
 	run_test([&] {no_op_should_err(s);}, "no op");
 	run_test([&] {op_missing_chan_should_err(s);}, "no chan");
 	run_test([&] {op_missing_user_should_err(s);}, "no user");

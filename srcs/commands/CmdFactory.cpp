@@ -142,7 +142,7 @@ ICommand* CmdFactory::kick_cmd(Server& server, Client& client, std::string& para
     if (replyCode == RPL_SUCCESS) {
         return new Kick(vectorParams);
     } else {
-        rh.process_response(client, replyCode, params);
+        rh.process_response(client, replyCode, "KICK");
     }
 	return NULL;
 };
