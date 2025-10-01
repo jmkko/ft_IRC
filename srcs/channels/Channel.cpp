@@ -1,16 +1,17 @@
 #include "Channel.hpp"
-
 #include "Client.hpp"
 #include "Config.hpp"
 #include "ICommand.hpp"
 #include "colors.hpp"
 #include "consts.hpp"
+#include "reply_codes.hpp"
 
 #include <algorithm>
 #include <iostream>
 
 /************************************************************
- *		📁 CLASS METHODS									*
+ *		📁 CLASS METHODS
+ **
  ************************************************************/
 
 /// @brief checks validity according to RFC
@@ -26,19 +27,13 @@ bool Channel::is_valid_channel_name(const std::string& name)
 }
 
 /************************************************************
- *		🥚 CONSTRUCTORS & DESTRUCTOR						*
+ *		🥚 CONSTRUCTORS & DESTRUCTOR
+ **
  ************************************************************/
 
 /// @throw exception if name is invalid
 Channel::Channel(const std::string& name) :
-    _topic("No topic is set"),
-    _mode(CHANMODE_INIT),
-    _userLimit(NO_LIMIT),
-    // _isInviteOnly(false),
-    // _isTopicChangeRestricted(false),
-    _members(),
-    _invites(),
-    _operators()
+    _topic("No topic is set"), _mode(CHANMODE_INIT), _userLimit(NO_LIMIT), _members(), _invites(), _operators()
 {
     set_name(name);
 }
@@ -48,8 +43,6 @@ Channel::Channel(const Channel& other) :
     _topic(other._topic),
     _mode(other._mode),
     _userLimit(other._userLimit),
-    // _isInviteOnly(other._isInviteOnly),
-    // _isTopicChangeRestricted(other._isTopicChangeRestricted),
     _members(other._members),
     _invites(other._invites),
     _operators(other._operators)
@@ -57,15 +50,7 @@ Channel::Channel(const Channel& other) :
 }
 
 Channel::Channel(void) :
-    _name(""),
-    _topic("No topic is set"),
-    _mode(CHANMODE_INIT),
-    _userLimit(NO_LIMIT),
-    // _isInviteOnly(false),
-    // _isTopicChangeRestricted(false),
-    _members(),
-    _invites(),
-    _operators()
+    _name(""), _topic("No topic is set"), _mode(CHANMODE_INIT), _userLimit(NO_LIMIT), _members(), _invites(), _operators()
 {
 }
 
@@ -81,8 +66,6 @@ Channel& Channel::operator=(const Channel& other)
         _name = other._name;
         _topic = other._topic;
         _userLimit = other._userLimit;
-        // _isInviteOnly = other._isInviteOnly;
-        // _isTopicChangeRestricted = other._isTopicChangeRestricted;
         _members = other._members;
         _operators = other._operators;
         _invites = other._invites;
@@ -97,22 +80,24 @@ std::ostream&	operator<<(std::ostream& os, const Channel& c)
 	<< " name = " << c.get_name()
 	<< " topic=" << c.get_topic()
 	<< " userLimit=" << c.get_user_limit()
-	// << " invite only=" << (c.is_invite_only() ? "true" : "false")
-	// << " topic change restricted=" << (c.is_topic_change_restricted() ? "true" : "false")
 	<< "]";
 }
+// clang-format on
 
 /*************************************************************
  *		🛠️ FUNCTIONS											*
  *************************************************************/
 
-void Channel::broadcast(const std::string& message, Client* sender) const
+void Channel::broadcast(Server& server, ReplyCode replyCode, const std::string& message, Client* sender) const
 {
+    ReplyHandler& rh = ReplyHandler::get_instance(&server);
     for (std::set<Client*>::iterator it = _members.begin(); it != _members.end(); ++it) {
         Client* recipient = *it;
         if (sender && recipient == sender)
             continue;
-        recipient->append_to_send_buffer(message);
+        // recipient->append_to_send_buffer(message);
+        LOG_SERVER.debug(recipient->get_nickname() + " received a broadcast of: " + get_name());
+        rh.process_response(*recipient, replyCode, message, sender);
     }
 }
 
@@ -124,32 +109,33 @@ const std::string& Channel::get_name() const { return _name; }
 
 const std::string& Channel::get_topic() const { return _topic; }
 
-bool               Channel::is_member(Client& client) const { return _members.find(&client) != _members.end(); }
+bool Channel::is_member(Client& client) const { return _members.find(&client) != _members.end(); }
 
-bool               Channel::is_operator(Client& client) const { return _operators.find(&client) != _operators.end(); }
+bool Channel::is_operator(Client& client) const { return _operators.find(&client) != _operators.end(); }
 
-bool               Channel::is_invited(Client& client) const { return _invites.find(&client) != _invites.end(); }
+bool Channel::is_invited(Client& client) const { return _invites.find(&client) != _invites.end(); }
 
-int                Channel::get_user_limit() const { return _userLimit; }
+int Channel::get_user_limit() const { return _userLimit; }
 
-bool               Channel::is_invite_only() const { return _mode & CHANMODE_INVITE; }
+bool Channel::is_invite_only() const { return _mode & CHANMODE_INVITE; }
 
-bool               Channel::is_topic_change_restricted() const { return _mode & CHANMODE_TOPIC; }
+bool Channel::is_topic_change_restricted() const { return _mode & CHANMODE_TOPIC; }
 
-ReplyCode               Channel::set_name(const std::string& name)
+ReplyCode Channel::set_name(const std::string& name)
 {
     if (Channel::is_valid_channel_name(name))
         _name = name;
     else
-	return ERR_BADCHANMASK;
+        return ERR_BADCHANMASK;
     return RPL_SUCCESS;
 }
 
-ReplyCode Channel::set_topic(Client& client, const std::string& topic) { 
-    if ((_mode & CHANMODE_TOPIC && is_operator(client)) ||  (!(_mode & CHANMODE_TOPIC)))
-	_topic = topic;
+ReplyCode Channel::set_topic(Client& client, const std::string& topic)
+{
+    if ((_mode & CHANMODE_TOPIC && is_operator(client)) || (!(_mode & CHANMODE_TOPIC)))
+        _topic = topic;
     else
-	return ERR_CHANOPRIVSNEEDED;
+        return ERR_CHANOPRIVSNEEDED;
     return RPL_SUCCESS;
 }
 
@@ -161,73 +147,79 @@ void Channel::set_user_limit(int limit)
         _userLimit = limit;
 }
 
-// void Channel::set_is_invite_only(bool is_invite_only) { _isInviteOnly = is_invite_only; }
-
-// void Channel::set_is_topic_change_restricted(bool isRestricted) { _isTopicChangeRestricted = isRestricted; }
-
 void Channel::invite_client(Client& client) { _invites.insert(&client); }
-//Can we invite a banned client ?
-//Or when we invite a banned client it's remove it from banned list ?
+// Can we invite a banned client ?
+// Or when we invite a banned client it's remove it from banned list ?
 
 ReplyCode Channel::add_member(Client& client)
 {
     if (is_member(client))
         return RPL_SUCCESS;
     if (_userLimit != NO_LIMIT && _members.size() >= static_cast<size_t>(_userLimit))
-	return ERR_CHANNELISFULL;
+        return ERR_CHANNELISFULL;
     if (_mode & CHANMODE_INVITE) {
         if (is_invited(client))
             _invites.erase(&client);
         else
-	    return ERR_INVITEONLYCHAN;
+            return ERR_INVITEONLYCHAN;
     }
-    if (ircConfig.get_max_joined_channels() != NO_LIMIT
-		&& client.get_nb_joined_channels() >= ircConfig.get_max_joined_channels())
-	return ERR_CHANNELISFULL;
+    if (ircConfig.get_max_joined_channels() != NO_LIMIT && client.get_nb_joined_channels() >= ircConfig.get_max_joined_channels())
+        return ERR_CHANNELISFULL;
     if (is_banned(client))
-	return ERR_BANNEDFROMCHAN;
+        return ERR_BANNEDFROMCHAN;
     _members.insert(&client);
     return RPL_SUCCESS;
 }
 
 void Channel::remove_member(Client& client) { _members.erase(&client); }
 
-ReplyCode Channel::ban_member(Client& client){
+ReplyCode Channel::ban_member(Client& client)
+{
     if (is_member(client)) {
         _banList.insert(&client);
-	return RPL_SUCCESS;
+        return RPL_SUCCESS;
     }
-    return ERR_USERNOTINCHANNEL; 
+    return ERR_USERNOTINCHANNEL;
 }
 
-bool               Channel::is_banned(Client& client) const { return _banList.find(&client) != _banList.end(); }
+bool Channel::is_banned(Client& client) const { return _banList.find(&client) != _banList.end(); }
 
 ReplyCode Channel::make_operator(Client& client)
 {
     if (is_member(client)) {
         _operators.insert(&client);
-	return RPL_SUCCESS;
+        return RPL_SUCCESS;
     }
-    return ERR_USERNOTINCHANNEL; 
+    return ERR_USERNOTINCHANNEL;
 }
 
-void Channel::set_mode(unsigned short mode){
-    _mode = _mode | mode;
-}
-unsigned short Channel::get_mode() const {
-    return _mode;
-}
+void           Channel::set_mode(unsigned short mode) { _mode = _mode | mode; }
+unsigned short Channel::get_mode() const { return _mode; }
 
-size_t Channel::get_nb_members() const { return _members.size();}
+size_t Channel::get_nb_members() const { return _members.size(); }
 
-// std::string Channel::get_members_list() const {
-//     std::string list;
-//     std::set<Client*>::iterator it = _members.begin();
-//
-//     while (it < _members.end()){
-// 	if (is_operator(it))
-// 	    list.append("@");
-// 	list.append(it->get_nickname()+ " ");
-//     }
-//     return (list);
-// }
+std::vector<std::string> Channel::get_members_list() const
+{
+    std::vector<std::string>          list;
+    std::set<Client*>::const_iterator it = _members.begin();
+    std::string                       users;
+    int                               nbUserPerLine = USERS_PER_LINE;
+    int                               count = 0;
+
+    while (it != _members.end()) {
+        Client* c = *it;
+        if (is_operator(*c))
+            users.append("@");
+        users.append(c->get_nickname() + " ");
+        ++it;
+        ++count;
+        if (count % nbUserPerLine == 0) {
+            list.push_back(users);
+            count = 0;
+            users.clear();
+        }
+    }
+    if (!users.empty())
+        list.push_back(users);
+    return (list);
+}

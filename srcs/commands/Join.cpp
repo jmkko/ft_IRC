@@ -103,43 +103,29 @@ void Join::execute(Server& server, Client& client)
             channel = existingChannel->second;
         }
         replyCode = channel->add_member(client);
-        if (replyCode == RPL_SUCCESS)
+        if (replyCode == RPL_SUCCESS) {
             rh.process_response(client, RPL_JOIN, channel->get_name());
-        else {
+            channel->broadcast(server, RPL_JOIN, channel->get_name(), &client);
+            LOG_CONN.info(client.get_nickname() + " joined channel: " + channel->get_name());
+        } else {
             rh.process_response(client, replyCode, channel->get_name());
             continue;
         }
         if (channel->get_nb_members() == 1) {
             channel->make_operator(client);
             rh.process_response(client, RPL_MODE, channel->get_name() + " +o ");
+            LOG_CMD.info(client.get_nickname() + " is operator of channel: " + channel->get_name());
         }
         if (channel->get_topic() == "No topic is set") {
             rh.process_response(client, RPL_NOTOPIC, channel->get_name());
         } else {
             rh.process_response(client, RPL_TOPIC, channel->get_name() + " :" + channel->get_topic());
         }
-        rh.process_response(client, RPL_NAMREPLY, channel->get_name());
+        std::vector<std::string> users = channel->get_members_list();
+        for (size_t i = 0; i < users.size(); ++i) {
+            rh.process_response(client, RPL_NAMREPLY, users[i]);
+        }
         rh.process_response(client, RPL_ENDOFNAMES, channel->get_name());
         ++it;
     }
 }
-
-// if no params
-//     return no params
-// if chanel badmaks ERR_BADCHANMASK avoir # ou & max 50 char , char forbidden-> ' '   ,   :   \a
-// if channel exist
-// if chanel is protected ERR_BADCHANNELKEY
-// if chanel is full ERR_CHANNELISFULL
-// if chanel invite only ERR_INVITEONLYCHAN
-// if banned from channel ERR_BANNEDFROMCHAN
-//
-// 477 ERR_NOCHANMODES +channelname = channel mode less on peut mettre de mode
-// #channel global -> multiserver
-// &channel local -> un seul serveur
-// +channel ->channel mode-less
-// !channel -> reçoit un id aleatoire de 5 char = !acfdechannela
-//
-//
-//
-// !!!!! banned list check
-// and list user channels
