@@ -2,6 +2,7 @@
 #define CHANNEL_HPP
 
 #include "LogManager.hpp"
+#include "ReplyHandler.hpp"
 #include "reply_codes.hpp"
 
 #include <set>
@@ -44,7 +45,8 @@ class Channel
     std::vector<std::string> get_members_list() const;
     size_t                   get_nb_members() const;
 
-    void        broadcast(const std::string& message, Client* sender = NULL) const;
+    void
+    broadcast(Server& server, ReplyCode replyCode, const std::string& message, Client* sender = NULL) const;
     static bool is_valid_channel_name(const std::string& name);
 
   private:

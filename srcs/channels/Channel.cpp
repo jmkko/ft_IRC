@@ -4,6 +4,7 @@
 #include "ICommand.hpp"
 #include "colors.hpp"
 #include "consts.hpp"
+#include "reply_codes.hpp"
 
 #include <algorithm>
 #include <iostream>
@@ -32,14 +33,7 @@ bool Channel::is_valid_channel_name(const std::string& name)
 
 /// @throw exception if name is invalid
 Channel::Channel(const std::string& name) :
-    _topic("No topic is set"),
-    _mode(CHANMODE_INIT),
-    _userLimit(NO_LIMIT),
-    // _isInviteOnly(false),
-    // _isTopicChangeRestricted(false),
-    _members(),
-    _invites(),
-    _operators()
+    _topic("No topic is set"), _mode(CHANMODE_INIT), _userLimit(NO_LIMIT), _members(), _invites(), _operators()
 {
     set_name(name);
 }
@@ -49,8 +43,6 @@ Channel::Channel(const Channel& other) :
     _topic(other._topic),
     _mode(other._mode),
     _userLimit(other._userLimit),
-    // _isInviteOnly(other._isInviteOnly),
-    // _isTopicChangeRestricted(other._isTopicChangeRestricted),
     _members(other._members),
     _invites(other._invites),
     _operators(other._operators)
@@ -58,15 +50,7 @@ Channel::Channel(const Channel& other) :
 }
 
 Channel::Channel(void) :
-    _name(""),
-    _topic("No topic is set"),
-    _mode(CHANMODE_INIT),
-    _userLimit(NO_LIMIT),
-    // _isInviteOnly(false),
-    // _isTopicChangeRestricted(false),
-    _members(),
-    _invites(),
-    _operators()
+    _name(""), _topic("No topic is set"), _mode(CHANMODE_INIT), _userLimit(NO_LIMIT), _members(), _invites(), _operators()
 {
 }
 
@@ -82,8 +66,6 @@ Channel& Channel::operator=(const Channel& other)
         _name = other._name;
         _topic = other._topic;
         _userLimit = other._userLimit;
-        // _isInviteOnly = other._isInviteOnly;
-        // _isTopicChangeRestricted = other._isTopicChangeRestricted;
         _members = other._members;
         _operators = other._operators;
         _invites = other._invites;
@@ -98,8 +80,6 @@ std::ostream&	operator<<(std::ostream& os, const Channel& c)
 	<< " name = " << c.get_name()
 	<< " topic=" << c.get_topic()
 	<< " userLimit=" << c.get_user_limit()
-	// << " invite only=" << (c.is_invite_only() ? "true" : "false")
-	// << " topic change restricted=" << (c.is_topic_change_restricted() ? "true" : "false")
 	<< "]";
 }
 // clang-format on
@@ -108,13 +88,16 @@ std::ostream&	operator<<(std::ostream& os, const Channel& c)
  *		🛠️ FUNCTIONS											*
  *************************************************************/
 
-void Channel::broadcast(const std::string& message, Client* sender) const
+void Channel::broadcast(Server& server, ReplyCode replyCode, const std::string& message, Client* sender) const
 {
+    ReplyHandler& rh = ReplyHandler::get_instance(&server);
     for (std::set<Client*>::iterator it = _members.begin(); it != _members.end(); ++it) {
         Client* recipient = *it;
         if (sender && recipient == sender)
             continue;
-        recipient->append_to_send_buffer(message);
+        // recipient->append_to_send_buffer(message);
+        LOG_SERVER.debug(recipient->get_nickname() + " received a broadcast of: " + get_name());
+        rh.process_response(*recipient, replyCode, message, sender);
     }
 }
 
@@ -180,8 +163,7 @@ ReplyCode Channel::add_member(Client& client)
         else
             return ERR_INVITEONLYCHAN;
     }
-    if (ircConfig.get_max_joined_channels() != NO_LIMIT
-        && client.get_nb_joined_channels() >= ircConfig.get_max_joined_channels())
+    if (ircConfig.get_max_joined_channels() != NO_LIMIT && client.get_nb_joined_channels() >= ircConfig.get_max_joined_channels())
         return ERR_CHANNELISFULL;
     if (is_banned(client))
         return ERR_BANNEDFROMCHAN;
