@@ -1,4 +1,5 @@
 #include "Logger.hpp"
+
 #include "colors.hpp"
 #include "consts.hpp"
 
@@ -93,9 +94,9 @@ std::string Logger::_get_current_time()
     std::time_t        now   = std::time(0);
     struct std::tm*    tmPtr = std::localtime(&now);
     std::ostringstream oss;
-    oss << "[" << (tmPtr->tm_year + EPOCH_TIME_START) << "-" << std::setfill('0') << std::setw(2)
-        << (tmPtr->tm_mon + 1) << "-" << std::setfill('0') << std::setw(2) << tmPtr->tm_mday << " "
-        << std::setfill('0') << std::setw(2) << tmPtr->tm_hour << ":" << std::setfill('0') << std::setw(2)
-        << tmPtr->tm_min << ":" << std::setfill('0') << std::setw(2) << tmPtr->tm_sec << "]";
+    oss << "[" << (tmPtr->tm_year + EPOCH_TIME_START) << "-" << std::setfill('0') << std::setw(2) << (tmPtr->tm_mon + 1) << "-"
+        << std::setfill('0') << std::setw(2) << tmPtr->tm_mday << " " << std::setfill('0') << std::setw(2) << tmPtr->tm_hour
+        << ":" << std::setfill('0') << std::setw(2) << tmPtr->tm_min << ":" << std::setfill('0') << std::setw(2) << tmPtr->tm_sec
+        << "]";
     return oss.str();
 }

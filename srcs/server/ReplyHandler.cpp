@@ -1,7 +1,8 @@
+#include "ReplyHandler.hpp"
+
 #include "Client.hpp"
 #include "Config.hpp"
 #include "LogManager.hpp"
-#include "ReplyHandler.hpp"
 #include "Server.hpp"
 #include "reply_codes.hpp"
 #include "utils.hpp"
@@ -93,8 +94,8 @@ std::string ReplyHandler::select_response(Client& client, ReplyCode code, const 
 {
     std::string nick = client.get_nickname();
     std::string response(":" + ircConfig.get_name());
-	std::string responseWithCode = response + code_to_str(code) + " ";
-	std::string responseWithCodeAndNick = responseWithCode + nick + " ";
+    std::string responseWithCode        = response + code_to_str(code) + " ";
+    std::string responseWithCodeAndNick = responseWithCode + nick + " ";
 
     if (!sender)
         sender = &client;
@@ -108,7 +109,7 @@ std::string ReplyHandler::select_response(Client& client, ReplyCode code, const 
     case RPL_NOTICE:
         return (response + " NOTICE " + nick + " :" + parameters);
     case RPL_KICK:
-		return (response + sender->get_full_userhost() + " KICK " + parameters);
+        return (response + sender->get_full_userhost() + " KICK " + parameters);
     case RPL_INVITING:
         return "";
     case RPL_MODE:
@@ -123,30 +124,30 @@ std::string ReplyHandler::select_response(Client& client, ReplyCode code, const 
         return (response + code_to_str(code) + nick + " " + parameters + RPL_NOTOPIC_MSG);
     case RPL_PRIVMSG:
         return "";
-	case ERR_CHANOPRIVSNEEDED:
-		return (responseWithCodeAndNick + parameters + ERR_CHANOPRIVSNEEDED_MSG);
+    case ERR_CHANOPRIVSNEEDED:
+        return (responseWithCodeAndNick + parameters + ERR_CHANOPRIVSNEEDED_MSG);
     case ERR_UNKNOWNCOMMAND:
         return (std::string("421") + ERR_UNKNOWNCOMMAND_MSG + parameters);
     case ERR_NEEDMOREPARAMS:
         return (responseWithCodeAndNick + parameters + ERR_NEEDMOREPARAMS_MSG);
-	case ERR_USERNOTINCHANNEL:
+    case ERR_USERNOTINCHANNEL:
         return (responseWithCodeAndNick + parameters + ERR_USERNOTINCHANNEL_MSG);
-	case ERR_USERONCHANNEL:
-		return (responseWithCodeAndNick + parameters + ERR_USERONCHANNEL_MSG);
-	case ERR_NOSUCHCHANNEL:
-		return (responseWithCodeAndNick + parameters + ERR_NOSUCHCHANNEL_MSG);
+    case ERR_USERONCHANNEL:
+        return (responseWithCodeAndNick + parameters + ERR_USERONCHANNEL_MSG);
+    case ERR_NOSUCHCHANNEL:
+        return (responseWithCodeAndNick + parameters + ERR_NOSUCHCHANNEL_MSG);
     case ERR_NONICKNAMEGIVEN:
         return (std::string("431") + ERR_NONICKNAMEGIVEN_MSG);
     case ERR_ERRONEUSNICKNAME:
         return (std::string("432") + ERR_ERRONEUSNICKNAME_MSG);
     case ERR_NICKNAMEINUSE:
-	return (std::string("433") + ERR_ERRONEUSNICKNAME_MSG + parameters);
+        return (std::string("433") + ERR_ERRONEUSNICKNAME_MSG + parameters);
     case ERR_PASSWDMISMATCH:
         return (std::string("464") + ERR_PASSWDMISMATCH_MSG);
     case ERR_NOTREGISTERED:
         return (TO_STRING(ERR_NOTREGISTERED) + "* " + parameters + " :You have not registered");
-	case ERR_NOTONCHANNEL:
-		return (responseWithCodeAndNick + parameters + ERR_NOTONCHANNEL_MSG);
+    case ERR_NOTONCHANNEL:
+        return (responseWithCodeAndNick + parameters + ERR_NOTONCHANNEL_MSG);
     case ERR_ALREADYREGISTERED:
         return (std::string("464") + ERR_ALREADYREGISTERED_MSG);
     case ERR_BADCHANMASK:

@@ -27,8 +27,7 @@ void Nick::execute(Server& server, Client& client)
     } else if (!oldNickname.empty() && !client.get_user_name().empty() && client.is_registered()) {
         LOG_CMD.info("204 RPL_NICK");
         rh.process_response(client, RPL_NICK, oldNickname);
-        rh.process_response(client,
-                            RPL_NOTICE,
+        rh.process_response(client, RPL_NOTICE,
                             "Your nickname has changed"); // DOESNT NEED TO BE THERE (just for fun)
     }
 }

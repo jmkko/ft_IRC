@@ -1,4 +1,5 @@
 #include "Channel.hpp"
+
 #include "Client.hpp"
 #include "Config.hpp"
 #include "ICommand.hpp"
@@ -66,7 +67,7 @@ Channel& Channel::operator=(const Channel& other)
         _name      = other._name;
         _topic     = other._topic;
         _userLimit = other._userLimit;
-        _members = other._members;
+        _members   = other._members;
         _operators = other._operators;
         _invites   = other._invites;
     }
@@ -204,7 +205,7 @@ std::vector<std::string> Channel::get_members_list() const
     std::set<Client*>::const_iterator it = _members.begin();
     std::string                       users;
     int                               nbUserPerLine = USERS_PER_LINE;
-    int                               count = 0;
+    int                               count         = 0;
 
     while (it != _members.end()) {
         Client* c = *it;

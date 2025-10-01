@@ -38,8 +38,7 @@
  * @param port valid port number
  * @param psswd valid password
  */
-Server::Server(const unsigned short port, const std::string& password) :
-    _psswd(password), _name(ircConfig.get_name())
+Server::Server(const unsigned short port, const std::string& password) : _psswd(password), _name(ircConfig.get_name())
 {
     try {
         _serverSocket.tcp_bind(port);
@@ -58,7 +57,7 @@ Server::Server(const unsigned short port, const std::string& password) :
 Server::~Server()
 {
     LOG_SERVER.debug("Server destructor");
-	_clean();
+    _clean();
     // server socket should auto close
 }
 
@@ -85,8 +84,8 @@ void Server::start()
         LOG_SERVER.debug(utils::to_string(pollResult) + "event(s) detected");
 
         for (int i = 0; i < static_cast<int>(_pfds.size()); i++) {
-			if (globalSignal == SIGINT && globalSignal == SIGABRT)
-				break ;
+            if (globalSignal == SIGINT && globalSignal == SIGABRT)
+                break;
             // new connection
             if (i == 0 && (_pfds[i].revents & POLLIN)) {
                 _handle_new_connection(i);
@@ -133,18 +132,17 @@ void Server::_handle_new_connection(int pfdIndex)
     sockaddr_in clientAddr = {};
     memset(&clientAddr, 0, sizeof(clientAddr));
     socklen_t addrLen = sizeof(clientAddr);
-    Socket    socket = accept(_serverSocket.get_socket(), reinterpret_cast<sockaddr*>(&clientAddr), &addrLen);
+    Socket    socket  = accept(_serverSocket.get_socket(), reinterpret_cast<sockaddr*>(&clientAddr), &addrLen);
 
     if (socket != -1) {
         if (fcntl(socket, F_SETFL, O_NONBLOCK) == -1) {
             LOG_ERR.error(std::string("Error while setting a non blocking client socket") + strerror(errno));
-            LOG_SOCKET.error(std::string("Error while setting a non blocking client socket")
-                             + strerror(errno));
+            LOG_SOCKET.error(std::string("Error while setting a non blocking client socket") + strerror(errno));
             close(socket);
         } else {
             Client* newClient = new Client(socket, clientAddr);
-            LOG_CONN.info(std::string("New connection accepted on socket ") + utils::to_string(socket)
-                          + " => " + utils::to_string(*newClient));
+            LOG_CONN.info(std::string("New connection accepted on socket ") + utils::to_string(socket) + " => "
+                          + utils::to_string(*newClient));
             _clients[socket] = newClient;
 
             _listen_to_socket(socket, POLLIN);
@@ -175,8 +173,8 @@ void Server::_handle_client_disconnection(int pfdIndex)
             LOG_SOCKET.warning(std::string("socket error : ") + strerror(static_cast<int>(err)));
         }
     }
-    LOG_CONN.info(std::string("Client at ") + client->get_address() + ":"
-                  + utils::to_string(client->get_port()) + " disconnected");
+    LOG_CONN.info(std::string("Client at ") + client->get_address() + ":" + utils::to_string(client->get_port())
+                  + " disconnected");
     _cleanup_socket_and_client(pfdIndex);
 }
 
@@ -250,8 +248,8 @@ void Server::_handle_client_output(int pfdIndex)
                 _handle_client_disconnection(pfdIndex);
             }
         } else if (static_cast<size_t>(bytesSent) < sendBuffer.length()) {
-            LOG_SERVER.warning(std::string("Queue has been partially sent (") + utils::to_string(bytesSent)
-                               + "/" + utils::to_string(sendBuffer.length()) + ")");
+            LOG_SERVER.warning(std::string("Queue has been partially sent (") + utils::to_string(bytesSent) + "/"
+                               + utils::to_string(sendBuffer.length()) + ")");
             client->set_send_buffer(sendBuffer.substr(bytesSent));
         } else {
             LOG_SERVER.debug(std::string("Message sent normally ... unsubscribing from POLLOUT"));
@@ -346,12 +344,11 @@ void Server::_listen_to_socket(Socket toListen, uint32_t flags)
 void Server::_clean()
 {
     LOG_SERVER.debug(std::string("cleaning ") + TO_STRING(_clients.size()) + " clients");
-    
-	// need to clean in reverse order (cf _pfds.erase in _cleanup_socket_and_client)
-	for (int i = static_cast<int>(_pfds.size()) - 1; i >= 1; --i)
-	{
-		_cleanup_socket_and_client(i);
-	}
+
+    // need to clean in reverse order (cf _pfds.erase in _cleanup_socket_and_client)
+    for (int i = static_cast<int>(_pfds.size()) - 1; i >= 1; --i) {
+        _cleanup_socket_and_client(i);
+    }
 
     // Clean up channels
     LOG_SERVER.debug(std::string("cleaning ") + TO_STRING(channels.size()) + " channels");
@@ -383,7 +380,7 @@ void Server::stop()
 void Server::_cleanup_socket_and_client(int pfdIndex)
 {
     Client* c = _clients[_pfds[pfdIndex].fd];
-	close(_pfds[pfdIndex].fd);
+    close(_pfds[pfdIndex].fd);
     _clients.erase(_pfds[pfdIndex].fd);
     if (c) {
         if (!c->get_nickname().empty())

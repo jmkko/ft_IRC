@@ -50,9 +50,8 @@ bool Config::_parse_config_file(const std::string& fileName)
 
 void Config::_set_key_value(const std::string& key, std::string& value)
 {
-    const size_t nbParam = 5;
-    std::string  keyList[nbParam]
-        = {"server_name", "password", "max_joined_channels", "chan_name_max_len", "nickname_max_len"};
+    const size_t nbParam          = 5;
+    std::string  keyList[nbParam] = {"server_name", "password", "max_joined_channels", "chan_name_max_len", "nickname_max_len"};
     void (Config::* functions[nbParam])(std::string&) = {&Config::_set_name,
                                                          &Config::_set_password,
                                                          &Config::_set_max_joined_channels,
@@ -68,18 +67,9 @@ void Config::_set_key_value(const std::string& key, std::string& value)
 
 void Config::_set_name(std::string& value) { _name = value; }
 void Config::_set_password(std::string& value) { _psswd = value; }
-void Config::_set_max_joined_channels(std::string& value)
-{
-    _maxJoinedChannels = static_cast<int>(atoi(value.c_str()));
-}
-void Config::_set_chan_name_max_len(std::string& value)
-{
-    _chanNameMaxLen = static_cast<int>(atoi(value.c_str()));
-}
-void Config::_set_nickname_max_len(std::string& value)
-{
-    _nicknameMaxLen = static_cast<int>(atoi(value.c_str()));
-}
+void Config::_set_max_joined_channels(std::string& value) { _maxJoinedChannels = static_cast<int>(atoi(value.c_str())); }
+void Config::_set_chan_name_max_len(std::string& value) { _chanNameMaxLen = static_cast<int>(atoi(value.c_str())); }
+void Config::_set_nickname_max_len(std::string& value) { _nicknameMaxLen = static_cast<int>(atoi(value.c_str())); }
 
 const std::string& Config::get_name() const { return _name; }
 const std::string& Config::get_password() const { return _psswd; }

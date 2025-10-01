@@ -33,11 +33,11 @@ void valid_nick_should_void(Server& s)
 {
     try {
 
-		TEST_SETUP(test, s, 1);
-		TcpSocket& so = *sockets.at(0);
+        TEST_SETUP(test, s, 1);
+        TcpSocket& so = *sockets.at(0);
         send_valid_password_assert(so);
 
-		// test
+        // test
         send_valid_nick_assert(so);
 
     } catch (const std::runtime_error& e) {
@@ -51,17 +51,17 @@ void valid_nick_should_void(Server& s)
 void valid_nick_special_should_void(Server& s)
 {
     try {
-		
-		TEST_SETUP(test, s, 1);
-		TcpSocket& so = *sockets.at(0);
+
+        TEST_SETUP(test, s, 1);
+        TcpSocket& so = *sockets.at(0);
         send_valid_password_assert(so);
 
-		// test
+        // test
         send_line(so, validNickSpecialMsg);
         std::string reply = recv_lines(so);
         AssertReply ar(reply);
         ar.is_empty();
-	
+
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());
     }
@@ -73,8 +73,8 @@ void valid_nick_special_should_void(Server& s)
 void valid_change_should_void(Server& s)
 {
     try {
-		TEST_SETUP(test, s, 1);
-		TcpSocket& so = *sockets.at(0);
+        TEST_SETUP(test, s, 1);
+        TcpSocket& so = *sockets.at(0);
         authenticate(so);
 
         send_line(so, validNickChangeMsg);
@@ -98,8 +98,8 @@ void no_arg_should_err(Server& s)
 {
 
     try {
-		TEST_SETUP(test, s, 1);
-		TcpSocket& so = *sockets.at(0);
+        TEST_SETUP(test, s, 1);
+        TcpSocket& so = *sockets.at(0);
         send_valid_password_assert(so);
 
         send_line(so, invalidNickMissingArgMsg);
@@ -118,8 +118,8 @@ void no_arg_should_err(Server& s)
 void starting_with_number_should_err(Server& s)
 {
     try {
-		TEST_SETUP(test, s, 1);
-		TcpSocket& so = *sockets.at(0);
+        TEST_SETUP(test, s, 1);
+        TcpSocket& so = *sockets.at(0);
         send_valid_password_assert(so);
 
         send_line(so, invalidNick3oroMsg);
@@ -138,9 +138,9 @@ void starting_with_number_should_err(Server& s)
 void taken_should_err(Server& s)
 {
     try {
-		TEST_SETUP(test, s, 2);
-		TcpSocket& so = *sockets.at(0);
-		TcpSocket& so2 = *sockets.at(1);
+        TEST_SETUP(test, s, 2);
+        TcpSocket& so  = *sockets.at(0);
+        TcpSocket& so2 = *sockets.at(1);
         authenticate(so);
 
         send_valid_password_assert(so2);

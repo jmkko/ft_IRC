@@ -11,10 +11,7 @@
 // Default constructor
 User::User(void) {}
 
-User::User(const std::string& username, const std::string& realname) :
-    _username(username), _realname(realname)
-{
-}
+User::User(const std::string& username, const std::string& realname) : _username(username), _realname(realname) {}
 // Copy constructor
 User::User(const User& other) : ICommand() { (void)other; }
 
