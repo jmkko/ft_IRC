@@ -118,7 +118,10 @@ void Join::execute(Server& server, Client& client)
         } else {
             rh.process_response(client, RPL_TOPIC, channel->get_name() + " :" + channel->get_topic());
         }
-        rh.process_response(client, RPL_NAMREPLY, channel->get_name());
+        std::vector<std::string> users = channel->get_members_list();
+        for (size_t i = 0; i < users.size(); ++i){
+            rh.process_response(client, RPL_NAMREPLY, users[i]);
+        }
         rh.process_response(client, RPL_ENDOFNAMES, channel->get_name());
         ++it;
     }
