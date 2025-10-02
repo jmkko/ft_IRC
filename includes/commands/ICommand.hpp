@@ -11,8 +11,6 @@ class ICommand
 	virtual ~ICommand() {}
 	virtual void execute(Server& s, Client& c) = 0;
 
-	typedef std::vector<std::string> Parameters;
-
   protected:
 	ICommand() {}
 
