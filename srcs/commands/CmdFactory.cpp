@@ -37,27 +37,25 @@ ICommand* CmdFactory::make_command(Server& server, Client& client, std::string& 
     ReplyHandler&      rh = ReplyHandler::get_instance(&server);
     std::string        commandLine = "";
     std::istringstream iss(params); // NOLINT(clang-diagnostic-vexing-parse)
-    std::string        available[NB_AVAILABLE_CMD]
-        = {"USER", "PASS", "NICK", "QUIT", "INVITE", "JOIN", "PART", "MODE", "WHO", "OPER"};
-    ICommand* (CmdFactory::* ptr[NB_AVAILABLE_CMD])(Server&, Client&, std::string&)
-        = {&CmdFactory::user_cmd,
-           &CmdFactory::pass_cmd,
-           &CmdFactory::nick_cmd,
-           &CmdFactory::quit_cmd,
-           &CmdFactory::invite_cmd,
-           &CmdFactory::join_cmd,
-           &CmdFactory::part_cmd,
-           &CmdFactory::mode_cmd,
-           &CmdFactory::who_cmd,
-           &CmdFactory::oper_cmd};
+    std::string available[NB_AVAILABLE_CMD] = {"USER", "PASS", "NICK", "QUIT", "INVITE", "JOIN", "PART", "MODE", "WHO", "OPER"};
+    ICommand* (CmdFactory::* ptr[NB_AVAILABLE_CMD])(Server&, Client&, std::string&) = {&CmdFactory::user_cmd,
+                                                                                       &CmdFactory::pass_cmd,
+                                                                                       &CmdFactory::nick_cmd,
+                                                                                       &CmdFactory::quit_cmd,
+                                                                                       &CmdFactory::invite_cmd,
+                                                                                       &CmdFactory::join_cmd,
+                                                                                       &CmdFactory::part_cmd,
+                                                                                       &CmdFactory::mode_cmd,
+                                                                                       &CmdFactory::who_cmd,
+                                                                                       &CmdFactory::oper_cmd};
 
     iss >> commandLine;
     for (size_t i = 0; i < NB_AVAILABLE_CMD; i++) {
         if (commandLine == available[i]) {
             LOG_CMD.debug("command params" + commandLine);
             // rergisteredcheck
-            if (!client.is_registered() && commandLine != "NICK" && commandLine != "USER"
-                && commandLine != "PASS" && commandLine != "QUIT") {
+            if (!client.is_registered() && commandLine != "NICK" && commandLine != "USER" && commandLine != "PASS"
+                && commandLine != "QUIT") {
                 LOG_CMD.info(TO_STRING(ERR_NOTREGISTERED) + " ERR_NOTREGISTERED");
                 ReplyHandler& rh = ReplyHandler::get_instance(&server);
                 rh.process_response(client, ERR_NOTREGISTERED, commandLine);
@@ -139,8 +137,6 @@ ICommand* CmdFactory::quit_cmd(Server& server, Client& client, std::string& para
 
 ICommand* CmdFactory::join_cmd(Server& server, Client& client, std::string& params)
 {
-    (void)client;
-    (void)server;
     ReplyHandler&            rh = ReplyHandler::get_instance(&server);
     std::vector<std::string> vectorParams;
     vectorParams.push_back(params);
@@ -191,9 +187,12 @@ ICommand* CmdFactory::invite_cmd(Server& server, Client& client, std::string& pa
 
 ICommand* CmdFactory::who_cmd(Server& server, Client& client, std::string& params)
 {
-    (void)client;
-    (void)server;
-    (void)params;
-    LOG_CMD.debug("Build WHO (not implemented)");
+    ReplyHandler& rh = ReplyHandler::get_instance(&server);
+    ReplyCode     replyCode = Who::check_args(server, client, params);
+    if (replyCode == RPL_SUCCESS) {
+        return new Who(params);
+    } else {
+        rh.process_response(client, replyCode, params);
+    }
     return NULL;
 };

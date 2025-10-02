@@ -5,6 +5,7 @@
 #include "ICommand.hpp"
 #include "reply_codes.hpp"
 
+#include <sstream>
 #include <string>
 
 class Client;
@@ -23,6 +24,7 @@ class Who : public ICommand
     Who();
     Who(const Who& other);
     Who& operator=(const Who& other);
+    bool _is_valid_pattern(const std::string& pattern, const std::string& str) const;
 };
 
 #endif
