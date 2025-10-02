@@ -209,7 +209,7 @@ ICommand* CmdFactory::privmsg_cmd(Server& server, Client& client, std::string& p
 
 	std::string word;
 	std::istringstream iss(params);
-	Client *dest;
+	Client *dest = NULL;
 	std::map<std::string, Channel*>::iterator chan;
 	while (iss >> word) {
 		chan = server.channels.find(word);
