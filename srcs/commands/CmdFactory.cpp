@@ -1,7 +1,9 @@
-#include "Client.hpp"
 #include "CmdFactory.hpp"
+
+#include "Client.hpp"
 #include "ICommand.hpp"
 #include "Join.hpp"
+#include "Kick.hpp"
 #include "LogManager.hpp"
 #include "Nick.hpp"
 #include "Pass.hpp"
@@ -34,7 +36,7 @@ CmdFactory::~CmdFactory(void) {}
 
 ICommand* CmdFactory::make_command(Server& server, Client& client, std::string& params)
 {
-    ReplyHandler&      rh = ReplyHandler::get_instance(&server);
+    ReplyHandler&      rh          = ReplyHandler::get_instance(&server);
     std::string        commandLine = "";
     std::istringstream iss(params); // NOLINT(clang-diagnostic-vexing-parse)
     std::string        available[NB_AVAILABLE_CMD]
@@ -56,8 +58,8 @@ ICommand* CmdFactory::make_command(Server& server, Client& client, std::string& 
         if (commandLine == available[i]) {
             LOG_CMD.debug("command params" + commandLine);
             // rergisteredcheck
-            if (!client.is_registered() && commandLine != "NICK" && commandLine != "USER"
-                && commandLine != "PASS" && commandLine != "QUIT") {
+            if (!client.is_registered() && commandLine != "NICK" && commandLine != "USER" && commandLine != "PASS"
+                && commandLine != "QUIT") {
                 LOG_CMD.info(TO_STRING(ERR_NOTREGISTERED) + " ERR_NOTREGISTERED");
                 ReplyHandler& rh = ReplyHandler::get_instance(&server);
                 rh.process_response(client, ERR_NOTREGISTERED, commandLine);
@@ -79,7 +81,7 @@ ICommand* CmdFactory::make_command(Server& server, Client& client, std::string& 
 // Return a NICK command object if the nickname is valid
 ICommand* CmdFactory::nick_cmd(Server& server, Client& client, std::string& params)
 {
-    ReplyHandler& rh = ReplyHandler::get_instance(&server);
+    ReplyHandler& rh        = ReplyHandler::get_instance(&server);
     ReplyCode     replyCode = Nick::check_args(server, client, params);
 
     if (replyCode == RPL_SUCCESS || replyCode == RPL_WELCOME)
@@ -95,7 +97,7 @@ ICommand* CmdFactory::user_cmd(Server& server, Client& client, std::string& para
 {
     std::string   username = "", realname = "";
     ReplyCode     replyCode = User::check_args(server, client, params);
-    ReplyHandler& rh = ReplyHandler::get_instance(&server);
+    ReplyHandler& rh        = ReplyHandler::get_instance(&server);
 
     if (replyCode == RPL_WELCOME || replyCode == RPL_SUCCESS) {
         std::istringstream iss(params);
@@ -114,7 +116,7 @@ ICommand* CmdFactory::user_cmd(Server& server, Client& client, std::string& para
 
 ICommand* CmdFactory::pass_cmd(Server& server, Client& client, std::string& params)
 {
-    ReplyHandler& rh = ReplyHandler::get_instance(&server);
+    ReplyHandler& rh        = ReplyHandler::get_instance(&server);
     ReplyCode     replyCode = Pass::check_args(server, client, params);
 
     if (replyCode == RPL_SUCCESS || replyCode == RPL_WELCOME) {
@@ -123,6 +125,25 @@ ICommand* CmdFactory::pass_cmd(Server& server, Client& client, std::string& para
         rh.process_response(client, replyCode, params);
     }
 
+    return NULL;
+};
+
+ICommand* CmdFactory::kick_cmd(Server& server, Client& client, std::string& params)
+{
+    ReplyHandler&            rh = ReplyHandler::get_instance(&server);
+    std::vector<std::string> vectorParams;
+    std::istringstream       iss(params);
+    std::string              token;
+    while (std::getline(iss, token, ' ')) {
+        vectorParams.push_back(token);
+        LOG_CMD.debug("factory token", token);
+    }
+    ReplyCode replyCode = Kick::check_args(server, client, vectorParams);
+    if (replyCode == RPL_SUCCESS) {
+        return new Kick(vectorParams);
+    } else {
+        rh.process_response(client, replyCode, "KICK");
+    }
     return NULL;
 };
 
@@ -139,8 +160,6 @@ ICommand* CmdFactory::quit_cmd(Server& server, Client& client, std::string& para
 
 ICommand* CmdFactory::join_cmd(Server& server, Client& client, std::string& params)
 {
-    (void)client;
-    (void)server;
     ReplyHandler&            rh = ReplyHandler::get_instance(&server);
     std::vector<std::string> vectorParams;
     vectorParams.push_back(params);

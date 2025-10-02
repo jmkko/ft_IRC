@@ -19,10 +19,8 @@ class Client
 {
   public:
     Client(Socket socket, sockaddr_in addr);
-    Client(const Client& other);
     virtual ~Client();
 
-    Client& operator=(const Client& other);
 
     Socket             get_socket() const;
     const std::string& get_address() const;
@@ -36,6 +34,8 @@ class Client
     std::string  get_nickname() const;
     std::string  get_user_name() const;
     std::string  get_real_name() const;
+	std::string  get_userhost() const;
+	std::string  get_full_userhost() const;
     ClientStatus get_status() const;
 
     bool is_registered() const;
@@ -56,6 +56,8 @@ class Client
 	Channel* get_channel(const std::string& name);
 
   private:
+    Client(const Client& other);
+    Client& operator=(const Client& other);
     TcpSocket                       _socket;
     sockaddr_in                     _addr;
     std::string                     _addrStr;
