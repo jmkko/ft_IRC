@@ -15,15 +15,15 @@ class Privmsg : public ICommand
     Privmsg& operator=(const Privmsg& other);
     ~Privmsg();
 
-	void			add_client(Client * client);
-	void			add_channel(Channel* chan);
+    void             add_client(Client* client);
+    void             add_channel(Channel* chan);
     void             execute(Server& s, Client& c);
     static ReplyCode check_args(Server& s, Client& c, std::string& p);
 
   private:
     std::string           _msg;
     std::vector<Channel*> _chans;
-	std::vector<Client*>  _dests;
+    std::vector<Client*>  _dests;
 };
 
 #endif

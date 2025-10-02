@@ -27,7 +27,7 @@ void Privmsg::execute(Server& server, Client& client)
 	ReplyHandler rh = ReplyHandler::get_instance(&server);
 
 	for (std::vector<Channel*>::iterator it = _chans.begin(); it != _chans.end(); it++){
-		LOG_CMD.debug("channel " + (*it)->get_name());
+		LOG_CMD.debug("privmsg channel " + (*it)->get_name());
 	}
 
 	LOG_CMD.debug("message = " + _msg);
