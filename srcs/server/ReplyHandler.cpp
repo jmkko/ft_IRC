@@ -108,6 +108,8 @@ std::string ReplyHandler::select_response(Client& client, ReplyCode code, const 
         return (get_id_of(*sender, "") + " JOIN :" + parameters);
     case RPL_NOTICE:
         return (response + " NOTICE " + nick + " :" + parameters);
+	case RPL_PRIVMSG:
+		return (get_id_of(*sender) + " PRIVMSG " + parameters);
     case RPL_KICK:
         return (response + sender->get_full_userhost() + " KICK " + parameters);
     case RPL_INVITING:
@@ -122,8 +124,6 @@ std::string ReplyHandler::select_response(Client& client, ReplyCode code, const 
         return (response + code_to_str(code) + nick + " " + parameters + RPL_ENDOFNAMES_MSG);
     case RPL_NOTOPIC:
         return (response + code_to_str(code) + nick + " " + parameters + RPL_NOTOPIC_MSG);
-    case RPL_PRIVMSG:
-        return "";
     case ERR_CHANOPRIVSNEEDED:
         return (responseWithCodeAndNick + parameters + ERR_CHANOPRIVSNEEDED_MSG);
     case ERR_UNKNOWNCOMMAND:

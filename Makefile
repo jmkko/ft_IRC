@@ -28,6 +28,7 @@ SRCS			:=	srcs/main.cpp\
 					srcs/commands/Kick.cpp\
 					srcs/commands/Pass.cpp\
 					srcs/commands/User.cpp\
+					srcs/commands/Privmsg.cpp\
 					srcs/commands/Join.cpp\
 					srcs/server/ReplyHandler.cpp\
 

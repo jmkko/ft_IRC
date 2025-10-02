@@ -3,7 +3,7 @@
 
 #include "ICommand.hpp"
 #include "reply_codes.hpp"
-
+#include "Channel.hpp"
 #include <string>
 
 class Server;

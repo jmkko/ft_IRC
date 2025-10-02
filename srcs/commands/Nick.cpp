@@ -15,21 +15,22 @@ Nick::~Nick(void) {}
 
 void Nick::execute(Server& server, Client& client)
 {
-    (void)server;
-    std::string oldNickname = client.get_nickname();
-    client.set_nickname(_nickname);
-    ReplyHandler& rh = ReplyHandler::get_instance(&server);
-    // welcome sequence complete for first time
-    if (oldNickname.empty() && !client.get_user_name().empty() && client.is_registered()) {
-        LOG_CMD.info("001 RPL_WELCOME");
-        rh.process_response(client, RPL_WELCOME);
-        // normal success behavior
-    } else if (!oldNickname.empty() && !client.get_user_name().empty() && client.is_registered()) {
-        LOG_CMD.info("204 RPL_NICK");
-        rh.process_response(client, RPL_NICK, oldNickname);
-        rh.process_response(client, RPL_NOTICE,
-                            "Your nickname has changed"); // DOESNT NEED TO BE THERE (just for fun)
-    }
+	(void)server;
+	std::string oldNickname = client.get_nickname();
+	client.set_nickname(_nickname);
+	ReplyHandler& rh = ReplyHandler::get_instance(&server);
+	// welcome sequence complete for first time
+	if (oldNickname.empty() && !client.get_user_name().empty() && client.is_registered()) {
+		LOG_CMD.info("001 RPL_WELCOME");
+		rh.process_response(client, RPL_WELCOME);
+		// normal success behavior
+	} else if (!oldNickname.empty() && !client.get_user_name().empty() && client.is_registered()) {
+		LOG_CMD.info("204 RPL_NICK");
+		// send the message to every user in every channel that this client takes part in
+		// NOT WORKING (client._joinedChannel is empty)
+		client.broadcast_to_all_channels(server, RPL_NICK, oldNickname); // ! \\ ;
+	 	rh.process_response(client, RPL_NICK, oldNickname);
+	}
 }
 
 ReplyCode Nick::check_args(Server& server, Client& client, std::string& params)

@@ -91,6 +91,7 @@ std::ostream&	operator<<(std::ostream& os, const Channel& c)
 
 void Channel::broadcast(Server& server, ReplyCode replyCode, const std::string& message, Client* sender) const
 {
+	LOG_CMD.debug("broadcast to everyone from channel"); 
     ReplyHandler& rh = ReplyHandler::get_instance(&server);
     for (std::set<Client*>::iterator it = _members.begin(); it != _members.end(); ++it) {
         Client* recipient = *it;
