@@ -105,6 +105,8 @@ std::string ReplyHandler::select_response(Client& client, ReplyCode code, const 
     case RPL_NOTICE:
         return (response + " NOTICE " + nick + " :" + parameters);
     case RPL_KICK:
+	case RPL_PRIVMSG:
+		return (get_id_of(*sender) + " PRIVMSG " + parameters);
     case RPL_INVITING:
         return "";
     case RPL_MODE:
@@ -117,8 +119,6 @@ std::string ReplyHandler::select_response(Client& client, ReplyCode code, const 
         return (response + code_to_str(code) + nick + " " + parameters + RPL_ENDOFNAMES_MSG);
     case RPL_NOTOPIC:
         return (response + code_to_str(code) + nick + " " + parameters + RPL_NOTOPIC_MSG);
-    case RPL_PRIVMSG:
-        return "";
     case ERR_UNKNOWNCOMMAND:
         return (std::string("421") + ERR_UNKNOWNCOMMAND_MSG + parameters);
     case ERR_NEEDMOREPARAMS:

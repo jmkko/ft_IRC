@@ -5,6 +5,7 @@
 #include "LogManager.hpp"
 #include "Nick.hpp"
 #include "Pass.hpp"
+#include "Privmsg.hpp"
 #include "ReplyHandler.hpp"
 #include "Server.hpp"
 #include "User.hpp"
@@ -37,7 +38,7 @@ ICommand* CmdFactory::make_command(Server& server, Client& client, std::string& 
     std::string        commandLine = "";
     std::istringstream iss(params); // NOLINT(clang-diagnostic-vexing-parse)
     std::string        available[NB_AVAILABLE_CMD]
-        = {"USER", "PASS", "NICK", "QUIT", "INVITE", "JOIN", "PART", "MODE", "OPER"};
+        = {"USER", "PASS", "NICK", "QUIT", "INVITE", "JOIN", "PART", "MODE", "OPER", "PRIVMSG"};
     ICommand* (CmdFactory::* ptr[NB_AVAILABLE_CMD])(Server&, Client&, std::string&)
         = {&CmdFactory::user_cmd,
            &CmdFactory::pass_cmd,
@@ -47,7 +48,8 @@ ICommand* CmdFactory::make_command(Server& server, Client& client, std::string& 
            &CmdFactory::join_cmd,
            &CmdFactory::part_cmd,
            &CmdFactory::mode_cmd,
-           &CmdFactory::oper_cmd};
+           &CmdFactory::oper_cmd,
+           &CmdFactory::privmsg_cmd};
 
     iss >> commandLine;
     for (size_t i = 0; i < NB_AVAILABLE_CMD; i++) {
@@ -185,4 +187,40 @@ ICommand* CmdFactory::invite_cmd(Server& server, Client& client, std::string& pa
     (void)params;
     LOG_CMD.debug("Build INVITE (not implemented)");
     return NULL;
+};
+
+ICommand* CmdFactory::privmsg_cmd(Server& server, Client& client, std::string& params)
+{
+	LOG_CMD.debug("PIVMSG params: " + params);
+	ReplyHandler rh = ReplyHandler::get_instance(&server);
+	ReplyCode code = Privmsg::check_args(server, client, params);
+	if (code != RPL_SUCCESS) {
+		rh.process_response(client, code, params, NULL);
+		return (NULL);
+	}
+	
+	std::string msg;
+	std::string::size_type pos = params.find(" :");
+	if (pos != std::string::npos) {
+		msg = params.substr(pos);
+	}
+
+	Privmsg* privmsg = new Privmsg(msg);
+
+	std::string word;
+	std::istringstream iss(params);
+	Client *dest;
+	std::map<std::string, Channel*>::iterator chan;
+	while (iss >> word) {
+		chan = server.channels.find(word);
+		if (chan != server.channels.end()) {
+			privmsg->add_channel(chan->second);
+		} 
+		dest = server.find_client_by_nickname(word);
+		if (dest) {
+			privmsg->add_client(dest);
+		}
+	}
+
+    return privmsg;
 };

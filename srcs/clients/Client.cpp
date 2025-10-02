@@ -1,5 +1,6 @@
 #include "Client.hpp"
 
+#include "utils.hpp"
 #include "Channel.hpp"
 #include "Config.hpp"
 #include "consts.hpp"
@@ -31,7 +32,7 @@ Client::Client(const Client& other) :
 Client::~Client(void) {}
 
 /************************************************************
- *		➕ OPERATORS											*
+*		➕ OPERATORS											*
  ************************************************************/
 
 Client& Client::operator=(const Client& other)
@@ -115,3 +116,23 @@ void               Client::add_joined_channel(Channel& channel) { _joinedChannel
 void               Client::remove_joined_channel(Channel& channel) { _joinedChannels.erase(channel.get_name()); }
 
 void               Client::set_send_buffer(const std::string& buffer) { _sendBuffer = buffer; }
+
+Channel* Client::get_channel(const std::string& name) {
+
+	std::map<std::string, Channel*>::iterator chan = _joinedChannels.find(name);
+	if (chan != _joinedChannels.end()) {
+		return chan->second;
+	}
+	return NULL;
+};
+
+// ISSUE !! _joinedChannels is allways empty
+void	Client::broadcast_to_all_channels(Server& server, ReplyCode code, std::string& msg) {
+	LOG_CMD.debug("broadcast to all channels, nb of joined channel: " + utils::to_string(_joinedChannels.size())); 
+	for (std::map<std::string, Channel*>::iterator it = _joinedChannels.begin(); it != _joinedChannels.end(); it++) {
+		if (it->second) {
+			LOG_CMD.debug("broadcast to: " + it->second->get_name());
+			it->second->broadcast(server, code, msg, this);
+		}
+	}
+}

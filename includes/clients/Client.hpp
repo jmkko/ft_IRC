@@ -2,10 +2,12 @@
 #define CLIENT_HPP
 
 #include "TcpSocket.hpp"
+#include "reply_codes.hpp"
 
 #include <map>
 #include <string>
 
+class Server;
 class Channel;
 
 enum ClientStatus {
@@ -49,6 +51,9 @@ class Client
 
     void append_to_send_buffer(const std::string& msg);
     void append_to_read_buffer(const std::string& msg);
+
+	void	broadcast_to_all_channels(Server& server, ReplyCode code, std::string& msg);
+	Channel* get_channel(const std::string& name);
 
   private:
     TcpSocket                       _socket;

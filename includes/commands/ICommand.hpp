@@ -1,5 +1,6 @@
 #ifndef ICOMMAND_HPP
-#define ICOMMAND_HPP
+# define ICOMMAND_HPP
+# include <vector>
 
 class Server;
 class Client;
@@ -9,6 +10,8 @@ class ICommand
   public:
 	virtual ~ICommand() {}
 	virtual void execute(Server& s, Client& c) = 0;
+
+	typedef std::vector<std::string> Parameters;
 
   protected:
 	ICommand() {}

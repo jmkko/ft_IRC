@@ -26,10 +26,10 @@ void Nick::execute(Server& server, Client& client)
 		// normal success behavior
 	} else if (!oldNickname.empty() && !client.get_user_name().empty() && client.is_registered()) {
 		LOG_CMD.info("204 RPL_NICK");
-		rh.process_response(client, RPL_NICK, oldNickname);
-		rh.process_response(client,
-							RPL_NOTICE,
-							"Your nickname has changed"); // DOESNT NEED TO BE THERE (just for fun)
+		// send the message to every user in every channel that this client takes part in
+		// NOT WORKING (client._joinedChannel is empty)
+		client.broadcast_to_all_channels(server, RPL_NICK, oldNickname); // ! \\ ;
+	 	rh.process_response(client, RPL_NICK, oldNickname);
 	}
 }
 
