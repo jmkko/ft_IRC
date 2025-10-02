@@ -2,12 +2,15 @@
 #define FAKE_CLIENT_HPP
 
 #include "TcpSocket.hpp"
+#include <memory>
 #include <string>
 
 #define RECEIVE_BUFFER 512
+#define POLL_TEST_TIMEOUT 2000
+#define MAX_RECV_ATTEMPTS 3
 
-Socket		make_client_socket(int port);
-void		send_line(int fd, const std::string& msg);
-std::string recv_line(int fd);
+std::unique_ptr<TcpSocket> make_client_socket(int port);
+void						send_line(const TcpSocket& so, const std::string& msg);
+std::string 				recv_lines(const TcpSocket& so);
 
 #endif

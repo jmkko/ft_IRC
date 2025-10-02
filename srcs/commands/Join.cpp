@@ -46,10 +46,10 @@ ReplyCode Join::check_args(Server& server, Client& client, std::vector<std::stri
     while (std::getline(issKeys, value, ',')) {
         keys.push_back(value);
     }
-    std::vector<std::string>::iterator it = channels.begin();
+    std::vector<std::string>::iterator it   = channels.begin();
     size_t                             rank = 0;
     for (; it < channels.end(); it++) {
-        std::cout << "channels : " << *it;
+        // std::cout << "channels : " << *it;
         if (rank < keys.size())
             channelsLst.push_back(*it + " " + keys[rank]);
         else
@@ -92,11 +92,11 @@ void Join::execute(Server& server, Client& client)
             rh.process_response(client, ERR_BADCHANMASK, chanName);
             continue;
         }
-        Channel*                                  channel = NULL;
+        Channel*                                  channel         = NULL;
         std::map<std::string, Channel*>::iterator existingChannel = server.channels.find(chanName);
 
         if (existingChannel == server.channels.end()) {
-            channel = new Channel(chanName);
+            channel                              = new Channel(chanName);
             server.channels[channel->get_name()] = channel;
             LOG_CMD.info("Created new channel: " + channel->get_name());
         } else {

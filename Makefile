@@ -25,11 +25,13 @@ SRCS			:=	srcs/main.cpp\
 					srcs/server/LogManager.cpp\
 					srcs/commands/CmdFactory.cpp\
 					srcs/commands/Nick.cpp\
+					srcs/commands/Kick.cpp\
 					srcs/commands/Pass.cpp\
 					srcs/commands/User.cpp\
 					srcs/commands/Join.cpp\
 					srcs/server/ReplyHandler.cpp\
 
+HEADERS			:=	$(wildcard INCLUDES)/*.hpp)
 OBJS_DIR		:=	.objs
 OBJS			:=	$(SRCS:%.cpp=$(OBJS_DIR)/%.o)
 DEPS			:=	$(OBJS:%.o=%.d)

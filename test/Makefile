@@ -4,9 +4,11 @@ export PATH := $(HOME)/local/bin:$(PATH)
 
 NAME			:=	test
 
+IRC_EXEC		:=  ircserv
+
 CXX				:=	clang++
 
-CXXFLAGS		:=	-Wall -Wextra -Werror -std=c++20
+CXXFLAGS		:=	-Wall -Wextra -Werror -std=c++20 -g
 
 MAKEFLAGS		:=	--no-print-directory
 
@@ -25,6 +27,9 @@ SRCS_FILES		:= 	main.cpp\
 					AssertReply.cpp\
 					printUtils.cpp\
 					ServerRunner.cpp\
+					sequences.cpp\
+					TestFixture.cpp\
+					testKick.cpp\
 					testNick.cpp\
 
 IRC_SRCS_FILES	:=	utils.cpp\
@@ -39,6 +44,7 @@ IRC_SRCS_FILES	:=	utils.cpp\
 					server/ReplyHandler.cpp\
 					commands/CmdFactory.cpp\
 					commands/Nick.cpp\
+					commands/Kick.cpp\
 					commands/Pass.cpp\
 					commands/User.cpp\
 					commands/Join.cpp\
@@ -57,12 +63,14 @@ vpath %.cpp $(SRC_DIR) $(IRC_DIR) $(IRC_DIR)/commands $(IRC_DIR)/clients $(IRC_D
 # Paths for clang-format / clang-tidy-12 / intercept-build if manually installed
 export PATH 	:=	$(PATH):$(HOME)/local/bin:/usr/bin/:/usr/share/clang/scan-build-py-12/bin/
 
+HEADERS			:=	$(wildcard $(INCLUDES)/*.hpp)
+FILES_TO_FORMAT	:=	$(SRCS) $(HEADERS)
 
 ###########
 # Targets #
 ###########
 
-all: $(NAME)
+all:$(NAME)
 
 $(DIRS):
 	@mkdir -p $@
@@ -81,6 +89,10 @@ comp-data:
 debug: CXXFLAGS += -g -DDEB=1
 debug: all
 
+formator:
+	@echo "$(YELLOW)=== Formatting code ===$(NOC)"
+	@clang-format -style=file:../.clang-format -i $(FILES_TO_FORMAT)
+
 clean:
 	@echo "$(RED)Remove objects$(NOC)"
 	@rm -rf $(BUILD_DIR)
@@ -89,8 +101,16 @@ fclean: clean
 	@echo "$(RED)Remove binary$(NOC)"
 	@rm -f $(NAME)
 	@rm -rf ../logs
+	@rm -rf logs
 
 re: fclean
 	@make
+
+# run: $(NAME)
+# 	@make -C ..
+# 	@../$(IRC_EXEC) 4343 password > /dev/null 2>&1 & echo $$! > ircserv.pid
+# 	@valgrind --track-fds=yes ./$(NAME) || true
+# 	@pid=$$(cat ircserv.pid); if kill -0 $$pid 2>/dev/null; then kill $$pid; fi
+# 	@rm -f ircserv.pid
 
 .PHONY: all clean fclean re $(DIRS)

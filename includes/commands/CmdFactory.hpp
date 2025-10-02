@@ -20,6 +20,7 @@ class CmdFactory
 	ICommand* user_cmd(Server& server, Client& client, std::string& params);
 	ICommand* pass_cmd(Server& server, Client& client, std::string& params);
 	ICommand* nick_cmd(Server& server, Client& client, std::string& params);
+	ICommand* kick_cmd(Server& server, Client& client, std::string& params);
 	ICommand* quit_cmd(Server& server, Client& client, std::string& params);
 	ICommand* join_cmd(Server& server, Client& client, std::string& params);
 	ICommand* part_cmd(Server& server, Client& client, std::string& params);

@@ -1,4 +1,5 @@
 #include "Logger.hpp"
+
 #include "colors.hpp"
 #include "consts.hpp"
 
@@ -32,12 +33,12 @@ void Logger::log(LogLevel level, const std::string& message)
         return;
 
     std::string timestamp = _get_current_time();
-    std::string levelStr = _level_to_string(level);
-    std::string color = _get_color_for_level(level);
+    std::string levelStr  = _level_to_string(level);
+    std::string color     = _get_color_for_level(level);
     if (_name == "TEST")
         color = PURPLEBACK;
     std::string terminalMessage = timestamp + " " + color + "[" + levelStr + "]" + RESET + " " + message;
-    std::string fileMessage = timestamp + " [" + levelStr + "] " + message;
+    std::string fileMessage     = timestamp + " [" + levelStr + "] " + message;
     if (level == ERROR)
         std::cerr << terminalMessage << '\n';
     else
@@ -48,6 +49,7 @@ void Logger::log(LogLevel level, const std::string& message)
     }
 }
 
+void Logger::debug(const std::string& desc, const std::string& message) { log(DEBUG, desc + " -> " + message); }
 void Logger::debug(const std::string& message) { log(DEBUG, message); }
 void Logger::info(const std::string& message) { log(INFO, message); }
 void Logger::warning(const std::string& message) { log(WARN, message); }
@@ -89,7 +91,7 @@ std::string Logger::_get_color_for_level(LogLevel level)
 
 std::string Logger::_get_current_time()
 {
-    std::time_t        now = std::time(0);
+    std::time_t        now   = std::time(0);
     struct std::tm*    tmPtr = std::localtime(&now);
     std::ostringstream oss;
     oss << "[" << (tmPtr->tm_year + EPOCH_TIME_START) << "-" << std::setfill('0') << std::setw(2) << (tmPtr->tm_mon + 1) << "-"
