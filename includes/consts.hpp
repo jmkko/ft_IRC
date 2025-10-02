@@ -6,7 +6,7 @@
 /*   By: fpetit <fpetit@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 23:38:52 by npolack           #+#    #+#             */
-/*   Updated: 2025/09/25 09:40:47 by jhervoch         ###   ########.fr       */
+/*   Updated: 2025/10/01 16:15:41 by fpetit           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 #define MIN_PASSWORD_LEN	8
 #define POLL_TIMEOUT		1000
 #define PERM_755		755
+#define PERM_777		777
 #define EPOCH_TIME_START	1900
 #define NO_LIMIT		(-1)
 #define SERVER_NAME		"hazardous.irc"
@@ -40,6 +41,10 @@
 #define CHANMODE_INVITE 0x08
 #define CHANMODE_LIMIT	0x10
 
+#include <vector>
+#include <string>
+
 typedef int Socket;
+typedef std::vector<std::string> t_params;
 
 #endif

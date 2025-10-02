@@ -5,16 +5,16 @@
 #include <vector>
 // #include <stddef.h>
 
-#define NC		"\e[0m"
-#define RED		"\e[31m"
-#define BLUE	"\e[34m"
-#define CYAN	"\e[36m"
+#define NC   "\e[0m"
+#define RED  "\e[31m"
+#define BLUE "\e[34m"
+#define CYAN "\e[36m"
 bool is_valid_pattern(const std::string& pattern, const std::string& str)
 {
     size_t p = 0, s = 0, star = std::string::npos, match = 0;
 
     while (s < str.size()) {
-            // std::cout << " w-p:" << p << " s:" << s << " star:" << star << " match:" << match << std::endl;
+        // std::cout << " w-p:" << p << " s:" << s << " star:" << star << " match:" << match << std::endl;
         if (p < pattern.size() && (pattern[p] == '?' || pattern[p] == str[s])) {
             // match direct ou ?
             // if (pattern[p] == '?')
@@ -35,7 +35,7 @@ bool is_valid_pattern(const std::string& pattern, const std::string& str)
             return false;
         }
     }
-     while (p < pattern.size() && pattern[p] == '*')
+    while (p < pattern.size() && pattern[p] == '*')
         p++;
     // if (p < pattern.size() && star != std::string::npos && match) {
     //     std::cout << "\t*p:" << p << " s:" << s << " star:" << star << " match:" << match << std::endl;
@@ -168,75 +168,75 @@ int main(int ac, char** av)
     // std::cout << "str empty:" << str.empty() << std::endl;
     // std::cout << "end * check:" << (str.empty() && wEnd) << std::endl;
     std::string pattern = "*abc*";
-    std::string str = "abc";
-    bool        check = is_valid_pattern(pattern, str);
+    std::string str     = "abc";
+    bool        check   = is_valid_pattern(pattern, str);
     std::cout << "Is valid pattern [" << pattern << "] for:[" << str << "]->" << (check ? "ok" : "false") << std::endl;
     pattern = "*abc";
-    str = "abc";
-    check = is_valid_pattern(pattern, str);
+    str     = "abc";
+    check   = is_valid_pattern(pattern, str);
     std::cout << "Is valid pattern [" << pattern << "] for:[" << str << "]->" << (check ? "ok" : "false") << std::endl;
     pattern = "abc*";
-    str = "abc";
-    check = is_valid_pattern(pattern, str);
+    str     = "abc";
+    check   = is_valid_pattern(pattern, str);
     std::cout << "Is valid pattern [" << pattern << "] for:[" << str << "]->" << (check ? "ok" : "false") << std::endl;
     pattern = "*abc*";
-    str = "abc";
-    check = is_valid_pattern(pattern, str);
+    str     = "abc";
+    check   = is_valid_pattern(pattern, str);
     std::cout << "Is valid pattern [" << pattern << "] for:[" << str << "]->" << (check ? "ok" : "false") << std::endl;
     pattern = "jto?2";
-    str = "jto12";
-    check = is_valid_pattern(pattern, str);
+    str     = "jto12";
+    check   = is_valid_pattern(pattern, str);
     std::cout << "Is valid pattern [" << pattern << "] for:[" << str << "]->" << (check ? "ok" : "false") << std::endl;
     pattern = "jto?";
-    str = "jto12";
-    check = is_valid_pattern(pattern, str);
+    str     = "jto12";
+    check   = is_valid_pattern(pattern, str);
     std::cout << "Is valid pattern [" << pattern << "] for:[" << str << "]->" << (check ? "ok" : "false") << std::endl;
     pattern = "jto?";
-    str = "jto1";
-    check = is_valid_pattern(pattern, str);
+    str     = "jto1";
+    check   = is_valid_pattern(pattern, str);
     std::cout << "Is valid pattern [" << pattern << "] for:[" << str << "]->" << (check ? "ok" : "false") << std::endl;
     pattern = "mar*";
-    str = "john";
-    check = is_valid_pattern(pattern, str);
+    str     = "john";
+    check   = is_valid_pattern(pattern, str);
     std::cout << "Is valid pattern [" << pattern << "] for:[" << str << "]->" << (check ? "ok" : "false") << std::endl;
     pattern = "abc*u";
-    str = "abcdeu";
-    check = is_valid_pattern(pattern, str);
+    str     = "abcdeu";
+    check   = is_valid_pattern(pattern, str);
     std::cout << "Is valid pattern [" << pattern << "] for:[" << str << "]->" << (check ? "ok" : "false") << std::endl;
     pattern = "*abc*u";
-    str = "sabcdeu";
-    check = is_valid_pattern(pattern, str);
+    str     = "sabcdeu";
+    check   = is_valid_pattern(pattern, str);
     std::cout << "Is valid pattern [" << pattern << "] for:[" << str << "]->" << (check ? "ok" : "false") << std::endl;
     pattern = "**abc*u";
-    str = "sabcdeu";
-    check = is_valid_pattern(pattern, str);
+    str     = "sabcdeu";
+    check   = is_valid_pattern(pattern, str);
     std::cout << "Is valid pattern [" << pattern << "] for:[" << str << "]->" << (check ? "ok" : "false") << std::endl;
     pattern = "**abc***u*t";
-    str = "sabcdeu-t";
-    check = is_valid_pattern(pattern, str);
+    str     = "sabcdeu-t";
+    check   = is_valid_pattern(pattern, str);
     std::cout << "Is valid pattern [" << pattern << "] for:[" << str << "]->" << (check ? "ok" : "false") << std::endl;
     pattern = "**abc***u*t?";
-    str = "sabcdeu-t1";
-    check = is_valid_pattern(pattern, str);
+    str     = "sabcdeu-t1";
+    check   = is_valid_pattern(pattern, str);
     std::cout << "Is valid pattern [" << pattern << "] for:[" << str << "]->" << (check ? "ok" : "false") << std::endl;
     pattern = "**abc***u*t?p";
-    str = "sabcdeu-t1p";
-    check = is_valid_pattern(pattern, str);
-    std::cout << "Is valid pattern [" << pattern << "] for:[" << str << "]->" << (check ? "ok" : "false")<< std::endl;
+    str     = "sabcdeu-t1p";
+    check   = is_valid_pattern(pattern, str);
+    std::cout << "Is valid pattern [" << pattern << "] for:[" << str << "]->" << (check ? "ok" : "false") << std::endl;
     pattern = "**abc***u*t?p*";
-    str = "sabcdeu-t1pg";
-    check = is_valid_pattern(pattern, str);
+    str     = "sabcdeu-t1pg";
+    check   = is_valid_pattern(pattern, str);
     std::cout << "Is valid pattern [" << pattern << "] for:[" << str << "]->" << (check ? "ok" : "false") << std::endl;
     pattern = "**abc***u*t?p?*";
-    str = "sabcdeu-t1pg";
-    check = is_valid_pattern(pattern, str);
-    std::cout << RED"Is valid pattern [" << pattern << "] for:[" << str << "]->" << (check ? "ok" : "false") << std::endl;
+    str     = "sabcdeu-t1pg";
+    check   = is_valid_pattern(pattern, str);
+    std::cout << RED "Is valid pattern [" << pattern << "] for:[" << str << "]->" << (check ? "ok" : "false") << std::endl;
     pattern = "*hello";
-    str = "sabcdeu";
-    check = is_valid_pattern(pattern, str);
-    std::cout << NC"Is valid pattern [" << pattern << "] for:[" << str << "]->" << (check ? "ok" : "false") << std::endl;
+    str     = "sabcdeu";
+    check   = is_valid_pattern(pattern, str);
+    std::cout << NC "Is valid pattern [" << pattern << "] for:[" << str << "]->" << (check ? "ok" : "false") << std::endl;
     pattern = "**abc***u*t?p?*titu";
-    str = "sabcdeu-t1pghtototutu";
-    check = is_valid_pattern(pattern, str);
+    str     = "sabcdeu-t1pghtototutu";
+    check   = is_valid_pattern(pattern, str);
     std::cout << "Is valid pattern [" << pattern << "] for:[" << str << "]->" << (check ? "ok" : "false") << std::endl;
 }

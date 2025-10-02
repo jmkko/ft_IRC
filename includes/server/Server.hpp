@@ -6,7 +6,7 @@
 /*   By: fpetit <fpetit@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/11 08:55:19 by jhervoch          #+#    #+#             */
-/*   Updated: 2025/09/29 16:02:49 by fpetit           ###   ########.fr       */
+/*   Updated: 2025/10/01 22:05:22 by fpetit           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ class Server
 
 	void	  _clean();
 	void	  _handle_new_connection(int pfdIndex);
-	void	  _cleanup_socket_and_clients(int pfdIndex);
+	void	  _cleanup_socket_and_client(int pfdIndex);
 	void	  _remove_client(Socket s);
 	void	  _handle_client_disconnection(int pfdIndex);
 	void	  _handle_client_input(int pfdIndex);

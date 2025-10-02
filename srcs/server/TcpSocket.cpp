@@ -6,7 +6,7 @@
 /*   By: fpetit <fpetit@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/13 14:12:49 by jhervoch          #+#    #+#             */
-/*   Updated: 2025/09/27 12:23:31 by fpetit           ###   ########.fr       */
+/*   Updated: 2025/10/01 19:08:16 by fpetit           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,11 +38,11 @@
  */
 TcpSocket::TcpSocket() : _sckt(socket(AF_INET, SOCK_STREAM, IPPROTO_TCP))
 {
-	if (_sckt == -1) {
-		std::ostringstream error;
-		LOG_SOCKET.error("init socket: [" + TO_STRING(errno) + "]");
-		throw std::runtime_error(error.str());
-	}
+    if (_sckt == -1) {
+        std::ostringstream error;
+        LOG_SOCKET.error("init socket: [" + TO_STRING(errno) + "]");
+        throw std::runtime_error(error.str());
+    }
 }
 
 /**
@@ -63,10 +63,10 @@ Socket TcpSocket::get_socket() const { return _sckt; }
 
 TcpSocket& TcpSocket::operator=(const TcpSocket& inst)
 {
-	if (this != &inst) {
-		_sckt = inst._sckt;
-	}
-	return *this;
+    if (this != &inst) {
+        _sckt = inst._sckt;
+    }
+    return *this;
 }
 
 /*************************************************************
@@ -80,12 +80,12 @@ TcpSocket& TcpSocket::operator=(const TcpSocket& inst)
  ******************************************************************************/
 bool TcpSocket::tcp_connect(const std::string& ipaddress, unsigned short port)
 {
-	sockaddr_in addr = {};
-	memset(&addr, 0, sizeof(addr));
-	addr.sin_addr.s_addr = inet_addr(ipaddress.c_str());
-	addr.sin_family = AF_INET;
-	addr.sin_port = htons(port);
-	return connect(_sckt, reinterpret_cast<const sockaddr*>(&addr), sizeof(addr)) == 0;
+    sockaddr_in addr = {};
+    memset(&addr, 0, sizeof(addr));
+    addr.sin_addr.s_addr = inet_addr(ipaddress.c_str());
+    addr.sin_family      = AF_INET;
+    addr.sin_port        = htons(port);
+    return connect(_sckt, reinterpret_cast<const sockaddr*>(&addr), sizeof(addr)) == 0;
 }
 
 /**
@@ -97,21 +97,21 @@ bool TcpSocket::tcp_connect(const std::string& ipaddress, unsigned short port)
  */
 void TcpSocket::tcp_bind(unsigned short port)
 {
-	sockaddr_in addr = {};
-	memset(&addr, 0, sizeof(addr));
-	addr.sin_addr.s_addr = INADDR_ANY;
-	addr.sin_family = AF_INET;
-	addr.sin_port = htons(port);
+    sockaddr_in addr = {};
+    memset(&addr, 0, sizeof(addr));
+    addr.sin_addr.s_addr = INADDR_ANY;
+    addr.sin_family      = AF_INET;
+    addr.sin_port        = htons(port);
 
-	int yes = 1;
-	setsockopt(_sckt, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes));
-	int res = 0;
-	res = bind(_sckt, reinterpret_cast<const sockaddr*>(&addr), sizeof(addr));
-	std::string error = strerror(errno);
-	if (res != 0) {
-		LOG_SOCKET.error("Bind:" + error);
-		throw std::runtime_error("Error bind:" + error + "\n");
-	}
+    int yes = 1;
+    setsockopt(_sckt, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes));
+    int res           = 0;
+    res               = bind(_sckt, reinterpret_cast<const sockaddr*>(&addr), sizeof(addr));
+    std::string error = strerror(errno);
+    if (res != 0) {
+        LOG_SOCKET.error("Bind:" + error);
+        throw std::runtime_error("Error bind:" + error + "\n");
+    }
 }
 
 /******************************************************************************
@@ -124,13 +124,15 @@ void TcpSocket::tcp_bind(unsigned short port)
 void TcpSocket::tcp_listen()
 {
 
-	int			res = listen(_sckt, SOMAXCONN);
-	std::string error = strerror(errno);
-	if (res != 0) {
-		LOG_SOCKET.error("Listen: " + error);
-		throw std::runtime_error("Error listen:" + error + "\n");
-	}
+    int         res   = listen(_sckt, SOMAXCONN);
+    std::string error = strerror(errno);
+    if (res != 0) {
+        LOG_SOCKET.error("Listen: " + error);
+        throw std::runtime_error("Error listen:" + error + "\n");
+    }
 }
+
+bool TcpSocket::is_valid() const { return _sckt != -1; }
 
 std::string TcpSocket::get_address(const sockaddr_in& addr) { return inet_ntoa(addr.sin_addr); }
 
@@ -142,10 +144,9 @@ int TcpSocket::set_non_blocking_socket() { return fcntl(_sckt, F_SETFL, O_NONBLO
  *******************************************************************************/
 int TcpSocket::do_send(const unsigned char* data, unsigned short len)
 {
-	unsigned short networkLen = htons(len);
-	return send(_sckt, reinterpret_cast<const char*>(&networkLen), sizeof(networkLen), 0)
-			   == sizeof(networkLen)
-		   && send(_sckt, reinterpret_cast<const char*>(data), len, 0) == len;
+    unsigned short networkLen = htons(len);
+    return send(_sckt, reinterpret_cast<const char*>(&networkLen), sizeof(networkLen), 0) == sizeof(networkLen)
+           && send(_sckt, reinterpret_cast<const char*>(data), len, 0) == len;
 }
 
 /*****************************************************************************
@@ -154,28 +155,26 @@ int TcpSocket::do_send(const unsigned char* data, unsigned short len)
  ******************************************************************************/
 int TcpSocket::do_receive(std::vector<unsigned char>& buffer)
 {
-	unsigned short expectedSize = 0;
-	size_t		   pending = recv(_sckt, reinterpret_cast<char*>(&expectedSize), sizeof(expectedSize), 0);
-	if (pending <= 0 || pending != sizeof(unsigned short)) {
-		//!< Erreur
-		return false;
-	}
+    unsigned short expectedSize = 0;
+    size_t         pending      = recv(_sckt, reinterpret_cast<char*>(&expectedSize), sizeof(expectedSize), 0);
+    if (pending <= 0 || pending != sizeof(unsigned short)) {
+        //!< Erreur
+        return false;
+    }
 
-	expectedSize = ntohs(expectedSize);
-	buffer.resize(expectedSize);
-	ssize_t bytesRead = 0;
-	do {
-		ssize_t ret = recv(_sckt,
-						   reinterpret_cast<char*>(&buffer[bytesRead]),
-						   (expectedSize - bytesRead) * sizeof(unsigned char),
-						   0);
-		if (ret <= 0) {
-			//!< Erreur
-			buffer.clear();
-			return false;
-		} else {
-			bytesRead += ret;
-		}
-	} while (bytesRead < expectedSize);
-	return true;
+    expectedSize = ntohs(expectedSize);
+    buffer.resize(expectedSize);
+    ssize_t bytesRead = 0;
+    do {
+        ssize_t ret
+            = recv(_sckt, reinterpret_cast<char*>(&buffer[bytesRead]), (expectedSize - bytesRead) * sizeof(unsigned char), 0);
+        if (ret <= 0) {
+            //!< Erreur
+            buffer.clear();
+            return false;
+        } else {
+            bytesRead += ret;
+        }
+    } while (bytesRead < expectedSize);
+    return true;
 }

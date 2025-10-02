@@ -1,5 +1,6 @@
 #ifndef ICOMMAND_HPP
-#define ICOMMAND_HPP
+# define ICOMMAND_HPP
+# include <vector>
 
 class Server;
 class Client;

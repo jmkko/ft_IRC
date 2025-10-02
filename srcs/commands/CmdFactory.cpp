@@ -2,9 +2,11 @@
 #include "CmdFactory.hpp"
 #include "ICommand.hpp"
 #include "Join.hpp"
+#include "Kick.hpp"
 #include "LogManager.hpp"
 #include "Nick.hpp"
 #include "Pass.hpp"
+#include "Privmsg.hpp"
 #include "ReplyHandler.hpp"
 #include "Server.hpp"
 #include "User.hpp"
@@ -34,10 +36,11 @@ CmdFactory::~CmdFactory(void) {}
 
 ICommand* CmdFactory::make_command(Server& server, Client& client, std::string& params)
 {
-    ReplyHandler&      rh = ReplyHandler::get_instance(&server);
+    ReplyHandler&      rh          = ReplyHandler::get_instance(&server);
     std::string        commandLine = "";
     std::istringstream iss(params); // NOLINT(clang-diagnostic-vexing-parse)
-    std::string available[NB_AVAILABLE_CMD] = {"USER", "PASS", "NICK", "QUIT", "INVITE", "JOIN", "PART", "MODE", "WHO", "OPER"};
+    std::string        available[NB_AVAILABLE_CMD]
+        = {"USER", "PASS", "NICK", "QUIT", "INVITE", "JOIN", "PART", "MODE", "OPER", "PRIVMSG", "WHO"};
     ICommand* (CmdFactory::* ptr[NB_AVAILABLE_CMD])(Server&, Client&, std::string&) = {&CmdFactory::user_cmd,
                                                                                        &CmdFactory::pass_cmd,
                                                                                        &CmdFactory::nick_cmd,
@@ -46,8 +49,9 @@ ICommand* CmdFactory::make_command(Server& server, Client& client, std::string& 
                                                                                        &CmdFactory::join_cmd,
                                                                                        &CmdFactory::part_cmd,
                                                                                        &CmdFactory::mode_cmd,
-                                                                                       &CmdFactory::who_cmd,
-                                                                                       &CmdFactory::oper_cmd};
+                                                                                       &CmdFactory::oper_cmd,
+                                                                                       &CmdFactory::privmsg_cmd,
+                                                                                       &CmdFactory::who_cmd};
 
     iss >> commandLine;
     for (size_t i = 0; i < NB_AVAILABLE_CMD; i++) {
@@ -77,7 +81,7 @@ ICommand* CmdFactory::make_command(Server& server, Client& client, std::string& 
 // Return a NICK command object if the nickname is valid
 ICommand* CmdFactory::nick_cmd(Server& server, Client& client, std::string& params)
 {
-    ReplyHandler& rh = ReplyHandler::get_instance(&server);
+    ReplyHandler& rh        = ReplyHandler::get_instance(&server);
     ReplyCode     replyCode = Nick::check_args(server, client, params);
 
     if (replyCode == RPL_SUCCESS || replyCode == RPL_WELCOME)
@@ -93,7 +97,7 @@ ICommand* CmdFactory::user_cmd(Server& server, Client& client, std::string& para
 {
     std::string   username = "", realname = "";
     ReplyCode     replyCode = User::check_args(server, client, params);
-    ReplyHandler& rh = ReplyHandler::get_instance(&server);
+    ReplyHandler& rh        = ReplyHandler::get_instance(&server);
 
     if (replyCode == RPL_WELCOME || replyCode == RPL_SUCCESS) {
         std::istringstream iss(params);
@@ -112,7 +116,7 @@ ICommand* CmdFactory::user_cmd(Server& server, Client& client, std::string& para
 
 ICommand* CmdFactory::pass_cmd(Server& server, Client& client, std::string& params)
 {
-    ReplyHandler& rh = ReplyHandler::get_instance(&server);
+    ReplyHandler& rh        = ReplyHandler::get_instance(&server);
     ReplyCode     replyCode = Pass::check_args(server, client, params);
 
     if (replyCode == RPL_SUCCESS || replyCode == RPL_WELCOME) {
@@ -121,6 +125,25 @@ ICommand* CmdFactory::pass_cmd(Server& server, Client& client, std::string& para
         rh.process_response(client, replyCode, params);
     }
 
+    return NULL;
+};
+
+ICommand* CmdFactory::kick_cmd(Server& server, Client& client, std::string& params)
+{
+    ReplyHandler&            rh = ReplyHandler::get_instance(&server);
+    std::vector<std::string> vectorParams;
+    std::istringstream       iss(params);
+    std::string              token;
+    while (std::getline(iss, token, ' ')) {
+        vectorParams.push_back(token);
+        LOG_CMD.debug("factory token", token);
+    }
+    ReplyCode replyCode = Kick::check_args(server, client, vectorParams);
+    if (replyCode == RPL_SUCCESS) {
+        return new Kick(vectorParams);
+    } else {
+        rh.process_response(client, replyCode, "KICK");
+    }
     return NULL;
 };
 
@@ -187,7 +210,7 @@ ICommand* CmdFactory::invite_cmd(Server& server, Client& client, std::string& pa
 
 ICommand* CmdFactory::who_cmd(Server& server, Client& client, std::string& params)
 {
-    ReplyHandler& rh = ReplyHandler::get_instance(&server);
+    ReplyHandler& rh        = ReplyHandler::get_instance(&server);
     ReplyCode     replyCode = Who::check_args(server, client, params);
     if (replyCode == RPL_SUCCESS) {
         return new Who(params);
@@ -195,4 +218,40 @@ ICommand* CmdFactory::who_cmd(Server& server, Client& client, std::string& param
         rh.process_response(client, replyCode, params);
     }
     return NULL;
+}
+
+ICommand* CmdFactory::privmsg_cmd(Server& server, Client& client, std::string& params)
+{
+    LOG_CMD.debug("PIVMSG params: " + params);
+    ReplyHandler rh   = ReplyHandler::get_instance(&server);
+    ReplyCode    code = Privmsg::check_args(server, client, params);
+    if (code != RPL_SUCCESS) {
+        rh.process_response(client, code, params, NULL);
+        return (NULL);
+    }
+
+    std::string            msg;
+    std::string::size_type pos = params.find(" :");
+    if (pos != std::string::npos) {
+        msg = params.substr(pos);
+    }
+
+    Privmsg* privmsg = new Privmsg(msg);
+
+    std::string                               word;
+    std::istringstream                        iss(params);
+    Client*                                   dest = NULL;
+    std::map<std::string, Channel*>::iterator chan;
+    while (iss >> word) {
+        chan = server.channels.find(word);
+        if (chan != server.channels.end()) {
+            privmsg->add_channel(chan->second);
+        }
+        dest = server.find_client_by_nickname(word);
+        if (dest) {
+            privmsg->add_client(dest);
+        }
+    }
+
+    return privmsg;
 };

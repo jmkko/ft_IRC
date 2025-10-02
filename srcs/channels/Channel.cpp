@@ -1,4 +1,5 @@
 #include "Channel.hpp"
+
 #include "Client.hpp"
 #include "Config.hpp"
 #include "ICommand.hpp"
@@ -18,7 +19,7 @@
 bool Channel::is_valid_channel_name(const std::string& name)
 {
     size_t posColon = name.find(':');
-    size_t posBell = name.find('\a');
+    size_t posBell  = name.find('\a');
     if (posColon != std::string::npos && posBell != std::string::npos)
         return false;
     if (name[0] != '#' && name[0] != '&' && name[0] != '+' && name[0] != '!')
@@ -63,12 +64,12 @@ Channel::~Channel() {}
 Channel& Channel::operator=(const Channel& other)
 {
     if (this != &other) {
-        _name = other._name;
-        _topic = other._topic;
+        _name      = other._name;
+        _topic     = other._topic;
         _userLimit = other._userLimit;
-        _members = other._members;
+        _members   = other._members;
         _operators = other._operators;
-        _invites = other._invites;
+        _invites   = other._invites;
     }
     return (*this);
 }
@@ -90,6 +91,7 @@ std::ostream&	operator<<(std::ostream& os, const Channel& c)
 
 void Channel::broadcast(Server& server, ReplyCode replyCode, const std::string& message, Client* sender) const
 {
+	LOG_CMD.debug("broadcast to everyone from channel"); 
     ReplyHandler& rh = ReplyHandler::get_instance(&server);
     for (std::set<Client*>::iterator it = _members.begin(); it != _members.end(); ++it) {
         Client* recipient = *it;
@@ -204,7 +206,7 @@ std::vector<std::string> Channel::get_members_list() const
     std::set<Client*>::const_iterator it = _members.begin();
     std::string                       users;
     int                               nbUserPerLine = USERS_PER_LINE;
-    int                               count = 0;
+    int                               count         = 0;
 
     while (it != _members.end()) {
         Client* c = *it;

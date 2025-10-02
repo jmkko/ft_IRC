@@ -66,6 +66,11 @@
 #define ERR_BADCHANNELKEY_MSG	 " :Cannot join channel (+k)"	   // <channel>
 #define ERR_BADCHANMASK_MSG		 " :Bad Channel Mask"			   // <channel>
 #define ERR_NOCHANMODES_MSG		 " :Channel doesn't support modes" // <channel>
+#define ERR_NOTONCHANNEL_MSG	 " :You're not on that channel"	 // <channel>
+#define ERR_CHANOPRIVSNEEDED_MSG " :You're not channel operator" // <channel>
+
+// Unused yet
+#define ERR_USERNOTINCHANNEL_MSG " :They aren't on that channel"
 
 // =============================================================================
 // INVITE Command Responses
@@ -78,9 +83,7 @@
 // Error Responses
 #define ERR_NOSUCHNICK_MSG " :No such nick/channel" // <nickname>
 // ERR_NOSUCHCHANNEL_MSG (reused)                                              // <channel>
-#define ERR_NOTONCHANNEL_MSG	 " :You're not on that channel"	 // <channel>
 #define ERR_USERONCHANNEL_MSG	 " :is already on channel"		 // <user> <channel>
-#define ERR_CHANOPRIVSNEEDED_MSG " :You're not channel operator" // <channel>
 
 // =============================================================================
 // QUIT Command Responses
@@ -128,6 +131,10 @@
 // ERR_CHANOPRIVSNEEDED_MSG (reused)                                           // <channel>
 #define ERR_UMODEUNKNOWNFLAG_MSG " :Unknown MODE flag"
 #define ERR_USERSDONTMATCH_MSG	 " :Cannot change mode for other users"
+
+// =============================================================================
+// KICK Command Responses
+// =============================================================================
 
 // =============================================================================
 // OPER Command Responses
@@ -193,7 +200,8 @@ enum ReplyCode {
 	ERR_ERRONEUSNICKNAME = 432, // NICK
 	ERR_NICKNAMEINUSE = 433,	// NICK
 	ERR_USERNOTINCHANNEL = 441,
-	ERR_NOTONCHANNEL = 442,
+	ERR_NOTONCHANNEL = 442,		// KICK
+	ERR_USERONCHANNEL = 443,	// INVITE
 	ERR_NOTREGISTERED = 451,
 	ERR_NEEDMOREPARAMS = 461,
 	ERR_ALREADYREGISTERED = 462, // PASS

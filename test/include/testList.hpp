@@ -4,5 +4,6 @@
 class Server;
 
 void test_nick(Server& s);
+void test_kick(Server& s);
 
 #endif
