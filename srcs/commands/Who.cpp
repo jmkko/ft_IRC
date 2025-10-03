@@ -25,13 +25,13 @@ ReplyCode Who::check_args(Server& server, Client& client, std::string& params)
     iss >> mask;
     iss >> op;
 
-    if (op != "o" || !iss.eof()) {
+    if (!op.empty() && op != "o" && !iss.eof()) {
         LOG_CMD.error(TO_STRING(ERR_NEEDMOREPARAMS) + " ERR_NEEDMOREPARAMS");
         return (ERR_NEEDMOREPARAMS);
     }
     return (RPL_SUCCESS);
 }
-//:server 352 <me> <channel> <user> <host> <server> <nick> <flags> :<hopcount> <realname>
+//: server 352 <me> <channel> <user> <host> <server> <nick> <flags> :<hopcount> <realname>
 // :irc.example.com 352 user1 #chan1 bob bobhost irc.example.com bob H@ :0 Bob Realname
 // :irc.example.com 352 user1 #chan1 alice alicehost irc.example.com alice H+ :0 Alice Realname
 // :irc.example.com 315 user1 #chan1 :End of WHO list
@@ -48,60 +48,79 @@ ReplyCode Who::check_args(Server& server, Client& client, std::string& params)
 // :0 → hopcount Dans un réseau mono-serveur (comme ton ft_irc), ça sera toujours 0
 //
 // Bob Realname → realname
-void Who::execute(Server& server, Client& client){
+void Who::execute(Server& server, Client& client)
+{
     std::string        mask;
     std::string        op;
     std::istringstream iss(_params);
-    (void)server;
-    (void)client;
+    ReplyHandler&      rh = ReplyHandler::get_instance(&server);
 
     iss >> mask;
     iss >> op;
 
-    if (Channel::is_valid_channel_name(mask)){
-        std::map<std::string, Channel*>::iterator result = server.channels.find(mask);
-        if (result != server.channels.end()){
-
-
+    if (Channel::is_valid_channel_name(mask)) {
+        std::map<std::string, Channel*>::iterator itChan = server.channels.begin();
+        for (; itChan != server.channels.end(); itChan++) {
+            if (utils::is_valid_pattern(mask, itChan->second->get_name())) {
+                std::set<Client*>                 clients  = itChan->second->get_members();
+                std::set<Client*>::const_iterator itClient = clients.begin();
+                for (; itClient != clients.end(); itClient++) {
+                    rh.process_response(client, RPL_WHOREPLY, _who_msg(*itClient, itChan->second, server));
+                }
+                rh.process_response(client, RPL_ENDOFWHO, itChan->second->get_name());
+            }
         }
-    }
+    } else {
+        std::vector<Client*> clients = server.find_clients_by_pattern(mask);
+        for (size_t i = 0; i < clients.size(); i++) {
 
+            rh.process_response(client, RPL_WHOREPLY, _who_msg(clients[i], NULL, server));
+        }
+        rh.process_response(client, RPL_ENDOFWHO, mask);
+    }
 }
 
 /**
- * @brief test if the string matching a wildcard with * pattern
+ * @brief build RPL_WHOREPLY message
  *
- * @param pattern string like *abc or abc* or *abc**df** etc..
- * @param str string to test
- * @return true if the string match the wildcard pattern
- *
- * key point
- * wildcard pattern begin with *
- * wildcard pattern end with *
- * multiple * wildcard pattern
+ * @param client
+ * @param channel
+ * @param server
+ * @return message
+ * : server 352 <me> <channel> <user> <host> <server> <nick> <flags> :<hopcount> <realname>
+ * :irc.example.com 352 user1 #chan1 bob bobhost irc.example.com bob H@ :0 Bob Realname
+ * :irc.example.com 315 user1 #chan1 :End of WHO list
  */
-bool Who::is_valid_pattern(const std::string& pattern, const std::string& str)
+std::string Who::_who_msg(Client* client, Channel* channel, Server& server)
 {
-    size_t p = 0, s = 0, star = std::string::npos, match = 0;
+    std::string msg = client->get_nickname();
+    if (channel)
+        msg.append(" " + channel->get_name());
+    else
+        msg.append(" *");
+    msg.append(" " + client->get_user_name());
+    msg.append(" " + client->get_userhost());
+    msg.append(" " + server.get_name());
+    msg.append(" " + client->get_nickname());
+    msg.append(" H" + std::string(channel->is_operator(*client) ? "@" : "") + " :0 ");
+    msg.append(client->get_real_name());
+    return (msg);
+}
 
-    while (s < str.size()) {
-        if (p < pattern.size() && (pattern[p] == '?' || pattern[p] == str[s])) {
-            // match direct ou ?
-            p++;
-            s++;
-        } else if (p < pattern.size() && pattern[p] == '*') {
-            // on note la position du *
-            star = p++;
-            match = s;
-        } else if (star != std::string::npos) {
-            // pas de match direct : on revient au dernier char apres *
-            p = star + 1;
-            s = ++match;
-        } else {
-            return false;
-        }
+/**
+ * @brief find the client mathcing the pattern of Who command
+ *
+ * @param members set of members in a channel
+ * @param pat pattern to search
+ * @return a vector of client corresponding to the pattern
+ */
+std::vector<Client*> Who::_find_all_clients_by_pattern(const std::set<Client*>& members, const std::string& pat)
+{
+    std::vector<Client*> result;
+    for (std::set<Client*>::const_iterator it = members.begin(); it != members.end(); it++) {
+
+        if (utils::MatchPattern(pat)(*it))
+            result.push_back(*it);
     }
-    while (p < pattern.size() && pattern[p] == '*')
-        p++;
-    return (p == pattern.size());
+    return result;
 }

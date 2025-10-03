@@ -1,5 +1,3 @@
-#include "Server.hpp"
-
 #include "Channel.hpp"
 #include "Client.hpp"
 #include "CmdFactory.hpp"
@@ -7,6 +5,7 @@
 #include "ICommand.hpp"
 #include "LogManager.hpp"
 #include "ReplyHandler.hpp"
+#include "Server.hpp"
 #include "consts.hpp"
 #include "signal_handler.hpp"
 #include "utils.hpp"
@@ -62,7 +61,14 @@ Server::~Server()
 }
 
 /*************************************************************
- *		🛠️ FUNCTIONS											*
+ *		👁️‍ GETTERS and SETTERS	                     *
+ *************************************************************/
+
+std::string Server::get_password() const { return _psswd; }
+std::string Server::get_name() const { return _name; }
+
+/*************************************************************
+ *		🛠️ FUNCTIONS                                 *
  *************************************************************/
 
 /**
@@ -140,7 +146,7 @@ void Server::_handle_new_connection(int pfdIndex)
             LOG_SOCKET.error(std::string("Error while setting a non blocking client socket") + strerror(errno));
             close(socket);
         } else {
-            Client* newClient = new Client(socket, clientAddr);
+            Client* newClient = new Client(socket, clientAddr); // NOLINT
             LOG_CONN.info(std::string("New connection accepted on socket ") + utils::to_string(socket) + " => "
                           + utils::to_string(*newClient));
             _clients[socket] = newClient;
@@ -278,7 +284,7 @@ void Server::_handle_command(int pfdIndex)
         ICommand* cmd = _parse_command(*client, line);
         if (cmd) {
             cmd->execute(*this, *client);
-            delete cmd;
+            delete cmd; // NOLINT
         }
     }
 }
@@ -301,8 +307,6 @@ Client* Server::find_client_by_nickname(std::string& nickname)
     }
     return NULL;
 }
-
-std::string Server::get_password() const { return _psswd; }
 
 /**
  * @brief [TODO:return index of client in _pfds[]]
@@ -353,7 +357,7 @@ void Server::_clean()
     // Clean up channels
     LOG_SERVER.debug(std::string("cleaning ") + TO_STRING(channels.size()) + " channels");
     for (std::map<std::string, Channel*>::iterator it = channels.begin(); it != channels.end(); ++it) {
-        delete it->second;
+        delete it->second; // NOLINT
     }
     channels.clear();
 
@@ -385,7 +389,17 @@ void Server::_cleanup_socket_and_client(int pfdIndex)
     if (c) {
         if (!c->get_nickname().empty())
             _clientsByNick.erase(c->get_nickname());
-        delete c;
+        delete c; // NOLINT
     }
     _pfds.erase(_pfds.begin() + pfdIndex);
+}
+
+std::vector<Client*> Server::find_clients_by_pattern(const std::string& pattern) const
+{
+    std::vector<Client*> result;
+    for (std::map<Socket, Client*>::const_iterator it = _clients.begin(); it != _clients.end(); it++) {
+        if (utils::MatchPattern(pattern)(it->second))
+            result.push_back(it->second);
+    }
+    return result;
 }

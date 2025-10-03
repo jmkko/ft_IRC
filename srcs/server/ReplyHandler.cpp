@@ -1,8 +1,7 @@
-#include "ReplyHandler.hpp"
-
 #include "Client.hpp"
 #include "Config.hpp"
 #include "LogManager.hpp"
+#include "ReplyHandler.hpp"
 #include "Server.hpp"
 #include "reply_codes.hpp"
 #include "utils.hpp"
@@ -108,12 +107,16 @@ std::string ReplyHandler::select_response(Client& client, ReplyCode code, const 
         return (get_id_of(*sender, "") + " JOIN :" + parameters);
     case RPL_NOTICE:
         return (response + " NOTICE " + nick + " :" + parameters);
-	case RPL_PRIVMSG:
-		return (get_id_of(*sender) + " PRIVMSG " + parameters);
+    case RPL_PRIVMSG:
+        return (get_id_of(*sender) + " PRIVMSG " + parameters);
     case RPL_KICK:
         return (response + sender->get_full_userhost() + " KICK " + parameters);
     case RPL_INVITING:
         return "";
+    case RPL_WHOREPLY:
+        return (response + code_to_str(code) + parameters);
+    case RPL_ENDOFWHO:
+        return (response + code_to_str(code) + parameters + RPL_ENDOFWHO_MSG);
     case RPL_MODE:
         return (response + " MODE " + parameters + nick);
     case RPL_TOPIC:
