@@ -6,7 +6,7 @@
 /*   By: fpetit <fpetit@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/11 08:55:19 by jhervoch          #+#    #+#             */
-/*   Updated: 2025/10/01 22:05:22 by fpetit           ###   ########.fr       */
+/*   Updated: 2025/10/03 16:25:43 by fpetit           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,10 +34,11 @@ class Server
     std::string          get_name() const;
     void                 start();
     void                 stop();
-    Client*              find_client_by_nickname(std::string& nick);
+    Client*              find_client_by_nickname(const std::string& nick);
     int                  index_of(Client& client);
     void                 add_events_of(Client& client, int event);
     std::vector<Client*> find_clients_by_pattern(const std::string& pattern) const;
+    void                 cleanup_socket_and_client(int pfdIndex);
 
   public:
     std::map<std::string, Channel*> channels;
@@ -57,7 +58,6 @@ class Server
 
     void      _clean();
     void      _handle_new_connection(int pfdIndex);
-    void      _cleanup_socket_and_client(int pfdIndex);
     void      _remove_client(Socket s);
     void      _handle_client_disconnection(int pfdIndex);
     void      _handle_client_input(int pfdIndex);

@@ -27,15 +27,9 @@ Pass::~Pass(void) {}
 void Pass::execute(Server& server, Client& client)
 {
     (void)server;
-    client.set_status(REGISTERED);
-    ReplyHandler& rh = ReplyHandler::get_instance(&server);
-    if (!client.get_user_name().empty() && !client.get_nickname().empty()) {
-        LOG_CMD.info("001 RPL_WELCOME");
-        rh.process_response(client, RPL_WELCOME);
-    } else {
-        LOG_CMD.info("201 RPL_PASS");
-        rh.process_response(client, RPL_PASS);
-    }
+	(void)client;
+	client.set_status(AUTHENTICATED);
+    LOG_CMD.info("PASS - correct");
 }
 
 ReplyCode Pass::check_args(Server& server, Client& client, std::string& params)

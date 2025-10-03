@@ -19,11 +19,11 @@ class Logger
 	void					   log(LogLevel level, const std::string& message);
 	void					   debug(const std::string& message);
 	void 						debug(const std::string& desc, const std::string& message);
-	template <typename T> void debug(const T& t, const std::string& message)
+	template <typename T> void debug(const std::string& context, const T& t)
 	{
 		std::ostringstream oss;
 		//NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
-		oss << t << " -> " << message;
+		oss << context << " -> " << t;
 		log(DEBUG, oss.str());
 	}
 	void info(const std::string& message);

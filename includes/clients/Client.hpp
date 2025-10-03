@@ -12,6 +12,7 @@ class Channel;
 
 enum ClientStatus {
     UNAUTHENTICATED, // before anything
+	AUTHENTICATED,	 // after PASS
     REGISTERED,      // after PASS + NICK + USER
 };
 
@@ -39,6 +40,7 @@ class Client
     ClientStatus get_status() const;
 
     bool is_registered() const;
+	bool is_authenticated () const;
     int  get_nb_joined_channels() const;
 
     void set_nickname(const std::string& nick);

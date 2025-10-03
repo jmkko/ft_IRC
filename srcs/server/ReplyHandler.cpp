@@ -111,6 +111,8 @@ std::string ReplyHandler::select_response(Client& client, ReplyCode code, const 
         return (get_id_of(*sender) + " PRIVMSG " + parameters);
     case RPL_KICK:
         return (response + sender->get_full_userhost() + " KICK " + parameters);
+	case RPL_QUIT:
+		return sender->get_nickname() + " has quit " + ircConfig.get_name() + parameters;
     case RPL_INVITING:
         return "";
     case RPL_WHOREPLY:
@@ -144,7 +146,7 @@ std::string ReplyHandler::select_response(Client& client, ReplyCode code, const 
     case ERR_ERRONEUSNICKNAME:
         return (std::string("432") + ERR_ERRONEUSNICKNAME_MSG);
     case ERR_NICKNAMEINUSE:
-        return (std::string("433") + ERR_ERRONEUSNICKNAME_MSG + parameters);
+        return (responseWithCodeAndNick + ERR_NICKNAMEINUSE_MSG);
     case ERR_PASSWDMISMATCH:
         return (std::string("464") + ERR_PASSWDMISMATCH_MSG);
     case ERR_NOTREGISTERED:

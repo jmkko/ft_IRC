@@ -101,7 +101,7 @@ void Server::start()
                 std::map<Socket, Client*>::iterator clientIt = _clients.find(_pfds[i].fd);
                 // orphelan socket
                 if (clientIt == _clients.end()) {
-                    _cleanup_socket_and_client(i--);
+                    cleanup_socket_and_client(i--);
                     continue;
                 }
                 if (_pfds[i].revents & (POLLHUP | POLLNVAL | POLLERR)) {
@@ -181,7 +181,7 @@ void Server::_handle_client_disconnection(int pfdIndex)
     }
     LOG_CONN.info(std::string("Client at ") + client->get_address() + ":" + utils::to_string(client->get_port())
                   + " disconnected");
-    _cleanup_socket_and_client(pfdIndex);
+    cleanup_socket_and_client(pfdIndex);
 }
 
 /**
@@ -270,11 +270,12 @@ void Server::_handle_client_output(int pfdIndex)
 
 void Server::_handle_command(int pfdIndex)
 {
-    Socket  socket = _pfds[pfdIndex].fd;
-    Client* client = _clients[socket];
-
-    size_t pos = std::string::npos;
+    Socket      socket = _pfds[pfdIndex].fd;
+    Client*     client = _clients[socket];
+    size_t      pos    = std::string::npos;
+    std::string cmdName;
     // tant qu'il y a un \r\n dans le readbuffer du client, executer les commandes
+
     while ((pos = client->get_read_buffer().find("\r\n")) != std::string::npos) {
         // extract the first command from the readBuffer
         std::string line = client->get_read_buffer().substr(0, pos);
@@ -283,8 +284,13 @@ void Server::_handle_command(int pfdIndex)
         // parse and create the appropriate command, NULL is returned if a faillure has happen
         ICommand* cmd = _parse_command(*client, line);
         if (cmd) {
+            LOG_SERVER.debug("Server _handle_command: executing command");
             cmd->execute(*this, *client);
             delete cmd; // NOLINT
+            std::istringstream iss(line);
+            iss >> cmdName;
+            if (cmdName == "QUIT")
+                break;
         }
     }
 }
@@ -299,7 +305,7 @@ ICommand* Server::_parse_command(Client& client, std::string line)
     return cmd;
 }
 
-Client* Server::find_client_by_nickname(std::string& nickname)
+Client* Server::find_client_by_nickname(const std::string& nickname)
 {
     for (std::map<Socket, Client*>::iterator it = _clients.begin(); it != _clients.end(); it++) {
         if (nickname == it->second->get_nickname())
@@ -351,7 +357,7 @@ void Server::_clean()
 
     // need to clean in reverse order (cf _pfds.erase in _cleanup_socket_and_client)
     for (int i = static_cast<int>(_pfds.size()) - 1; i >= 1; --i) {
-        _cleanup_socket_and_client(i);
+        cleanup_socket_and_client(i);
     }
 
     // Clean up channels
@@ -381,7 +387,7 @@ void Server::stop()
  remove entry from _fds (the pollfd list)
  @param i index of monitored fd
 */
-void Server::_cleanup_socket_and_client(int pfdIndex)
+void Server::cleanup_socket_and_client(int pfdIndex)
 {
     Client* c = _clients[_pfds[pfdIndex].fd];
     close(_pfds[pfdIndex].fd);
@@ -389,6 +395,7 @@ void Server::_cleanup_socket_and_client(int pfdIndex)
     if (c) {
         if (!c->get_nickname().empty())
             _clientsByNick.erase(c->get_nickname());
+        LOG_SERVER.debug("cleanup: deleting client");
         delete c; // NOLINT
     }
     _pfds.erase(_pfds.begin() + pfdIndex);
