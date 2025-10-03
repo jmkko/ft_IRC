@@ -8,6 +8,7 @@
 #include "Nick.hpp"
 #include "Pass.hpp"
 #include "Privmsg.hpp"
+#include "Quit.hpp"
 #include "ReplyHandler.hpp"
 #include "Server.hpp"
 #include "User.hpp"
@@ -56,16 +57,18 @@ ICommand* CmdFactory::make_command(Server& server, Client& client, std::string& 
     iss >> commandLine;
     for (size_t i = 0; i < NB_AVAILABLE_CMD; i++) {
         if (commandLine == available[i]) {
-            LOG_CMD.debug("command params" + commandLine);
+            LOG_CMD.debug("make_command : " + commandLine);
             // rergisteredcheck
             if (!client.is_registered() && commandLine != "NICK" && commandLine != "USER" && commandLine != "PASS"
                 && commandLine != "QUIT") {
                 LOG_CMD.info(TO_STRING(ERR_NOTREGISTERED) + " ERR_NOTREGISTERED");
                 ReplyHandler& rh = ReplyHandler::get_instance(&server);
                 rh.process_response(client, ERR_NOTREGISTERED, commandLine);
+				return NULL;
             }
             std::string params;
             std::getline(iss, params);
+			LOG_CMD.debug("make_command : params : " + params);
             if (!params.empty() && params[0] == ' ') {
                 params = params.substr(1);
             }
@@ -84,7 +87,7 @@ ICommand* CmdFactory::nick_cmd(Server& server, Client& client, std::string& para
     ReplyHandler& rh        = ReplyHandler::get_instance(&server);
     ReplyCode     replyCode = Nick::check_args(server, client, params);
 
-    if (replyCode == RPL_SUCCESS || replyCode == RPL_WELCOME)
+    if (replyCode == RPL_SUCCESS)
         return (new Nick(params));
     else {
         rh.process_response(client, replyCode, params);
@@ -99,7 +102,7 @@ ICommand* CmdFactory::user_cmd(Server& server, Client& client, std::string& para
     ReplyCode     replyCode = User::check_args(server, client, params);
     ReplyHandler& rh        = ReplyHandler::get_instance(&server);
 
-    if (replyCode == RPL_WELCOME || replyCode == RPL_SUCCESS) {
+    if (replyCode == RPL_SUCCESS) {
         std::istringstream iss(params);
         iss >> username;
         std::getline(iss, realname);
@@ -119,7 +122,7 @@ ICommand* CmdFactory::pass_cmd(Server& server, Client& client, std::string& para
     ReplyHandler& rh        = ReplyHandler::get_instance(&server);
     ReplyCode     replyCode = Pass::check_args(server, client, params);
 
-    if (replyCode == RPL_SUCCESS || replyCode == RPL_WELCOME) {
+    if (replyCode == RPL_SUCCESS) {
         return new Pass(params);
     } else {
         rh.process_response(client, replyCode, params);
@@ -147,14 +150,17 @@ ICommand* CmdFactory::kick_cmd(Server& server, Client& client, std::string& para
     return NULL;
 };
 
-// NOT IMPLEMENTED YET
 
 ICommand* CmdFactory::quit_cmd(Server& server, Client& client, std::string& params)
 {
-    (void)client;
-    (void)server;
-    (void)params;
-    LOG_CMD.debug("Build QUIT (not implemented)");
+    ReplyHandler&            rh = ReplyHandler::get_instance(&server);
+
+	ReplyCode replyCode = Quit::check_args(server, client, params);
+    if (replyCode == RPL_SUCCESS) {
+        return new Quit(params);
+    } else {
+        rh.process_response(client, replyCode, params);
+    }
     return NULL;
 };
 
@@ -171,6 +177,9 @@ ICommand* CmdFactory::join_cmd(Server& server, Client& client, std::string& para
     }
     return NULL;
 };
+
+// NOT IMPLEMENTED YET
+
 
 ICommand* CmdFactory::part_cmd(Server& server, Client& client, std::string& params)
 {

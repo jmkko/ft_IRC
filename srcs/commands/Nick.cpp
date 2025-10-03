@@ -20,9 +20,9 @@ void Nick::execute(Server& server, Client& client)
 	client.set_nickname(_nickname);
 	ReplyHandler& rh = ReplyHandler::get_instance(&server);
 	// welcome sequence complete for first time
-	if (oldNickname.empty() && !client.get_user_name().empty() && client.is_registered()) {
-		LOG_CMD.info("001 RPL_WELCOME");
-		rh.process_response(client, RPL_WELCOME);
+	if (oldNickname.empty() && client.get_user_name().empty() && client.is_authenticated()) {
+		LOG_CMD.info("Nick execute - first change");
+		// rh.process_response(client, RPL_WELCOME);
 		// normal success behavior
 	} else if (!oldNickname.empty() && !client.get_user_name().empty() && client.is_registered()) {
 		LOG_CMD.info("204 RPL_NICK");
@@ -40,6 +40,7 @@ ReplyCode Nick::check_args(Server& server, Client& client, std::string& params)
     std::string        nickname;
 
     iss >> nickname;
+	LOG_CMD.debug("Nick::check_args nickname :", nickname);
     if (nickname.empty()) {
         LOG_CMD.error("431 ERR_NONICKNAMEGIVEN");
         return (ERR_NONICKNAMEGIVEN);
@@ -49,13 +50,16 @@ ReplyCode Nick::check_args(Server& server, Client& client, std::string& params)
     } else if (nickname.length() > ircConfig.get_nickname_max_len()) {
         nickname = nickname.substr(0, ircConfig.get_nickname_max_len());
     }
-    if (server.find_client_by_nickname(nickname)) {
+	// TODO what if the user wants to change nickname ? -> move to execute with proper checks
+	// checks args checks params
+	// execute checks logic involving server or client ?
+    if (server.find_client_by_nickname(nickname)) { 
         LOG_CMD.error("431 ERR_NICKNAMEINUSE");
         return (ERR_NICKNAMEINUSE);
     }
     params = nickname;
-    if (client.get_nickname().empty() && !client.get_user_name().empty() && client.is_registered()) {
-        return (RPL_WELCOME);
-    }
+    // if (client.get_nickname().empty() && !client.get_user_name().empty() && client.is_registered()) {
+    //     return (RPL_WELCOME);
+    // }
     return (RPL_SUCCESS);
 }
