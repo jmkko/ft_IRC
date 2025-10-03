@@ -76,6 +76,8 @@ bool               Client::has_data_to_send() const { return _sendBuffer.empty()
 
 bool               Client::is_registered() const { return _status == REGISTERED; }
 
+bool               Client::is_authenticated () const { return _status == AUTHENTICATED; }
+
 int                Client::get_nb_joined_channels() const { return static_cast<int>(_joinedChannels.size()); }
 
 void               Client::set_nickname(const std::string& nick) { _nickName = nick; }
