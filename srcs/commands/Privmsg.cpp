@@ -43,8 +43,9 @@ void Privmsg::execute(Server& server, Client& client)
 
 }
 
-void			Privmsg::add_channel(Channel* chan) {_chans.push_back(chan);};
-void			Privmsg::add_client(Client *client) {_dests.push_back(client);};
+void			Privmsg::add_channel(Channel* chan) {_chans.push_back(chan);}
+
+void			Privmsg::add_client(Client *client) {_dests.push_back(client);}
 
 ReplyCode Privmsg::check_args(Server& server, Client& client, std::string& params) {
 

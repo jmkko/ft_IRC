@@ -30,6 +30,7 @@ SRCS_FILES		:= 	main.cpp\
 					sequences.cpp\
 					TestFixture.cpp\
 					testKick.cpp\
+					testMode.cpp\
 					testNick.cpp\
 
 IRC_SRCS_FILES	:=	utils.cpp\
@@ -48,6 +49,7 @@ IRC_SRCS_FILES	:=	utils.cpp\
 					commands/Pass.cpp\
 					commands/User.cpp\
 					commands/Join.cpp\
+					commands/Privmsg.cpp\
 
 EXT				:= .cpp
 

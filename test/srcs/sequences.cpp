@@ -21,6 +21,14 @@ void send_valid_nick_assert(const TcpSocket& so)
     ar.is_empty();
 }
 
+void join_assert(const TcpSocket& so)
+{
+	send_line(so, validJoinMsg);
+	std::string reply = recv_lines(so);
+	AssertReply ar(reply);
+	ar.has_code(RPL_ENDOFNAMES);
+}
+
 void authenticate(const TcpSocket& so)
 {
     send_line(so, validPassMsg);
@@ -32,6 +40,16 @@ void authenticate(const TcpSocket& so)
 void authenticate_and_join(const TcpSocket& so)
 {
     authenticate(so);
+    send_line(so, validJoinMsg);
+    recv_lines(so);
+}
+
+void authenticate_and_join_op2(const TcpSocket& so)
+{
+	send_line(so, validPassMsg);
+    send_line(so, validNickOp2Msg);
+    send_line(so, validUserOp2Msg);
+    recv_lines(so);
     send_line(so, validJoinMsg);
     recv_lines(so);
 }
@@ -59,4 +77,16 @@ void make_op(const TcpSocket& so)
     recv_lines(so);
     send_line(so, validJoinMsg);
     recv_lines(so);
+}
+
+void make_two_ops(const TcpSocket& so, const TcpSocket& so2)
+{
+	make_op(so);
+    send_line(so2, validPassMsg);
+    send_line(so2, validNickOp2Msg);
+    send_line(so2, validUserOp2Msg);
+    recv_lines(so);
+    send_line(so, validJoinMsg);
+    recv_lines(so);
+	send_line(so, validModePlusOMsg);
 }
