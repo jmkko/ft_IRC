@@ -50,13 +50,16 @@ ReplyCode Nick::check_args(Server& server, Client& client, std::string& params)
     } else if (nickname.length() > ircConfig.get_nickname_max_len()) {
         nickname = nickname.substr(0, ircConfig.get_nickname_max_len());
     }
-    if (server.find_client_by_nickname(nickname)) {
+	// TODO what if the user wants to change nickname ? -> move to execute with proper checks
+	// checks args checks params
+	// execute checks logic involving server or client ?
+    if (server.find_client_by_nickname(nickname)) { 
         LOG_CMD.error("431 ERR_NICKNAMEINUSE");
         return (ERR_NICKNAMEINUSE);
     }
     params = nickname;
-    if (client.get_nickname().empty() && !client.get_user_name().empty() && client.is_registered()) {
-        return (RPL_WELCOME);
-    }
+    // if (client.get_nickname().empty() && !client.get_user_name().empty() && client.is_registered()) {
+    //     return (RPL_WELCOME);
+    // }
     return (RPL_SUCCESS);
 }
