@@ -3,8 +3,8 @@
 
 class Server;
 
-void test_nick(Server& s);
-void test_kick(Server& s);
-void test_mode(Server& s);
+void test_nick();
+void test_kick();
+void test_mode();
 
 #endif

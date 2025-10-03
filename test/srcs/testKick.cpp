@@ -30,10 +30,10 @@
 /**
  @brief integration test - normal case
 */
-void op_existing_chan_valid_user_should_notice(Server& s)
+void op_existing_chan_valid_user_should_notice()
 {
     try {
-        TEST_SETUP(test, s, 2);
+        TEST_SETUP(test, 2);
         TcpSocket& soOp = *sockets.at(0);
         TcpSocket& so   = *sockets.at(1);
         make_op(soOp);
@@ -66,10 +66,10 @@ void op_existing_chan_valid_user_should_notice(Server& s)
 /**
  @brief integration test - normal case - many users
 */
-void op_existing_chan_valid_users_should_notice(Server& s)
+void op_existing_chan_valid_users_should_notice()
 {
     try {
-        TEST_SETUP(test, s, 3);
+        TEST_SETUP(test, 3);
         TcpSocket& soOp = *sockets.at(0);
         TcpSocket& so   = *sockets.at(1);
         TcpSocket& so2  = *sockets.at(2);
@@ -108,11 +108,11 @@ void op_existing_chan_valid_users_should_notice(Server& s)
 /**
  @brief integration test - error case
 */
-void no_op_should_err(Server& s)
+void no_op_should_err()
 {
     try {
 
-        TEST_SETUP(test, s, 3);
+        TEST_SETUP(test, 3);
         TcpSocket& soOp = *sockets.at(0);
         TcpSocket& so   = *sockets.at(1);
         TcpSocket& so2  = *sockets.at(2);
@@ -134,11 +134,11 @@ void no_op_should_err(Server& s)
 /**
  @brief integration test - error case
 */
-void op_missing_chan_should_err(Server& s)
+void op_missing_chan_should_err()
 {
     try {
 
-        TEST_SETUP(test, s, 3);
+        TEST_SETUP(test, 3);
         TcpSocket& soOp = *sockets.at(0);
         TcpSocket& so   = *sockets.at(1);
         make_op(soOp);
@@ -159,11 +159,11 @@ void op_missing_chan_should_err(Server& s)
 /**
  @brief integration test - error case
 */
-void op_missing_user_should_err(Server& s)
+void op_missing_user_should_err()
 {
     try {
 
-        TEST_SETUP(test, s, 3);
+        TEST_SETUP(test, 3);
         TcpSocket& soOp = *sockets.at(0);
         TcpSocket& so   = *sockets.at(1);
         make_op(soOp);
@@ -184,11 +184,11 @@ void op_missing_user_should_err(Server& s)
 /**
  @brief integration test - error case
 */
-void op_user_not_in_channel_should_err(Server& s)
+void op_user_not_in_channel_should_err()
 {
     try {
 
-        TEST_SETUP(test, s, 3);
+        TEST_SETUP(test, 3);
         TcpSocket& soOp = *sockets.at(0);
         TcpSocket& so   = *sockets.at(1);
         make_op(soOp);
@@ -208,11 +208,11 @@ void op_user_not_in_channel_should_err(Server& s)
 /**
  @brief integration test - error case
 */
-void op_invalid_channel_should_err(Server& s)
+void op_invalid_channel_should_err()
 {
     try {
 
-        TEST_SETUP(test, s, 3);
+        TEST_SETUP(test, 3);
         TcpSocket& soOp = *sockets.at(0);
         TcpSocket& so   = *sockets.at(1);
         make_op(soOp);
@@ -233,11 +233,11 @@ void op_invalid_channel_should_err(Server& s)
 /**
  @brief integration test - error case
 */
-void op_valid_inexistent_channel_should_err(Server& s)
+void op_valid_inexistent_channel_should_err()
 {
     try {
 
-        TEST_SETUP(test, s, 3);
+        TEST_SETUP(test, 3);
         TcpSocket& soOp = *sockets.at(0);
         TcpSocket& so   = *sockets.at(1);
         make_op(soOp);
@@ -255,15 +255,15 @@ void op_valid_inexistent_channel_should_err(Server& s)
     }
 }
 
-void test_kick(Server& s)
+void test_kick()
 {
     print_test_series("command KICK");
-    run_test([&] { op_existing_chan_valid_user_should_notice(s); }, "single kick");
-    run_test([&] { op_existing_chan_valid_users_should_notice(s); }, "combo double kick");
-    run_test([&] { no_op_should_err(s); }, "no op");
-    run_test([&] { op_missing_chan_should_err(s); }, "no chan");
-    run_test([&] { op_missing_user_should_err(s); }, "no user");
-    run_test([&] { op_user_not_in_channel_should_err(s); }, "not in chan");
-    run_test([&] { op_invalid_channel_should_err(s); }, "invalid chan");
-    run_test([&] { op_valid_inexistent_channel_should_err(s); }, "inexisting chan");
+    run_test([&] { op_existing_chan_valid_user_should_notice(); }, "single kick");
+    run_test([&] { op_existing_chan_valid_users_should_notice(); }, "combo double kick");
+    run_test([&] { no_op_should_err(); }, "no op");
+    run_test([&] { op_missing_chan_should_err(); }, "no chan");
+    run_test([&] { op_missing_user_should_err(); }, "no user");
+    run_test([&] { op_user_not_in_channel_should_err(); }, "not in chan");
+    run_test([&] { op_invalid_channel_should_err(); }, "invalid chan");
+    run_test([&] { op_valid_inexistent_channel_should_err(); }, "inexisting chan");
 }

@@ -7,6 +7,7 @@
 #include "Server.hpp"
 #include "reply_codes.hpp"
 #include "utils.hpp"
+#include "consts.hpp"
 
 #include <iostream>
 
@@ -46,7 +47,9 @@ void	Quit::execute(Server& server, Client& client)
 	if (trailingMsg.empty())
 		trailingMsg = QUIT_TRAILING_MSG;
 	client.broadcast_to_all_channels(server, RPL_QUIT, trailingMsg);
+	// usleep(SLEEP_FOR_BROADCAST_MS);
 	server.add_events_of(client, 0);
+	LOG_CMD.debug("quit execute - before cleaning sockets");
 	server.cleanup_socket_and_client(pfdIndex);
 }
 

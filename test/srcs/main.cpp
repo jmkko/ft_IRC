@@ -2,11 +2,13 @@
 #include "LogManager.hpp"
 #include "Logger.hpp"
 #include "Server.hpp"
+#include "ServerRunner.hpp"
 #include "consts.hpp"
 #include "testList.hpp"
 #include "testUtils.hpp"
 
 #include <exception>
+#include <memory>
 
 int main()
 {
@@ -14,12 +16,26 @@ int main()
     lm.set_global_level(ERROR);
 
     try {
-        Server server(TEST_PORT, DEFAULT_PASSWORD);
-        // test_nick(server);
-        // test_kick(server);
-		test_mode(server);
+        // Start server once for all tests
+        Server* s = new Server(TEST_PORT, DEFAULT_PASSWORD);
+		ServerRunner runner(*s);
+		runner.start();
+
+        // Run command tests
+        LOG_TEST.info("Running test suite...");
+        test_nick();
+        test_kick();
+        test_mode();
+        
+        LOG_TEST.info("All tests completed, stopping server...");
+		runner.stop();
+		delete s; // NOLINT(cppcoreguidelines-owning-memory)
+        
     } catch (const std::exception& e) {
-        std::cerr << e.what() << '\n';
+        std::cerr << "Caught : " << e.what() << '\n';
+        return 1;
     }
+    
+    LOG_TEST.info("Test suite finished successfully");
     return 0;
 }

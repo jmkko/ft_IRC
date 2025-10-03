@@ -107,6 +107,7 @@ void Join::execute(Server& server, Client& client)
             rh.process_response(client, RPL_JOIN, channel->get_name());
             channel->broadcast(server, RPL_JOIN, channel->get_name(), &client);
             LOG_CONN.info(client.get_nickname() + " joined channel: " + channel->get_name());
+			client.add_joined_channel(*channel);
         } else {
             rh.process_response(client, replyCode, channel->get_name());
             continue;

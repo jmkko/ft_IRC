@@ -1,6 +1,7 @@
 #include "ServerRunner.hpp"
 
 #include "LogManager.hpp"
+#include "consts.hpp"
 #include "signal_handler.hpp"
 #include "testUtils.hpp"
 
@@ -12,7 +13,7 @@
  *		🥚 CONSTRUCTORS & DESTRUCTOR						*
  ************************************************************/
 
-ServerRunner::ServerRunner(Server& server) : _server(server), _isRunning(false) {}
+ServerRunner::ServerRunner(Server& s) : _server(s), _isRunning(false) {}
 
 ServerRunner::~ServerRunner()
 {

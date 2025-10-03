@@ -7,8 +7,8 @@
 
 #define SERVER_PROCESS_TIME_MS 10
 #define SERVER_SEND_WAIT_MS 50
-#define SERVER_START_WAIT_MS 1000
-#define SERVER_STOP_WAIT_MS 2000
+#define SERVER_START_WAIT_MS 100
+#define SERVER_STOP_WAIT_MS 200
 #define TEST_PORT 4343
 
 /**
@@ -100,6 +100,8 @@ static const std::string& invalidModeNoChanMsg 			= "MODE +l 4\r\n";
 static const std::string& validPartMsg 					= "PART #chan\r\n";
 
 static const std::string& validTopicMsg 				= "TOPIC #chan :New topic\r\n";
+
+static const std::string& validQuitMsg 					= "QUIT\r\n";
 
 // with assertions
 void send_valid_password_assert(const TcpSocket& so);

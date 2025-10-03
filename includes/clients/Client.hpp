@@ -48,7 +48,8 @@ class Client
     void set_real_name(const std::string& realName);
     void set_status(ClientStatus status);
     void add_joined_channel(Channel& channel);
-    void remove_joined_channel(Channel& channel);
+	void remove_joined_channel(Channel& channel);
+    void remove_from_all_channels();
     void set_send_buffer(const std::string& buffer);
 
     void append_to_send_buffer(const std::string& msg);

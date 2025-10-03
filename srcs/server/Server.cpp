@@ -212,7 +212,7 @@ void Server::_handle_client_input(int pfdIndex)
         if (utils::safe_at(buffer, bytesRead))
             utils::safe_at(buffer, bytesRead) = '\0';
         client->append_to_read_buffer(std::string(static_cast<char*>(buffer)));
-        this->_handle_command(pfdIndex);
+        this->_handle_commands(pfdIndex);
     }
 }
 
@@ -262,14 +262,14 @@ void Server::_handle_client_output(int pfdIndex)
     }
 }
 
-void Server::_handle_command(int pfdIndex)
+void Server::_handle_commands(int pfdIndex)
 {
     Socket  socket = _pfds[pfdIndex].fd;
     Client* client = _clients[socket];
     size_t pos = std::string::npos;
 	std::string cmdName;
     // tant qu'il y a un \r\n dans le readbuffer du client, executer les commandes
-	
+
     while ((pos = client->get_read_buffer().find("\r\n")) != std::string::npos) {
         // extract the first command from the readBuffer
         std::string line = client->get_read_buffer().substr(0, pos);
@@ -284,7 +284,10 @@ void Server::_handle_command(int pfdIndex)
 			std::istringstream iss(line);
 			iss >> cmdName;
 			if (cmdName == "QUIT")
+			{
+				LOG_SERVER.debug("Server _handle_command: it is QUIT : stopping processing further");
 				break;
+			}
         }
     }
 }
@@ -392,6 +395,7 @@ void Server::cleanup_socket_and_client(int pfdIndex)
         if (!c->get_nickname().empty())
             _clientsByNick.erase(c->get_nickname());
 		LOG_SERVER.debug("cleanup: deleting client");
+		c->remove_from_all_channels();
         delete c;
     }
     _pfds.erase(_pfds.begin() + pfdIndex);

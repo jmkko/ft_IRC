@@ -30,11 +30,11 @@
 /**
  @brief integration test - normal case
 */
-void mode_plusk_should_block_join_if_no_key(Server& s)
+void mode_plusk_should_block_join_if_no_key()
 {
     try {
 
-        TEST_SETUP(test, s, 2);
+        TEST_SETUP(test, 2);
         TcpSocket& sop = *sockets.at(0);
 		TcpSocket& so = *sockets.at(1);
 		make_op(sop);
@@ -59,10 +59,10 @@ void mode_plusk_should_block_join_if_no_key(Server& s)
 /**
  @brief integration test - normal case
 */
-void mode_plusk_should_allow_op_to_join_without_key(Server& s)
+void mode_plusk_should_allow_op_to_join_without_key()
 {
     try {
-        TEST_SETUP(test, s, 2);
+        TEST_SETUP(test, 2);
        
 		TcpSocket& sop = *sockets.at(0);
 		TcpSocket& sop2 = *sockets.at(1);
@@ -85,10 +85,10 @@ void mode_plusk_should_allow_op_to_join_without_key(Server& s)
 /**
  @brief integration test - normal case
 */
-void mode_minusk_should_lift_block(Server& s)
+void mode_minusk_should_lift_block()
 {
     try {
-        TEST_SETUP(test, s, 2);
+        TEST_SETUP(test, 2);
         TcpSocket& sop = *sockets.at(0);
 		TcpSocket& so = *sockets.at(1);
 		make_op(sop);
@@ -113,10 +113,10 @@ void mode_minusk_should_lift_block(Server& s)
 /**
  @brief integration test - normal case
 */
-void mode_plusi_should_send_rpl_and_block_join_if_no_invite(Server& s)
+void mode_plusi_should_send_rpl_and_block_join_if_no_invite()
 {
     try {
-        TEST_SETUP(test, s, 2);
+        TEST_SETUP(test, 2);
         TcpSocket& sop = *sockets.at(0);
 		TcpSocket& so = *sockets.at(1);
 		make_op(sop);
@@ -141,10 +141,10 @@ void mode_plusi_should_send_rpl_and_block_join_if_no_invite(Server& s)
 /**
  @brief integration test - normal case
 */
-void mode_plusi_should_allow_op_to_join_without_invite(Server& s)
+void mode_plusi_should_allow_op_to_join_without_invite()
 {
     try {
-        TEST_SETUP(test, s, 2);
+        TEST_SETUP(test, 2);
 		TcpSocket& sop = *sockets.at(0);
 		TcpSocket& sop2 = *sockets.at(1);
 		make_two_ops(sop, sop2);
@@ -166,10 +166,10 @@ void mode_plusi_should_allow_op_to_join_without_invite(Server& s)
 /**
  @brief integration test - normal case
 */
-void mode_minusi_should_lift_block(Server& s)
+void mode_minusi_should_lift_block()
 {
     try {
-        TEST_SETUP(test, s, 2);
+        TEST_SETUP(test, 2);
 		TcpSocket& sop = *sockets.at(0);
 		TcpSocket& so = *sockets.at(1);
 		make_op(sop);
@@ -191,10 +191,10 @@ void mode_minusi_should_lift_block(Server& s)
 /**
  @brief integration test - normal case
 */
-void mode_plusl_should_block_join_if_max_reached(Server& s)
+void mode_plusl_should_block_join_if_max_reached()
 {
     try {
-        TEST_SETUP(test, s, 2);
+        TEST_SETUP(test, 2);
 		TcpSocket& sop = *sockets.at(0);
 		TcpSocket& so = *sockets.at(1);
 		make_op(sop);
@@ -219,10 +219,10 @@ void mode_plusl_should_block_join_if_max_reached(Server& s)
 /**
  @brief integration test - normal case
 */
-void mode_plusl_should_allow_op_to_join_if_max_reached(Server& s)
+void mode_plusl_should_allow_op_to_join_if_max_reached()
 {
     try {
-        TEST_SETUP(test, s, 2);
+        TEST_SETUP(test, 2);
 		TcpSocket& sop = *sockets.at(0);
 		TcpSocket& sop2 = *sockets.at(1);
 		make_two_ops(sop, sop2);
@@ -244,10 +244,10 @@ void mode_plusl_should_allow_op_to_join_if_max_reached(Server& s)
 /**
  @brief integration test - normal case
 */
-void mode_minusl_should_lift_block(Server& s)
+void mode_minusl_should_lift_block()
 {
     try {
-        TEST_SETUP(test, s, 2);
+        TEST_SETUP(test, 2);
 		TcpSocket& sop = *sockets.at(0);
 		TcpSocket& so = *sockets.at(1);
 		make_op(sop);
@@ -269,10 +269,10 @@ void mode_minusl_should_lift_block(Server& s)
 /**
  @brief integration test - normal case
 */
-void mode_pluso_should_grant_op_and_kick(Server& s)
+void mode_pluso_should_grant_op_and_kick()
 {
     try {
-        TEST_SETUP(test, s, 3);
+        TEST_SETUP(test, 3);
 		TcpSocket& sop = *sockets.at(0);
 		TcpSocket& sop2 = *sockets.at(1);
 		TcpSocket& so = *sockets.at(2);
@@ -299,10 +299,10 @@ void mode_pluso_should_grant_op_and_kick(Server& s)
 /**
  @brief integration test - normal case
 */
-void mode_minuso_should_remove_op_and_kick(Server& s)
+void mode_minuso_should_remove_op_and_kick()
 {
     try {
-        TEST_SETUP(test, s, 3);
+        TEST_SETUP(test, 3);
 		TcpSocket& sop = *sockets.at(0);
 		TcpSocket& sop2 = *sockets.at(1);
 		TcpSocket& so = *sockets.at(2);
@@ -332,10 +332,10 @@ void mode_minuso_should_remove_op_and_kick(Server& s)
 /**
  @brief integration test - normal case
 */
-void mode_plust_should_reserve_topic_to_op(Server& s)
+void mode_plust_should_reserve_topic_to_op()
 {
     try {
-        TEST_SETUP(test, s, 2);
+        TEST_SETUP(test, 2);
 		TcpSocket& sop = *sockets.at(0);
 		TcpSocket& so = *sockets.at(1);
 		make_op(sop);
@@ -360,10 +360,10 @@ void mode_plust_should_reserve_topic_to_op(Server& s)
 /**
  @brief integration test - normal case
 */
-void mode_minust_should_grant_topic_to_all(Server& s)
+void mode_minust_should_grant_topic_to_all()
 {
     try {
-        TEST_SETUP(test, s, 2);
+        TEST_SETUP(test, 2);
 		TcpSocket& sop = *sockets.at(0);
 		TcpSocket& so = *sockets.at(1);
 		make_op(sop);
@@ -390,10 +390,10 @@ void mode_minust_should_grant_topic_to_all(Server& s)
 /**
  @brief integration test - normal case
 */
-void user_with_wildcard_should_match(Server& s)
+void user_with_wildcard_should_match()
 {
     try {
-        TEST_SETUP(test, s, 2);
+        TEST_SETUP(test, 2);
 		TcpSocket& sop = *sockets.at(0);
 		TcpSocket& sop2 = *sockets.at(1);
 		make_op(sop);
@@ -412,10 +412,10 @@ void user_with_wildcard_should_match(Server& s)
 /**
  @brief integration test - normal case
 */
-void many_modes_work(Server& s)
+void many_modes_work()
 {
     try {
-        TEST_SETUP(test, s, 1);
+        TEST_SETUP(test, 1);
 		TcpSocket& sop = *sockets.at(0);
 		make_op(sop);
 		
@@ -437,10 +437,10 @@ void many_modes_work(Server& s)
 /**
  @brief integration test - error case
 */
-void mode_l_zeroarg_should_block_join(Server& s)
+void mode_l_zeroarg_should_block_join()
 {
     try {
-        TEST_SETUP(test, s, 2);
+        TEST_SETUP(test, 2);
 		TcpSocket& sop = *sockets.at(0);
 		TcpSocket& so = *sockets.at(1);
 		make_op(sop);
@@ -469,10 +469,10 @@ void mode_l_zeroarg_should_block_join(Server& s)
 /**
  @brief integration test - error case
 */
-void no_chan_should_err(Server& s)
+void no_chan_should_err()
 {
     try {
-        TEST_SETUP(test, s, 1);
+        TEST_SETUP(test, 1);
 		TcpSocket& sop = *sockets.at(0);
 		make_op(sop);
 
@@ -489,10 +489,10 @@ void no_chan_should_err(Server& s)
 /**
  @brief integration test - error case
 */
-void no_mode_should_err(Server& s)
+void no_mode_should_err()
 {
     try {
-        TEST_SETUP(test, s, 1);
+        TEST_SETUP(test, 1);
 		TcpSocket& sop = *sockets.at(0);
 		make_op(sop);
 
@@ -509,10 +509,10 @@ void no_mode_should_err(Server& s)
 /**
  @brief integration test - error case
 */
-void no_keyarg_should_err(Server& s)
+void no_keyarg_should_err()
 {
     try {
-        TEST_SETUP(test, s, 1);
+        TEST_SETUP(test, 1);
 		TcpSocket& sop = *sockets.at(0);
 		make_op(sop);
 
@@ -530,10 +530,10 @@ void no_keyarg_should_err(Server& s)
 /**
  @brief integration test - error case
 */
-void no_limitarg_should_err(Server& s)
+void no_limitarg_should_err()
 {
     try {
-        TEST_SETUP(test, s, 1);
+        TEST_SETUP(test, 1);
 		TcpSocket& sop = *sockets.at(0);
 		make_op(sop);
 
@@ -551,10 +551,10 @@ void no_limitarg_should_err(Server& s)
 /**
  @brief integration test - error case
 */
-void no_oparg_should_err(Server& s)
+void no_oparg_should_err()
 {
     try {
-        TEST_SETUP(test, s, 2);
+        TEST_SETUP(test, 2);
 		TcpSocket& sop = *sockets.at(0);
 		TcpSocket& sop2 = *sockets.at(0);
 		make_op(sop);
@@ -574,10 +574,10 @@ void no_oparg_should_err(Server& s)
 /**
  @brief integration test - error case
 */
-void key_already_set_should_err(Server& s)
+void key_already_set_should_err()
 {
     try {
-        TEST_SETUP(test, s, 1);
+        TEST_SETUP(test, 1);
         TcpSocket& sop = *sockets.at(0);
 		make_op(sop);
 		send_line(sop, validModePlusKMsg);
@@ -598,10 +598,10 @@ void key_already_set_should_err(Server& s)
 /**
  @brief integration test - error case
 */
-void unknown_mode_should_err(Server& s)
+void unknown_mode_should_err()
 {
     try {
-        TEST_SETUP(test, s, 1);
+        TEST_SETUP(test, 1);
 		TcpSocket& sop = *sockets.at(0);
 		make_op(sop);
 
@@ -619,10 +619,10 @@ void unknown_mode_should_err(Server& s)
 /**
  @brief integration test - error case
 */
-void unknown_chan_should_err(Server& s)
+void unknown_chan_should_err()
 {
     try {
-        TEST_SETUP(test, s, 1);
+        TEST_SETUP(test, 1);
 		TcpSocket& sop = *sockets.at(0);
 		make_op(sop);
 
@@ -640,10 +640,10 @@ void unknown_chan_should_err(Server& s)
 /**
  @brief integration test - error case
 */
-void mode_l_negativearg_should_err(Server& s)
+void mode_l_negativearg_should_err()
 {
     try {
-        TEST_SETUP(test, s, 2);
+        TEST_SETUP(test, 2);
 		TcpSocket& sop = *sockets.at(0);
 		make_op(sop);
 
@@ -661,10 +661,10 @@ void mode_l_negativearg_should_err(Server& s)
 /**
  @brief integration test - error case
 */
-void mode_o_unknown_user_should_err(Server& s)
+void mode_o_unknown_user_should_err()
 {
     try {
-        TEST_SETUP(test, s, 2);
+        TEST_SETUP(test, 2);
 		TcpSocket& sop = *sockets.at(0);
 		make_op(sop);
 
@@ -682,10 +682,10 @@ void mode_o_unknown_user_should_err(Server& s)
 /**
  @brief integration test - error case
 */
-void wildcard_no_match_should_err(Server& s)
+void wildcard_no_match_should_err()
 {
     try {
-        TEST_SETUP(test, s, 2);
+        TEST_SETUP(test, 2);
 		TcpSocket& sop = *sockets.at(0);
 		make_op(sop);
 
@@ -700,37 +700,37 @@ void wildcard_no_match_should_err(Server& s)
     }
 }
 
-void test_mode(Server& s)
+void test_mode()
 {
     print_test_series("command MODE");
-    run_test([&] { mode_plusk_should_block_join_if_no_key(s); }, "+k <key>");
-    run_test([&] { mode_plusk_should_allow_op_to_join_without_key(s); }, "+k <key> (op)");
-    run_test([&] { mode_minusk_should_lift_block(s); }, "-k <key>");
-    run_test([&] { mode_plusi_should_send_rpl_and_block_join_if_no_invite(s); }, "+i");
-    run_test([&] { mode_plusi_should_allow_op_to_join_without_invite(s); }, "+i (op)");
-    run_test([&] { mode_minusi_should_lift_block(s); }, "-i");
-    run_test([&] { mode_plusl_should_block_join_if_max_reached(s); }, "+l <limit>");
-    run_test([&] { mode_plusl_should_allow_op_to_join_if_max_reached(s); }, "+l <limit> (op)");
-    run_test([&] { mode_minusl_should_lift_block(s); }, "-l");
-    run_test([&] { mode_pluso_should_grant_op_and_kick(s); }, "+o <user>");
-    run_test([&] { mode_minuso_should_remove_op_and_kick(s); }, "-o <user>");
-    run_test([&] { mode_plust_should_reserve_topic_to_op(s); }, "+t");
-    run_test([&] { mode_minust_should_grant_topic_to_all(s); }, "-t");
-    run_test([&] { user_with_wildcard_should_match(s); }, "+o <us*r>");
-    run_test([&] { many_modes_work(s); }, "+kl <key> <limit>");
+    run_test([&] { mode_plusk_should_block_join_if_no_key(); }, "+k <key>");
+    run_test([&] { mode_plusk_should_allow_op_to_join_without_key(); }, "+k <key> (op)");
+    run_test([&] { mode_minusk_should_lift_block(); }, "-k <key>");
+    run_test([&] { mode_plusi_should_send_rpl_and_block_join_if_no_invite(); }, "+i");
+    run_test([&] { mode_plusi_should_allow_op_to_join_without_invite(); }, "+i (op)");
+    run_test([&] { mode_minusi_should_lift_block(); }, "-i");
+    run_test([&] { mode_plusl_should_block_join_if_max_reached(); }, "+l <limit>");
+    run_test([&] { mode_plusl_should_allow_op_to_join_if_max_reached(); }, "+l <limit> (op)");
+    run_test([&] { mode_minusl_should_lift_block(); }, "-l");
+    run_test([&] { mode_pluso_should_grant_op_and_kick(); }, "+o <user>");
+    run_test([&] { mode_minuso_should_remove_op_and_kick(); }, "-o <user>");
+    run_test([&] { mode_plust_should_reserve_topic_to_op(); }, "+t");
+    run_test([&] { mode_minust_should_grant_topic_to_all(); }, "-t");
+    run_test([&] { user_with_wildcard_should_match(); }, "+o <us*r>");
+    run_test([&] { many_modes_work(); }, "+kl <key> <limit>");
 
-    run_test([&] { mode_l_zeroarg_should_block_join(s); }, "+l 0");
+    run_test([&] { mode_l_zeroarg_should_block_join(); }, "+l 0");
 
-    run_test([&] { no_chan_should_err(s); }, "no chan");
-    run_test([&] { no_mode_should_err(s); }, "no mode");
-	run_test([&] { no_keyarg_should_err(s); }, "+k no arg");
-	run_test([&] { no_limitarg_should_err(s); }, "+l no arg");
-	run_test([&] { no_oparg_should_err(s); }, "+o no arg");
-	run_test([&] { key_already_set_should_err(s); }, "+k already set");
-	run_test([&] { unknown_mode_should_err(s); }, "+z");
-	run_test([&] { unknown_chan_should_err(s); }, "unknown chan");
-	run_test([&] { mode_l_negativearg_should_err(s); }, "+l -1");
-	run_test([&] { mode_o_unknown_user_should_err(s); }, "+o unknown");
-	run_test([&] { wildcard_no_match_should_err(s); }, "<us*r> no match");
+    run_test([&] { no_chan_should_err(); }, "no chan");
+    run_test([&] { no_mode_should_err(); }, "no mode");
+	run_test([&] { no_keyarg_should_err(); }, "+k no arg");
+	run_test([&] { no_limitarg_should_err(); }, "+l no arg");
+	run_test([&] { no_oparg_should_err(); }, "+o no arg");
+	run_test([&] { key_already_set_should_err(); }, "+k already set");
+	run_test([&] { unknown_mode_should_err(); }, "+z");
+	run_test([&] { unknown_chan_should_err(); }, "unknown chan");
+	run_test([&] { mode_l_negativearg_should_err(); }, "+l -1");
+	run_test([&] { mode_o_unknown_user_should_err(); }, "+o unknown");
+	run_test([&] { wildcard_no_match_should_err(); }, "<us*r> no match");
 
 }

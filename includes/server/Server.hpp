@@ -6,7 +6,7 @@
 /*   By: fpetit <fpetit@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/11 08:55:19 by jhervoch          #+#    #+#             */
-/*   Updated: 2025/10/03 16:25:43 by fpetit           ###   ########.fr       */
+/*   Updated: 2025/10/04 00:07:43 by fpetit           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ class Server
 	void	  _handle_client_output(int pfdIndex);
 	void	  _listen_to_socket(Socket toListen, uint32_t flags);
 	ICommand* _parse_command(Client& c, std::string line);
-	void	  _handle_command(int pfdIndex);
+	void	  _handle_commands(int pfdIndex);
 };
 
 #endif

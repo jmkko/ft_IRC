@@ -146,7 +146,7 @@ void Kick::execute(Server& server, Client& client)
             continue;
         }
         for (t_params::iterator nickIt = nicknames.begin(); nickIt != nicknames.end(); ++nickIt) {
-            Client* targetUser = server.find_client_by_nickname(*nickIt);
+            Client* targetUser = server.find_client_by_nickname(static_cast<const std::string&>(*nickIt));
             if (!channel->is_member(*targetUser)) {
                 LOG_CMD.warning("ERR_USERNOTINCHANNEL");
                 rh.process_response(client, ERR_USERNOTINCHANNEL);

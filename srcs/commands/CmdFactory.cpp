@@ -41,7 +41,7 @@ ICommand* CmdFactory::make_command(Server& server, Client& client, std::string& 
     std::string        commandLine = "";
     std::istringstream iss(params); // NOLINT(clang-diagnostic-vexing-parse)
     std::string        available[NB_AVAILABLE_CMD]
-        = {"USER", "PASS", "NICK", "QUIT", "INVITE", "JOIN", "PART", "MODE", "OPER", "PRIVMSG"};
+        = {"USER", "PASS", "NICK", "QUIT", "INVITE", "JOIN", "PART", "KICK", "MODE", "OPER", "PRIVMSG"};
     ICommand* (CmdFactory::* ptr[NB_AVAILABLE_CMD])(Server&, Client&, std::string&)
         = {&CmdFactory::user_cmd,
            &CmdFactory::pass_cmd,
@@ -50,6 +50,7 @@ ICommand* CmdFactory::make_command(Server& server, Client& client, std::string& 
            &CmdFactory::invite_cmd,
            &CmdFactory::join_cmd,
            &CmdFactory::part_cmd,
+           &CmdFactory::kick_cmd,
            &CmdFactory::mode_cmd,
            &CmdFactory::oper_cmd,
            &CmdFactory::privmsg_cmd};
