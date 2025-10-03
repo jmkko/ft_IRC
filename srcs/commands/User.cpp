@@ -31,8 +31,9 @@ void User::execute(Server& server, Client& client)
     client.set_user_name(_username);
     client.set_real_name(_realname);
     ReplyHandler& rh = ReplyHandler::get_instance(&server);
-    if (!client.get_nickname().empty() && client.get_status() == REGISTERED) {
+    if (!client.get_nickname().empty() && client.get_status() == AUTHENTICATED) {
         LOG_CMD.info("001 RPL_WELCOME");
+		client.set_status(REGISTERED);
         rh.process_response(client, RPL_WELCOME);
     } else {
         LOG_CMD.info("202 RPL_USER");
