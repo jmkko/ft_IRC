@@ -57,7 +57,8 @@ void Who::execute(Server& server, Client& client)
 
     iss >> mask;
     iss >> op;
-
+    if (_params.empty())
+        mask = "*";
     if (Channel::is_valid_channel_name(mask)) {
         std::map<std::string, Channel*>::iterator itChan = server.channels.begin();
         for (; itChan != server.channels.end(); itChan++) {
@@ -71,10 +72,11 @@ void Who::execute(Server& server, Client& client)
             }
         }
     } else {
-        std::vector<Client*> clients = server.find_clients_by_pattern(mask);
-        for (size_t i = 0; i < clients.size(); i++) {
+        std::vector<Client*>           clients = server.find_clients_by_pattern(mask);
+        std::vector<Client*>::iterator it      = clients.begin();
+        for (; it != clients.end(); it++) {
 
-            rh.process_response(client, RPL_WHOREPLY, _who_msg(clients[i], NULL, server));
+            rh.process_response(client, RPL_WHOREPLY, _who_msg(*it, NULL, server));
         }
         rh.process_response(client, RPL_ENDOFWHO, mask);
     }
@@ -93,16 +95,18 @@ void Who::execute(Server& server, Client& client)
  */
 std::string Who::_who_msg(Client* client, Channel* channel, Server& server)
 {
+    std::string op  = "";
     std::string msg = client->get_nickname();
-    if (channel)
+    if (channel) {
         msg.append(" " + channel->get_name());
-    else
+        op = std::string(channel->is_operator(*client) ? "@" : "");
+    } else
         msg.append(" *");
     msg.append(" " + client->get_user_name());
     msg.append(" " + client->get_userhost());
     msg.append(" " + server.get_name());
     msg.append(" " + client->get_nickname());
-    msg.append(" H" + std::string(channel->is_operator(*client) ? "@" : "") + " :0 ");
+    msg.append(" H" + op + " :0 ");
     msg.append(client->get_real_name());
     return (msg);
 }

@@ -235,7 +235,7 @@ int main(int ac, char** av)
     str     = "sabcdeu";
     check   = is_valid_pattern(pattern, str);
     std::cout << NC "Is valid pattern [" << pattern << "] for:[" << str << "]->" << (check ? "ok" : "false") << std::endl;
-    pattern = "**abc***u*t?p?*titu";
+    pattern = "*";
     str     = "sabcdeu-t1pghtototutu";
     check   = is_valid_pattern(pattern, str);
     std::cout << "Is valid pattern [" << pattern << "] for:[" << str << "]->" << (check ? "ok" : "false") << std::endl;
