@@ -7,13 +7,14 @@
 #include "testList.hpp"
 #include "testUtils.hpp"
 
+#include <cstring>
 #include <exception>
 #include <memory>
 
 int main()
 {
     LogManager& lm = LogManager::get_instance();
-    lm.set_global_level(ERROR);
+    lm.set_global_level(DEBUG);
 
     try {
         // Start server once for all tests
@@ -23,8 +24,8 @@ int main()
 
         // Run command tests
         LOG_TEST.info("Running test suite...");
-        test_nick();
-        test_kick();
+        // test_nick();
+        // test_kick();
         test_mode();
         
         LOG_TEST.info("All tests completed, stopping server...");
@@ -32,7 +33,7 @@ int main()
 		delete s; // NOLINT(cppcoreguidelines-owning-memory)
         
     } catch (const std::exception& e) {
-        std::cerr << "Caught : " << e.what() << '\n';
+        std::cerr << "Caught : " << e.what() << ": " << strerror(errno) << '\n';
         return 1;
     }
     

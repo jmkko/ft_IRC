@@ -1,9 +1,11 @@
 #ifndef CONFIG_HPP
 #define CONFIG_HPP
 
+#include "reply_codes.hpp"
 #include <cstdlib>
 #include <string>
 #include <vector>
+#include <map>
 
 class Config
 {
@@ -12,6 +14,7 @@ class Config
 	Config(const std::string& fileName);
 	~Config();
 
+	const std::string& str(ReplyCode code) const;
 	const std::string& get_name() const;
 	const std::string& get_password() const;
 	int				   get_max_joined_channels() const;
@@ -24,11 +27,13 @@ class Config
 	int			_maxJoinedChannels;
 	size_t		_chanNameMaxLen;
 	size_t		_nicknameMaxLen;
+	std::map<int, std::string> _codes;
 
 	Config(const Config& config);
 
 	Config& operator=(const Config& other);
 
+	bool _parse_code_file(const std::string& filename);
 	bool _parse_config_file(const std::string& fileName);
 	void _set_key_value(const std::string& key, std::string& value);
 	void _set_name(std::string& value);
@@ -38,5 +43,6 @@ class Config
 	void _set_nickname_max_len(std::string& value);
 };
 extern const Config ircConfig;
+extern const Config ircCodes;
 
 #endif

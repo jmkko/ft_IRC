@@ -3,7 +3,9 @@
 #include "AssertFail.hpp"
 #include "LogManager.hpp"
 #include "consts.hpp"
+#include "reply_codes.hpp"
 #include "utils.hpp"
+#include "Config.hpp"
 
 #include <algorithm>
 #include <sstream>
@@ -31,7 +33,7 @@ AssertReply::~AssertReply(void) {}
  *		🛠️ FUNCTIONS											*
  *************************************************************/
 
-bool AssertReply::_has_message_code(const Message& msg, const std::string& expected, std::string* actual)
+bool AssertReply::_has_message_code(const Message& msg, const std::string& expected, std::string* actual) const
 {
 
     if (msg.cmdOrCode != expected) {
@@ -71,7 +73,7 @@ bool AssertReply::_is_message_matching_entirely(const Message& msg, const std::s
     return true;
 }
 
-bool AssertReply::_is_message_containing(const Message& msg, const std::string& token) { return msg.raw.find(token); }
+bool AssertReply::_is_message_containing(const Message& msg, const std::string& token) { return msg.raw.find(token) != std::string::npos; }
 
 AssertReply& AssertReply::has_code(ReplyCode code)
 {
@@ -85,8 +87,12 @@ AssertReply& AssertReply::has_code(ReplyCode code)
             break;
         }
     }
+	const std::string& expectedCodeStr = ircCodes.str(code);
+	std::string actualCodeStr = std::string("");
+	if (!actual.empty())
+		actualCodeStr = ircCodes.str(static_cast<ReplyCode>(std::atoi(actual.c_str())));
     if (!isMatching)
-        throw AssertFail("code", oss.str(), actual);
+        throw AssertFail("code", std::string(oss.str()) + " [" + expectedCodeStr + "]", std::string(actual) + " [" + actualCodeStr + "]" );
     return *this;
 }
 

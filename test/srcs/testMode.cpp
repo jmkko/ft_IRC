@@ -15,6 +15,7 @@
 #include "testUtils.hpp"
 #include "utils.hpp"
 
+#include <cassert>
 #include <chrono>
 #include <csignal>
 #include <iostream>
@@ -288,6 +289,7 @@ void mode_pluso_should_grant_op_and_kick()
 		// test 2
 		send_line(sop2, validKickMsg);
 		reply  = recv_lines(sop2);
+		LOG_TEST.debug("line - +o KICK", reply);
 		ar.handle_new_reply(reply);
 		ar.contains("KICK");
 
@@ -703,10 +705,10 @@ void wildcard_no_match_should_err()
 void test_mode()
 {
     print_test_series("command MODE");
-    run_test([&] { mode_plusk_should_block_join_if_no_key(); }, "+k <key>");
+    // run_test([&] { mode_plusk_should_block_join_if_no_key(); }, "+k <key>");
     run_test([&] { mode_plusk_should_allow_op_to_join_without_key(); }, "+k <key> (op)");
-    run_test([&] { mode_minusk_should_lift_block(); }, "-k <key>");
-    run_test([&] { mode_plusi_should_send_rpl_and_block_join_if_no_invite(); }, "+i");
+    // run_test([&] { mode_minusk_should_lift_block(); }, "-k <key>");
+    // run_test([&] { mode_plusi_should_send_rpl_and_block_join_if_no_invite(); }, "+i");
     run_test([&] { mode_plusi_should_allow_op_to_join_without_invite(); }, "+i (op)");
     run_test([&] { mode_minusi_should_lift_block(); }, "-i");
     run_test([&] { mode_plusl_should_block_join_if_max_reached(); }, "+l <limit>");

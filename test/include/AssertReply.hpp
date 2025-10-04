@@ -35,7 +35,7 @@ class AssertReply {
 		std::vector<Message>		_messages;
 
 		void						_process_reply();
-		bool						_has_message_code(const Message& msg, const std::string& expected, std::string* actual);
+		bool						_has_message_code(const Message& msg, const std::string& expected, std::string* actual) const;
 		bool						_is_message_ending_with(const Message& msg, const std::string& trailing, std::string* actual);
 		bool						_is_message_empty(const Message& msg, std::string* actual);
 		bool						_is_message_matching_entirely(const Message& msg, const std::string& message, std::string* actual);

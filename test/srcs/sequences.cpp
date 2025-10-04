@@ -37,6 +37,12 @@ void authenticate(const TcpSocket& so)
     recv_lines(so);
 }
 
+void send_pass_nick(const TcpSocket& so)
+{
+    send_line(so, validPassMsg);
+    send_line(so, validNickMsg);
+}
+
 void authenticate_and_join(const TcpSocket& so)
 {
     authenticate(so);
