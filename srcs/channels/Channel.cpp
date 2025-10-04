@@ -1,4 +1,5 @@
 #include "Channel.hpp"
+
 #include "Client.hpp"
 #include "Config.hpp"
 #include "ICommand.hpp"
@@ -169,6 +170,7 @@ ReplyCode Channel::add_member(Client& client)
     if (is_banned(client))
         return ERR_BANNEDFROMCHAN;
     _members.insert(&client);
+    client.add_joined_channel(*this);
     return RPL_SUCCESS;
 }
 
