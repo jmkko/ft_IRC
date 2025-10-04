@@ -1,6 +1,5 @@
-#include "CmdFactory.hpp"
-
 #include "Client.hpp"
+#include "CmdFactory.hpp"
 #include "ICommand.hpp"
 #include "Join.hpp"
 #include "Kick.hpp"
@@ -12,6 +11,7 @@
 #include "ReplyHandler.hpp"
 #include "Server.hpp"
 #include "User.hpp"
+#include "Who.hpp"
 #include "consts.hpp"
 #include "reply_codes.hpp"
 #include "utils.hpp"
@@ -41,19 +41,18 @@ ICommand* CmdFactory::make_command(Server& server, Client& client, std::string& 
     std::string        commandLine = "";
     std::istringstream iss(params); // NOLINT(clang-diagnostic-vexing-parse)
     std::string        available[NB_AVAILABLE_CMD]
-        = {"USER", "PASS", "NICK", "QUIT", "INVITE", "JOIN", "PART", "KICK", "MODE", "OPER", "PRIVMSG"};
-    ICommand* (CmdFactory::* ptr[NB_AVAILABLE_CMD])(Server&, Client&, std::string&)
-        = {&CmdFactory::user_cmd,
-           &CmdFactory::pass_cmd,
-           &CmdFactory::nick_cmd,
-           &CmdFactory::quit_cmd,
-           &CmdFactory::invite_cmd,
-           &CmdFactory::join_cmd,
-           &CmdFactory::part_cmd,
-           &CmdFactory::kick_cmd,
-           &CmdFactory::mode_cmd,
-           &CmdFactory::oper_cmd,
-           &CmdFactory::privmsg_cmd};
+        = {"USER", "PASS", "NICK", "QUIT", "INVITE", "JOIN", "PART", "MODE", "OPER", "PRIVMSG", "WHO"};
+    ICommand* (CmdFactory::* ptr[NB_AVAILABLE_CMD])(Server&, Client&, std::string&) = {&CmdFactory::user_cmd,
+                                                                                       &CmdFactory::pass_cmd,
+                                                                                       &CmdFactory::nick_cmd,
+                                                                                       &CmdFactory::quit_cmd,
+                                                                                       &CmdFactory::invite_cmd,
+                                                                                       &CmdFactory::join_cmd,
+                                                                                       &CmdFactory::part_cmd,
+                                                                                       &CmdFactory::mode_cmd,
+                                                                                       &CmdFactory::oper_cmd,
+                                                                                       &CmdFactory::privmsg_cmd,
+                                                                                       &CmdFactory::who_cmd};
 
     iss >> commandLine;
     for (size_t i = 0; i < NB_AVAILABLE_CMD; i++) {
@@ -218,38 +217,50 @@ ICommand* CmdFactory::invite_cmd(Server& server, Client& client, std::string& pa
     return NULL;
 };
 
+ICommand* CmdFactory::who_cmd(Server& server, Client& client, std::string& params)
+{
+    ReplyHandler& rh        = ReplyHandler::get_instance(&server);
+    ReplyCode     replyCode = Who::check_args(server, client, params);
+    if (replyCode == RPL_SUCCESS) {
+        return new Who(params);
+    } else {
+        rh.process_response(client, replyCode, params);
+    }
+    return NULL;
+}
+
 ICommand* CmdFactory::privmsg_cmd(Server& server, Client& client, std::string& params)
 {
-	LOG_CMD.debug("PIVMSG params: " + params);
-	ReplyHandler rh = ReplyHandler::get_instance(&server);
-	ReplyCode code = Privmsg::check_args(server, client, params);
-	if (code != RPL_SUCCESS) {
-		rh.process_response(client, code, params, NULL);
-		return (NULL);
-	}
-	
-	std::string msg;
-	std::string::size_type pos = params.find(" :");
-	if (pos != std::string::npos) {
-		msg = params.substr(pos);
-	}
+    LOG_CMD.debug("PIVMSG params: " + params);
+    ReplyHandler rh   = ReplyHandler::get_instance(&server);
+    ReplyCode    code = Privmsg::check_args(server, client, params);
+    if (code != RPL_SUCCESS) {
+        rh.process_response(client, code, params, NULL);
+        return (NULL);
+    }
 
-	Privmsg* privmsg = new Privmsg(msg);
+    std::string            msg;
+    std::string::size_type pos = params.find(" :");
+    if (pos != std::string::npos) {
+        msg = params.substr(pos);
+    }
 
-	std::string word;
-	std::istringstream iss(params);
-	Client *dest = NULL;
-	std::map<std::string, Channel*>::iterator chan;
-	while (iss >> word) {
-		chan = server.channels.find(word);
-		if (chan != server.channels.end()) {
-			privmsg->add_channel(chan->second);
-		} 
-		dest = server.find_client_by_nickname(word);
-		if (dest) {
-			privmsg->add_client(dest);
-		}
-	}
+    Privmsg* privmsg = new Privmsg(msg);
+
+    std::string                               word;
+    std::istringstream                        iss(params);
+    Client*                                   dest = NULL;
+    std::map<std::string, Channel*>::iterator chan;
+    while (iss >> word) {
+        chan = server.channels.find(word);
+        if (chan != server.channels.end()) {
+            privmsg->add_channel(chan->second);
+        }
+        dest = server.find_client_by_nickname(word);
+        if (dest) {
+            privmsg->add_client(dest);
+        }
+    }
 
     return privmsg;
 };

@@ -91,7 +91,7 @@ std::ostream&	operator<<(std::ostream& os, const Channel& c)
 
 void Channel::broadcast(Server& server, ReplyCode replyCode, const std::string& message, Client* sender) const
 {
-	LOG_CMD.debug("broadcast to everyone from channel"); 
+    LOG_CMD.debug("broadcast to everyone from channel");
     ReplyHandler& rh = ReplyHandler::get_instance(&server);
     for (std::set<Client*>::iterator it = _members.begin(); it != _members.end(); ++it) {
         Client* recipient = *it;
@@ -170,6 +170,7 @@ ReplyCode Channel::add_member(Client& client)
     if (is_banned(client))
         return ERR_BANNEDFROMCHAN;
     _members.insert(&client);
+    client.add_joined_channel(*this);
     return RPL_SUCCESS;
 }
 
@@ -198,7 +199,8 @@ ReplyCode Channel::make_operator(Client& client)
 void           Channel::set_mode(unsigned short mode) { _mode = _mode | mode; }
 unsigned short Channel::get_mode() const { return _mode; }
 
-size_t Channel::get_nb_members() const { return _members.size(); }
+size_t            Channel::get_nb_members() const { return _members.size(); }
+std::set<Client*> Channel::get_members() const { return _members; }
 
 std::vector<std::string> Channel::get_members_list() const
 {

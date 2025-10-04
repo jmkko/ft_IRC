@@ -1,5 +1,3 @@
-#include "Server.hpp"
-
 #include "Channel.hpp"
 #include "Client.hpp"
 #include "CmdFactory.hpp"
@@ -7,6 +5,7 @@
 #include "ICommand.hpp"
 #include "LogManager.hpp"
 #include "ReplyHandler.hpp"
+#include "Server.hpp"
 #include "consts.hpp"
 #include "signal_handler.hpp"
 #include "utils.hpp"
@@ -62,7 +61,14 @@ Server::~Server()
 }
 
 /*************************************************************
- *		🛠️ FUNCTIONS											*
+ *		👁️‍ GETTERS and SETTERS	                     *
+ *************************************************************/
+
+std::string Server::get_password() const { return _psswd; }
+std::string Server::get_name() const { return _name; }
+
+/*************************************************************
+ *		🛠️ FUNCTIONS                                 *
  *************************************************************/
 
 /**
@@ -140,7 +146,7 @@ void Server::_handle_new_connection(int pfdIndex)
             LOG_SOCKET.error(std::string("Error while setting a non blocking client socket") + strerror(errno));
             close(socket);
         } else {
-            Client* newClient = new Client(socket, clientAddr);
+            Client* newClient = new Client(socket, clientAddr); // NOLINT
             LOG_CONN.info(std::string("New connection accepted on socket ") + utils::to_string(socket) + " => "
                           + utils::to_string(*newClient));
             _clients[socket] = newClient;
@@ -264,10 +270,10 @@ void Server::_handle_client_output(int pfdIndex)
 
 void Server::_handle_commands(int pfdIndex)
 {
-    Socket  socket = _pfds[pfdIndex].fd;
-    Client* client = _clients[socket];
-    size_t pos = std::string::npos;
-	std::string cmdName;
+    Socket      socket = _pfds[pfdIndex].fd;
+    Client*     client = _clients[socket];
+    size_t      pos    = std::string::npos;
+    std::string cmdName;
     // tant qu'il y a un \r\n dans le readbuffer du client, executer les commandes
 
     while ((pos = client->get_read_buffer().find("\r\n")) != std::string::npos) {
@@ -278,14 +284,14 @@ void Server::_handle_commands(int pfdIndex)
         // parse and create the appropriate command, NULL is returned if a faillure has happen
         ICommand* cmd = _parse_command(*client, line);
         if (cmd) {
-			LOG_SERVER.debug("Server _handle_command: executing command");
+            LOG_SERVER.debug("Server _handle_command: executing command");
             cmd->execute(*this, *client);
             delete cmd;
 			std::istringstream iss(line);
 			iss >> cmdName;
 			if (cmdName == "QUIT")
 			{
-				LOG_SERVER.debug("Server _handle_command: it is QUIT : stopping processing further");
+				LOG_SERVER.debug("Server handle QUIT : stopping processing further");
 				break;
 			}
         }
@@ -310,8 +316,6 @@ Client* Server::find_client_by_nickname(const std::string& nickname)
     }
     return NULL;
 }
-
-std::string Server::get_password() const { return _psswd; }
 
 /**
  * @brief [TODO:return index of client in _pfds[]]
@@ -362,7 +366,7 @@ void Server::_clean()
     // Clean up channels
     LOG_SERVER.debug(std::string("cleaning ") + TO_STRING(channels.size()) + " channels");
     for (std::map<std::string, Channel*>::iterator it = channels.begin(); it != channels.end(); ++it) {
-        delete it->second;
+        delete it->second; // NOLINT
     }
     channels.clear();
 
@@ -399,4 +403,14 @@ void Server::cleanup_socket_and_client(int pfdIndex)
         delete c;
     }
     _pfds.erase(_pfds.begin() + pfdIndex);
+}
+
+std::vector<Client*> Server::find_clients_by_pattern(const std::string& pattern) const
+{
+    std::vector<Client*> result;
+    for (std::map<Socket, Client*>::const_iterator it = _clients.begin(); it != _clients.end(); it++) {
+        if (utils::MatchPattern(pattern)(it->second))
+            result.push_back(it->second);
+    }
+    return result;
 }
