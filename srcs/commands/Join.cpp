@@ -90,6 +90,7 @@ void Join::execute(Server& server, Client& client)
         if (!Channel::is_valid_channel_name(chanName)) {
             LOG_CMD.error(TO_STRING(ERR_BADCHANMASK) + " ERR_BADCHANMASK");
             rh.process_response(client, ERR_BADCHANMASK, chanName);
+            it++;
             continue;
         }
         Channel*                                  channel         = NULL;
