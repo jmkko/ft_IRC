@@ -45,11 +45,13 @@ IRC_SRCS_FILES	:=	utils.cpp\
 					server/ReplyHandler.cpp\
 					commands/CmdFactory.cpp\
 					commands/Quit.cpp\
+					commands/Mode.cpp\
 					commands/Nick.cpp\
 					commands/Kick.cpp\
 					commands/Pass.cpp\
 					commands/User.cpp\
 					commands/Join.cpp\
+					commands/Who.cpp\
 					commands/Privmsg.cpp\
 
 EXT				:= .cpp

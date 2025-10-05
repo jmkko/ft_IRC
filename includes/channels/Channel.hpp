@@ -9,6 +9,8 @@
 #include <string>
 #include <vector>
 
+#define MODE_LEN 5
+
 class Client;
 
 class Channel
@@ -23,6 +25,7 @@ class Channel
 
     const std::string& get_name() const;
     const std::string& get_topic() const;
+    const std::string& get_key() const;
     bool               is_member(Client& client) const;
     bool               is_operator(Client& client) const;
     bool               is_invited(Client& client) const;
@@ -33,12 +36,14 @@ class Channel
 
     ReplyCode set_name(const std::string& name);
     ReplyCode set_topic(Client& client, const std::string& topic);
+	ReplyCode set_key(const std::string& key);
     void      set_user_limit(int limit);
     void      invite_client(Client& client);
     ReplyCode add_member(Client& client);
     void      remove_member(Client& client);
     ReplyCode ban_member(Client& client);
     ReplyCode make_operator(Client& client);
+    void      remove_operator(Client& client);
 
     void                     set_mode(unsigned short mode);
     unsigned short           get_mode() const;
@@ -52,6 +57,7 @@ class Channel
   private:
     std::string       _name;
     std::string       _topic;
+	std::string		  _key;
     unsigned short    _mode;
     int               _userLimit; // -1 if -l not set
     std::set<Client*> _members;

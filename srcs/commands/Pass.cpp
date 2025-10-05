@@ -46,8 +46,8 @@ ReplyCode Pass::check_args(Server& server, Client& client, std::string& params)
         LOG_CMD.error("464 ERR_PASSWDMISMATCH");
         return (ERR_PASSWDMISMATCH);
     } else if (client.get_status() == REGISTERED) {
-        LOG_CMD.error("462 ERR_ALREADYREGISTERED");
-        return (ERR_ALREADYREGISTERED);
+        LOG_CMD.error("462 ERR_ALREADYREGISTRED");
+        return (ERR_ALREADYREGISTRED);
     }
     params = pass;
     return (RPL_SUCCESS);

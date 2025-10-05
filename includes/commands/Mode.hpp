@@ -12,6 +12,9 @@ class Client;
 class Server;
 
 static const std::string& authorizedModes = "kilot";
+static const std::string& modesRequiringArg = "klo";
+static const std::string& authorizedOps = "+-";
+static const std::string& digits = "0123456789";
 
 class Mode : public ICommand
 {
@@ -24,9 +27,6 @@ class Mode : public ICommand
 
   private:
   	std::vector<std::string> _args;
-	std::string				_channel;
-	char					_oper;
-
 
   	Mode();
     Mode(const Mode& other);

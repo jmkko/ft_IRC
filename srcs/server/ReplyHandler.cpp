@@ -153,8 +153,8 @@ std::string ReplyHandler::select_response(Client& client, ReplyCode code, const 
         return (TO_STRING(ERR_NOTREGISTERED) + "* " + parameters + " :You have not registered");
     case ERR_NOTONCHANNEL:
         return (responseWithCodeAndNick + parameters + ERR_NOTONCHANNEL_MSG);
-    case ERR_ALREADYREGISTERED:
-        return (std::string("464") + ERR_ALREADYREGISTERED_MSG);
+    case ERR_ALREADYREGISTRED:
+        return (std::string("464") + ERR_ALREADYREGISTRED_MSG);
     case ERR_BADCHANMASK:
         return (responseWithCodeAndNick + parameters + ERR_BADCHANMASK_MSG);
     case ERR_CHANNELISFULL:

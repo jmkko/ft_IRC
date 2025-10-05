@@ -79,7 +79,7 @@ ReplyCode User::check_args(Server& server, Client& client, std::string& params)
     if (!client.get_user_name().empty() && !client.get_nickname().empty() && client.is_registered()) {
         LOG_CMD.error("462 ERR_ALREADYREGISTRED");
         params = "";
-        return (ERR_ALREADYREGISTERED);
+        return (ERR_ALREADYREGISTRED);
     }
     params = username + " " + realname;
     return (RPL_SUCCESS);
