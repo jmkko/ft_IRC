@@ -15,6 +15,7 @@ class Config
 	~Config();
 
 	const std::string& str(ReplyCode code) const;
+	const std::string& trailing(ReplyCode code) const;
 	const std::string& get_name() const;
 	const std::string& get_password() const;
 	int				   get_max_joined_channels() const;
@@ -28,6 +29,7 @@ class Config
 	size_t		_chanNameMaxLen;
 	size_t		_nicknameMaxLen;
 	std::map<int, std::string> _codes;
+	std::map<int, std::string> _trailings;
 
 	Config(const Config& config);
 

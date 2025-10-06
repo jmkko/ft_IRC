@@ -1,6 +1,5 @@
-#include "AssertReply.hpp"
-
 #include "AssertFail.hpp"
+#include "AssertReply.hpp"
 #include "LogManager.hpp"
 #include "consts.hpp"
 #include "reply_codes.hpp"
@@ -35,7 +34,6 @@ AssertReply::~AssertReply(void) {}
 
 bool AssertReply::_has_message_code(const Message& msg, const std::string& expected, std::string* actual) const
 {
-
     if (msg.cmdOrCode != expected) {
         if (msg.cmdOrCode.empty())
             *actual = "nothing";
@@ -46,7 +44,7 @@ bool AssertReply::_has_message_code(const Message& msg, const std::string& expec
     return true;
 }
 
-bool AssertReply::_is_message_ending_with(const Message& msg, const std::string& trailing, std::string* actual)
+bool AssertReply::_is_message_trailing(const Message& msg, const std::string& trailing, std::string* actual) const
 {
     if (msg.trailing != trailing) {
         *actual = msg.trailing;
@@ -55,7 +53,16 @@ bool AssertReply::_is_message_ending_with(const Message& msg, const std::string&
     return true;
 }
 
-bool AssertReply::_is_message_empty(const Message& msg, std::string* actual)
+bool AssertReply::_is_message_starting_with(const Message& msg, const std::string& start, std::string* actual) const
+{
+    if (!msg.raw.starts_with(start)) {
+        *actual = msg.raw;
+        return false;
+    }
+    return true;
+}
+
+bool AssertReply::_is_message_empty(const Message& msg, std::string* actual) const
 {
     if (!msg.raw.empty()) {
         *actual = msg.raw;
@@ -64,7 +71,7 @@ bool AssertReply::_is_message_empty(const Message& msg, std::string* actual)
     return true;
 }
 
-bool AssertReply::_is_message_matching_entirely(const Message& msg, const std::string& message, std::string* actual)
+bool AssertReply::_is_message_matching_entirely(const Message& msg, const std::string& message, std::string* actual) const
 {
     if (msg.raw != message) {
         *actual = msg.raw;
@@ -73,7 +80,7 @@ bool AssertReply::_is_message_matching_entirely(const Message& msg, const std::s
     return true;
 }
 
-bool AssertReply::_is_message_containing(const Message& msg, const std::string& token) { return msg.raw.find(token) != std::string::npos; }
+bool AssertReply::_is_message_containing(const Message& msg, const std::string& token) const { return msg.raw.find(token) != std::string::npos; }
 
 AssertReply& AssertReply::has_code(ReplyCode code)
 {
@@ -101,13 +108,29 @@ AssertReply& AssertReply::ends_with(const std::string& trailing)
     std::string actual     = "";
     bool        isMatching = false;
     for (std::vector<Message>::iterator it = _messages.begin(); it != _messages.end(); ++it) {
-        if (_is_message_ending_with(*it, trailing, &actual)) {
+        if (_is_message_trailing(*it, trailing, &actual)) {
             isMatching = true;
             break;
         }
     }
     if (!isMatching) {
         throw AssertFail("trailing message ", trailing, actual);
+    }
+    return *this;
+}
+
+AssertReply& AssertReply::starts_with(const std::string& start)
+{
+    std::string actual = "";
+    bool        isMatching = false;
+    for (std::vector<Message>::iterator it = _messages.begin(); it != _messages.end(); ++it) {
+        if (_is_message_starting_with(*it, start, &actual)) {
+            isMatching = true;
+            break;
+        }
+    }
+    if (!isMatching) {
+        throw AssertFail("trailing message ", start, actual);
     }
     return *this;
 }
@@ -123,6 +146,21 @@ AssertReply& AssertReply::contains(const std::string& token)
     }
     if (!isMatching) {
         throw AssertFail("message ", token, "no occurence");
+    }
+    return *this;
+}
+
+AssertReply& AssertReply::do_not_contains(const std::string& token)
+{
+    bool isMatching = true;
+    for (std::vector<Message>::iterator it = _messages.begin(); it != _messages.end(); ++it) {
+        if (_is_message_containing(*it, token)) {
+            isMatching = false;
+            break;
+        }
+    }
+    if (isMatching) {
+        throw AssertFail("not in message ", token, token);
     }
     return *this;
 }
@@ -157,6 +195,20 @@ AssertReply& AssertReply::is_empty()
         throw AssertFail("message ", "empty", actual);
     }
     return *this;
+}
+
+/**
+ * @brief checks full message based on code
+ * @todo implement by getting client nick
+ * @param code 
+ * @return AsserReply& 
+ */
+AssertReply&  AssertReply::is_formatted(ReplyCode code, const std::string& clientNick)
+{
+    std::string expectedStart = ircConfig.get_name();
+    expectedStart += ": " + ircCodes.str(code) + " " + clientNick + " ";
+    const std::string& expectedTrailing = ircCodes.trailing(code);
+    return this->starts_with(expectedStart).ends_with(expectedTrailing);
 }
 
 AssertReply& AssertReply::handle_new_reply(const std::string& reply)

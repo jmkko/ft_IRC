@@ -24,7 +24,9 @@ Config::Config(const std::string& fileName) :
     _psswd(DEFAULT_PASSWORD),
     _maxJoinedChannels(MAX_JOINED_CHANNELS),
     _chanNameMaxLen(CHAN_NAME_MAX_LEN),
-    _nicknameMaxLen(NICKNAME_MAX_LEN)
+    _nicknameMaxLen(NICKNAME_MAX_LEN),
+    _codes(),
+    _trailings()
 {
 	if (fileName == CODES_CONF_FILE && !_parse_code_file(fileName))
 		LOG_SERVER.warning("Code file not loaded!");
@@ -43,11 +45,16 @@ bool Config::_parse_code_file(const std::string& fileName)
 	while (std::getline(file, line)) {
         size_t posAssign  = line.find('=');
         size_t posComment = line.find('#');
+        size_t posTrailing = line.find(':');
         if (posAssign != std::string::npos && posComment == std::string::npos) {
             std::string keyStr   = line.substr(0, posAssign);
 			int code = std::atoi(keyStr.c_str());
-            std::string value = line.substr(posAssign + 1);
+            std::string value = line.substr(posAssign + 1, posTrailing - 4);
             _codes[code] = value;
+            std::string trailing = line.substr(posTrailing);
+            _trailings[code] = trailing;
+            LOG_CMD.debug("value", value);
+            LOG_CMD.debug("trailing", trailing);
         }
     }
 	file.close();
@@ -97,6 +104,7 @@ void Config::_set_chan_name_max_len(std::string& value) { _chanNameMaxLen = stat
 void Config::_set_nickname_max_len(std::string& value) { _nicknameMaxLen = static_cast<int>(atoi(value.c_str())); }
 
 const std::string& Config::str(ReplyCode code) const { return _codes.at(static_cast<int>(code)); }
+const std::string& Config::trailing(ReplyCode code) const { return _trailings.at(static_cast<int>(code)); }
 const std::string& Config::get_name() const { return _name; }
 const std::string& Config::get_password() const { return _psswd; }
 int                Config::get_max_joined_channels() const { return _maxJoinedChannels; }
