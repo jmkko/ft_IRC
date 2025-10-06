@@ -78,6 +78,11 @@ static const std::string& badUserWho     = "WHO resu\r\n";
 static const std::string& badPatternWho  = "WHO *x*\r\n";
 static const std::string& allUserWho     = "WHO *\r\n";
 
+static const std::string& noparamsJoin   = "JOIN\r\n";
+static const std::string& noSpecCharJoin = "JOIN chan\r\n";
+static const std::string& toobigJoin     = "JOIN #chanllllllllllllllllllllllllllllllllllllllllllllllllll\r\n";
+static const std::string& validJoin      = "JOIN #chan\r\n";
+
 void send_valid_password_assert(const TcpSocket& so);
 void send_valid_nick_assert(const TcpSocket& so);
 void authenticate(const TcpSocket& so);

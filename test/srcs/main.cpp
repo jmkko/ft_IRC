@@ -18,6 +18,7 @@ int main()
         test_nick(server);
         test_kick(server);
         test_who(server);
+        test_join(server);
     } catch (const std::exception& e) {
         std::cerr << e.what() << '\n';
     }

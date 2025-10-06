@@ -1,0 +1,18 @@
+[2025-10-06 08:11:57] [ERROR] :op!op@hazardous.irc JOIN :#chan
+:hazardous.irc MODE #chan +o op
+:hazardous.irc 331 op #chan :No topic is set
+:hazardous.irc 353 op = @op  :op
+:hazardous.irc 366 op #chan :End of NAMES list
+
+[2025-10-06 08:13:25] [ERROR] :op!op@hazardous.irc JOIN :#chan
+:hazardous.irc MODE #chan +o op
+:hazardous.irc 331 op #chan :No topic is set
+:hazardous.irc 353 op = @op  :op
+:hazardous.irc 366 op #chan :End of NAMES list
+
+[2025-10-06 08:44:38] [ERROR] :op!op@hazardous.irc JOIN :#chan
+:hazardous.irc MODE #chan +o op
+:hazardous.irc 331 op #chan :No topic is set
+:hazardous.irc 353 op = @op  :op
+:hazardous.irc 366 op #chan :End of NAMES list
+

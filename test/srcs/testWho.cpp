@@ -169,4 +169,5 @@ void test_who(Server& s)
     run_test([&] { good_pattern_should_notice(s); }, "WHO ro*");
     run_test([&] { bad_user_should_notice(s); }, "WHO resu");
     run_test([&] { bad_pattern_should_notice(s); }, "WHO *x*");
+    run_test([&] { all_user_should_notice(s); }, "WHO *");
 }

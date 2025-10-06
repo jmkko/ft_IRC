@@ -32,6 +32,7 @@ SRCS_FILES		:= 	main.cpp\
 					testKick.cpp\
 					testNick.cpp\
 					testWho.cpp\
+					testJoin.cpp\
 
 IRC_SRCS_FILES	:=	utils.cpp\
 					signal_handler.cpp\
