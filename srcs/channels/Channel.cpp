@@ -90,14 +90,13 @@ std::ostream&	operator<<(std::ostream& os, const Channel& c)
 
 void Channel::broadcast(Server& server, ReplyCode replyCode, const std::string& message, Client* sender) const
 {
-    LOG_CMD.debug("broadcast to everyone from channel");
+    LOG_CMD.debug("Channel::broadcast -> send to everyone from channel: " );
     ReplyHandler& rh = ReplyHandler::get_instance(&server);
     for (std::set<Client*>::iterator it = _members.begin(); it != _members.end(); ++it) {
         Client* recipient = *it;
         if (sender && recipient == sender)
-            continue;
-        // recipient->append_to_send_buffer(message);
-        LOG_SERVER.debug(recipient->get_nickname() + " received a broadcast of: " + get_name());
+           continue;
+        LOG_SERVER.debug("Channel::broadcast -> " + recipient->get_nickname() + " received a broadcast from " + get_name());
         rh.process_response(*recipient, replyCode, message, sender);
     }
 }
