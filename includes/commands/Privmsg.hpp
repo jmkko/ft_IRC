@@ -15,6 +15,7 @@ class Privmsg : public ICommand
     Privmsg& operator=(const Privmsg& other);
     ~Privmsg();
 
+    void             build_args(Server& server, std::string& params);
     void             add_client(Client* client);
     void             add_channel(Channel* chan);
     void             execute(Server& s, Client& c);

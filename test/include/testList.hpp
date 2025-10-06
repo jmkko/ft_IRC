@@ -8,5 +8,6 @@ void test_kick();
 void test_mode();
 void test_nick();
 void test_who();
+void test_privmsg();
 
 #endif

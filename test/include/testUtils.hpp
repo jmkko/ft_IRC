@@ -115,7 +115,10 @@ static const std::string& badUserWho                    = "WHO resu\r\n";
 static const std::string& badPatternWho                 = "WHO *x*\r\n";
 static const std::string& allUserWho                    = "WHO *\r\n";
 
-
+static const std::string& noparamsPrivmsg               = "PRIVMSG\r\n";
+static const std::string& invalidnicknamePrivmsg        = "PRIVMSG nonexistant :message\r\n";
+static const std::string& toomanytargetPrivmsg          = "PRIVMSG roro,toto,charlie,#chan,doc,#leo :message\r\n";
+static const std::string& notextPrivmsg                 = "PRIVMSG #chan\r\n";
 
 // with assertions
 void send_valid_password_assert(const TcpSocket& so);

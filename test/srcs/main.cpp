@@ -33,13 +33,13 @@ int main()
         // test_kick();
         // test_who();
         // test_join();
+        // test_privmsg();
         
         LOG_TEST.info("All tests completed, stopping server...");
 		runner.stop();
 		delete s; // NOLINT(cppcoreguidelines-owning-memory)
         
         Server server(TEST_PORT, DEFAULT_PASSWORD);
-
     } catch (const std::exception& e) {
         std::cerr << "Caught : " << e.what() << ": " << strerror(errno) << '\n';
         return 1;
