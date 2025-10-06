@@ -234,25 +234,25 @@ void AssertReply::_process_reply()
     }
 
     while (std::getline(iss, rawMsg, '\n')) {
-        LOG_TEST.debug("process_reply : parsing raw Msg ", rawMsg);
+        LOG_DTV_TEST(rawMsg);
         std::istringstream issMsg(rawMsg);
         if (rawMsg[0] == ':') {
             issMsg >> msgPrefix;
-            LOG_TEST.debug("process_reply : msgPrefix ", msgPrefix);
+            LOG_DTV_TEST(msgPrefix);
         }
         issMsg >> msgCmdOrCode;
-        LOG_TEST.debug("process_reply : msgCmdOrCode ", msgCmdOrCode);
+        LOG_DTV_TEST(msgCmdOrCode);
         std::string token;
         while (issMsg >> token) {
             if (token[0] == ':') {
                 msgTrailing = token;
                 while (issMsg >> token)
                     msgTrailing += token;
-                LOG_TEST.debug("process_reply : msgTrailing ", msgTrailing);
+                LOG_DTV_TEST(msgTrailing);
                 break;
             }
             msgArgs.push_back(token);
-            LOG_TEST.debug("process_reply : msgArg ", token);
+            LOG_DT_TEST("msgArg", token);
         }
         Message msg = {.args = msgArgs, .cmdOrCode = msgCmdOrCode, .prefix = msgPrefix, .trailing = msgTrailing, .raw = rawMsg};
         _messages.push_back(msg);

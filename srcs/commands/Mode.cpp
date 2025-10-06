@@ -60,23 +60,22 @@ ReplyCode Mode::check_args(Server& server, Client& client, std::vector<std::stri
 	if (args.size() < 3)
 		return ERR_NEEDMOREPARAMS;
 	parse_args(args, &channel, &operation, &modes, &modeParams);
-    LOG_CMD.log_full(DEBUG, __FILE_NAME__, __FUNCTION__,  std::string("channel op modes params"), channel + " " + operation + " " + modes + " " + modeParams[0]);
+    LOG_CMD.log(DEBUG, __FILE_NAME__, __FUNCTION__,  std::string("channel op modes params"), channel + " " + operation + " " + modes + " " + modeParams[0]);
 
 	if(modes.find_first_not_of(authorizedModes) != std::string::npos)
     {
-        LOG_CMD.log_full(WARN, __FILE_NAME__, __FUNCTION__,"unknown option (other than kilot)", modes);
+        LOG_CMD.log(WARN, __FILE_NAME__, __FUNCTION__,"unknown option (other than kilot)", modes);
 		return ERR_UNKNOWNMODE;
     }
 	if (std::string(1, operation).find_first_not_of(authorizedOps) != std::string::npos)
     {
-         LOG_CMD.log_full(WARN, __FILE_NAME__, __FUNCTION__, "unknown operator (other than +-)", operation);
+         LOG_CMD.log(WARN, __FILE_NAME__, __FUNCTION__, "unknown operator (other than +-)", operation);
          return ERR_UNKNOWNMODE;
     }
 	for (size_t i = 0; i < modes.size(); ++i)
 	{
 		if (modesRequiringArg.find(modes[i]) != std::string::npos && operation == '+' && i >= modeParams.size())
         {
-            LOG_CMD.debug("option requires param");
 			return ERR_NEEDMOREPARAMS;
         }
 		if (modes[i] == 'l' && modeParams[i].find_first_not_of(digits) != std::string::npos)
@@ -163,7 +162,7 @@ void Mode::execute(Server& server, Client& client)
 	// checking and (un)setting modes
 	std::string validModes = operation == '+' ? "+" : "-";
 	std::string validModeParams = "";
-    LOG_CMD.log_full(DEBUG, __FILE_NAME__, __FUNCTION__, "modes", modes);
+    LOG_CMD.log(DEBUG, __FILE_NAME__, __FUNCTION__, "modes", modes);
 	for (size_t i = 0; i < modes.size() ; ++i)
 	{
 		if (modes[i] == 'k')
@@ -176,7 +175,6 @@ void Mode::execute(Server& server, Client& client)
 				}
 				else
 				{
-                    LOG_CMD.debug("setting +k");
 					channel->add_mode(CHANMODE_KEY);
 					channel->set_key(modeParams[i]);
 					validModes += "k";

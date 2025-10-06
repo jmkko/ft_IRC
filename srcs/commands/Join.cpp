@@ -99,7 +99,6 @@ void Join::execute(Server& server, Client& client)
         iss >> chanName;
         iss >> chanKey;
         if (!Channel::is_valid_channel_name(chanName)) {
-            LOG_CMD.warning(TO_STRING(ERR_BADCHANMASK) + " ERR_BADCHANMASK");
             rh.process_response(client, ERR_BADCHANMASK, chanName);
             it++;
             continue;
@@ -110,15 +109,12 @@ void Join::execute(Server& server, Client& client)
         if (existingChannel == server.channels.end()) {
             channel                              = new Channel(chanName); // NOLINT
             server.channels[channel->get_name()] = channel;
-            LOG_CMD.info("Created new channel: " + channel->get_name());
+            LOG_I_CMD("#️⃣ New channel", channel->get_name());
         } else {
             channel = existingChannel->second;
         }
-        LOG_CMD.log_full(DEBUG, __FILE_NAME__, __FUNCTION__, "providedkey chankey", chanKey + "-" + channel->get_key());
-        LOG_CMD.log_full(DEBUG, __FILE_NAME__, __FUNCTION__, "mode is ", channel->get_mode());	
         if ((channel->get_mode() & CHANMODE_KEY) && (chanKey != channel->get_key()))
         {
-            LOG_CMD.debug("it is different");
 			replyCode = ERR_BADCHANNELKEY;
             rh.process_response(client, ERR_BADCHANNELKEY, channel->get_name());
             ++it;
@@ -132,6 +128,7 @@ void Join::execute(Server& server, Client& client)
 			client.add_joined_channel(*channel);
         } else {
             rh.process_response(client, replyCode, channel->get_name());
+            ++it;
             continue;
         }
         if (channel->get_nb_members() == 1) {

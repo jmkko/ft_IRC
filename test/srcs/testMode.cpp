@@ -84,38 +84,10 @@
 //     }
 // }
 
-/**
- @brief integration test - normal case
-*/
-void mode_minusk_should_lift_block()
-{
-    try {
-        TEST_SETUP(test, 2);
-        TcpSocket& sop = *sockets.at(0);
-		TcpSocket& so = *sockets.at(1);
-		make_op(sop);
-		authenticate(so);
-
-		// test 1
-		send_line(sop, validModeMinusKMsg);
-		std::string reply = recv_lines(sop);
-        AssertReply ar(reply);
-        ar.contains("MODE").contains("-k");
-		// test 2
-		send_line(so, validJoinMsg);
-		reply = recv_lines(sop);
-		ar.handle_new_reply(reply);
-		ar.has_code(RPL_ENDOFNAMES);
-
-    } catch (const std::runtime_error& e) {
-        LOG_TEST.error(e.what());
-    }
-}
-
 // /**
 //  @brief integration test - normal case
 // */
-// void mode_plusi_should_send_rpl_and_block_join_if_no_invite()
+// void mode_minusk_should_lift_block()
 // {
 //     try {
 //         TEST_SETUP(test, 2);
@@ -125,20 +97,48 @@ void mode_minusk_should_lift_block()
 // 		authenticate(so);
 
 // 		// test 1
-// 		send_line(sop, validModePlusIMsg);
+// 		send_line(sop, validModeMinusKMsg);
 // 		std::string reply = recv_lines(sop);
 //         AssertReply ar(reply);
-//         ar.contains("MODE").contains("+i");
+//         ar.contains("MODE").contains("-k");
 // 		// test 2
 // 		send_line(so, validJoinMsg);
-// 		reply = recv_lines(sop);
+// 		reply = recv_lines(so);
 // 		ar.handle_new_reply(reply);
-// 		ar.has_code(ERR_INVITEONLYCHAN);
+// 		ar.has_code(RPL_ENDOFNAMES);
 
 //     } catch (const std::runtime_error& e) {
 //         LOG_TEST.error(e.what());
 //     }
 // }
+
+/**
+ @brief integration test - normal case
+*/
+void mode_plusi_should_send_rpl_and_block_join_if_no_invite()
+{
+    try {
+        TEST_SETUP(test, 2);
+        TcpSocket& sop = *sockets.at(0);
+		TcpSocket& so = *sockets.at(1);
+		make_op(sop);
+		authenticate(so);
+
+		// test 1
+		send_line(sop, validModePlusIMsg);
+		std::string reply = recv_lines(sop);
+        AssertReply ar(reply);
+        ar.contains("MODE").contains("+i");
+		// test 2
+		send_line(so, validJoinMsg);
+		reply = recv_lines(sop);
+		ar.handle_new_reply(reply);
+		ar.has_code(ERR_INVITEONLYCHAN);
+
+    } catch (const std::runtime_error& e) {
+        LOG_TEST.error(e.what());
+    }
+}
 
 // /**
 //  @brief integration test - normal case
@@ -708,8 +708,8 @@ void test_mode()
     print_test_series("command MODE");
     // run_test([&] { mode_plusk_should_block_join_if_no_key(); }, "+k <key>");
     // run_test([&] { mode_plusk_should_allow_op_to_join_without_key(); }, "+k <key> (op)");
-    run_test([&] { mode_minusk_should_lift_block(); }, "-k <key>");
-    // run_test([&] { mode_plusi_should_send_rpl_and_block_join_if_no_invite(); }, "+i");
+    // run_test([&] { mode_minusk_should_lift_block(); }, "-k <key>");
+    run_test([&] { mode_plusi_should_send_rpl_and_block_join_if_no_invite(); }, "+i");
     // run_test([&] { mode_plusi_should_allow_op_to_join_without_invite(); }, "+i (op)");
     // run_test([&] { mode_minusi_should_lift_block(); }, "-i");
     // run_test([&] { mode_plusl_should_block_join_if_max_reached(); }, "+l <limit>");

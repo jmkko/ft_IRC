@@ -54,7 +54,7 @@ void ServerRunner::stop()
     if (!_isRunning)
         return;
 
-    LOG_TEST.debug("Stopping server...");
+    LOG_d_TEST("Stopping server...");
 
     // Signal the server to stop
     globalSignal = SIGINT;

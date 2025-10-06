@@ -117,6 +117,7 @@ $(BUILD_DIR)/%.o: %.cpp | $(DIRS)
 			9) anim="०ᵒ०ᵒ०";; \
 			*) anim="०ooo०";; \
 		esac; \
+		printf "                                                                     "; \
 		printf "\r[%-6s] %3d%% Compiling %s" "$$anim" $(PERCENT) "$<"; \
 	} 
 	@$(CXX) $(CXXFLAGS) $(INC) $< -c -o $@

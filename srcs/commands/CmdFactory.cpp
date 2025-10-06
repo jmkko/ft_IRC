@@ -69,9 +69,8 @@ ICommand* CmdFactory::make_command(Server& server, Client& client, std::string& 
     iss >> commandLine;
     for (size_t i = 0; i < NB_AVAILABLE_CMD; i++) {
         if (commandLine == available[i]) {
-            LOG_CMD.debug("CmdFactory::make_command --> " + commandLine);
+            LOG_d_CMD(commandLine);
             if (!check_in(client, commandLine)) {
-                LOG_CMD.warning(TO_STRING(ERR_NOTREGISTERED) + " ERR_NOTREGISTERED");
                 rh.process_response(client, ERR_NOTREGISTERED, commandLine);
 				return NULL;
             }
@@ -83,7 +82,6 @@ ICommand* CmdFactory::make_command(Server& server, Client& client, std::string& 
             return (this->*ptr[i])(server, client, params);
         }
     }
-    LOG_CMD.warning("421 ERR_UNKNOWNCOMMAND" + commandLine);
     rh.process_response(client, ERR_UNKNOWNCOMMAND, params);
 
     return NULL;

@@ -53,8 +53,6 @@ bool Config::_parse_code_file(const std::string& fileName)
             _codes[code] = value;
             std::string trailing = line.substr(posTrailing);
             _trailings[code] = trailing;
-            LOG_CMD.debug("value", value);
-            LOG_CMD.debug("trailing", trailing);
         }
     }
 	file.close();

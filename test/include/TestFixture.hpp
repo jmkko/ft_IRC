@@ -21,7 +21,6 @@ class TestFixture
 		
 	private:
 		std::vector<std::unique_ptr<TcpSocket>> 	_sockets;
-		// Server*										_server;
 
 };
 

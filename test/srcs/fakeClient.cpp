@@ -79,18 +79,18 @@ void send_line(const TcpSocket& so, const std::string& msg)
 
     int ret = poll(&pfd, 1, POLL_TIMEOUT);
     if (ret == -1) {
-        LOG_TEST.debug("send_lines: error poll", strerror(errno));
+        LOG_W_TEST("poll error", strerror(errno));
         return;
     }
 
     if (ret == 0) {
-        LOG_TEST.debug("send_lines: poll timeout waiting for data");
+        LOG_d_TEST("poll timeout waiting for data");
         return;
     }
 
     if (pfd.revents & POLLOUT) {
         ssize_t sentBytes = send(so.get_socket(), msg.c_str(), msg.size(), 0);
-        LOG_TEST.debug(std::string("send_line: sent bytes = ") + TO_STRING(sentBytes) + ":" + msg);
+        LOG_D_TEST("sent " + TO_STRING(sentBytes) + " bytes", msg);
         if (sentBytes <= 0) {
             throw std::runtime_error("send_line: can't send");
         }
@@ -108,12 +108,12 @@ std::string recv_lines(const TcpSocket& so)
         throw std::runtime_error("recv_line: attempted to send on invalid socket");
 
     for (int attempt = 0; attempt < MAX_RECV_ATTEMPTS; ++attempt) {
-        LOG_TEST.debug("attempt" + TO_STRING(attempt + 1) + "/" + TO_STRING(MAX_RECV_ATTEMPTS));
+        LOG_dt_TEST("attempt" + TO_STRING(attempt + 1) + "/" + TO_STRING(MAX_RECV_ATTEMPTS));
         pollfd pfd = {.fd = so.get_socket(), .events = POLLIN, .revents = 0};
 
         int ret = poll(&pfd, 1, POLL_TEST_TIMEOUT);
         if (ret == -1) {
-            LOG_TEST.debug("recv_lines: error poll", strerror(errno));
+            LOG_W_TEST("poll error", strerror(errno));
             return {};
         }
 
@@ -133,7 +133,7 @@ std::string recv_lines(const TcpSocket& so)
             } else {
                 buffer[bytesReceived] = '\0';
                 result                = std::string(static_cast<char*>(buffer));
-                LOG_TEST.debug("recv_line: received " + std::to_string(bytesReceived) + " bytes: " + result);
+                LOG_D_TEST("received " + TO_STRING(bytesReceived) + " bytes", result);
                 if (result.find("\r\n") != std::string::npos)
                     break;
             }

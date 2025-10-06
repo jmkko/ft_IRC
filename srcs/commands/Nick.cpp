@@ -21,11 +21,10 @@ void Nick::execute(Server& server, Client& client)
 	ReplyHandler& rh = ReplyHandler::get_instance(&server);
 	// welcome sequence complete for first time
 	if (oldNickname.empty() && client.get_user_name().empty() && client.is_authenticated()) {
-		LOG_CMD.info("Nick execute - first change");
+        LOG_dt_CMD("first change");
 		// rh.process_response(client, RPL_WELCOME);
 		// normal success behavior
 	} else if (!oldNickname.empty() && !client.get_user_name().empty() && client.is_registered()) {
-		LOG_CMD.info("204 RPL_NICK");
 		// send the message to every user in every channel that this client takes part in
 		// NOT WORKING (client._joinedChannel is empty)
 		client.broadcast_to_all_channels(server, RPL_NICK, oldNickname); // ! \\ ;
@@ -40,12 +39,10 @@ ReplyCode Nick::check_args(Server& server, Client& client, std::string& params)
     std::string        nickname;
 
     iss >> nickname;
-	LOG_CMD.debug("Nick::check_args nickname :", nickname);
+    LOG_DTV_CMD(nickname);
     if (nickname.empty()) {
-        LOG_CMD.warning("431 ERR_NONICKNAMEGIVEN");
         return (ERR_NONICKNAMEGIVEN);
     } else if (!std::isalpha(nickname[0]) && !is_special_abnf(nickname[0])) {
-        LOG_CMD.warning("432 ERR_ERRONEUSNICKNAME");
         return (ERR_ERRONEUSNICKNAME);
     } else if (nickname.length() > ircConfig.get_nickname_max_len()) {
         nickname = nickname.substr(0, ircConfig.get_nickname_max_len());
@@ -54,7 +51,6 @@ ReplyCode Nick::check_args(Server& server, Client& client, std::string& params)
 	// checks args checks params
 	// execute checks logic involving server or client ?
     if (server.find_client_by_nickname(nickname)) { 
-        LOG_CMD.warning("431 ERR_NICKNAMEINUSE");
         return (ERR_NICKNAMEINUSE);
     }
     params = nickname;
