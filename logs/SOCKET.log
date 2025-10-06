@@ -1,8 +1,0 @@
-[2025-10-06 17:09:47] [INFO ] SOCKET Logger initialized - file: logs/SOCKET.log
-[2025-10-06 17:09:47] [DEBUG] Socket 4 events: POLLIN 
-[2025-10-06 17:09:49] [DEBUG] Socket 4 events: POLLIN 
-[2025-10-06 17:10:03] [DEBUG] Socket 4 events: POLLIN 
-[2025-10-06 17:13:14] [INFO ] SOCKET Logger shutting down
-[2025-10-06 17:14:46] [INFO ] SOCKET Logger initialized - file: logs/SOCKET.log
-[2025-10-06 17:14:46] [DEBUG] Socket 4 events: POLLIN 
-[2025-10-06 17:17:49] [INFO ] SOCKET Logger shutting down
