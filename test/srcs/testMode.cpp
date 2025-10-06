@@ -28,37 +28,38 @@
  *		✅  VALID											*
  ************************************************************/
 
-/**
- @brief integration test - normal case
-*/
-void mode_plusk_should_block_join_if_no_key()
-{
-    try {
+// /**
+//  @brief integration test - normal case
+// */
+// void mode_plusk_should_block_join_if_no_key()
+// {
+//     try {
 
-        TEST_SETUP(test, 2);
-        TcpSocket& sop = *sockets.at(0);
-		TcpSocket& so = *sockets.at(1);
-		make_op(sop);
-		authenticate(so);
+//         TEST_SETUP(test, 2);
+//         TcpSocket& sop = *sockets.at(0);
+// 		TcpSocket& so = *sockets.at(1);
+// 		make_op(sop);
+// 		authenticate(so);
 
-		// test 1
-		send_line(sop, validModePlusKMsg);
-		std::string reply = recv_lines(sop);
-        AssertReply ar(reply);
-        ar.contains("MODE").contains("+k");
-		// test 2
-		send_line(so, validJoinMsg);
-		reply = recv_lines(sop);
-		ar.handle_new_reply(reply);
-		ar.has_code(ERR_BADCHANNELKEY);
+// 		// test 1
+// 		send_line(sop, validModePlusKMsg);
+// 		std::string reply = recv_lines(sop);
+//         AssertReply ar(reply);
+//         ar.contains("MODE").contains("+k");
+// 		// test 2
+// 		send_line(so, validJoinMsg);
+// 		reply = recv_lines(so);
+// 		ar.handle_new_reply(reply);
+// 		ar.has_code(ERR_BADCHANNELKEY);
 
-    } catch (const std::runtime_error& e) {
-        LOG_TEST.error(e.what());
-    }
-}
+//     } catch (const std::runtime_error& e) {
+//         LOG_TEST.error(e.what());
+//     }
+// }
 
 // /**
 //  @brief integration test - normal case
+//  @todo implement PART to test it
 // */
 // void mode_plusk_should_allow_op_to_join_without_key()
 // {
@@ -83,33 +84,33 @@ void mode_plusk_should_block_join_if_no_key()
 //     }
 // }
 
-// /**
-//  @brief integration test - normal case
-// */
-// void mode_minusk_should_lift_block()
-// {
-//     try {
-//         TEST_SETUP(test, 2);
-//         TcpSocket& sop = *sockets.at(0);
-// 		TcpSocket& so = *sockets.at(1);
-// 		make_op(sop);
-// 		authenticate(so);
+/**
+ @brief integration test - normal case
+*/
+void mode_minusk_should_lift_block()
+{
+    try {
+        TEST_SETUP(test, 2);
+        TcpSocket& sop = *sockets.at(0);
+		TcpSocket& so = *sockets.at(1);
+		make_op(sop);
+		authenticate(so);
 
-// 		// test 1
-// 		send_line(sop, validModeMinusKMsg);
-// 		std::string reply = recv_lines(sop);
-//         AssertReply ar(reply);
-//         ar.contains("MODE").contains("-k");
-// 		// test 2
-// 		send_line(so, validJoinMsg);
-// 		reply = recv_lines(sop);
-// 		ar.handle_new_reply(reply);
-// 		ar.has_code(RPL_ENDOFNAMES);
+		// test 1
+		send_line(sop, validModeMinusKMsg);
+		std::string reply = recv_lines(sop);
+        AssertReply ar(reply);
+        ar.contains("MODE").contains("-k");
+		// test 2
+		send_line(so, validJoinMsg);
+		reply = recv_lines(sop);
+		ar.handle_new_reply(reply);
+		ar.has_code(RPL_ENDOFNAMES);
 
-//     } catch (const std::runtime_error& e) {
-//         LOG_TEST.error(e.what());
-//     }
-// }
+    } catch (const std::runtime_error& e) {
+        LOG_TEST.error(e.what());
+    }
+}
 
 // /**
 //  @brief integration test - normal case
@@ -705,9 +706,9 @@ void mode_plusk_should_block_join_if_no_key()
 void test_mode()
 {
     print_test_series("command MODE");
-    run_test([&] { mode_plusk_should_block_join_if_no_key(); }, "+k <key>");
+    // run_test([&] { mode_plusk_should_block_join_if_no_key(); }, "+k <key>");
     // run_test([&] { mode_plusk_should_allow_op_to_join_without_key(); }, "+k <key> (op)");
-    // run_test([&] { mode_minusk_should_lift_block(); }, "-k <key>");
+    run_test([&] { mode_minusk_should_lift_block(); }, "-k <key>");
     // run_test([&] { mode_plusi_should_send_rpl_and_block_join_if_no_invite(); }, "+i");
     // run_test([&] { mode_plusi_should_allow_op_to_join_without_invite(); }, "+i (op)");
     // run_test([&] { mode_minusi_should_lift_block(); }, "-i");

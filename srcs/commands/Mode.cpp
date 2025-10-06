@@ -192,10 +192,10 @@ void Mode::execute(Server& server, Client& client)
 		{
 			if (operation == '+')
 			{
-				channel->add_mode(currentModes & CHANMODE_INVITE);
+				channel->add_mode(CHANMODE_INVITE);
 			}
 			else {
-				channel->add_mode(currentModes & ~CHANMODE_INVITE);
+                channel->remove_mode(CHANMODE_INVITE);
 			}
 			validModes += 'i';
 		}
@@ -203,12 +203,12 @@ void Mode::execute(Server& server, Client& client)
 		{
 			if (operation == '+')
 			{
-				channel->add_mode(currentModes & CHANMODE_LIMIT);
+				channel->add_mode(CHANMODE_LIMIT);
 				channel->set_user_limit(std::atoi(modeParams[i].c_str()));
 				validModeParams += " " + modeParams[i];
 			}
 			else {
-				channel->add_mode(currentModes & ~CHANMODE_LIMIT);
+                channel->remove_mode(CHANMODE_LIMIT);
 				channel->set_user_limit(NO_LIMIT);
 			}
 			validModes += 'l';
@@ -234,6 +234,17 @@ void Mode::execute(Server& server, Client& client)
 				}
 			}
 		}
+        else if (modes[i] == 't')
+        {
+            if (operation == '+')
+			{
+				channel->add_mode(CHANMODE_TOPIC);
+			}
+			else {
+                channel->remove_mode(CHANMODE_TOPIC);
+			}
+			validModes += 't';
+        }
 	}
 
 	// send confirmation
