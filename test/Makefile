@@ -106,7 +106,7 @@ fclean: clean
 	@echo "$(RED)Remove binary$(NOC)"
 	@rm -f $(NAME)
 	@rm -rf ../logs
-#	@rm -rf logs
+@rm -rf logs/*
 
 re: fclean
 	@make
