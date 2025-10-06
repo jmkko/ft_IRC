@@ -101,6 +101,7 @@ void Who::execute(Server& server, Client& client)
  * : server 352 <me> <channel> <user> <host> <server> <nick> <flags> :<hopcount> <realname>
  * :irc.example.com 352 user1 #chan1 bob bobhost irc.example.com bob H@ :0 Bob Realname
  * :irc.example.com 315 user1 #chan1 :End of WHO list
+ * <client> <channel> <username> <host> <server> <nick> <flags> :<hopcount> <realname>
  */
 std::string Who::_who_msg(Client* client, Channel* channel, Server& server)
 {
