@@ -87,7 +87,7 @@ void Server::start()
         }
 
         // review each client socket
-        LOG_SERVER.debug(utils::to_string(pollResult) + "event(s) detected");
+        LOG_SERVER.debug("Server::start --> event(s) detected on socket " + TO_STRING(pollResult));
 
         for (int i = 0; i < static_cast<int>(_pfds.size()); i++) {
             if (globalSignal == SIGINT && globalSignal == SIGABRT)
@@ -192,11 +192,10 @@ void Server::_handle_client_disconnection(int pfdIndex)
  */
 void Server::_handle_client_input(int pfdIndex)
 {
-    LOG_SERVER.debug("Server #_handle_client_input");
+    LOG_SERVER.debug("Server::_handle_client_input");
     Socket  socket = _pfds[pfdIndex].fd;
     Client* client = _clients[socket];
     if (!client) {
-        LOG_ERR.error("handle receive... client not found");
         return;
     }
 
@@ -218,6 +217,7 @@ void Server::_handle_client_input(int pfdIndex)
         if (utils::safe_at(buffer, bytesRead))
             utils::safe_at(buffer, bytesRead) = '\0';
         client->append_to_read_buffer(std::string(static_cast<char*>(buffer)));
+    	LOG_SERVER.debug("Server::_handle_client_input --> client read buffer: \n" + client->get_read_buffer());
         this->_handle_command(pfdIndex);
     }
 }
@@ -231,7 +231,7 @@ void Server::_handle_client_input(int pfdIndex)
 */
 void Server::_handle_client_output(int pfdIndex)
 {
-    LOG_SERVER.info("Server#_handle_client_output");
+    LOG_SERVER.info("Server::_handle_client_output");
     Socket  socket = _pfds[pfdIndex].fd;
     Client* client = _clients[socket];
     if (!client) {
@@ -242,7 +242,7 @@ void Server::_handle_client_output(int pfdIndex)
     std::string sendBuffer = client->get_send_buffer();
     if (!sendBuffer.empty()) {
 
-        LOG_SERVER.info("Client.Buffer: " + sendBuffer);
+        LOG_SERVER.info("Server::_handle_client_output --> Client send buffer: \n" + sendBuffer);
         ssize_t bytesSent = send(socket, sendBuffer.c_str(), sendBuffer.length(), 0);
 
         if (bytesSent == -1) {
@@ -258,12 +258,11 @@ void Server::_handle_client_output(int pfdIndex)
                                + utils::to_string(sendBuffer.length()) + ")");
             client->set_send_buffer(sendBuffer.substr(bytesSent));
         } else {
-            LOG_SERVER.debug(std::string("Message sent normally ... unsubscribing from POLLOUT"));
             client->get_send_buffer().clear();
+        	LOG_SERVER.info("Server::_handle_client_output --> Message sent, unsuscribe from POLLOUT");
             _pfds[pfdIndex].events &= ~POLLOUT;
         }
     } else {
-        LOG_SERVER.debug(std::string("No data to send ... unsubscribing from POLLOUT"));
         _pfds[pfdIndex].events &= ~POLLOUT;
     }
 }
@@ -284,9 +283,9 @@ void Server::_handle_command(int pfdIndex)
         // parse and create the appropriate command, NULL is returned if a faillure has happen
         ICommand* cmd = _parse_command(*client, line);
         if (cmd) {
-            LOG_SERVER.debug("Server _handle_command: executing command");
+            LOG_SERVER.debug("Server::_handle_command --> executing command");
             cmd->execute(*this, *client);
-            delete cmd; // NOLINT
+            delete cmd;
             std::istringstream iss(line);
             iss >> cmdName;
             if (cmdName == "QUIT")
@@ -336,7 +335,7 @@ int Server::index_of(Client& client)
 void Server::add_events_of(Client& client, int event)
 {
     int index = index_of(client);
-    LOG_SERVER.debug(TO_STRING("index of client : ") + TO_STRING(index));
+    LOG_SERVER.debug("Server::add_envents_of --> " + EVENT_TO_STR(event) + " on index: " + TO_STRING(index));
     if (index >= 0) {
         _pfds[index].events = static_cast<short>(_pfds[index].events | event); // ADD to existing events
     }

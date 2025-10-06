@@ -143,6 +143,12 @@ std::string ReplyHandler::select_response(Client& client, ReplyCode code, const 
         return (responseWithCodeAndNick + parameters + ERR_NOSUCHCHANNEL_MSG);
     case ERR_NONICKNAMEGIVEN:
         return (std::string("431") + ERR_NONICKNAMEGIVEN_MSG);
+	case ERR_TOOMANYTARGETS:
+		return (responseWithCodeAndNick + parameters + " :too many recipients (you dont have that much friends)");
+	case ERR_NOSUCHNICK:
+		return (responseWithCodeAndNick + parameters + " :No such nickname (imaginary friend issue)");
+	case ERR_NOTEXTTOSEND:
+		return (responseWithCodeAndNick + ERR_NOTEXTTOSEND_MSG);
     case ERR_ERRONEUSNICKNAME:
         return (std::string("432") + ERR_ERRONEUSNICKNAME_MSG);
     case ERR_NICKNAMEINUSE:
@@ -176,7 +182,7 @@ int ReplyHandler::process_response(Client& client, ReplyCode code, const std::st
     // if (code == RPL_NICK | code == RPL_TOPIC)
     //	broadcast(response, chanel);
     if (!response.empty()) {
-        LOG_CMD.debug("add to sendBuffer: " + response);
+        LOG_CMD.debug("ReplyHandler::process_response --> response: \n" + response);
         _send_reply(client, response);
     }
     return (code);

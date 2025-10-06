@@ -17,6 +17,7 @@
 #define ERR_NEEDMOREPARAMS_MSG    " :Not enough parameters "
 #define ERR_ALREADYREGISTERED_MSG " :Unauthorized command (already registered)"
 #define ERR_UNKNOWNCOMMAND_MSG    " :Command is not handled (sorry guys) "
+#define ERR_NOTEXTTOSEND_MSG " :NO text to send"
 // =============================================================================
 // PASS Command Responses
 // =============================================================================

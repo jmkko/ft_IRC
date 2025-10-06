@@ -23,6 +23,7 @@ template <typename T> std::string to_string(const T& value)
 }
 
 long string_to_ulong(const std::string& str);
+std::string event_to_str(int event);
 
 template <size_t N> char& safe_at(char (&arr)[N], size_t index)
 {
@@ -48,6 +49,7 @@ struct MatchPattern {
 
 } // namespace utils
 
-#define TO_STRING utils::to_string
+# define TO_STRING utils::to_string
+# define EVENT_TO_STR utils::event_to_str
 
 #endif
