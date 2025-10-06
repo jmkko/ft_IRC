@@ -178,11 +178,9 @@ int ReplyHandler::process_response(Client& client, ReplyCode code, const std::st
 {
     std::string response = select_response(client, code, parameters, sender);
 
-    // to be implemented
-    // if (code == RPL_NICK | code == RPL_TOPIC)
-    //	broadcast(response, chanel);
     if (!response.empty()) {
-        LOG_CMD.debug("ReplyHandler::process_response --> response: \n" + response);
+        LOG_CMD.info("ReplyHandler::process_response --> response to " 
+					 + client.get_nickname() + ":\n" + response);
         _send_reply(client, response);
     }
     return (code);

@@ -71,7 +71,6 @@ ICommand* CmdFactory::make_command(Server& server, Client& client, std::string& 
             LOG_CMD.debug("CmdFactory::make_command --> " + commandLine);
             if (!check_in(client, commandLine)) {
                 LOG_CMD.warning(TO_STRING(ERR_NOTREGISTERED) + " ERR_NOTREGISTERED");
-                ReplyHandler& rh = ReplyHandler::get_instance(&server);
                 rh.process_response(client, ERR_NOTREGISTERED, commandLine);
 				return NULL;
             }
@@ -255,20 +254,21 @@ ICommand* CmdFactory::privmsg_cmd(Server& server, Client& client, std::string& p
 
     Privmsg* privmsg = new Privmsg(msg);
 
-    std::string                               word;
-    std::istringstream                        iss(params);
-    Client*                                   dest = NULL;
-    std::map<std::string, Channel*>::iterator chan;
-    while (iss >> word) {
-        chan = server.channels.find(word);
-        if (chan != server.channels.end()) {
-            privmsg->add_channel(chan->second);
-        }
-        dest = server.find_client_by_nickname(word);
-        if (dest) {
-            privmsg->add_client(dest);
-        }
-    }
+    //std::string                               word;
+    //std::istringstream                        iss(params);
+    //Client*                                   dest = NULL;
+    //std::map<std::string, Channel*>::iterator chan;
+	privmsg->build_args(server, params);
+    // while (iss >> word) {
+    //     chan = server.channels.find(word);
+    //     if (chan != server.channels.end()) {
+    //         privmsg->add_channel(chan->second);
+    //     }
+    //     dest = server.find_client_by_nickname(word);
+    //     if (dest) {
+    //         privmsg->add_client(dest);
+    //     }
+    // }
 
     return privmsg;
 };
