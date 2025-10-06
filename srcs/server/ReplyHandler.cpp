@@ -1,8 +1,7 @@
-#include "ReplyHandler.hpp"
-
 #include "Client.hpp"
 #include "Config.hpp"
 #include "LogManager.hpp"
+#include "ReplyHandler.hpp"
 #include "Server.hpp"
 #include "reply_codes.hpp"
 #include "utils.hpp"
@@ -115,7 +114,9 @@ std::string ReplyHandler::select_response(Client& client, ReplyCode code, const 
     case RPL_QUIT:
         return sender->get_nickname() + " has quit " + ircConfig.get_name() + parameters;
     case RPL_INVITING:
-        return "";
+        return (response + code_to_str(code) + parameters);
+    case RPL_INVITING_TARGET:
+        return (response + parameters);
     case RPL_WHOREPLY:
         return (response + code_to_str(code) + parameters);
     case RPL_ENDOFWHO:

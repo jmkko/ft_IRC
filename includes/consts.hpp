@@ -13,7 +13,7 @@
 #ifndef CONSTS_HPP
 #define CONSTS_HPP
 
-#define COMMANDS_NB             11
+#define COMMANDS_NB             12
 #define EXPECTED_ARGS_NB        3
 #define MIN_PASSWORD_LEN        8
 #define POLL_TIMEOUT            1000
@@ -31,7 +31,7 @@
 #define WELL_KNOWN_PORT_MAX     1024
 #define DYNAMIC_PORT_MIN        49152
 #define NICKNAME_MAX_LEN        9
-#define NB_AVAILABLE_CMD        11
+#define NB_AVAILABLE_CMD        12
 #define USERS_PER_LINE          10
 
 #define CHANMODE_INIT   0x00

@@ -1,6 +1,7 @@
 #include "Client.hpp"
 #include "CmdFactory.hpp"
 #include "ICommand.hpp"
+#include "Invite.hpp"
 #include "Join.hpp"
 #include "Kick.hpp"
 #include "LogManager.hpp"
@@ -41,7 +42,7 @@ ICommand* CmdFactory::make_command(Server& server, Client& client, std::string& 
     std::string        commandLine = "";
     std::istringstream iss(params); // NOLINT(clang-diagnostic-vexing-parse)
     std::string        available[NB_AVAILABLE_CMD]
-        = {"USER", "PASS", "NICK", "QUIT", "INVITE", "JOIN", "PART", "MODE", "OPER", "PRIVMSG", "WHO"};
+        = {"USER", "PASS", "NICK", "QUIT", "INVITE", "JOIN", "PART", "MODE", "OPER", "PRIVMSG", "WHO", "INVITE"};
     ICommand* (CmdFactory::* ptr[NB_AVAILABLE_CMD])(Server&, Client&, std::string&) = {&CmdFactory::user_cmd,
                                                                                        &CmdFactory::pass_cmd,
                                                                                        &CmdFactory::nick_cmd,
@@ -52,7 +53,8 @@ ICommand* CmdFactory::make_command(Server& server, Client& client, std::string& 
                                                                                        &CmdFactory::mode_cmd,
                                                                                        &CmdFactory::oper_cmd,
                                                                                        &CmdFactory::privmsg_cmd,
-                                                                                       &CmdFactory::who_cmd};
+                                                                                       &CmdFactory::who_cmd,
+                                                                                       &CmdFactory::invite_cmd};
 
     iss >> commandLine;
     for (size_t i = 0; i < NB_AVAILABLE_CMD; i++) {
@@ -64,11 +66,11 @@ ICommand* CmdFactory::make_command(Server& server, Client& client, std::string& 
                 LOG_CMD.info(TO_STRING(ERR_NOTREGISTERED) + " ERR_NOTREGISTERED");
                 ReplyHandler& rh = ReplyHandler::get_instance(&server);
                 rh.process_response(client, ERR_NOTREGISTERED, commandLine);
-				return NULL;
+                return NULL;
             }
             std::string params;
             std::getline(iss, params);
-			LOG_CMD.debug("make_command : params : " + params);
+            LOG_CMD.debug("make_command : params : " + params);
             if (!params.empty() && params[0] == ' ') {
                 params = params.substr(1);
             }
@@ -150,12 +152,11 @@ ICommand* CmdFactory::kick_cmd(Server& server, Client& client, std::string& para
     return NULL;
 };
 
-
 ICommand* CmdFactory::quit_cmd(Server& server, Client& client, std::string& params)
 {
-    ReplyHandler&            rh = ReplyHandler::get_instance(&server);
+    ReplyHandler& rh = ReplyHandler::get_instance(&server);
 
-	ReplyCode replyCode = Quit::check_args(server, client, params);
+    ReplyCode replyCode = Quit::check_args(server, client, params);
     if (replyCode == RPL_SUCCESS) {
         return new Quit(params);
     } else {
@@ -179,7 +180,6 @@ ICommand* CmdFactory::join_cmd(Server& server, Client& client, std::string& para
 };
 
 // NOT IMPLEMENTED YET
-
 
 ICommand* CmdFactory::part_cmd(Server& server, Client& client, std::string& params)
 {
@@ -210,11 +210,13 @@ ICommand* CmdFactory::oper_cmd(Server& server, Client& client, std::string& para
 
 ICommand* CmdFactory::invite_cmd(Server& server, Client& client, std::string& params)
 {
-    (void)client;
-    (void)server;
-    (void)params;
-    LOG_CMD.debug("Build INVITE (not implemented)");
-    return NULL;
+    ReplyHandler& rh        = ReplyHandler::get_instance(&server);
+    ReplyCode     replyCode = Invite::check_args(server, client, params);
+    if (replyCode != RPL_SUCCESS) {
+        rh.process_response(client, replyCode, params);
+        return NULL;
+    }
+    return new Invite(params);
 };
 
 ICommand* CmdFactory::who_cmd(Server& server, Client& client, std::string& params)

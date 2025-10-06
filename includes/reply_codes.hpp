@@ -225,9 +225,10 @@ enum ReplyCode {
     ERR_BADCHANMASK       = 476,
 
     // custom
-    SERVER_ERR = 801,
-    FORMAT_ERR = 802,
-    PWD_ERR    = 803,
+    SERVER_ERR          = 801,
+    FORMAT_ERR          = 802,
+    PWD_ERR             = 803,
+    RPL_INVITING_TARGET = 804,
 
 };
 
