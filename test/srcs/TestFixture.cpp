@@ -1,8 +1,7 @@
-#include "TestFixture.hpp"
-
 #include "LogManager.hpp"
 #include "Logger.hpp"
 #include "TcpSocket.hpp"
+#include "TestFixture.hpp"
 #include "fakeClient.hpp"
 #include "testUtils.hpp"
 #include "utils.hpp"
@@ -11,6 +10,7 @@
 #include <cstddef>
 #include <thread>
 #include <chrono>
+#include <unistd.h>             // close
 
 TestFixture::TestFixture() : _sockets() {}
 

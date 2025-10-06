@@ -139,5 +139,6 @@ std::string recv_lines(const TcpSocket& so)
             }
         }
     }
+    std::this_thread::sleep_for(std::chrono::milliseconds(SERVER_PROCESS_TIME_MS));
     return result;
 }

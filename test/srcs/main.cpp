@@ -27,14 +27,19 @@ int main()
 
         // Run command tests
         LOG_TEST.info("Running test suite...");
+
+        test_mode();
         // test_nick();
         // test_kick();
-        test_mode();
+        // test_who();
+        // test_join();
         
         LOG_TEST.info("All tests completed, stopping server...");
 		runner.stop();
 		delete s; // NOLINT(cppcoreguidelines-owning-memory)
         
+        Server server(TEST_PORT, DEFAULT_PASSWORD);
+
     } catch (const std::exception& e) {
         std::cerr << "Caught : " << e.what() << ": " << strerror(errno) << '\n';
         return 1;

@@ -20,8 +20,8 @@ class Who : public ICommand
 {
   public:
     Who(const std::string& params);
-    ~Who();
-    void             execute(Server& s, Client& c);
+    ~Who();                                         // NOLINT
+    void             execute(Server& s, Client& c); // NOLINT
     static ReplyCode check_args(Server& s, Client& c, std::string& params);
 
   private:

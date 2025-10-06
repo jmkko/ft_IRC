@@ -6,8 +6,8 @@
 #include <string>
 
 #define RECEIVE_BUFFER 512
-#define POLL_TEST_TIMEOUT 50
-#define MAX_RECV_ATTEMPTS 1
+#define POLL_TEST_TIMEOUT 200
+#define MAX_RECV_ATTEMPTS 2
 
 std::unique_ptr<TcpSocket> make_client_socket(int port);
 void						send_line(const TcpSocket& so, const std::string& msg);

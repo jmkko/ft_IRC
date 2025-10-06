@@ -1,7 +1,8 @@
+#include "ReplyHandler.hpp"
+
 #include "Client.hpp"
 #include "Config.hpp"
 #include "LogManager.hpp"
-#include "ReplyHandler.hpp"
 #include "Server.hpp"
 #include "reply_codes.hpp"
 #include "utils.hpp"
@@ -111,20 +112,20 @@ std::string ReplyHandler::select_response(Client& client, ReplyCode code, const 
         return (get_id_of(*sender) + " PRIVMSG " + parameters);
     case RPL_KICK:
         return (response + sender->get_full_userhost() + " KICK " + parameters);
-	case RPL_QUIT:
-		return sender->get_nickname() + " has quit " + ircConfig.get_name() + parameters;
+    case RPL_QUIT:
+        return sender->get_nickname() + " has quit " + ircConfig.get_name() + parameters;
     case RPL_INVITING:
         return "";
     case RPL_WHOREPLY:
         return (response + code_to_str(code) + parameters);
     case RPL_ENDOFWHO:
-        return (response + code_to_str(code) + parameters + RPL_ENDOFWHO_MSG);
+        return (response + code_to_str(code) + nick + " " + parameters + RPL_ENDOFWHO_MSG);
     case RPL_MODE:
         return (response + " MODE " + parameters);
     case RPL_TOPIC:
         return (response + code_to_str(code) + nick + " " + parameters);
     case RPL_NAMREPLY:
-        return (response + code_to_str(code) + nick + " = " + parameters + " :" + nick);
+        return (response + code_to_str(code) + nick + " = " + parameters);
     case RPL_ENDOFNAMES:
         return (response + code_to_str(code) + nick + " " + parameters + RPL_ENDOFNAMES_MSG);
     case RPL_NOTOPIC:

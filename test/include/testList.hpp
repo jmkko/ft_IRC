@@ -3,8 +3,10 @@
 
 class Server;
 
-void test_nick();
+void test_join();
 void test_kick();
 void test_mode();
+void test_nick();
+void test_who();
 
 #endif
