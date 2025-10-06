@@ -33,6 +33,7 @@ SRCS_FILES		:= 	main.cpp\
 					testNick.cpp\
 					testWho.cpp\
 					testJoin.cpp\
+					testPrivmsg.cpp\
 
 IRC_SRCS_FILES	:=	utils.cpp\
 					signal_handler.cpp\
@@ -106,7 +107,7 @@ fclean: clean
 	@echo "$(RED)Remove binary$(NOC)"
 	@rm -f $(NAME)
 	@rm -rf ../logs
-@rm -rf logs/*
+	@rm -rf logs/*
 
 re: fclean
 	@make

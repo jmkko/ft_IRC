@@ -33,7 +33,7 @@
 #define NICKNAME_MAX_LEN        9
 #define NB_AVAILABLE_CMD        11
 #define USERS_PER_LINE          10
-
+#define TARGET_LIMIT			5
 #define CHANMODE_INIT   0x00
 #define CHANMODE_OP     0x01
 #define CHANMODE_TOPIC  0x02

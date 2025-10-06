@@ -1,0 +1,218 @@
+[2025-10-06 17:09:48] [INFO ] COMMAND Logger initialized - file: logs/COMMAND.log
+[2025-10-06 17:09:48] [ERROR] 421 ERR_UNKNOWNCOMMAND :CAP
+[2025-10-06 17:09:48] [DEBUG] ReplyHandler::process_response --> response: 
+421 :Command is not handled (sorry guys) CAP LS 302
+[2025-10-06 17:09:48] [DEBUG] CmdFactory::make_command --> PASS
+[2025-10-06 17:09:48] [INFO ] PASS - correct
+[2025-10-06 17:09:48] [DEBUG] CmdFactory::make_command --> USER
+[2025-10-06 17:09:48] [INFO ] 202 RPL_USER
+[2025-10-06 17:09:49] [ERROR] 421 ERR_UNKNOWNCOMMAND :CAP
+[2025-10-06 17:09:49] [DEBUG] ReplyHandler::process_response --> response: 
+421 :Command is not handled (sorry guys) CAP LS 302
+[2025-10-06 17:09:49] [DEBUG] CmdFactory::make_command --> PASS
+[2025-10-06 17:09:49] [INFO ] PASS - correct
+[2025-10-06 17:09:49] [DEBUG] CmdFactory::make_command --> NICK
+[2025-10-06 17:09:49] [DEBUG] Nick::check_args nickname : -> first
+[2025-10-06 17:09:49] [INFO ] Nick execute - first change
+[2025-10-06 17:09:49] [DEBUG] CmdFactory::make_command --> USER
+[2025-10-06 17:09:49] [INFO ] 001 RPL_WELCOME
+[2025-10-06 17:09:49] [DEBUG] ReplyHandler::process_response --> response: 
+:hazardous.irc.serv 001 first :Welcome to the IRC HazADoU& SerVerRrrr
+[2025-10-06 17:09:49] [DEBUG] CmdFactory::make_command --> JOIN
+[2025-10-06 17:09:49] [INFO ] Created new channel: #TETE
+[2025-10-06 17:09:49] [DEBUG] ReplyHandler::process_response --> response: 
+:first!userfir@hazardous.irc.serv JOIN :#TETE
+[2025-10-06 17:09:49] [DEBUG] Channel::broadcast -> send to everyone from channel: 
+[2025-10-06 17:09:49] [DEBUG] ReplyHandler::process_response --> response: 
+:hazardous.irc.serv MODE #TETE +o first
+[2025-10-06 17:09:49] [INFO ] first is operator of channel: #TETE
+[2025-10-06 17:09:49] [DEBUG] ReplyHandler::process_response --> response: 
+:hazardous.irc.serv 331 first #TETE :No topic is set
+[2025-10-06 17:09:49] [DEBUG] ReplyHandler::process_response --> response: 
+:hazardous.irc.serv 353 first = @first  :first
+[2025-10-06 17:09:49] [DEBUG] ReplyHandler::process_response --> response: 
+:hazardous.irc.serv 366 first #TETE :End of NAMES list
+[2025-10-06 17:09:49] [DEBUG] CmdFactory::make_command --> MODE
+[2025-10-06 17:09:49] [DEBUG] Build MODE (not implemented)
+[2025-10-06 17:09:56] [DEBUG] CmdFactory::make_command --> PRIVMSG
+[2025-10-06 17:09:56] [DEBUG] PIVMSG params: #TETE :hello
+[2025-10-06 17:09:56] [DEBUG] Privmsg::check_args -> add channel: #TETE
+[2025-10-06 17:09:56] [ERROR] #TETE is not a channel nor a client
+[2025-10-06 17:09:56] [ERROR] :hello is not a channel nor a client
+[2025-10-06 17:09:56] [DEBUG] Channel::broadcast -> send to everyone from channel: 
+[2025-10-06 17:10:03] [ERROR] 421 ERR_UNKNOWNCOMMAND :CAP
+[2025-10-06 17:10:03] [DEBUG] ReplyHandler::process_response --> response: 
+421 :Command is not handled (sorry guys) CAP LS 302
+[2025-10-06 17:10:03] [DEBUG] CmdFactory::make_command --> PASS
+[2025-10-06 17:10:03] [INFO ] PASS - correct
+[2025-10-06 17:10:03] [DEBUG] CmdFactory::make_command --> NICK
+[2025-10-06 17:10:03] [DEBUG] Nick::check_args nickname : -> second
+[2025-10-06 17:10:03] [INFO ] Nick execute - first change
+[2025-10-06 17:10:03] [DEBUG] CmdFactory::make_command --> USER
+[2025-10-06 17:10:03] [INFO ] 001 RPL_WELCOME
+[2025-10-06 17:10:03] [DEBUG] ReplyHandler::process_response --> response: 
+:hazardous.irc.serv 001 second :Welcome to the IRC HazADoU& SerVerRrrr
+[2025-10-06 17:10:03] [DEBUG] CmdFactory::make_command --> JOIN
+[2025-10-06 17:10:03] [INFO ] Created new channel: #chan1
+[2025-10-06 17:10:03] [DEBUG] ReplyHandler::process_response --> response: 
+:second!userSec@hazardous.irc.serv JOIN :#chan1
+[2025-10-06 17:10:03] [DEBUG] Channel::broadcast -> send to everyone from channel: 
+[2025-10-06 17:10:03] [DEBUG] ReplyHandler::process_response --> response: 
+:hazardous.irc.serv MODE #chan1 +o second
+[2025-10-06 17:10:03] [INFO ] second is operator of channel: #chan1
+[2025-10-06 17:10:03] [DEBUG] ReplyHandler::process_response --> response: 
+:hazardous.irc.serv 331 second #chan1 :No topic is set
+[2025-10-06 17:10:03] [DEBUG] ReplyHandler::process_response --> response: 
+:hazardous.irc.serv 353 second = @second  :second
+[2025-10-06 17:10:03] [DEBUG] ReplyHandler::process_response --> response: 
+:hazardous.irc.serv 366 second #chan1 :End of NAMES list
+[2025-10-06 17:10:03] [DEBUG] ReplyHandler::process_response --> response: 
+:second!userSec@hazardous.irc.serv JOIN :#TETE
+[2025-10-06 17:10:03] [DEBUG] Channel::broadcast -> send to everyone from channel: 
+[2025-10-06 17:10:03] [DEBUG] ReplyHandler::process_response --> response: 
+:second!userSec@hazardous.irc.serv JOIN :#TETE
+[2025-10-06 17:10:03] [DEBUG] ReplyHandler::process_response --> response: 
+:hazardous.irc.serv 331 second #TETE :No topic is set
+[2025-10-06 17:10:03] [DEBUG] ReplyHandler::process_response --> response: 
+:hazardous.irc.serv 353 second = @first second  :second
+[2025-10-06 17:10:03] [DEBUG] ReplyHandler::process_response --> response: 
+:hazardous.irc.serv 366 second #TETE :End of NAMES list
+[2025-10-06 17:10:03] [DEBUG] CmdFactory::make_command --> MODE
+[2025-10-06 17:10:03] [DEBUG] Build MODE (not implemented)
+[2025-10-06 17:10:05] [DEBUG] CmdFactory::make_command --> MODE
+[2025-10-06 17:10:05] [DEBUG] Build MODE (not implemented)
+[2025-10-06 17:10:06] [DEBUG] CmdFactory::make_command --> PRIVMSG
+[2025-10-06 17:10:06] [DEBUG] PIVMSG params: #TETE :hi
+[2025-10-06 17:10:06] [DEBUG] Privmsg::check_args -> add channel: #TETE
+[2025-10-06 17:10:06] [ERROR] #TETE is not a channel nor a client
+[2025-10-06 17:10:06] [ERROR] :hi is not a channel nor a client
+[2025-10-06 17:10:06] [DEBUG] Channel::broadcast -> send to everyone from channel: 
+[2025-10-06 17:10:06] [DEBUG] ReplyHandler::process_response --> response: 
+:second!userSec@hazardous.irc.serv PRIVMSG #TETE :hi
+[2025-10-06 17:10:11] [DEBUG] CmdFactory::make_command --> PRIVMSG
+[2025-10-06 17:10:11] [DEBUG] PIVMSG params: #TETE :hello there
+[2025-10-06 17:10:11] [DEBUG] Privmsg::check_args -> add channel: #TETE
+[2025-10-06 17:10:11] [ERROR] #TETE is not a channel nor a client
+[2025-10-06 17:10:11] [ERROR] :hello is not a channel nor a client
+[2025-10-06 17:10:11] [ERROR] there is not a channel nor a client
+[2025-10-06 17:10:11] [DEBUG] Channel::broadcast -> send to everyone from channel: 
+[2025-10-06 17:10:11] [DEBUG] ReplyHandler::process_response --> response: 
+:first!userfir@hazardous.irc.serv PRIVMSG #TETE :hello there
+[2025-10-06 17:10:29] [DEBUG] CmdFactory::make_command --> PRIVMSG
+[2025-10-06 17:10:29] [DEBUG] PIVMSG params: second :hi there
+[2025-10-06 17:10:29] [DEBUG] Privmsg::check_args -> add client: second
+[2025-10-06 17:10:29] [ERROR] :hi is not a channel nor a client
+[2025-10-06 17:10:29] [ERROR] there is not a channel nor a client
+[2025-10-06 17:10:29] [DEBUG] ReplyHandler::process_response --> response: 
+:first!userfir@hazardous.irc.serv PRIVMSG second :hi there
+[2025-10-06 17:10:29] [ERROR] 421 ERR_UNKNOWNCOMMAND :ISON
+[2025-10-06 17:10:29] [DEBUG] ReplyHandler::process_response --> response: 
+421 :Command is not handled (sorry guys) ISON first
+[2025-10-06 17:10:42] [DEBUG] CmdFactory::make_command --> PRIVMSG
+[2025-10-06 17:10:42] [DEBUG] PIVMSG params: secon :hi there
+[2025-10-06 17:10:42] [ERROR] Privmsg::check_args -> secon is not a channel nor a client
+[2025-10-06 17:10:42] [DEBUG] ReplyHandler::process_response --> response: 
+:hazardous.irc.serv 401  first secon :No such nickname (imaginary friend issue)
+[2025-10-06 17:10:43] [ERROR] 421 ERR_UNKNOWNCOMMAND :ISON
+[2025-10-06 17:10:43] [DEBUG] ReplyHandler::process_response --> response: 
+421 :Command is not handled (sorry guys) ISON first third
+[2025-10-06 17:10:59] [ERROR] 421 ERR_UNKNOWNCOMMAND :ISON
+[2025-10-06 17:10:59] [DEBUG] ReplyHandler::process_response --> response: 
+421 :Command is not handled (sorry guys) ISON first
+[2025-10-06 17:11:13] [ERROR] 421 ERR_UNKNOWNCOMMAND :ISON
+[2025-10-06 17:11:13] [DEBUG] ReplyHandler::process_response --> response: 
+421 :Command is not handled (sorry guys) ISON first third
+[2025-10-06 17:11:29] [ERROR] 421 ERR_UNKNOWNCOMMAND :ISON
+[2025-10-06 17:11:29] [DEBUG] ReplyHandler::process_response --> response: 
+421 :Command is not handled (sorry guys) ISON first
+[2025-10-06 17:11:43] [ERROR] 421 ERR_UNKNOWNCOMMAND :ISON
+[2025-10-06 17:11:43] [DEBUG] ReplyHandler::process_response --> response: 
+421 :Command is not handled (sorry guys) ISON first third
+[2025-10-06 17:11:59] [ERROR] 421 ERR_UNKNOWNCOMMAND :ISON
+[2025-10-06 17:11:59] [DEBUG] ReplyHandler::process_response --> response: 
+421 :Command is not handled (sorry guys) ISON first
+[2025-10-06 17:11:59] [DEBUG] CmdFactory::make_command --> WHO
+[2025-10-06 17:11:59] [DEBUG] ReplyHandler::process_response --> response: 
+:hazardous.irc.serv 352 first #TETE userfir userfir@hazardous.irc.serv hazardous.irc.serv first H@ :0 :text1
+[2025-10-06 17:11:59] [DEBUG] ReplyHandler::process_response --> response: 
+:hazardous.irc.serv 352 second #TETE userSec userSec@hazardous.irc.serv hazardous.irc.serv second H :0 :text2
+[2025-10-06 17:11:59] [DEBUG] ReplyHandler::process_response --> response: 
+:hazardous.irc.serv 315 #TETE :End of WHO list
+[2025-10-06 17:12:19] [ERROR] 421 ERR_UNKNOWNCOMMAND :ISON
+[2025-10-06 17:12:19] [DEBUG] ReplyHandler::process_response --> response: 
+421 :Command is not handled (sorry guys) ISON first third
+[2025-10-06 17:12:19] [DEBUG] CmdFactory::make_command --> WHO
+[2025-10-06 17:12:19] [DEBUG] ReplyHandler::process_response --> response: 
+:hazardous.irc.serv 352 first #TETE userfir userfir@hazardous.irc.serv hazardous.irc.serv first H@ :0 :text1
+[2025-10-06 17:12:19] [DEBUG] ReplyHandler::process_response --> response: 
+:hazardous.irc.serv 352 second #TETE userSec userSec@hazardous.irc.serv hazardous.irc.serv second H :0 :text2
+[2025-10-06 17:12:19] [DEBUG] ReplyHandler::process_response --> response: 
+:hazardous.irc.serv 315 #TETE :End of WHO list
+[2025-10-06 17:12:19] [DEBUG] CmdFactory::make_command --> WHO
+[2025-10-06 17:12:19] [DEBUG] ReplyHandler::process_response --> response: 
+:hazardous.irc.serv 352 second #chan1 userSec userSec@hazardous.irc.serv hazardous.irc.serv second H@ :0 :text2
+[2025-10-06 17:12:19] [DEBUG] ReplyHandler::process_response --> response: 
+:hazardous.irc.serv 315 #chan1 :End of WHO list
+[2025-10-06 17:12:31] [ERROR] 421 ERR_UNKNOWNCOMMAND :ISON
+[2025-10-06 17:12:31] [DEBUG] ReplyHandler::process_response --> response: 
+421 :Command is not handled (sorry guys) ISON first
+[2025-10-06 17:12:43] [ERROR] 421 ERR_UNKNOWNCOMMAND :ISON
+[2025-10-06 17:12:43] [DEBUG] ReplyHandler::process_response --> response: 
+421 :Command is not handled (sorry guys) ISON first third
+[2025-10-06 17:12:59] [ERROR] 421 ERR_UNKNOWNCOMMAND :ISON
+[2025-10-06 17:12:59] [DEBUG] ReplyHandler::process_response --> response: 
+421 :Command is not handled (sorry guys) ISON first
+[2025-10-06 17:13:13] [ERROR] 421 ERR_UNKNOWNCOMMAND :ISON
+[2025-10-06 17:13:13] [DEBUG] ReplyHandler::process_response --> response: 
+421 :Command is not handled (sorry guys) ISON first third
+[2025-10-06 17:13:14] [INFO ] COMMAND Logger shutting down
+[2025-10-06 17:14:46] [INFO ] COMMAND Logger initialized - file: logs/COMMAND.log
+[2025-10-06 17:14:46] [ERROR] 421 ERR_UNKNOWNCOMMAND :CAP
+[2025-10-06 17:14:46] [DEBUG] ReplyHandler::process_response --> response to 
+421 :Command is not handled (sorry guys) CAP LS 302
+[2025-10-06 17:14:46] [DEBUG] CmdFactory::make_command --> PASS
+[2025-10-06 17:14:46] [INFO ] PASS - correct
+[2025-10-06 17:14:46] [DEBUG] CmdFactory::make_command --> NICK
+[2025-10-06 17:14:46] [DEBUG] Nick::check_args nickname : -> first
+[2025-10-06 17:14:46] [INFO ] Nick execute - first change
+[2025-10-06 17:14:46] [DEBUG] CmdFactory::make_command --> USER
+[2025-10-06 17:14:46] [INFO ] 001 RPL_WELCOME
+[2025-10-06 17:14:46] [DEBUG] ReplyHandler::process_response --> response to first
+:hazardous.irc.serv 001 first :Welcome to the IRC HazADoU& SerVerRrrr
+[2025-10-06 17:14:46] [DEBUG] CmdFactory::make_command --> JOIN
+[2025-10-06 17:14:46] [INFO ] Created new channel: #TETE
+[2025-10-06 17:14:46] [DEBUG] ReplyHandler::process_response --> response to first
+:first!userfir@hazardous.irc.serv JOIN :#TETE
+[2025-10-06 17:14:46] [DEBUG] Channel::broadcast -> send to everyone from channel: 
+[2025-10-06 17:14:46] [DEBUG] ReplyHandler::process_response --> response to first
+:hazardous.irc.serv MODE #TETE +o first
+[2025-10-06 17:14:46] [INFO ] first is operator of channel: #TETE
+[2025-10-06 17:14:46] [DEBUG] ReplyHandler::process_response --> response to first
+:hazardous.irc.serv 331 first #TETE :No topic is set
+[2025-10-06 17:14:46] [DEBUG] ReplyHandler::process_response --> response to first
+:hazardous.irc.serv 353 first = @first  :first
+[2025-10-06 17:14:46] [DEBUG] ReplyHandler::process_response --> response to first
+:hazardous.irc.serv 366 first #TETE :End of NAMES list
+[2025-10-06 17:14:46] [DEBUG] CmdFactory::make_command --> MODE
+[2025-10-06 17:14:46] [DEBUG] Build MODE (not implemented)
+[2025-10-06 17:15:26] [ERROR] 421 ERR_UNKNOWNCOMMAND :ISON
+[2025-10-06 17:15:26] [DEBUG] ReplyHandler::process_response --> response to first
+421 :Command is not handled (sorry guys) ISON first
+[2025-10-06 17:15:56] [ERROR] 421 ERR_UNKNOWNCOMMAND :ISON
+[2025-10-06 17:15:56] [DEBUG] ReplyHandler::process_response --> response to first
+421 :Command is not handled (sorry guys) ISON first
+[2025-10-06 17:16:26] [ERROR] 421 ERR_UNKNOWNCOMMAND :ISON
+[2025-10-06 17:16:26] [DEBUG] ReplyHandler::process_response --> response to first
+421 :Command is not handled (sorry guys) ISON first
+[2025-10-06 17:16:56] [ERROR] 421 ERR_UNKNOWNCOMMAND :ISON
+[2025-10-06 17:16:56] [DEBUG] ReplyHandler::process_response --> response to first
+421 :Command is not handled (sorry guys) ISON first
+[2025-10-06 17:16:56] [DEBUG] CmdFactory::make_command --> WHO
+[2025-10-06 17:16:56] [DEBUG] ReplyHandler::process_response --> response to first
+:hazardous.irc.serv 352 first #TETE userfir userfir@hazardous.irc.serv hazardous.irc.serv first H@ :0 :text1
+[2025-10-06 17:16:56] [DEBUG] ReplyHandler::process_response --> response to first
+:hazardous.irc.serv 315 #TETE :End of WHO list
+[2025-10-06 17:17:26] [ERROR] 421 ERR_UNKNOWNCOMMAND :ISON
+[2025-10-06 17:17:26] [DEBUG] ReplyHandler::process_response --> response to first
+421 :Command is not handled (sorry guys) ISON first
+[2025-10-06 17:17:49] [INFO ] COMMAND Logger shutting down

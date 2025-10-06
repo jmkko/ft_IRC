@@ -35,6 +35,17 @@ CmdFactory& CmdFactory::operator=(const CmdFactory& other)
 // Destructor
 CmdFactory::~CmdFactory(void) {}
 
+bool CmdFactory::check_in(Client& client, std::string& command) {
+    if (!client.is_registered() 
+		&& command != "NICK" 
+		&& command != "USER" 
+		&& command != "PASS"
+        && command != "QUIT") {
+		return false;
+	}
+	return true;
+}
+
 ICommand* CmdFactory::make_command(Server& server, Client& client, std::string& params)
 {
     ReplyHandler&      rh          = ReplyHandler::get_instance(&server);
@@ -57,25 +68,21 @@ ICommand* CmdFactory::make_command(Server& server, Client& client, std::string& 
     iss >> commandLine;
     for (size_t i = 0; i < NB_AVAILABLE_CMD; i++) {
         if (commandLine == available[i]) {
-            LOG_CMD.debug("make_command : " + commandLine);
-            // rergisteredcheck
-            if (!client.is_registered() && commandLine != "NICK" && commandLine != "USER" && commandLine != "PASS"
-                && commandLine != "QUIT") {
-                LOG_CMD.info(TO_STRING(ERR_NOTREGISTERED) + " ERR_NOTREGISTERED");
-                ReplyHandler& rh = ReplyHandler::get_instance(&server);
+            LOG_CMD.debug("CmdFactory::make_command --> " + commandLine);
+            if (!check_in(client, commandLine)) {
+                LOG_CMD.warning(TO_STRING(ERR_NOTREGISTERED) + " ERR_NOTREGISTERED");
                 rh.process_response(client, ERR_NOTREGISTERED, commandLine);
 				return NULL;
             }
             std::string params;
             std::getline(iss, params);
-			LOG_CMD.debug("make_command : params : " + params);
             if (!params.empty() && params[0] == ' ') {
                 params = params.substr(1);
             }
             return (this->*ptr[i])(server, client, params);
         }
     }
-    LOG_CMD.error("421 ERR_UNKNOWNCOMMAND");
+    LOG_CMD.error("421 ERR_UNKNOWNCOMMAND :" + commandLine);
     rh.process_response(client, ERR_UNKNOWNCOMMAND, params);
 
     return NULL;
@@ -247,20 +254,21 @@ ICommand* CmdFactory::privmsg_cmd(Server& server, Client& client, std::string& p
 
     Privmsg* privmsg = new Privmsg(msg);
 
-    std::string                               word;
-    std::istringstream                        iss(params);
-    Client*                                   dest = NULL;
-    std::map<std::string, Channel*>::iterator chan;
-    while (iss >> word) {
-        chan = server.channels.find(word);
-        if (chan != server.channels.end()) {
-            privmsg->add_channel(chan->second);
-        }
-        dest = server.find_client_by_nickname(word);
-        if (dest) {
-            privmsg->add_client(dest);
-        }
-    }
+    //std::string                               word;
+    //std::istringstream                        iss(params);
+    //Client*                                   dest = NULL;
+    //std::map<std::string, Channel*>::iterator chan;
+	privmsg->build_args(server, params);
+    // while (iss >> word) {
+    //     chan = server.channels.find(word);
+    //     if (chan != server.channels.end()) {
+    //         privmsg->add_channel(chan->second);
+    //     }
+    //     dest = server.find_client_by_nickname(word);
+    //     if (dest) {
+    //         privmsg->add_client(dest);
+    //     }
+    // }
 
     return privmsg;
 };

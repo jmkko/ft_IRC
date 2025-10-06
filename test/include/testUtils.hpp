@@ -83,6 +83,11 @@ static const std::string& noSpecCharJoin = "JOIN chan\r\n";
 static const std::string& toobigJoin     = "JOIN #chanllllllllllllllllllllllllllllllllllllllllllllllllll\r\n";
 static const std::string& validJoin      = "JOIN #chan\r\n";
 
+static const std::string& noparamsPrivmsg = "PRIVMSG\r\n";
+static const std::string& invalidnicknamePrivmsg = "PRIVMSG nonexistant :message\r\n";
+static const std::string& toomanytargetPrivmsg = "PRIVMSG roro,toto,charlie,#chan,doc,#leo :message\r\n";
+static const std::string& notextPrivmsg = "PRIVMSG #chan\r\n";
+
 void send_valid_password_assert(const TcpSocket& so);
 void send_valid_nick_assert(const TcpSocket& so);
 void authenticate(const TcpSocket& so);
