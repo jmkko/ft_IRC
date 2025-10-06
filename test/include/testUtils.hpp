@@ -6,7 +6,7 @@
 #include "printUtils.hpp"
 
 #define SERVER_PROCESS_TIME_MS 2
-#define SERVER_SEND_WAIT_MS    5
+#define SERVER_SEND_WAIT_MS    15
 #define SERVER_START_WAIT_MS   50
 #define SERVER_STOP_WAIT_MS    20
 #define TEST_PORT              4343
