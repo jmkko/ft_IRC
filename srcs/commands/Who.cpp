@@ -26,7 +26,7 @@ ReplyCode Who::check_args(Server& server, Client& client, std::string& params)
     iss >> op;
 
     if (!op.empty() && op != "o" && !iss.eof()) {
-        LOG_CMD.error(TO_STRING(ERR_NEEDMOREPARAMS) + " ERR_NEEDMOREPARAMS");
+        LOG_CMD.warning(TO_STRING(ERR_NEEDMOREPARAMS) + " ERR_NEEDMOREPARAMS");
         return (ERR_NEEDMOREPARAMS);
     }
     return (RPL_SUCCESS);

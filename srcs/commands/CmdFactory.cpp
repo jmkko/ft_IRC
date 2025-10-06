@@ -4,6 +4,7 @@
 #include "Join.hpp"
 #include "Kick.hpp"
 #include "LogManager.hpp"
+#include "Mode.hpp"
 #include "Nick.hpp"
 #include "Pass.hpp"
 #include "Privmsg.hpp"
@@ -75,7 +76,7 @@ ICommand* CmdFactory::make_command(Server& server, Client& client, std::string& 
             return (this->*ptr[i])(server, client, params);
         }
     }
-    LOG_CMD.error("421 ERR_UNKNOWNCOMMAND");
+    LOG_CMD.warning("421 ERR_UNKNOWNCOMMAND");
     rh.process_response(client, ERR_UNKNOWNCOMMAND, params);
 
     return NULL;
@@ -178,6 +179,25 @@ ICommand* CmdFactory::join_cmd(Server& server, Client& client, std::string& para
     return NULL;
 };
 
+ICommand* CmdFactory::mode_cmd(Server& server, Client& client, std::string& params)
+{
+    ReplyHandler&   rh = ReplyHandler::get_instance(&server);
+    std::vector<std::string> vectorParams;
+    std::istringstream iss(params);
+    std::string token = "";
+    while (std::getline(iss, token, ' '))
+    {
+        vectorParams.push_back(token);
+    }
+    ReplyCode replyCode = Mode::check_args(server, client, vectorParams);
+    if (replyCode == RPL_SUCCESS) {
+        return new Mode(vectorParams);
+    } else {
+        rh.process_response(client, replyCode, params);
+    }
+    return NULL;
+};
+
 // NOT IMPLEMENTED YET
 
 
@@ -187,15 +207,6 @@ ICommand* CmdFactory::part_cmd(Server& server, Client& client, std::string& para
     (void)server;
     (void)params;
     LOG_CMD.debug("Build PART (not implemented)");
-    return NULL;
-};
-
-ICommand* CmdFactory::mode_cmd(Server& server, Client& client, std::string& params)
-{
-    (void)client;
-    (void)server;
-    (void)params;
-    LOG_CMD.debug("Build MODE (not implemented)");
     return NULL;
 };
 

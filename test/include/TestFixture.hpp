@@ -5,6 +5,8 @@
 #include <cstddef>
 #include <vector>
 #include <memory>
+#include <iostream>
+#include "colors.hpp"
 
 class Server;
 
@@ -26,5 +28,6 @@ class TestFixture
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define TEST_SETUP(test, nbSockets) \
 	TestFixture test; \
-	auto sockets = (test).setup(nbSockets)
+	auto sockets = (test).setup(nbSockets); \
+    std::cout << BWHITE << "=====================START OF TEST " << __FUNCTION__ << "=====================" << RESET << '\n'
 #endif

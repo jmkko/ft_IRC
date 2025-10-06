@@ -71,6 +71,18 @@ export PATH 	:=	$(PATH):$(HOME)/local/bin:/usr/bin/:/usr/share/clang/scan-build-
 HEADERS			:=	$(wildcard $(INCLUDES)/*.hpp)
 FILES_TO_FORMAT	:=	$(SRCS) $(HEADERS)
 
+################	LOADER
+
+NB_COMP			:=	1
+
+ifndef RECURSION
+TO_COMP 		:=	$(shell make RECURSION=1 -n | grep Compiling | wc -l)
+else
+TO_COMP			:=	1
+endif
+
+PERCENT			:= 0
+
 ###########
 # Targets #
 ###########
@@ -86,13 +98,34 @@ $(NAME): $(OBJS)
 
 $(BUILD_DIR)/%.o: %.cpp | $(DIRS)
 	@mkdir -p $(BUILD_DIR)
+	$(eval PERCENT :=$(shell if [ "$(TO_COMP)" -eq 0 ]; then echo 100; else expr $(NB_COMP)00 "/" $(TO_COMP); fi))
+	@{ \
+		i=$$(($(PERCENT) % 4)); \
+		case $$i in \
+			0) anim="ᵒᵒᵒᵒᵒ";; \
+			1) anim="०ᵒ०ᵒ०";; \
+			2) anim="०००००";; \
+			3) anim="ᵒ०ᵒ०ᵒ";; \
+			4) anim="००ooᵒ";; \
+			5) anim="०ᵒᵒᵒ०";; \
+			6) anim="००o००";; \
+			7) anim="०o०ᵒ०";; \
+			8) anim="०o०o०";; \
+			9) anim="०ᵒ०ᵒ०";; \
+			*) anim="०ooo०";; \
+		esac; \
+		printf "\r[%-6s] %3d%% Compiling %s" "$$anim" $(PERCENT) "$<"; \
+	} 
 	@$(CXX) $(CXXFLAGS) $(INC) $< -c -o $@
+	$(eval NB_COMP=$(shell expr $(NB_COMP) + 1))
 
 comp-data:
 	@intercept-build make re
 
-debug: CXXFLAGS += -g -DDEB=1
+debug: CXXFLAGS += -g -DDEB
 debug: all
+
+redebug: fclean debug
 
 formator:
 	@echo "$(YELLOW)=== Formatting code ===$(NOC)"

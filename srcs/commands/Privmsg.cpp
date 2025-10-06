@@ -71,7 +71,7 @@ ReplyCode Privmsg::check_args(Server& server, Client& client, std::string& param
 			channels += word + " ";
 			LOG_CMD.debug("add client: " + word);
 		} else {
-			LOG_CMD.error(word + " is not a channel nor a client");
+			LOG_CMD.warning(word + " is not a channel nor a client");
 		}
 	}
 

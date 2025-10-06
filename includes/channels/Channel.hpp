@@ -45,7 +45,8 @@ class Channel
     ReplyCode make_operator(Client& client);
     void      remove_operator(Client& client);
 
-    void                     set_mode(unsigned short mode);
+    void                     add_mode(unsigned short mode);
+    void                     remove_mode(unsigned short mode);
     unsigned short           get_mode() const;
     std::vector<std::string> get_members_list() const;
     size_t                   get_nb_members() const;

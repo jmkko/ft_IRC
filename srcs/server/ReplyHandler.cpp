@@ -120,7 +120,7 @@ std::string ReplyHandler::select_response(Client& client, ReplyCode code, const 
     case RPL_ENDOFWHO:
         return (response + code_to_str(code) + parameters + RPL_ENDOFWHO_MSG);
     case RPL_MODE:
-        return (response + " MODE " + parameters + nick);
+        return (response + " MODE " + parameters);
     case RPL_TOPIC:
         return (response + code_to_str(code) + nick + " " + parameters);
     case RPL_NAMREPLY:
@@ -157,6 +157,8 @@ std::string ReplyHandler::select_response(Client& client, ReplyCode code, const 
         return (std::string("464") + ERR_ALREADYREGISTRED_MSG);
     case ERR_BADCHANMASK:
         return (responseWithCodeAndNick + parameters + ERR_BADCHANMASK_MSG);
+    case ERR_BADCHANNELKEY:
+        return (responseWithCodeAndNick + parameters + ERR_BADCHANNELKEY_MSG);
     case ERR_CHANNELISFULL:
         return (response + code_to_str(code) + nick + " " + parameters + ERR_CHANNELISFULL_MSG);
     case ERR_INVITEONLYCHAN:
@@ -176,7 +178,7 @@ int ReplyHandler::process_response(Client& client, ReplyCode code, const std::st
     // if (code == RPL_NICK | code == RPL_TOPIC)
     //	broadcast(response, chanel);
     if (!response.empty()) {
-        LOG_CMD.debug("add to sendBuffer: " + response);
+        LOG_CMD.sending(__FILE_NAME__, __FUNCTION__, response, &client);
         _send_reply(client, response);
     }
     return (code);

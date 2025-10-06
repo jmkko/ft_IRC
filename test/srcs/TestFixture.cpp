@@ -1,10 +1,12 @@
 #include "TestFixture.hpp"
 
 #include "LogManager.hpp"
+#include "Logger.hpp"
 #include "TcpSocket.hpp"
 #include "fakeClient.hpp"
 #include "testUtils.hpp"
 #include "utils.hpp"
+#include "colors.hpp"
 
 #include <cstddef>
 #include <thread>
@@ -28,19 +30,22 @@ std::vector<TcpSocket*> TestFixture::setup(size_t nbSockets)
     
     // Give server time to process new connections
     std::this_thread::sleep_for(std::chrono::milliseconds(SERVER_PROCESS_TIME_MS));
-    
+
     return socketsPtrs;
 }
 
 void TestFixture::cleanup()
 {
+	// wait to process replies
+	std::this_thread::sleep_for(std::chrono::milliseconds(SERVER_PROCESS_TIME_MS));
+    std::cout << BWHITE << "=====================END OF TEST=====================" << RESET << '\n';
     if (!_sockets.empty()) {
         LOG_TEST.debug("Fixture cleanup - closing " + utils::to_string(_sockets.size()) + " socket(s)");
         
         for (auto& socket : _sockets) {
             if (socket && socket->get_socket() != -1) {
                 // Send QUIT command to properly disconnect from server
-                // send_line(*socket.get(), validQuitMsg);
+                send_line(*socket.get(), validQuitMsg);
                 
                 // Give server time to process QUIT
                 std::this_thread::sleep_for(std::chrono::milliseconds(SERVER_PROCESS_TIME_MS));

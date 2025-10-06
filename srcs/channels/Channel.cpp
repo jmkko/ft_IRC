@@ -43,7 +43,7 @@ Channel::Channel(const std::string& name) :
 Channel::Channel(const Channel& other) :
     _name(other._name),
     _topic(other._topic),
-	_key(other._key),
+    _key(other._key),
     _mode(other._mode),
     _userLimit(other._userLimit),
     _members(other._members),
@@ -68,7 +68,7 @@ Channel& Channel::operator=(const Channel& other)
     if (this != &other) {
         _name      = other._name;
         _topic     = other._topic;
-		_key	   = other._key;
+        _key	   = other._key;
         _userLimit = other._userLimit;
         _members   = other._members;
         _operators = other._operators;
@@ -80,14 +80,14 @@ Channel& Channel::operator=(const Channel& other)
 // clang-format off
 std::ostream&	operator<<(std::ostream& os, const Channel& c)
 {
-	std::bitset<MODE_LEN>modes(c.get_mode());
-	return os << "Channel" << "["
-	<< " name = " << c.get_name()
-	<< " modes=" << modes
-	<< " topic=" << c.get_topic()
-	<< " userLimit=" << c.get_user_limit()
-	<< " nb of members=" << c.get_members().size()
-	<< "]";
+    std::bitset<MODE_LEN>modes(c.get_mode());
+    return os << "Channel" << "["
+    << " name = " << c.get_name()
+    << " modes=" << modes
+    << " topic=" << c.get_topic()
+    << " userLimit=" << c.get_user_limit()
+    << " nb of members=" << c.get_members().size()
+    << "]";
 }
 // clang-format on
 
@@ -151,8 +151,8 @@ ReplyCode Channel::set_topic(Client& client, const std::string& topic)
 
 ReplyCode Channel::set_key(const std::string& key)
 {
-	_key = key;
-	return RPL_SUCCESS;
+    _key = key;
+    return RPL_SUCCESS;
 }
 
 void Channel::set_user_limit(int limit)
@@ -212,7 +212,8 @@ ReplyCode Channel::make_operator(Client& client)
     return ERR_USERNOTINCHANNEL;
 }
 
-void           Channel::set_mode(unsigned short mode) { _mode = _mode | mode; }
+void           Channel::add_mode(unsigned short mode) { _mode = _mode | mode; }
+void           Channel::remove_mode(unsigned short mode) { _mode = _mode ^ mode; }
 unsigned short Channel::get_mode() const { return _mode; }
 
 size_t            Channel::get_nb_members() const { return _members.size(); }

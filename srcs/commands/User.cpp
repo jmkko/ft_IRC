@@ -48,36 +48,36 @@ ReplyCode User::check_args(Server& server, Client& client, std::string& params)
 
     iss >> username;
     if (username.empty()) {
-        LOG_CMD.error("461 ERR_NEEDMOREPARAMS");
+        LOG_CMD.warning("461 ERR_NEEDMOREPARAMS");
         return (ERR_NEEDMOREPARAMS);
     }
     iss >> hostname;
     if (hostname.empty()) {
-        LOG_CMD.error("461 ERR_NEEDMOREPARAMS");
+        LOG_CMD.warning("461 ERR_NEEDMOREPARAMS");
         return (ERR_NEEDMOREPARAMS);
     }
     iss >> servername;
     if (servername.empty()) {
-        LOG_CMD.error("461 ERR_NEEDMOREPARAMS");
+        LOG_CMD.warning("461 ERR_NEEDMOREPARAMS");
         return (ERR_NEEDMOREPARAMS);
     }
     iss >> realname;
     if (realname.empty() || realname[0] != ':' || realname.length() < 2) {
-        LOG_CMD.error("461 ERR_NEEDMOREPARAMS");
+        LOG_CMD.warning("461 ERR_NEEDMOREPARAMS");
         return (ERR_NEEDMOREPARAMS);
     }
 
     // trim white space around realname; return 461 if only space in realname
     size_t start = realname.find_first_not_of(" \t\r\n");
     if (start == std::string::npos) {
-        LOG_CMD.error("461 ERR_NEEDMOREPARAMS");
+        LOG_CMD.warning("461 ERR_NEEDMOREPARAMS");
         return (ERR_NEEDMOREPARAMS);
     }
     size_t end = realname.find_last_not_of(" \t\r\n");
     realname   = realname.substr(start, end - start + 1);
 
     if (!client.get_user_name().empty() && !client.get_nickname().empty() && client.is_registered()) {
-        LOG_CMD.error("462 ERR_ALREADYREGISTRED");
+        LOG_CMD.warning("462 ERR_ALREADYREGISTRED");
         params = "";
         return (ERR_ALREADYREGISTRED);
     }

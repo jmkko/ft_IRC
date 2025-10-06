@@ -1,6 +1,8 @@
 #ifndef LOGGER_HPP
 #define LOGGER_HPP
 
+#include "Client.hpp"
+
 #include <fstream>
 #include <map>
 #include <sstream>
@@ -26,10 +28,23 @@ class Logger
 		oss << context << " -> " << t;
 		log(DEBUG, oss.str());
 	}
+
+	template <typename T> void log_full(LogLevel level, const std::string& file, const std::string& function, const std::string& varName, const T& varVal)
+	{
+		std::ostringstream oss;
+		//NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+		oss << file << ": " << function << "() " << varName << " -> " << varVal;
+		log(level, oss.str() );
+	}
+
+	void receiving(const std::string& file, const std::string& function, const std::string& rawMessage, Client* client);
+	void sending(const std::string& file, const std::string& function, const std::string& rawMessage, Client* client);
+
 	void info(const std::string& message);
 	void warning(const std::string& message);
 	void error(const std::string& message);
 	void set_min_level(LogLevel level);
+	std::string	get_name() const;
 
   private:
 	std::string	  _name;

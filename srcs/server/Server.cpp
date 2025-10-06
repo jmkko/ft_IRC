@@ -192,7 +192,6 @@ void Server::_handle_client_disconnection(int pfdIndex)
  */
 void Server::_handle_client_input(int pfdIndex)
 {
-    LOG_SERVER.debug("Server #_handle_client_input");
     Socket  socket = _pfds[pfdIndex].fd;
     Client* client = _clients[socket];
     if (!client) {
@@ -302,6 +301,7 @@ void Server::_handle_commands(int pfdIndex)
 // return NULL if command has failed amd print
 ICommand* Server::_parse_command(Client& client, std::string line)
 {
+	LOG_CMD.receiving(__FILE_NAME__, __FUNCTION__, line, &client);
     CmdFactory commandBuilder;
     ICommand*  cmd = commandBuilder.make_command(*this, client, line);
 

@@ -4,6 +4,7 @@
 #include "Client.hpp"
 #include "Config.hpp"
 #include "LogManager.hpp"
+#include "Logger.hpp"
 #include "ReplyHandler.hpp"
 #include "Server.hpp"
 #include "consts.hpp"
@@ -53,19 +54,31 @@ ReplyCode Mode::check_args(Server& server, Client& client, std::vector<std::stri
 	char 		operation = '\0';
 	std::string modes;
 	std::vector<std::string> modeParams;
+
 	if (args.size() == 1 && Channel::is_valid_channel_name(channel))
 		return RPL_SUCCESS;
 	if (args.size() < 3)
 		return ERR_NEEDMOREPARAMS;
 	parse_args(args, &channel, &operation, &modes, &modeParams);
+    LOG_CMD.log_full(DEBUG, __FILE_NAME__, __FUNCTION__,  std::string("channel op modes params"), channel + " " + operation + " " + modes + " " + modeParams[0]);
+
 	if(modes.find_first_not_of(authorizedModes) != std::string::npos)
+    {
+        LOG_CMD.log_full(WARN, __FILE_NAME__, __FUNCTION__,"unknown option (other than kilot)", modes);
 		return ERR_UNKNOWNMODE;
-	if (std::string(1, operation).find_first_not_of(authorizedOps))
-		return ERR_UNKNOWNMODE;
+    }
+	if (std::string(1, operation).find_first_not_of(authorizedOps) != std::string::npos)
+    {
+         LOG_CMD.log_full(WARN, __FILE_NAME__, __FUNCTION__, "unknown operator (other than +-)", operation);
+         return ERR_UNKNOWNMODE;
+    }
 	for (size_t i = 0; i < modes.size(); ++i)
 	{
 		if (modesRequiringArg.find(modes[i]) != std::string::npos && operation == '+' && i >= modeParams.size())
+        {
+            LOG_CMD.debug("option requires param");
 			return ERR_NEEDMOREPARAMS;
+        }
 		if (modes[i] == 'l' && modeParams[i].find_first_not_of(digits) != std::string::npos)
 			return ERR_NEEDMOREPARAMS;
 		if (modes[i] == 'l' && std::atol(modeParams[i].c_str()) > std::numeric_limits<int>::max())
@@ -148,57 +161,59 @@ void Mode::execute(Server& server, Client& client)
 	}
 
 	// checking and (un)setting modes
-	std::string validModes = "";
+	std::string validModes = operation == '+' ? "+" : "-";
 	std::string validModeParams = "";
+    LOG_CMD.log_full(DEBUG, __FILE_NAME__, __FUNCTION__, "modes", modes);
 	for (size_t i = 0; i < modes.size() ; ++i)
 	{
 		if (modes[i] == 'k')
 		{
 			if (operation == '+')
 			{
-				if (channel->get_mode() | CHANMODE_KEY)
+                if (channel->get_mode() & CHANMODE_KEY)
 				{
-					rh.process_response(client, ERR_KEYSET);
+                    rh.process_response(client, ERR_KEYSET);
 				}
 				else
 				{
-					channel->set_mode(currentModes & CHANMODE_KEY);
+                    LOG_CMD.debug("setting +k");
+					channel->add_mode(CHANMODE_KEY);
 					channel->set_key(modeParams[i]);
-					validModes += "+k";
+					validModes += "k";
 					validModeParams += " " + modeParams[i];
 				}
 			}
 			else {
-				channel->set_mode(currentModes & ~CHANMODE_KEY);
-				validModes += "-k";
+				channel->remove_mode(CHANMODE_KEY);
+				validModes += "k";
 			}
 		}
-		if (modes[i] == 'i')
+		else if (modes[i] == 'i')
 		{
 			if (operation == '+')
 			{
-				channel->set_mode(currentModes & CHANMODE_INVITE);
+				channel->add_mode(currentModes & CHANMODE_INVITE);
 			}
 			else {
-				channel->set_mode(currentModes & ~CHANMODE_INVITE);
+				channel->add_mode(currentModes & ~CHANMODE_INVITE);
 			}
 			validModes += 'i';
 		}
-		if (modes[i] == 'l')
+		else if (modes[i] == 'l')
 		{
 			if (operation == '+')
 			{
-				channel->set_mode(currentModes & CHANMODE_LIMIT);
+				channel->add_mode(currentModes & CHANMODE_LIMIT);
 				channel->set_user_limit(std::atoi(modeParams[i].c_str()));
 				validModeParams += " " + modeParams[i];
 			}
 			else {
-				channel->set_mode(currentModes & ~CHANMODE_LIMIT);
+				channel->add_mode(currentModes & ~CHANMODE_LIMIT);
 				channel->set_user_limit(NO_LIMIT);
 			}
 			validModes += 'l';
 		}
-		if (modes[i] == 'o')
+		else if (modes[i] == 'o')
 		{
 			Client* targetOp = server.find_client_by_nickname(modeParams[i]);
 			if (!targetOp)

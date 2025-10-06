@@ -14,8 +14,11 @@
 int main()
 {
     LogManager& lm = LogManager::get_instance();
+	#ifdef DEB
     lm.set_global_level(DEBUG);
-
+	#else
+	lm.set_global_level(ERROR);
+	#endif
     try {
         // Start server once for all tests
         Server* s = new Server(TEST_PORT, DEFAULT_PASSWORD);

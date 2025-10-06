@@ -42,10 +42,10 @@ ReplyCode Nick::check_args(Server& server, Client& client, std::string& params)
     iss >> nickname;
 	LOG_CMD.debug("Nick::check_args nickname :", nickname);
     if (nickname.empty()) {
-        LOG_CMD.error("431 ERR_NONICKNAMEGIVEN");
+        LOG_CMD.warning("431 ERR_NONICKNAMEGIVEN");
         return (ERR_NONICKNAMEGIVEN);
     } else if (!std::isalpha(nickname[0]) && !is_special_abnf(nickname[0])) {
-        LOG_CMD.error("432 ERR_ERRONEUSNICKNAME");
+        LOG_CMD.warning("432 ERR_ERRONEUSNICKNAME");
         return (ERR_ERRONEUSNICKNAME);
     } else if (nickname.length() > ircConfig.get_nickname_max_len()) {
         nickname = nickname.substr(0, ircConfig.get_nickname_max_len());
@@ -54,7 +54,7 @@ ReplyCode Nick::check_args(Server& server, Client& client, std::string& params)
 	// checks args checks params
 	// execute checks logic involving server or client ?
     if (server.find_client_by_nickname(nickname)) { 
-        LOG_CMD.error("431 ERR_NICKNAMEINUSE");
+        LOG_CMD.warning("431 ERR_NICKNAMEINUSE");
         return (ERR_NICKNAMEINUSE);
     }
     params = nickname;
