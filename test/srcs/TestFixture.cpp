@@ -1,11 +1,11 @@
-#include "TestFixture.hpp"
-
 #include "LogManager.hpp"
 #include "TcpSocket.hpp"
+#include "TestFixture.hpp"
 #include "fakeClient.hpp"
 #include "testUtils.hpp"
 
 #include <cstddef>
+#include <unistd.h> // close
 
 TestFixture::TestFixture(Server& server) : _sockets(), _runner(server), _hasStarted(false) {}
 

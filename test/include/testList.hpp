@@ -5,5 +5,7 @@ class Server;
 
 void test_nick(Server& s);
 void test_kick(Server& s);
+void test_who(Server& s);
+void test_join(Server& s);
 
 #endif

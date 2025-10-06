@@ -14,6 +14,14 @@ Who& Who::operator=(const Who& other)
     return *this;
 }
 
+/**
+ * @brief Check if there is to much params for the command Who
+ *
+ * @param serve
+ * @param client
+ * @param params
+ * @return replyCode
+ */
 ReplyCode Who::check_args(Server& server, Client& client, std::string& params)
 {
     std::string        mask;
@@ -31,6 +39,7 @@ ReplyCode Who::check_args(Server& server, Client& client, std::string& params)
     }
     return (RPL_SUCCESS);
 }
+
 //: server 352 <me> <channel> <user> <host> <server> <nick> <flags> :<hopcount> <realname>
 // :irc.example.com 352 user1 #chan1 bob bobhost irc.example.com bob H@ :0 Bob Realname
 // :irc.example.com 352 user1 #chan1 alice alicehost irc.example.com alice H+ :0 Alice Realname
