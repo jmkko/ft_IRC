@@ -10,9 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "TcpSocket.hpp"
-
 #include "LogManager.hpp"
+#include "TcpSocket.hpp"
 #include "utils.hpp"
 
 #include <arpa/inet.h> // hton*, ntoh*, inet_addr
@@ -73,11 +72,14 @@ TcpSocket& TcpSocket::operator=(const TcpSocket& inst)
  *		🛠️ FUNCTIONS											*
  *************************************************************/
 
-/******************************************************************************
- * Connect a socket to a server
- * ipaddress like "127.0.0.1"
+/**
+ * @brief Connect a socket to a server
  * AF_INET IPv4 familly
- ******************************************************************************/
+ *
+ * @param ipaddress like "127.0.0.1"
+ * @param port
+ * @return true
+ */
 bool TcpSocket::tcp_connect(const std::string& ipaddress, unsigned short port)
 {
     sockaddr_in addr = {};
@@ -114,13 +116,13 @@ void TcpSocket::tcp_bind(unsigned short port)
     }
 }
 
-/******************************************************************************
- * wait a socket connection a socket that will be used to accept incoming
- *      connection requests using accept(2)
- * SOMAXCONN system manage the value
- * AF_INET IPv4 familly
- * return 0 on success or -1 on error
- ******************************************************************************/
+/**
+ * @brief wait a socket connection a socket that will be used to accept incoming
+ *        connection requests using accept(2)
+ *        SOMAXCONN system manage the value
+ *        AF_INET IPv4 familly
+ * @return 0 on success or -1 on error
+ */
 void TcpSocket::tcp_listen()
 {
 
@@ -138,10 +140,14 @@ std::string TcpSocket::get_address(const sockaddr_in& addr) { return inet_ntoa(a
 
 int TcpSocket::set_non_blocking_socket() { return fcntl(_sckt, F_SETFL, O_NONBLOCK); }
 
-/*****************************************************************************
- * first send data size
- * second send data
- *******************************************************************************/
+/**
+ * @brief first send data size
+ *        second send the data@
+ *
+ * @param data
+ * @param len
+ * @return
+ */
 int TcpSocket::do_send(const unsigned char* data, unsigned short len)
 {
     unsigned short networkLen = htons(len);
@@ -153,6 +159,13 @@ int TcpSocket::do_send(const unsigned char* data, unsigned short len)
  * first read data size
  * second read data
  ******************************************************************************/
+/**
+ * @brief first read data size
+ *        second read the data@
+ *
+ * @param buffer
+ * @return
+ */
 int TcpSocket::do_receive(std::vector<unsigned char>& buffer)
 {
     unsigned short expectedSize = 0;

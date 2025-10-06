@@ -1,6 +1,5 @@
-#include "Join.hpp"
-
 #include "Channel.hpp"
+#include "Join.hpp"
 #include "LogManager.hpp"
 #include "ReplyHandler.hpp"
 #include "Server.hpp"
@@ -20,6 +19,15 @@ Join& Join::operator=(const Join& other)
 
 Join::Join(const std::vector<std::string>& channelsLst) : _channelsLst(channelsLst) {}
 
+/**
+ * @brief check if there is no params for command Join, and parse the params
+ * and format this params to a vector of string <channel><space><key>
+ *
+ * @param server
+ * @param client
+ * @param params
+ * @return vector of string formarted
+ */
 ReplyCode Join::check_args(Server& server, Client& client, std::vector<std::string>& params)
 {
     (void)server;
@@ -62,6 +70,7 @@ ReplyCode Join::check_args(Server& server, Client& client, std::vector<std::stri
 
 /**
  * @brief Allows a client to join a channel or create it if it does not exist
+ * after checking if the name of the channel is valid accordind to the RFC_2812
  *
  * @param server
  * @param client
@@ -97,7 +106,7 @@ void Join::execute(Server& server, Client& client)
         std::map<std::string, Channel*>::iterator existingChannel = server.channels.find(chanName);
 
         if (existingChannel == server.channels.end()) {
-            channel                              = new Channel(chanName);
+            channel                              = new Channel(chanName); // NOLINT
             server.channels[channel->get_name()] = channel;
             LOG_CMD.info("Created new channel: " + channel->get_name());
         } else {

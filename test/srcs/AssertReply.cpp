@@ -1,6 +1,5 @@
-#include "AssertReply.hpp"
-
 #include "AssertFail.hpp"
+#include "AssertReply.hpp"
 #include "LogManager.hpp"
 #include "consts.hpp"
 #include "utils.hpp"
@@ -117,6 +116,21 @@ AssertReply& AssertReply::contains(const std::string& token)
     }
     if (!isMatching) {
         throw AssertFail("message ", token, "no occurence");
+    }
+    return *this;
+}
+
+AssertReply& AssertReply::do_not_contains(const std::string& token)
+{
+    bool isMatching = true;
+    for (std::vector<Message>::iterator it = _messages.begin(); it != _messages.end(); ++it) {
+        if (_is_message_containing(*it, token)) {
+            isMatching = false;
+            break;
+        }
+    }
+    if (isMatching) {
+        throw AssertFail("not in message ", token, token);
     }
     return *this;
 }

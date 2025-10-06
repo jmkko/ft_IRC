@@ -17,6 +17,7 @@ int main()
         Server server(TEST_PORT, DEFAULT_PASSWORD);
         test_nick(server);
         test_kick(server);
+        test_who(server);
     } catch (const std::exception& e) {
         std::cerr << e.what() << '\n';
     }
