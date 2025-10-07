@@ -3,11 +3,11 @@
 
 class Server;
 
-void test_join();
-void test_kick();
-void test_mode();
-void test_nick();
-void test_who();
-void test_privmsg();
+void test_join(Server& s);
+void test_kick(Server& s);
+void test_mode(Server& s);
+void test_nick(Server& s);
+void test_who(Server& s);
+void test_privmsg(Server& s);
 
 #endif

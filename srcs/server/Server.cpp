@@ -355,11 +355,7 @@ void Server::_clean()
     }
 
     // Clean up channels
-    LOG_SERVER.debug(std::string("cleaning ") + TO_STRING(channels.size()) + " channels");
-    for (std::map<std::string, Channel*>::iterator it = channels.begin(); it != channels.end(); ++it) {
-        delete it->second; // NOLINT
-    }
-    channels.clear();
+    cleanup_channels();
 
     // Reset signal
     globalSignal = 0;
@@ -394,6 +390,16 @@ void Server::cleanup_socket_and_client(int pfdIndex)
         delete c;
     }
     _pfds.erase(_pfds.begin() + pfdIndex);
+}
+
+void                 Server::cleanup_channels()
+{
+    LOG_dt_SERVER(std::string("cleaning ") + TO_STRING(channels.size()) + " channels");
+    for (std::map<std::string, Channel*>::iterator it = channels.begin(); it != channels.end(); ++it) {
+        delete it->second; // NOLINT
+    }
+    channels.clear();
+
 }
 
 std::vector<Client*> Server::find_clients_by_pattern(const std::string& pattern) const

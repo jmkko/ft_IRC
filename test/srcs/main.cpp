@@ -28,12 +28,12 @@ int main()
         // Run command tests
         LOG_TEST.info("Running test suite...");
 
-        test_mode();
-        // test_nick();
-        // test_kick();
-        // test_who();
-        // test_join();
-        // test_privmsg();
+        test_mode(*s);
+        test_nick(*s);
+        test_kick(*s);
+        test_who(*s);
+        test_join(*s);
+        test_privmsg(*s);
         
         LOG_TEST.info("All tests completed, stopping server...");
 		runner.stop();

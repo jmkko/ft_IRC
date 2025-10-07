@@ -209,7 +209,7 @@ ReplyCode Channel::make_operator(Client& client)
 }
 
 void           Channel::add_mode(unsigned short mode) { _mode = _mode | mode; }
-void           Channel::remove_mode(unsigned short mode) { _mode = _mode ^ mode; }
+void           Channel::remove_mode(unsigned short mode) { _mode = _mode & ~mode; }
 unsigned short Channel::get_mode() const { return _mode; }
 
 size_t            Channel::get_nb_members() const { return _members.size(); }

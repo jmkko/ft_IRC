@@ -12,7 +12,7 @@
 #include <chrono>
 #include <unistd.h>             // close
 
-TestFixture::TestFixture() : _sockets() {}
+TestFixture::TestFixture(Server& s) : _sockets(), _server(s) {}
 
 TestFixture::~TestFixture() { cleanup(); }
 
@@ -38,10 +38,11 @@ void TestFixture::cleanup()
 {
 	// wait to process replies
 	std::this_thread::sleep_for(std::chrono::milliseconds(SERVER_PROCESS_TIME_MS));
+    #ifdef DEB
     std::cout << BWHITE << "=====================END OF TEST=====================" << RESET << '\n';
+    #endif
     if (!_sockets.empty()) {
-        LOG_TEST.debug("Fixture cleanup - closing " + utils::to_string(_sockets.size()) + " socket(s)");
-        
+        LOG_dt_TEST("Fixture cleanup - closing " + utils::to_string(_sockets.size()) + " socket(s)");        
         for (auto& socket : _sockets) {
             if (socket && socket->get_socket() != -1) {
                 // Send QUIT command to properly disconnect from server
@@ -57,4 +58,5 @@ void TestFixture::cleanup()
         // Give server time to cleanup disconnected clients
         std::this_thread::sleep_for(std::chrono::milliseconds(SERVER_PROCESS_TIME_MS));
     }
+    _server.cleanup_channels();
 }

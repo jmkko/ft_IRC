@@ -79,6 +79,7 @@ static const std::string& invalidNoChanKickMsg          = "KICK roro\r\n";
 static const std::string& invalidNoUserKickMsg          = "KICK #chan\r\n";
 static const std::string& validInexistentChannelKickMsg = "KICK #chanel roro\r\n";
 
+static const std::string& validModeMsg 			        = "MODE #chan\r\n";
 static const std::string& validModePlusKMsg 			= "MODE #chan +k key\r\n";
 static const std::string& validModeMinusKMsg 			= "MODE #chan -k key\r\n";
 static const std::string& invalidModePlusKNoArgMsg 		= "MODE #chan +k\r\n";
@@ -91,14 +92,13 @@ static const std::string& invalidModePlusLNegativeMsg 	= "MODE #chan +l -1\r\n";
 static const std::string& invalidModePlusLNoArgMsg 		= "MODE #chan +l\r\n";
 static const std::string& validModePlusOMsg 			= "MODE #chan +o op2\r\n";
 static const std::string& validModeMinusOMsg 			= "MODE #chan -o op2\r\n";
-static const std::string& validModePlusOWildcardMsg 	= "MODE #chan -o *2\r\n";
 static const std::string& invalidModePlusONoArgMsg 		= "MODE #chan +o\r\n";
 static const std::string& validModePlusTMsg 			= "MODE #chan +t\r\n";
 static const std::string& validModeMinusTMsg 			= "MODE #chan -t\r\n";
 static const std::string& validModePlusKLMsg 			= "MODE #chan +kl key 10\r\n";
-static const std::string& invalidModeNoModeMsg 			= "MODE #chan\r\n";
 static const std::string& invalidModeUnknownModeMsg 	= "MODE #chan +z\r\n";
-static const std::string& invalidModeUnknownUserMsg 	= "MODE #chan +o pouic\r\n";
+static const std::string& invalidModeUnknownChanMsg 	= "MODE #ch +i\r\n";
+static const std::string& validModeUnknownUserMsg 	    = "MODE #chan +o pouic\r\n";
 static const std::string& invalidModeNoChanMsg 			= "MODE +l 4\r\n";
 
 static const std::string& validPartMsg 					= "PART #chan\r\n";
@@ -134,6 +134,7 @@ void authenticate_and_join_op2(const TcpSocket& so);
 void authenticate_second_user(const TcpSocket& so);
 void make_op(const TcpSocket& so);
 void make_two_ops(const TcpSocket& so, const TcpSocket& so2);
+void skip_lines(const TcpSocket& so, int nb);
 
 // simple
 

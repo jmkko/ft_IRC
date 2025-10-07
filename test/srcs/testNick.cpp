@@ -29,11 +29,11 @@
 /**
  @brief integration test - normal case
 */
-void valid_nick_should_void()
+void valid_nick_should_void(Server& s)
 {
     try {
 
-        TEST_SETUP(test, 1);
+        TEST_SETUP(test, s, 1);
         TcpSocket& so = *sockets.at(0);
         send_valid_password_assert(so);
 
@@ -48,11 +48,11 @@ void valid_nick_should_void()
 /**
  @brief integration test - normal case
 */
-void valid_nick_special_should_void()
+void valid_nick_special_should_void(Server& s)
 {
     try {
 
-        TEST_SETUP(test, 1);
+        TEST_SETUP(test, s, 1);
         TcpSocket& so = *sockets.at(0);
         send_valid_password_assert(so);
 
@@ -70,10 +70,10 @@ void valid_nick_special_should_void()
 /**
  @brief integration test - error case
 */
-void valid_change_should_void()
+void valid_change_should_void(Server& s)
 {
     try {
-        TEST_SETUP(test, 1);
+        TEST_SETUP(test, s, 1);
         TcpSocket& so = *sockets.at(0);
         authenticate(so);
 
@@ -94,11 +94,11 @@ void valid_change_should_void()
 /**
  @brief integration test - error case
 */
-void no_arg_should_err()
+void no_arg_should_err(Server& s)
 {
 
     try {
-        TEST_SETUP(test, 1);
+        TEST_SETUP(test, s, 1);
         TcpSocket& so = *sockets.at(0);
         send_valid_password_assert(so);
 
@@ -115,10 +115,10 @@ void no_arg_should_err()
 /**
  @brief integration test - error case
 */
-void starting_with_number_should_err()
+void starting_with_number_should_err(Server& s)
 {
     try {
-        TEST_SETUP(test, 1);
+        TEST_SETUP(test, s, 1);
         TcpSocket& so = *sockets.at(0);
         send_valid_password_assert(so);
 
@@ -135,10 +135,10 @@ void starting_with_number_should_err()
 /**
  @brief integration test - error case
 */
-void taken_should_err()
+void taken_should_err(Server& s)
 {
     try {
-        TEST_SETUP(test, 2);
+        TEST_SETUP(test, s, 2);
         TcpSocket& so  = *sockets.at(0);
         TcpSocket& so2 = *sockets.at(1);
         authenticate(so);
@@ -154,12 +154,12 @@ void taken_should_err()
     }
 }
 
-void test_nick()
+void test_nick(Server& s)
 {
     print_test_series("command NICK");
-    run_test([&] { valid_nick_should_void(); }, "roro");
-    run_test([&] { valid_nick_special_should_void(); }, "[roro]");
-    run_test([&] { no_arg_should_err(); }, "no arg");
-    run_test([&] { starting_with_number_should_err(); }, "3oro");
-    run_test([&] { taken_should_err(); }, "taken");
+    run_test([&] { valid_nick_should_void(s); }, "roro");
+    run_test([&] { valid_nick_special_should_void(s); }, "[roro]");
+    run_test([&] { no_arg_should_err(s); }, "no arg");
+    run_test([&] { starting_with_number_should_err(s); }, "3oro");
+    run_test([&] { taken_should_err(s); }, "taken");
 }

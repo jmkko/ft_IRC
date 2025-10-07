@@ -177,6 +177,7 @@ enum ReplyCode {
     FORMAT_ERR          = 802,
     PWD_ERR             = 803,
     RPL_INVITING_TARGET = 804,
+    ERR_WRONG_FORMAT    = 805,
 
     ////////////////////// RFC REPLIES
     RPL_WELCOME  = 001,	// after registering (PASS NICK USER)

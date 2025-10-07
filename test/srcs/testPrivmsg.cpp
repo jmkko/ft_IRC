@@ -22,10 +22,10 @@
 #include <string>
 #include <thread>
 
-void no_params_should_err()
+void no_params_should_err(Server& s)
 {
     try {
-        TEST_SETUP(test, 1);
+        TEST_SETUP(test, s, 1);
         TcpSocket& soOp = *sockets.at(0);
         make_op(soOp);
 
@@ -39,10 +39,10 @@ void no_params_should_err()
     }
 }
 
-void invalid_nickname_should_err()
+void invalid_nickname_should_err(Server& s)
 {
     try {
-        TEST_SETUP(test, 1);
+        TEST_SETUP(test, s, 1);
         TcpSocket& soOp = *sockets.at(0);
         make_op(soOp);
 
@@ -56,10 +56,10 @@ void invalid_nickname_should_err()
     }
 }
 
-void too_many_target_should_notice()
+void too_many_target_should_notice(Server& s)
 {
     try {
-        TEST_SETUP(test, 1);
+        TEST_SETUP(test, s, 1);
         TcpSocket& soOp = *sockets.at(0);
         make_op(soOp);
 
@@ -73,10 +73,10 @@ void too_many_target_should_notice()
     }
 }
 
-void no_text_should_err()
+void no_text_should_err(Server& s)
 {
     try {
-        TEST_SETUP(test, 1);
+        TEST_SETUP(test, s, 1);
         TcpSocket& soOp = *sockets.at(0);
         make_op(soOp);
 
@@ -89,11 +89,11 @@ void no_text_should_err()
     }
 }
 
-void test_privmsg()
+void test_privmsg(Server& s)
 {
     print_test_series("command PRIMSG");
-    run_test([&] { no_params_should_err(); }, "PRIVMSG with no params");
-    run_test([&] { invalid_nickname_should_err(); }, "PRIVMSG to non existant nickname");
-    run_test([&] { too_many_target_should_notice(); }, "PRIVMSG with too many target");
-    run_test([&] { no_text_should_err(); }, "PRIVMSG with no message");
+    run_test([&] { no_params_should_err(s); }, "PRIVMSG with no params");
+    run_test([&] { invalid_nickname_should_err(s); }, "PRIVMSG to non existant nickname");
+    run_test([&] { too_many_target_should_notice(s); }, "PRIVMSG with too many target");
+    run_test([&] { no_text_should_err(s); }, "PRIVMSG with no message");
 }

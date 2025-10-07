@@ -23,11 +23,11 @@
 #include <string>
 #include <thread>
 
-void noparams_should_err()
+void noparams_should_err(Server& s)
 {
     try {
         // init test_join
-        TEST_SETUP(test, 1);
+        TEST_SETUP(test, s, 1);
         TcpSocket& soOp = *sockets.at(0);
         make_op(soOp);
 
@@ -41,11 +41,11 @@ void noparams_should_err()
     }
 }
 
-void no_spec_char_should_err()
+void no_spec_char_should_err(Server& s)
 {
     try {
         // init test_join
-        TEST_SETUP(test, 1);
+        TEST_SETUP(test, s, 1);
         TcpSocket& soOp = *sockets.at(0);
         make_op(soOp);
 
@@ -59,11 +59,11 @@ void no_spec_char_should_err()
     }
 }
 
-void toobigname_should_err()
+void toobigname_should_err(Server& s)
 {
     try {
         // init test_join
-        TEST_SETUP(test, 1);
+        TEST_SETUP(test, s, 1);
         TcpSocket& soOp = *sockets.at(0);
         make_op(soOp);
 
@@ -77,11 +77,11 @@ void toobigname_should_err()
     }
 }
 
-void valid_join_should_notice()
+void valid_join_should_notice(Server& s)
 {
     try {
         // init test_join
-        TEST_SETUP(test, 1);
+        TEST_SETUP(test, s, 1);
         TcpSocket& soOp = *sockets.at(0);
         make_op(soOp);
 
@@ -97,11 +97,11 @@ void valid_join_should_notice()
     }
 }
 
-void test_join()
+void test_join(Server& s)
 {
     print_test_series("command JOIN");
-    run_test([&] { noparams_should_err(); }, "JOIN with no params");
-    run_test([&] { no_spec_char_should_err(); }, "JOIN chan");
-    run_test([&] { toobigname_should_err(); }, "JOIN more 50 char channel name");
-    run_test([&] { valid_join_should_notice(); }, "JOIN #chan (op user)"); // only check the last code endof names
+    run_test([&] { noparams_should_err(s); }, "JOIN with no params");
+    run_test([&] { no_spec_char_should_err(s); }, "JOIN chan");
+    run_test([&] { toobigname_should_err(s); }, "JOIN more 50 char channel name");
+    run_test([&] { valid_join_should_notice(s); }, "JOIN #chan (op user)"); // only check the last code endof names
 }

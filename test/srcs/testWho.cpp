@@ -26,11 +26,11 @@
  *                    ✅  VALID                              *
  ************************************************************/
 
-void noparams_should_notice()
+void noparams_should_notice(Server& s)
 {
     try {
         // init test
-        TEST_SETUP(test, 2);
+        TEST_SETUP(test, s, 2);
         TcpSocket& soOp = *sockets.at(0);
         TcpSocket& so   = *sockets.at(1);
         make_op(soOp);
@@ -45,11 +45,11 @@ void noparams_should_notice()
     }
 }
 
-void chan1_should_notice()
+void chan1_should_notice(Server& s)
 {
     try {
         // init test
-        TEST_SETUP(test, 2);
+        TEST_SETUP(test, s, 2);
         TcpSocket& soOp = *sockets.at(0);
         TcpSocket& so   = *sockets.at(1);
         make_op(soOp);
@@ -64,11 +64,11 @@ void chan1_should_notice()
     }
 }
 
-void chan1op_should_notice()
+void chan1op_should_notice(Server& s)
 {
     try {
         // init test
-        TEST_SETUP(test, 2);
+        TEST_SETUP(test, s, 2);
         TcpSocket& soOp = *sockets.at(0);
         TcpSocket& so   = *sockets.at(1);
         make_op(soOp);
@@ -83,11 +83,11 @@ void chan1op_should_notice()
     }
 }
 
-void good_pattern_should_notice()
+void good_pattern_should_notice(Server& s)
 {
     try {
         // init test
-        TEST_SETUP(test, 2);
+        TEST_SETUP(test, s, 2);
         TcpSocket& soOp = *sockets.at(0);
         TcpSocket& so   = *sockets.at(1);
         make_op(soOp);
@@ -102,11 +102,11 @@ void good_pattern_should_notice()
     }
 }
 
-void bad_user_should_notice()
+void bad_user_should_notice(Server& s)
 {
     try {
         // init test
-        TEST_SETUP(test, 2);
+        TEST_SETUP(test, s, 2);
         TcpSocket& soOp = *sockets.at(0);
         TcpSocket& so   = *sockets.at(1);
         make_op(soOp);
@@ -121,11 +121,11 @@ void bad_user_should_notice()
     }
 }
 
-void bad_pattern_should_notice()
+void bad_pattern_should_notice(Server& s)
 {
     try {
         // init test
-        TEST_SETUP(test, 2);
+        TEST_SETUP(test, s, 2);
         TcpSocket& soOp = *sockets.at(0);
         TcpSocket& so   = *sockets.at(1);
         make_op(soOp);
@@ -140,11 +140,11 @@ void bad_pattern_should_notice()
     }
 }
 
-void all_user_should_notice()
+void all_user_should_notice(Server& s)
 {
     try {
         // init test
-        TEST_SETUP(test, 2);
+        TEST_SETUP(test, s, 2);
         TcpSocket& soOp = *sockets.at(0);
         TcpSocket& so   = *sockets.at(1);
         make_op(soOp);
@@ -159,15 +159,15 @@ void all_user_should_notice()
     }
 }
 
-void test_who()
+void test_who(Server& s)
 {
     print_test_series("command WHO");
 
-    run_test([&] { noparams_should_notice(); }, "No params WHO");
-    run_test([&] { chan1_should_notice(); }, "WHO #chan1");
-    run_test([&] { chan1op_should_notice(); }, "WHO #chan1 o");
-    run_test([&] { good_pattern_should_notice(); }, "WHO ro*");
-    run_test([&] { bad_user_should_notice(); }, "WHO resu");
-    run_test([&] { bad_pattern_should_notice(); }, "WHO *x*");
-    run_test([&] { all_user_should_notice(); }, "WHO *");
+    run_test([&] { noparams_should_notice(s); }, "No params WHO");
+    run_test([&] { chan1_should_notice(s); }, "WHO #chan1");
+    run_test([&] { chan1op_should_notice(s); }, "WHO #chan1 o");
+    run_test([&] { good_pattern_should_notice(s); }, "WHO ro*");
+    run_test([&] { bad_user_should_notice(s); }, "WHO resu");
+    run_test([&] { bad_pattern_should_notice(s); }, "WHO *x*");
+    run_test([&] { all_user_should_notice(s); }, "WHO *");
 }

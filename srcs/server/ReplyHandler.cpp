@@ -131,6 +131,8 @@ std::string ReplyHandler::select_response(Client& client, ReplyCode code, const 
         return (response + code_to_str(code) + nick + " " + parameters + RPL_ENDOFNAMES_MSG);
     case RPL_NOTOPIC:
         return (response + code_to_str(code) + nick + " " + parameters + RPL_NOTOPIC_MSG);
+    case RPL_CHANNELMODEIS:
+        return (responseWithCodeAndNick + parameters + " " + ircCodes.trailing(code));
     case ERR_CHANOPRIVSNEEDED:
         return (responseWithCodeAndNick + parameters + ERR_CHANOPRIVSNEEDED_MSG);
     case ERR_UNKNOWNCOMMAND:
@@ -173,6 +175,12 @@ std::string ReplyHandler::select_response(Client& client, ReplyCode code, const 
         return (response + code_to_str(code) + nick + " " + parameters + ERR_INVITEONLYCHAN_MSG);
     case ERR_BANNEDFROMCHAN:
         return (response + code_to_str(code) + nick + " " + parameters + ERR_BANNEDFROMCHAN_MSG);
+    case ERR_WRONG_FORMAT:
+        return (responseWithCodeAndNick + parameters + ircCodes.trailing(ERR_WRONG_FORMAT));
+    case ERR_UNKNOWNMODE:
+        return (responseWithCodeAndNick + parameters + ircCodes.trailing(ERR_UNKNOWNMODE));
+    case ERR_KEYSET:
+        return (responseWithCodeAndNick + parameters + ircCodes.trailing(ERR_KEYSET));    
     default:
         return ("");
     }
@@ -183,7 +191,7 @@ int ReplyHandler::process_response(Client& client, ReplyCode code, const std::st
     std::string response = select_response(client, code, parameters, sender);
 
     if (!response.empty()) {
-        LOG_CMD.info("ReplyHandler::process_response --> response to " + client.get_nickname() + ":\n" + response);
+        LOG_CMD.sending(__FILE_NAME__, __FUNCTION__, response, &client);
         _send_reply(client, response);
     }
     return (code);

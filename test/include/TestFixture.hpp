@@ -7,13 +7,16 @@
 #include <memory>
 #include <iostream>
 #include "colors.hpp"
-
-class Server;
+#include "Server.hpp"
+#include <cstdlib>
 
 class TestFixture 
 {
+
+    friend class Server;
+
 	public:
-		TestFixture();
+		TestFixture(Server& s);
 		~TestFixture();
 		
 		std::vector<TcpSocket*>	setup(size_t nbSockets = 1);
@@ -21,12 +24,16 @@ class TestFixture
 		
 	private:
 		std::vector<std::unique_ptr<TcpSocket>> 	_sockets;
+        //NOLINTNEXTLINE(cppcoreguidelines-avoid-const-or-ref-data-members)
+        Server&                                     _server;
 
 };
 
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
-#define TEST_SETUP(test, nbSockets) \
-	TestFixture test; \
+#define TEST_SETUP(test, s, nbSockets) \
+	TestFixture test(s); \
 	auto sockets = (test).setup(nbSockets); \
-    std::cout << BWHITE << "=====================START OF TEST " << __FUNCTION__ << "=====================" << RESET << '\n'
+    if (std::getenv("DEB") != nullptr) { \
+        std::cout << BWHITE << "=====================START OF TEST " << __FUNCTION__ << "=====================" << RESET << '\n'; \
+    }
 #endif

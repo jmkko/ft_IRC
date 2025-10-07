@@ -8,6 +8,8 @@
 #include "reply_codes.hpp"
 #include "utils.hpp"
 
+#include <bitset>
+
 Join::Join() {}
 Join::~Join() {}
 Join::Join(const Join& other) : ICommand(), _channelsLst(other._channelsLst) {}
@@ -113,6 +115,7 @@ void Join::execute(Server& server, Client& client)
         } else {
             channel = existingChannel->second;
         }
+        LOG_DV_CMD(std::bitset<8>(channel->get_mode()));
         if ((channel->get_mode() & CHANMODE_KEY) && (chanKey != channel->get_key()))
         {
 			replyCode = ERR_BADCHANNELKEY;

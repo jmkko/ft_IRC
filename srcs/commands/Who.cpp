@@ -71,7 +71,7 @@ void Who::execute(Server& server, Client& client)
     if (Channel::is_valid_channel_name(mask)) {
         std::map<std::string, Channel*>::iterator itChan = server.channels.begin();
         for (; itChan != server.channels.end(); itChan++) {
-            if (utils::is_valid_pattern(mask, itChan->second->get_name())) {
+            if (utils::is_matching_pattern(mask, itChan->second->get_name())) {
                 std::set<Client*>                 clients  = itChan->second->get_members();
                 std::set<Client*>::const_iterator itClient = clients.begin();
                 for (; itClient != clients.end(); itClient++) {

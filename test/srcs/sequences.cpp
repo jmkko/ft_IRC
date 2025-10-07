@@ -43,6 +43,15 @@ void send_pass_nick(const TcpSocket& so)
     send_line(so, validNickMsg);
 }
 
+void skip_lines(const TcpSocket& so, int nb)
+{
+    int i = 0;
+    while (i++ < nb)
+    {
+        recv_lines(so);
+    }
+}
+
 void authenticate_and_join(const TcpSocket& so)
 {
     authenticate(so);

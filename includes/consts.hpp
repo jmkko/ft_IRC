@@ -6,7 +6,7 @@
 /*   By: fpetit <fpetit@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 23:38:52 by npolack           #+#    #+#             */
-/*   Updated: 2025/10/07 11:30:34 by fpetit           ###   ########.fr       */
+/*   Updated: 2025/10/07 15:02:11 by fpetit           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@
 #define WELL_KNOWN_PORT_MAX     1024
 #define DYNAMIC_PORT_MIN        49152
 #define NICKNAME_MAX_LEN        9
-#define NB_AVAILABLE_CMD        11
+#define NB_AVAILABLE_CMD        12
 #define USERS_PER_LINE          10
 #define CHANMODE_INIT           0b00000
 #define CHANMODE_OP             0b00001 // no use ?

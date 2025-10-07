@@ -26,12 +26,16 @@ static void parse_args(std::vector<std::string>& args, std::string* channel, cha
 {
 	std::vector<std::string>::iterator it = args.begin();
 	*channel = *it;
-	*operation = (*++it)[0];
-	*modes = it->substr(1);
-	while (++it != args.end())
-	{
-		modeParams->push_back(*it);
-	}
+    ++it;
+    if (it != args.end())
+    {
+        *operation = (*it)[0];
+        *modes = it->substr(1);
+        while (++it != args.end())
+        {
+            modeParams->push_back(*it);
+        }
+    }
 }
 
  /************************************************************
@@ -54,13 +58,24 @@ ReplyCode Mode::check_args(Server& server, Client& client, std::vector<std::stri
 	char 		operation = '\0';
 	std::string modes;
 	std::vector<std::string> modeParams;
-
-	if (args.size() == 1 && Channel::is_valid_channel_name(channel))
+    
+    LOG_DV_CMD(args[0]);
+    LOG_DV_CMD(args.size());
+    LOG_DV_CMD(args.size());
+	if (args.size() == 1 && Channel::is_valid_channel_name(args[0]))
+    {
+        LOG_d_CMD("its ok !");
 		return RPL_SUCCESS;
-	if (args.size() < 3)
+    }
+    if (args.size() < 2)
+        return ERR_NEEDMOREPARAMS;
+    parse_args(args, &channel, &operation, &modes, &modeParams);
+    LOG_DV_CMD(operation);
+    LOG_DV_CMD(modes);
+    if (!modeParams.empty())
+        LOG_DV_CMD(modeParams[0]);
+	if (channel.empty() || modes.empty())
 		return ERR_NEEDMOREPARAMS;
-	parse_args(args, &channel, &operation, &modes, &modeParams);
-    LOG_CMD.log(DEBUG, __FILE_NAME__, __FUNCTION__,  std::string("channel op modes params"), channel + " " + operation + " " + modes + " " + modeParams[0]);
 
 	if(modes.find_first_not_of(authorizedModes) != std::string::npos)
     {
@@ -78,10 +93,13 @@ ReplyCode Mode::check_args(Server& server, Client& client, std::vector<std::stri
         {
 			return ERR_NEEDMOREPARAMS;
         }
-		if (modes[i] == 'l' && modeParams[i].find_first_not_of(digits) != std::string::npos)
-			return ERR_NEEDMOREPARAMS;
-		if (modes[i] == 'l' && std::atol(modeParams[i].c_str()) > std::numeric_limits<int>::max())
-			return ERR_UNKNOWNMODE;
+		if (modes[i] == 'l' && operation == '+')
+        {
+            if (modeParams[i].find_first_not_of(digits) != std::string::npos)
+                return ERR_WRONG_FORMAT;
+            if (std::atol(modeParams[i].c_str()) > std::numeric_limits<int>::max())
+                return ERR_WRONG_FORMAT;
+        }
 	}
 	return RPL_SUCCESS;
 }
@@ -113,10 +131,10 @@ void Mode::execute(Server& server, Client& client)
 	std::string modes;
 	std::vector<std::string> modeParams;
 	parse_args(_args, &channelName, &operation, &modes, &modeParams);
-	Channel* channel = NULL;
-	std::map<std::string, Channel*>::iterator it = server.channels.find(channelName);
 	
 	// checking channel
+	Channel* channel = NULL;
+	std::map<std::string, Channel*>::iterator it = server.channels.find(channelName);
 	if (it == server.channels.end())
 	{
 		rh.process_response(client, ERR_NOSUCHCHANNEL);
@@ -129,9 +147,11 @@ void Mode::execute(Server& server, Client& client)
 	// case MOD #chan
 	if (_args.size() == 1)
 	{
+        LOG_d_CMD("args == 1");
+        std::string modeIsReply = "";
 		std::string modeIsParams("");
 		std::string modeIsParamsVal("");
-		if (!(currentModes & CHANMODE_INIT && currentModes & CHANMODE_OP))
+		if (!(currentModes & CHANMODE_INIT))
 		{
 			modeIsParams += '+';
 			if (currentModes & CHANMODE_KEY)
@@ -148,8 +168,10 @@ void Mode::execute(Server& server, Client& client)
 			}
 		}
 		if (!modeIsParamsVal.empty())
-			modeIsParams += " " + modeIsParamsVal;
-		rh.process_response(client, RPL_CHANNELMODEIS, modeIsParams);
+			modeIsReply = modeIsParams + " " + modeIsParamsVal;
+        else
+            modeIsReply = modeIsParams;
+		rh.process_response(client, RPL_CHANNELMODEIS, modeIsReply);
 	}
 
 	// checking client privileges
@@ -215,9 +237,9 @@ void Mode::execute(Server& server, Client& client)
 		{
 			Client* targetOp = server.find_client_by_nickname(modeParams[i]);
 			if (!targetOp)
-			{
-				rh.process_response(client, ERR_USERNOTINCHANNEL, modeParams[i]);
-			}
+                rh.process_response(client, ERR_NOSUCHNICK, modeParams[i]);
+            else if (!channel->is_member(*targetOp))
+                rh.process_response(client, ERR_USERNOTINCHANNEL, modeParams[i]);
 			else
 			{
 				validModes += "o";
