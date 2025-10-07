@@ -33,9 +33,9 @@ Config::Config(const std::string& fileName) :
     #ifdef TEST
     std::cout << "in TEST !!!!! " << '\n';
     if (fileName == CODES_CONF_FILE)
-        actualFileName = CODES_CONF_FILE__TEST;
+        actualFileName = CODES_CONF_FILE_FOR_TEST;
     else if (fileName == SERVER_CONF_FILE)
-        actualFileName = SERVER_CONF_FILE_TEST;
+        actualFileName = SERVER_CONF_FILE_FOR_TEST;
     #endif
 	if (fileName == CODES_CONF_FILE && !_parse_code_file(actualFileName))
 		LOG_SERVER.warning("Code file not loaded!");
