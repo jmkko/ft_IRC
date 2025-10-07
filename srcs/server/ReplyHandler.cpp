@@ -114,9 +114,9 @@ std::string ReplyHandler::select_response(Client& client, ReplyCode code, const 
     case RPL_QUIT:
         return sender->get_nickname() + " has quit " + ircConfig.get_name() + parameters;
     case RPL_INVITING:
-        return (response + code_to_str(code) + parameters);
+        return (response + code_to_str(code) + nick + " " + parameters);
     case RPL_INVITING_TARGET:
-        return (response + parameters);
+        return (get_id_of(*sender, "") + parameters);
     case RPL_WHOREPLY:
         return (response + code_to_str(code) + parameters);
     case RPL_ENDOFWHO:
@@ -145,12 +145,12 @@ std::string ReplyHandler::select_response(Client& client, ReplyCode code, const 
         return (responseWithCodeAndNick + parameters + ERR_NOSUCHCHANNEL_MSG);
     case ERR_NONICKNAMEGIVEN:
         return (std::string("431") + ERR_NONICKNAMEGIVEN_MSG);
-	case ERR_TOOMANYTARGETS:
-		return (responseWithCodeAndNick + parameters + " :too many recipients (you dont have that much friends)");
-	case ERR_NOSUCHNICK:
-		return (responseWithCodeAndNick + parameters + " :No such nickname (imaginary friend issue)");
-	case ERR_NOTEXTTOSEND:
-		return (responseWithCodeAndNick + ERR_NOTEXTTOSEND_MSG);
+    case ERR_TOOMANYTARGETS:
+        return (responseWithCodeAndNick + parameters + " :too many recipients (you dont have that much friends)");
+    case ERR_NOSUCHNICK:
+        return (responseWithCodeAndNick + parameters + " :No such nickname (imaginary friend issue)");
+    case ERR_NOTEXTTOSEND:
+        return (responseWithCodeAndNick + ERR_NOTEXTTOSEND_MSG);
     case ERR_ERRONEUSNICKNAME:
         return (std::string("432") + ERR_ERRONEUSNICKNAME_MSG);
     case ERR_NICKNAMEINUSE:
@@ -181,8 +181,27 @@ int ReplyHandler::process_response(Client& client, ReplyCode code, const std::st
     std::string response = select_response(client, code, parameters, sender);
 
     if (!response.empty()) {
-        LOG_CMD.info("ReplyHandler::process_response --> response to " 
-					 + client.get_nickname() + ":\n" + response);
+        LOG_CMD.info("ReplyHandler::process_response --> response to " + client.get_nickname() + ":\n" + response);
+        _send_reply(client, response);
+    }
+    return (code);
+}
+
+/**
+ * @brief send RFC_2812 formmated message to the client
+ *
+ * @param client who waiting response from the server
+ * @param code of response
+ * @param parameters message corresponding of the code
+ * @return
+ */
+int ReplyHandler::process_code_response(Client& client, ReplyCode code, const std::string& parameters)
+{
+    std::string response(":" + ircConfig.get_name());
+    response = response + code_to_str(code) + " " + parameters;
+
+    if (!response.empty()) {
+        LOG_CMD.info("ReplyHandler::process_response --> response to " + client.get_nickname() + ":\n" + response);
         _send_reply(client, response);
     }
     return (code);
