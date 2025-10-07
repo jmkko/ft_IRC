@@ -172,10 +172,11 @@ enum ReplyCode {
     RPL_MODE    = 207,
     RPL_QUIT    = 208,
 
- 	RPL_NONE    = 300,	// no answer
-    SERVER_ERR  = 801,
-    FORMAT_ERR  = 802,
-    PWD_ERR     = 803,
+ 	RPL_NONE            = 300,	// no answer
+    SERVER_ERR          = 801,
+    FORMAT_ERR          = 802,
+    PWD_ERR             = 803,
+    RPL_INVITING_TARGET = 804,
 
     ////////////////////// RFC REPLIES
     RPL_WELCOME  = 001,	// after registering (PASS NICK USER)

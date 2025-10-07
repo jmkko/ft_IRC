@@ -47,15 +47,16 @@ IRC_SRCS_FILES	:=	utils.cpp\
 					server/LogManager.cpp\
 					server/ReplyHandler.cpp\
 					commands/CmdFactory.cpp\
-					commands/Quit.cpp\
+					commands/Invite.cpp\
+					commands/Join.cpp\
+					commands/Kick.cpp\
 					commands/Mode.cpp\
 					commands/Nick.cpp\
-					commands/Kick.cpp\
 					commands/Pass.cpp\
+					commands/Privmsg.cpp\
+					commands/Quit.cpp\
 					commands/User.cpp\
 					commands/Who.cpp\
-					commands/Privmsg.cpp\
-					commands/Join.cpp\
 
 EXT				:= .cpp
 
@@ -79,7 +80,9 @@ FILES_TO_FORMAT	:=	$(SRCS) $(HEADERS)
 NB_COMP			:=	1
 
 ifndef RECURSION
-TO_COMP 		:=	$(shell make RECURSION=1 -n | grep Compiling | wc -l)
+TO_COMP_IRC		:=	$(shell make -C .. RECURSION=1 -n 2>/dev/null | grep Compiling | wc -l)
+TO_COMP_LOC 	:=	$(shell make RECURSION=1 -n 2>/dev/null | grep Compiling | wc -l) 
+TO_COMP			:=	$(shell echo $$(( $(TO_COMP_IRC) + $(TO_COMP_LOC) )))
 else
 TO_COMP			:=	1
 endif

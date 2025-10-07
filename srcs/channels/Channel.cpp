@@ -1,5 +1,4 @@
 #include "Channel.hpp"
-
 #include "Client.hpp"
 #include "Config.hpp"
 #include "ICommand.hpp"
@@ -172,12 +171,10 @@ ReplyCode Channel::add_member(Client& client)
         return RPL_SUCCESS;
     if (_userLimit != NO_LIMIT && _members.size() >= static_cast<size_t>(_userLimit))
         return ERR_CHANNELISFULL;
-    if (_mode & CHANMODE_INVITE) {
-        if (is_invited(client))
-            _invites.erase(&client);
-        else
-            return ERR_INVITEONLYCHAN;
+    if (is_invite_only() && !is_invited(client)) {
+        return ERR_INVITEONLYCHAN;
     }
+    _invites.erase(&client);
     if (ircConfig.get_max_joined_channels() != NO_LIMIT && client.get_nb_joined_channels() >= ircConfig.get_max_joined_channels())
         return ERR_CHANNELISFULL;
     if (is_banned(client))
