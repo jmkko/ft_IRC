@@ -17,6 +17,7 @@ Diagnostics:
         - cppcoreguidelines-special-member-functions
         - cppcoreguidelines-avoid-c-arrays
         - cppcoreguidelines-pro-bounds-constant-array-index
+        - cppcoreguidelines-pro-bounds-array-to-pointer-decay
         - bugprone-easily-swappable-parameters
       CheckOptions:
         cppcoreguidelines-avoid-non-const-global-variables.AllowInternalLinkage: 'true'
