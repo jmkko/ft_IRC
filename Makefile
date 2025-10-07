@@ -25,6 +25,7 @@ SRCS			:=	srcs/main.cpp\
 					srcs/server/LogManager.cpp\
 					srcs/commands/CmdFactory.cpp\
 					srcs/commands/Quit.cpp\
+					srcs/commands/Mode.cpp\
 					srcs/commands/Nick.cpp\
 					srcs/commands/Kick.cpp\
 					srcs/commands/Pass.cpp\

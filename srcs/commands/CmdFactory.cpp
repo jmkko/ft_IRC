@@ -5,6 +5,7 @@
 #include "Join.hpp"
 #include "Kick.hpp"
 #include "LogManager.hpp"
+#include "Mode.hpp"
 #include "Nick.hpp"
 #include "Pass.hpp"
 #include "Privmsg.hpp"
@@ -50,7 +51,7 @@ ICommand* CmdFactory::make_command(Server& server, Client& client, std::string& 
     std::string        commandLine = "";
     std::istringstream iss(params); // NOLINT(clang-diagnostic-vexing-parse)
     std::string        available[NB_AVAILABLE_CMD]
-        = {"USER", "PASS", "NICK", "QUIT", "INVITE", "JOIN", "PART", "MODE", "OPER", "PRIVMSG", "WHO"};
+        = {"USER", "PASS", "NICK", "QUIT", "INVITE", "JOIN", "PART", "MODE", "OPER", "PRIVMSG", "WHO", "KICK"};
     ICommand* (CmdFactory::* ptr[NB_AVAILABLE_CMD])(Server&, Client&, std::string&) = {&CmdFactory::user_cmd,
                                                                                        &CmdFactory::pass_cmd,
                                                                                        &CmdFactory::nick_cmd,
@@ -61,14 +62,15 @@ ICommand* CmdFactory::make_command(Server& server, Client& client, std::string& 
                                                                                        &CmdFactory::mode_cmd,
                                                                                        &CmdFactory::oper_cmd,
                                                                                        &CmdFactory::privmsg_cmd,
-                                                                                       &CmdFactory::who_cmd};
+                                                                                       &CmdFactory::who_cmd,
+                                                                                       &CmdFactory::kick_cmd,
+                                                                                    };
 
     iss >> commandLine;
     for (size_t i = 0; i < NB_AVAILABLE_CMD; i++) {
         if (commandLine == available[i]) {
-            LOG_CMD.debug("CmdFactory::make_command --> " + commandLine);
+            LOG_d_CMD(commandLine);
             if (!check_in(client, commandLine)) {
-                LOG_CMD.warning(TO_STRING(ERR_NOTREGISTERED) + " ERR_NOTREGISTERED");
                 rh.process_response(client, ERR_NOTREGISTERED, commandLine);
                 return NULL;
             }
@@ -81,7 +83,6 @@ ICommand* CmdFactory::make_command(Server& server, Client& client, std::string& 
             return (this->*ptr[i])(server, client, params);
         }
     }
-    LOG_CMD.error("421 ERR_UNKNOWNCOMMAND :" + commandLine);
     rh.process_response(client, ERR_UNKNOWNCOMMAND, params);
 
     return NULL;
@@ -183,6 +184,25 @@ ICommand* CmdFactory::join_cmd(Server& server, Client& client, std::string& para
     return NULL;
 };
 
+ICommand* CmdFactory::mode_cmd(Server& server, Client& client, std::string& params)
+{
+    ReplyHandler&   rh = ReplyHandler::get_instance(&server);
+    std::vector<std::string> vectorParams;
+    std::istringstream iss(params);
+    std::string token = "";
+    while (std::getline(iss, token, ' '))
+    {
+        vectorParams.push_back(token);
+    }
+    ReplyCode replyCode = Mode::check_args(server, client, vectorParams);
+    if (replyCode == RPL_SUCCESS) {
+        return new Mode(vectorParams);
+    } else {
+        rh.process_response(client, replyCode, params);
+    }
+    return NULL;
+};
+
 // NOT IMPLEMENTED YET
 
 ICommand* CmdFactory::part_cmd(Server& server, Client& client, std::string& params)
@@ -191,15 +211,6 @@ ICommand* CmdFactory::part_cmd(Server& server, Client& client, std::string& para
     (void)server;
     (void)params;
     LOG_CMD.debug("Build PART (not implemented)");
-    return NULL;
-};
-
-ICommand* CmdFactory::mode_cmd(Server& server, Client& client, std::string& params)
-{
-    (void)client;
-    (void)server;
-    (void)params;
-    LOG_CMD.debug("Build MODE (not implemented)");
     return NULL;
 };
 

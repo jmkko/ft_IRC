@@ -4,8 +4,11 @@
 #include "LogManager.hpp"
 #include "ReplyHandler.hpp"
 #include "Server.hpp"
+#include "consts.hpp"
 #include "reply_codes.hpp"
 #include "utils.hpp"
+
+#include <bitset>
 
 Join::Join() {}
 Join::~Join() {}
@@ -44,7 +47,7 @@ ReplyCode Join::check_args(Server& server, Client& client, std::vector<std::stri
     iss >> tokenChannels;
     iss >> tokenKeys;
     if (tokenChannels.empty()) {
-        LOG_CMD.error(TO_STRING(ERR_NEEDMOREPARAMS) + " ERR_NEEDMOREPARAMS");
+        LOG_CMD.warning(TO_STRING(ERR_NEEDMOREPARAMS) + " ERR_NEEDMOREPARAMS");
         return (ERR_NEEDMOREPARAMS);
     }
     std::istringstream issChannels(tokenChannels);
@@ -98,7 +101,6 @@ void Join::execute(Server& server, Client& client)
         iss >> chanName;
         iss >> chanKey;
         if (!Channel::is_valid_channel_name(chanName)) {
-            LOG_CMD.error(TO_STRING(ERR_BADCHANMASK) + " ERR_BADCHANMASK");
             rh.process_response(client, ERR_BADCHANMASK, chanName);
             it++;
             continue;
@@ -109,9 +111,16 @@ void Join::execute(Server& server, Client& client)
         if (existingChannel == server.channels.end()) {
             channel                              = new Channel(chanName); // NOLINT
             server.channels[channel->get_name()] = channel;
-            LOG_CMD.info("Created new channel: " + channel->get_name());
+            LOG_I_CMD("#️⃣ New channel", channel->get_name());
         } else {
             channel = existingChannel->second;
+        }
+        LOG_DV_CMD(std::bitset<8>(channel->get_mode()));
+        if ((channel->get_mode() & CHANMODE_KEY) && (chanKey != channel->get_key()))
+        {
+            rh.process_response(client, ERR_BADCHANNELKEY, channel->get_name());
+            ++it;
+            continue;
         }
         replyCode = channel->add_member(client);
         if (replyCode == RPL_SUCCESS) {
@@ -120,6 +129,7 @@ void Join::execute(Server& server, Client& client)
             LOG_CONN.info(client.get_nickname() + " joined channel: " + channel->get_name());
         } else {
             rh.process_response(client, replyCode, channel->get_name());
+            ++it;
             continue;
         }
         if (channel->get_nb_members() == 1) {

@@ -8,7 +8,7 @@ IRC_EXEC		:=  ircserv
 
 CXX				:=	clang++
 
-CXXFLAGS		:=	-Wall -Wextra -Werror -std=c++20 -g
+CXXFLAGS		:=	-Wall -Wextra -Werror -std=c++20 -g -DTEST
 
 MAKEFLAGS		:=	--no-print-directory
 
@@ -30,6 +30,7 @@ SRCS_FILES		:= 	main.cpp\
 					sequences.cpp\
 					TestFixture.cpp\
 					testKick.cpp\
+					testMode.cpp\
 					testNick.cpp\
 					testWho.cpp\
 					testJoin.cpp\
@@ -46,14 +47,16 @@ IRC_SRCS_FILES	:=	utils.cpp\
 					server/LogManager.cpp\
 					server/ReplyHandler.cpp\
 					commands/CmdFactory.cpp\
-					commands/Quit.cpp\
-					commands/Nick.cpp\
+					commands/Invite.cpp\
+					commands/Join.cpp\
 					commands/Kick.cpp\
+					commands/Mode.cpp\
+					commands/Nick.cpp\
 					commands/Pass.cpp\
+					commands/Privmsg.cpp\
+					commands/Quit.cpp\
 					commands/User.cpp\
 					commands/Who.cpp\
-					commands/Privmsg.cpp\
-					commands/Join.cpp\
 
 EXT				:= .cpp
 
@@ -72,6 +75,20 @@ export PATH 	:=	$(PATH):$(HOME)/local/bin:/usr/bin/:/usr/share/clang/scan-build-
 HEADERS			:=	$(wildcard $(INCLUDES)/*.hpp)
 FILES_TO_FORMAT	:=	$(SRCS) $(HEADERS)
 
+################	LOADER
+
+NB_COMP			:=	1
+
+ifndef RECURSION
+TO_COMP_IRC		:=	$(shell make -C .. RECURSION=1 -n 2>/dev/null | grep Compiling | wc -l)
+TO_COMP_LOC 	:=	$(shell make RECURSION=1 -n 2>/dev/null | grep Compiling | wc -l) 
+TO_COMP			:=	$(shell echo $$(( $(TO_COMP_IRC) + $(TO_COMP_LOC) )))
+else
+TO_COMP			:=	1
+endif
+
+PERCENT			:= 0
+
 ###########
 # Targets #
 ###########
@@ -87,13 +104,35 @@ $(NAME): $(OBJS)
 
 $(BUILD_DIR)/%.o: %.cpp | $(DIRS)
 	@mkdir -p $(BUILD_DIR)
+	$(eval PERCENT :=$(shell if [ "$(TO_COMP)" -eq 0 ]; then echo 100; else expr $(NB_COMP)00 "/" $(TO_COMP); fi))
+	@{ \
+		i=$$(($(PERCENT) % 4)); \
+		case $$i in \
+			0) anim="ᵒᵒᵒᵒᵒ";; \
+			1) anim="०ᵒ०ᵒ०";; \
+			2) anim="०००००";; \
+			3) anim="ᵒ०ᵒ०ᵒ";; \
+			4) anim="००ooᵒ";; \
+			5) anim="०ᵒᵒᵒ०";; \
+			6) anim="००o००";; \
+			7) anim="०o०ᵒ०";; \
+			8) anim="०o०o०";; \
+			9) anim="०ᵒ०ᵒ०";; \
+			*) anim="०ooo०";; \
+		esac; \
+		printf "                                                                     "; \
+		printf "\r[%-6s] %3d%% Compiling %s" "$$anim" $(PERCENT) "$<"; \
+	} 
 	@$(CXX) $(CXXFLAGS) $(INC) $< -c -o $@
+	$(eval NB_COMP=$(shell expr $(NB_COMP) + 1))
 
 comp-data:
 	@intercept-build make re
 
-debug: CXXFLAGS += -g -DDEB=1
+debug: CXXFLAGS += -g -DDEB
 debug: all
+
+redebug: fclean debug
 
 formator:
 	@echo "$(YELLOW)=== Formatting code ===$(NOC)"

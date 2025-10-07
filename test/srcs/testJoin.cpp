@@ -86,7 +86,7 @@ void valid_join_should_notice(Server& s)
         make_op(soOp);
 
         // test
-        send_line(soOp, validJoin);
+        send_line(soOp, validJoinMsg);
         std::string reply = recv_lines(soOp);
         AssertReply ar(reply);
 

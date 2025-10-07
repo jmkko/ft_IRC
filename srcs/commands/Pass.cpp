@@ -39,15 +39,15 @@ ReplyCode Pass::check_args(Server& server, Client& client, std::string& params)
 
     iss >> pass;
     if (pass.empty()) {
-        LOG_CMD.error("461 ERR_NEEDMOREPARAMS");
+        LOG_CMD.warning("461 ERR_NEEDMOREPARAMS");
         return (ERR_NEEDMOREPARAMS);
     }
     if (server.get_password() != pass) {
-        LOG_CMD.error("464 ERR_PASSWDMISMATCH");
+        LOG_CMD.warning("464 ERR_PASSWDMISMATCH");
         return (ERR_PASSWDMISMATCH);
     } else if (client.get_status() == REGISTERED) {
-        LOG_CMD.error("462 ERR_ALREADYREGISTERED");
-        return (ERR_ALREADYREGISTERED);
+        LOG_CMD.warning("462 ERR_ALREADYREGISTRED");
+        return (ERR_ALREADYREGISTRED);
     }
     params = pass;
     return (RPL_SUCCESS);

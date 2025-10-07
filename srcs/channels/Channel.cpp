@@ -2,11 +2,13 @@
 #include "Client.hpp"
 #include "Config.hpp"
 #include "ICommand.hpp"
+#include "LogManager.hpp"
 #include "colors.hpp"
 #include "consts.hpp"
 #include "reply_codes.hpp"
 
 #include <algorithm>
+#include <bitset>
 #include <iostream>
 
 /************************************************************
@@ -33,7 +35,7 @@ bool Channel::is_valid_channel_name(const std::string& name)
 
 /// @throw exception if name is invalid
 Channel::Channel(const std::string& name) :
-    _topic("No topic is set"), _mode(CHANMODE_INIT), _userLimit(NO_LIMIT), _members(), _invites(), _operators()
+    _topic("No topic is set"), _key(""), _mode(CHANMODE_INIT), _userLimit(NO_LIMIT), _members(), _invites(), _operators()
 {
     set_name(name);
 }
@@ -41,6 +43,7 @@ Channel::Channel(const std::string& name) :
 Channel::Channel(const Channel& other) :
     _name(other._name),
     _topic(other._topic),
+    _key(other._key),
     _mode(other._mode),
     _userLimit(other._userLimit),
     _members(other._members),
@@ -50,7 +53,7 @@ Channel::Channel(const Channel& other) :
 }
 
 Channel::Channel(void) :
-    _name(""), _topic("No topic is set"), _mode(CHANMODE_INIT), _userLimit(NO_LIMIT), _members(), _invites(), _operators()
+    _name(""), _topic("No topic is set"), _key(""), _mode(CHANMODE_INIT), _userLimit(NO_LIMIT), _members(), _invites(), _operators()
 {
 }
 
@@ -65,6 +68,7 @@ Channel& Channel::operator=(const Channel& other)
     if (this != &other) {
         _name      = other._name;
         _topic     = other._topic;
+        _key	   = other._key;
         _userLimit = other._userLimit;
         _members   = other._members;
         _operators = other._operators;
@@ -76,11 +80,14 @@ Channel& Channel::operator=(const Channel& other)
 // clang-format off
 std::ostream&	operator<<(std::ostream& os, const Channel& c)
 {
-	return os << "Channel" << "["
-	<< " name = " << c.get_name()
-	<< " topic=" << c.get_topic()
-	<< " userLimit=" << c.get_user_limit()
-	<< "]";
+    std::bitset<MODE_LEN>modes(c.get_mode());
+    return os << "Channel" << "["
+    << " name = " << c.get_name()
+    << " modes=" << modes
+    << " topic=" << c.get_topic()
+    << " userLimit=" << c.get_user_limit()
+    << " nb of members=" << c.get_members().size()
+    << "]";
 }
 // clang-format on
 
@@ -90,13 +97,12 @@ std::ostream&	operator<<(std::ostream& os, const Channel& c)
 
 void Channel::broadcast(Server& server, ReplyCode replyCode, const std::string& message, Client* sender) const
 {
-    LOG_CMD.debug("Channel::broadcast -> send to everyone from channel: " );
     ReplyHandler& rh = ReplyHandler::get_instance(&server);
     for (std::set<Client*>::iterator it = _members.begin(); it != _members.end(); ++it) {
         Client* recipient = *it;
         if (sender && recipient == sender)
            continue;
-        LOG_SERVER.debug("Channel::broadcast -> " + recipient->get_nickname() + " received a broadcast from " + get_name());
+        LOG_DT_SERVER(recipient->get_nickname() + " received a broadcast from " + get_name(), "");
         rh.process_response(*recipient, replyCode, message, sender);
     }
 }
@@ -108,6 +114,8 @@ void Channel::broadcast(Server& server, ReplyCode replyCode, const std::string& 
 const std::string& Channel::get_name() const { return _name; }
 
 const std::string& Channel::get_topic() const { return _topic; }
+
+const std::string& Channel::get_key() const { return _key; }
 
 bool Channel::is_member(Client& client) const { return _members.find(&client) != _members.end(); }
 
@@ -136,6 +144,12 @@ ReplyCode Channel::set_topic(Client& client, const std::string& topic)
         _topic = topic;
     else
         return ERR_CHANOPRIVSNEEDED;
+    return RPL_SUCCESS;
+}
+
+ReplyCode Channel::set_key(const std::string& key)
+{
+    _key = key;
     return RPL_SUCCESS;
 }
 
@@ -172,6 +186,8 @@ ReplyCode Channel::add_member(Client& client)
 
 void Channel::remove_member(Client& client) { _members.erase(&client); }
 
+void Channel::remove_operator(Client& client) { _operators.erase(&client); }
+
 ReplyCode Channel::ban_member(Client& client)
 {
     if (is_member(client)) {
@@ -192,7 +208,8 @@ ReplyCode Channel::make_operator(Client& client)
     return ERR_USERNOTINCHANNEL;
 }
 
-void           Channel::set_mode(unsigned short mode) { _mode = _mode | mode; }
+void           Channel::add_mode(unsigned short mode) { _mode = _mode | mode; }
+void           Channel::remove_mode(unsigned short mode) { _mode = _mode & ~mode; }
 unsigned short Channel::get_mode() const { return _mode; }
 
 size_t            Channel::get_nb_members() const { return _members.size(); }
