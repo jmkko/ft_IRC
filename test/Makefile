@@ -8,7 +8,7 @@ IRC_EXEC		:=  ircserv
 
 CXX				:=	clang++
 
-CXXFLAGS		:=	-Wall -Wextra -Werror -std=c++20 -g
+CXXFLAGS		:=	-Wall -Wextra -Werror -std=c++20 -g -DTEST
 
 MAKEFLAGS		:=	--no-print-directory
 
