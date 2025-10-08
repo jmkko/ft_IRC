@@ -13,9 +13,9 @@ Ping::Ping(void) {}
 
 Ping::Ping(const std::string& token) : _token(token) {}
 
-Ping::Ping(const Ping& other) 
+Ping::Ping(const Ping& other)
+    : _token(other._token)
 {
-    (void) other;
 }
 
 Ping::~Ping(void) {}
