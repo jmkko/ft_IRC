@@ -1,6 +1,13 @@
+#include "LogManager.hpp"
 #include "Motd.hpp"
+#include "ReplyHandler.hpp"
+#include "consts.hpp"
 
 #include <ostream>
+#include <fstream>
+#include <ctime>
+#include <sstream>
+#include <iomanip>
 
 Motd::Motd() {}
 Motd::~Motd() {}
@@ -13,35 +20,48 @@ Motd& Motd::operator=(const Motd& other)
     return (*this);
 }
 
+/**
+ * @brief open and read the motd.conf file
+ *        replace the var by her data
+ *        send the message to the client
+ *
+ * @param server
+ * @param client
+ */
 void Motd::execute(Server& server, Client& client)
 {
-    std::string        line, newline;
-    std::ifstream      inputFile;
-    std::ostringstream oss;
+    std::string   line, newline;
+    std::ifstream inputFile;
 
-    std::string   find     = "$(servername)";
-    std::string   replace  = server.get_name();
     const char*   filename = "motd.conf";
     ReplyHandler& rh       = ReplyHandler::get_instance(&server);
 
     inputFile.open(filename);
     if (inputFile.is_open()) {
-
+        std::string nick = client.get_nickname();
+        rh.process_code_response(client, RPL_MOTDSTART, nick + RPL_MOTDSTART_MSG);
         while (getline(inputFile, line)) {
-            newline = strReplace(line, "$(servername)", server.get_name());
-            newline = strReplace(line, "$(nick)", client.get_nickname());
-            newline = strReplace(line, "$(date)", replace);
-            oss << newline << "\r\n";
+            newline = _str_replace(line, "$(servername)", server.get_name());
+            newline = _str_replace(newline, "$(nick)", nick);
+            newline = _str_replace(newline, "$(date)", _get_current_time());
+            newline.append("\r\n");
+            rh.process_code_response(client, RPL_MOTD, nick + " :- " + newline.c_str());
+            newline.clear();
         }
+        rh.process_code_response(client, RPL_ENDOFMOTD, nick + RPL_ENDOFMOTD_MSG);
     }
     inputFile.close();
 }
-else std::cout << RED << "No matching file" << RESET << std::endl;
-return 0;
-}
-}
 
-std::string Motd::_str_replace(std::string str, std::string find, std::string replace)
+/**
+ * @brief find a word in a line and replace by an other
+ *
+ * @param str the raw line
+ * @param find  the word to replace
+ * @param replace the new word
+ * @return a new string with the new word
+ */
+std::string Motd::_str_replace(const std::string& str, const std::string& find, const std::string& replace)
 {
     std::string newstr, trimstr, tmpstr;
 
@@ -56,4 +76,19 @@ std::string Motd::_str_replace(std::string str, std::string find, std::string re
     }
     newstr.append(tmpstr);
     return newstr;
+}
+
+/**
+ * @brief calculate and format the current date
+ *
+ * @return date like AAAA-MM-DD
+ */
+std::string Motd::_get_current_time()
+{
+    std::time_t        now   = std::time(0);
+    struct std::tm*    tmPtr = std::localtime(&now);
+    std::ostringstream oss;
+    oss << (tmPtr->tm_year + EPOCH_TIME_START) << "-" << std::setfill('0') << std::setw(2) << (tmPtr->tm_mon + 1) << "-"
+        << std::setfill('0') << std::setw(2) << tmPtr->tm_mday;
+    return oss.str();
 }

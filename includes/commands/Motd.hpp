@@ -9,6 +9,10 @@
 #include "utils.hpp"
 
 #include <string>
+#include <fstream>
+#include <ctime>
+#include <sstream>
+#include <iomanip>
 
 class Client;
 class Server;
@@ -21,7 +25,8 @@ class Motd : public ICommand
     void execute(Server& s, Client& c); // NOLINT
 
   private:
-    std::string _str_replace(std::string str, std::string find, std::string replace);
+    std::string _str_replace(const std::string& str, const std::string& find, const std::string& replace);
+    std::string _get_current_time();
     std::string _params;
     Motd();
     Motd(const Motd& other);

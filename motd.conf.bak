@@ -1,13 +1,13 @@
 .-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-.
-|              WELCOME TO $(servername)             |
+|                 WELCOME TO $(servername)               |
 |--------------------------------------------------------|
 |                                                        |
 |             ░█░█░█▀▀░█░░░█▀▀░█▀█░█▄█░█▀▀               | 
 |             ░█▄█░█▀▀░█░░░█░░░█░█░█░█░█▀▀               |
 |             ░▀░▀░▀▀▀░▀▀▀░▀▀▀░▀▀▀░▀░▀░▀▀▀               |
 |                                                        |
-    Hey $(nick)!  You just plugged into the mainframe.    
-|   Date connected: $(date)                           |
+|   Hey $(nick)!  You just plugged into the mainframe.   |
+|   Date connected: $(date)                              |
 |                                                        |
 |   Rules are simple:                                    |
 |    → Be cool                                           |
@@ -18,3 +18,4 @@
 |                                                        |
 |   "Reality is just a poorly rendered simulation."      |
 `-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-'
+
