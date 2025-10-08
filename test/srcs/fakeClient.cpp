@@ -111,6 +111,7 @@ std::string recv_lines(const TcpSocket& so)
         LOG_dt_TEST("attempt" + TO_STRING(attempt + 1) + "/" + TO_STRING(MAX_RECV_ATTEMPTS));
         pollfd pfd = {.fd = so.get_socket(), .events = POLLIN, .revents = 0};
 
+        std::this_thread::sleep_for(std::chrono::milliseconds(SERVER_PROCESS_TIME_MS));
         int ret = poll(&pfd, 1, POLL_TEST_TIMEOUT);
         if (ret == -1) {
             LOG_W_TEST("poll error", strerror(errno));
@@ -139,6 +140,5 @@ std::string recv_lines(const TcpSocket& so)
             }
         }
     }
-    std::this_thread::sleep_for(std::chrono::milliseconds(SERVER_PROCESS_TIME_MS));
     return result;
 }
