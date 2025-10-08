@@ -86,7 +86,7 @@ std::string event_to_str(int event){
  * Conformément à la RFC 2812, les wildcards servent pour les masks
  * dans les commandes WHO, NAMES, LIST, etc.
  */
-bool is_valid_pattern(const std::string& pattern, const std::string& str)
+bool is_matching_pattern(const std::string& pattern, const std::string& str)
 {
     size_t p = 0, s = 0, star = std::string::npos, match = 0;
 
@@ -116,8 +116,8 @@ MatchPattern::MatchPattern(const std::string& p) : pattern(p) {}
 
 bool MatchPattern::operator()(const Client* c) const
 {
-    return is_valid_pattern(pattern, c->get_nickname()) || is_valid_pattern(pattern, c->get_user_name())
-           || is_valid_pattern(pattern, c->get_userhost()) || is_valid_pattern(pattern, c->get_real_name());
+    return is_matching_pattern(pattern, c->get_nickname()) || is_matching_pattern(pattern, c->get_user_name())
+           || is_matching_pattern(pattern, c->get_userhost()) || is_matching_pattern(pattern, c->get_real_name());
 }
 
 } // namespace utils

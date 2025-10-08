@@ -22,12 +22,14 @@ class AssertReply
     AssertReply(const std::string& reply);
     virtual ~AssertReply();
 
+    AssertReply& is_empty();
     AssertReply& has_code(ReplyCode code);
     AssertReply& ends_with(const std::string& trailing);
-    AssertReply& is_empty();
-    AssertReply& matches_entirely(const std::string& message);
+    AssertReply& starts_with(const std::string& start);
     AssertReply& contains(const std::string& token);
     AssertReply& do_not_contains(const std::string& token);
+    AssertReply& matches_entirely(const std::string& message);
+    AssertReply& is_formatted(ReplyCode code, const std::string& clientNick);
 
     AssertReply& handle_new_reply(const std::string& reply);
 
@@ -36,9 +38,10 @@ class AssertReply
     std::vector<Message> _messages;
 
     void _process_reply();
-    bool _has_message_code(const Message& msg, const std::string& expected, std::string* actual);
-    bool _is_message_ending_with(const Message& msg, const std::string& trailing, std::string* actual);
-    bool _is_message_empty(const Message& msg, std::string* actual);
-    bool _is_message_matching_entirely(const Message& msg, const std::string& message, std::string* actual);
-    bool _is_message_containing(const Message& msg, const std::string& token);
+    bool _has_message_code(const Message& msg, const std::string& expected, std::string* actual) const;
+    bool _is_message_trailing(const Message& msg, const std::string& trailing, std::string* actual) const;
+    bool _is_message_starting_with(const Message& msg, const std::string& start, std::string* actual) const;
+    bool _is_message_empty(const Message& msg, std::string* actual) const;
+    bool _is_message_matching_entirely(const Message& msg, const std::string& message, std::string* actual) const;
+    bool _is_message_containing(const Message& msg, const std::string& token) const;
 };

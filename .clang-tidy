@@ -8,6 +8,7 @@ Checks: >
   -cppcoreguidelines-special-member-functions,
   -cppcoreguidelines-avoid-c-arrays,
   -cppcoreguidelines-pro-bounds-constant-array-index,
+  -cppcoreguidelines-pro-bounds-array-to-pointer-decay,
   -cppcoreguidelines-owning-memory,
   bugprone-*,
   -bugprone-easily-swappable-parameters,

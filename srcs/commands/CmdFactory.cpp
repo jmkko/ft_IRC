@@ -1,9 +1,11 @@
 #include "Client.hpp"
 #include "CmdFactory.hpp"
 #include "ICommand.hpp"
+#include "Invite.hpp"
 #include "Join.hpp"
 #include "Kick.hpp"
 #include "LogManager.hpp"
+#include "Mode.hpp"
 #include "Nick.hpp"
 #include "Pass.hpp"
 #include "Privmsg.hpp"
@@ -35,15 +37,12 @@ CmdFactory& CmdFactory::operator=(const CmdFactory& other)
 // Destructor
 CmdFactory::~CmdFactory(void) {}
 
-bool CmdFactory::check_in(Client& client, std::string& command) {
-    if (!client.is_registered() 
-		&& command != "NICK" 
-		&& command != "USER" 
-		&& command != "PASS"
-        && command != "QUIT") {
-		return false;
-	}
-	return true;
+bool CmdFactory::check_in(Client& client, std::string& command)
+{
+    if (!client.is_registered() && command != "NICK" && command != "USER" && command != "PASS" && command != "QUIT") {
+        return false;
+    }
+    return true;
 }
 
 ICommand* CmdFactory::make_command(Server& server, Client& client, std::string& params)
@@ -52,7 +51,7 @@ ICommand* CmdFactory::make_command(Server& server, Client& client, std::string& 
     std::string        commandLine = "";
     std::istringstream iss(params); // NOLINT(clang-diagnostic-vexing-parse)
     std::string        available[NB_AVAILABLE_CMD]
-        = {"USER", "PASS", "NICK", "QUIT", "INVITE", "JOIN", "PART", "MODE", "OPER", "PRIVMSG", "WHO"};
+        = {"USER", "PASS", "NICK", "QUIT", "INVITE", "JOIN", "PART", "MODE", "OPER", "PRIVMSG", "WHO", "KICK"};
     ICommand* (CmdFactory::* ptr[NB_AVAILABLE_CMD])(Server&, Client&, std::string&) = {&CmdFactory::user_cmd,
                                                                                        &CmdFactory::pass_cmd,
                                                                                        &CmdFactory::nick_cmd,
@@ -63,26 +62,27 @@ ICommand* CmdFactory::make_command(Server& server, Client& client, std::string& 
                                                                                        &CmdFactory::mode_cmd,
                                                                                        &CmdFactory::oper_cmd,
                                                                                        &CmdFactory::privmsg_cmd,
-                                                                                       &CmdFactory::who_cmd};
+                                                                                       &CmdFactory::who_cmd,
+                                                                                       &CmdFactory::kick_cmd,
+                                                                                    };
 
     iss >> commandLine;
     for (size_t i = 0; i < NB_AVAILABLE_CMD; i++) {
         if (commandLine == available[i]) {
-            LOG_CMD.debug("CmdFactory::make_command --> " + commandLine);
+            LOG_d_CMD(commandLine);
             if (!check_in(client, commandLine)) {
-                LOG_CMD.warning(TO_STRING(ERR_NOTREGISTERED) + " ERR_NOTREGISTERED");
                 rh.process_response(client, ERR_NOTREGISTERED, commandLine);
-				return NULL;
+                return NULL;
             }
             std::string params;
             std::getline(iss, params);
+            // LOG_CMD.debug("make_command : params : " + params);
             if (!params.empty() && params[0] == ' ') {
                 params = params.substr(1);
             }
             return (this->*ptr[i])(server, client, params);
         }
     }
-    LOG_CMD.error("421 ERR_UNKNOWNCOMMAND :" + commandLine);
     rh.process_response(client, ERR_UNKNOWNCOMMAND, params);
 
     return NULL;
@@ -157,12 +157,11 @@ ICommand* CmdFactory::kick_cmd(Server& server, Client& client, std::string& para
     return NULL;
 };
 
-
 ICommand* CmdFactory::quit_cmd(Server& server, Client& client, std::string& params)
 {
-    ReplyHandler&            rh = ReplyHandler::get_instance(&server);
+    ReplyHandler& rh = ReplyHandler::get_instance(&server);
 
-	ReplyCode replyCode = Quit::check_args(server, client, params);
+    ReplyCode replyCode = Quit::check_args(server, client, params);
     if (replyCode == RPL_SUCCESS) {
         return new Quit(params);
     } else {
@@ -185,8 +184,26 @@ ICommand* CmdFactory::join_cmd(Server& server, Client& client, std::string& para
     return NULL;
 };
 
-// NOT IMPLEMENTED YET
+ICommand* CmdFactory::mode_cmd(Server& server, Client& client, std::string& params)
+{
+    ReplyHandler&   rh = ReplyHandler::get_instance(&server);
+    std::vector<std::string> vectorParams;
+    std::istringstream iss(params);
+    std::string token = "";
+    while (std::getline(iss, token, ' '))
+    {
+        vectorParams.push_back(token);
+    }
+    ReplyCode replyCode = Mode::check_args(server, client, vectorParams);
+    if (replyCode == RPL_SUCCESS) {
+        return new Mode(vectorParams);
+    } else {
+        rh.process_response(client, replyCode, params);
+    }
+    return NULL;
+};
 
+// NOT IMPLEMENTED YET
 
 ICommand* CmdFactory::part_cmd(Server& server, Client& client, std::string& params)
 {
@@ -194,15 +211,6 @@ ICommand* CmdFactory::part_cmd(Server& server, Client& client, std::string& para
     (void)server;
     (void)params;
     LOG_CMD.debug("Build PART (not implemented)");
-    return NULL;
-};
-
-ICommand* CmdFactory::mode_cmd(Server& server, Client& client, std::string& params)
-{
-    (void)client;
-    (void)server;
-    (void)params;
-    LOG_CMD.debug("Build MODE (not implemented)");
     return NULL;
 };
 
@@ -217,11 +225,13 @@ ICommand* CmdFactory::oper_cmd(Server& server, Client& client, std::string& para
 
 ICommand* CmdFactory::invite_cmd(Server& server, Client& client, std::string& params)
 {
-    (void)client;
-    (void)server;
-    (void)params;
-    LOG_CMD.debug("Build INVITE (not implemented)");
-    return NULL;
+    ReplyHandler& rh        = ReplyHandler::get_instance(&server);
+    ReplyCode     replyCode = Invite::check_args(server, client, params);
+    if (replyCode != RPL_SUCCESS) {
+        rh.process_response(client, replyCode, params);
+        return NULL;
+    }
+    return new Invite(params);
 };
 
 ICommand* CmdFactory::who_cmd(Server& server, Client& client, std::string& params)
@@ -254,11 +264,11 @@ ICommand* CmdFactory::privmsg_cmd(Server& server, Client& client, std::string& p
 
     Privmsg* privmsg = new Privmsg(msg);
 
-    //std::string                               word;
-    //std::istringstream                        iss(params);
-    //Client*                                   dest = NULL;
-    //std::map<std::string, Channel*>::iterator chan;
-	privmsg->build_args(server, params);
+    // std::string                               word;
+    // std::istringstream                        iss(params);
+    // Client*                                   dest = NULL;
+    // std::map<std::string, Channel*>::iterator chan;
+    privmsg->build_args(server, params);
     // while (iss >> word) {
     //     chan = server.channels.find(word);
     //     if (chan != server.channels.end()) {

@@ -1,8 +1,7 @@
-#include "ReplyHandler.hpp"
-
 #include "Client.hpp"
 #include "Config.hpp"
 #include "LogManager.hpp"
+#include "ReplyHandler.hpp"
 #include "Server.hpp"
 #include "reply_codes.hpp"
 #include "utils.hpp"
@@ -115,13 +114,15 @@ std::string ReplyHandler::select_response(Client& client, ReplyCode code, const 
     case RPL_QUIT:
         return sender->get_nickname() + " has quit " + ircConfig.get_name() + parameters;
     case RPL_INVITING:
-        return "";
+        return (response + code_to_str(code) + nick + " " + parameters);
+    case RPL_INVITING_TARGET:
+        return (get_id_of(*sender, "") + parameters);
     case RPL_WHOREPLY:
         return (response + code_to_str(code) + parameters);
     case RPL_ENDOFWHO:
         return (response + code_to_str(code) + nick + " " + parameters + RPL_ENDOFWHO_MSG);
     case RPL_MODE:
-        return (response + " MODE " + parameters + nick);
+        return (response + " MODE " + parameters);
     case RPL_TOPIC:
         return (response + code_to_str(code) + nick + " " + parameters);
     case RPL_NAMREPLY:
@@ -130,6 +131,8 @@ std::string ReplyHandler::select_response(Client& client, ReplyCode code, const 
         return (response + code_to_str(code) + nick + " " + parameters + RPL_ENDOFNAMES_MSG);
     case RPL_NOTOPIC:
         return (response + code_to_str(code) + nick + " " + parameters + RPL_NOTOPIC_MSG);
+    case RPL_CHANNELMODEIS:
+        return (responseWithCodeAndNick + parameters + " " + ircCodes.trailing(code));
     case ERR_CHANOPRIVSNEEDED:
         return (responseWithCodeAndNick + parameters + ERR_CHANOPRIVSNEEDED_MSG);
     case ERR_UNKNOWNCOMMAND:
@@ -144,12 +147,12 @@ std::string ReplyHandler::select_response(Client& client, ReplyCode code, const 
         return (responseWithCodeAndNick + parameters + ERR_NOSUCHCHANNEL_MSG);
     case ERR_NONICKNAMEGIVEN:
         return (std::string("431") + ERR_NONICKNAMEGIVEN_MSG);
-	case ERR_TOOMANYTARGETS:
-		return (responseWithCodeAndNick + parameters + " :too many recipients (you dont have that much friends)");
-	case ERR_NOSUCHNICK:
-		return (responseWithCodeAndNick + parameters + " :No such nickname (imaginary friend issue)");
-	case ERR_NOTEXTTOSEND:
-		return (responseWithCodeAndNick + ERR_NOTEXTTOSEND_MSG);
+    case ERR_TOOMANYTARGETS:
+        return (responseWithCodeAndNick + parameters + " :too many recipients (you dont have that much friends)");
+    case ERR_NOSUCHNICK:
+        return (responseWithCodeAndNick + parameters + " :No such nickname (imaginary friend issue)");
+    case ERR_NOTEXTTOSEND:
+        return (responseWithCodeAndNick + ERR_NOTEXTTOSEND_MSG);
     case ERR_ERRONEUSNICKNAME:
         return (std::string("432") + ERR_ERRONEUSNICKNAME_MSG);
     case ERR_NICKNAMEINUSE:
@@ -160,16 +163,24 @@ std::string ReplyHandler::select_response(Client& client, ReplyCode code, const 
         return (TO_STRING(ERR_NOTREGISTERED) + "* " + parameters + " :You have not registered");
     case ERR_NOTONCHANNEL:
         return (responseWithCodeAndNick + parameters + ERR_NOTONCHANNEL_MSG);
-    case ERR_ALREADYREGISTERED:
-        return (std::string("464") + ERR_ALREADYREGISTERED_MSG);
+    case ERR_ALREADYREGISTRED:
+        return (std::string("464") + ERR_ALREADYREGISTRED_MSG);
     case ERR_BADCHANMASK:
         return (responseWithCodeAndNick + parameters + ERR_BADCHANMASK_MSG);
+    case ERR_BADCHANNELKEY:
+        return (responseWithCodeAndNick + parameters + ERR_BADCHANNELKEY_MSG);
     case ERR_CHANNELISFULL:
         return (response + code_to_str(code) + nick + " " + parameters + ERR_CHANNELISFULL_MSG);
     case ERR_INVITEONLYCHAN:
         return (response + code_to_str(code) + nick + " " + parameters + ERR_INVITEONLYCHAN_MSG);
     case ERR_BANNEDFROMCHAN:
         return (response + code_to_str(code) + nick + " " + parameters + ERR_BANNEDFROMCHAN_MSG);
+    case ERR_WRONG_FORMAT:
+        return (responseWithCodeAndNick + parameters + ircCodes.trailing(ERR_WRONG_FORMAT));
+    case ERR_UNKNOWNMODE:
+        return (responseWithCodeAndNick + parameters + ircCodes.trailing(ERR_UNKNOWNMODE));
+    case ERR_KEYSET:
+        return (responseWithCodeAndNick + parameters + ircCodes.trailing(ERR_KEYSET));    
     default:
         return ("");
     }
@@ -180,8 +191,27 @@ int ReplyHandler::process_response(Client& client, ReplyCode code, const std::st
     std::string response = select_response(client, code, parameters, sender);
 
     if (!response.empty()) {
-        LOG_CMD.info("ReplyHandler::process_response --> response to " 
-					 + client.get_nickname() + ":\n" + response);
+        LOG_CMD.sending(__FILE_NAME__, __FUNCTION__, response, &client);
+        _send_reply(client, response);
+    }
+    return (code);
+}
+
+/**
+ * @brief send RFC_2812 formmated message to the client
+ *
+ * @param client who waiting response from the server
+ * @param code of response
+ * @param parameters message corresponding of the code
+ * @return
+ */
+int ReplyHandler::process_code_response(Client& client, ReplyCode code, const std::string& parameters)
+{
+    std::string response(":" + ircConfig.get_name());
+    response = response + code_to_str(code) + " " + parameters;
+
+    if (!response.empty()) {
+        LOG_CMD.info("ReplyHandler::process_response --> response to " + client.get_nickname() + ":\n" + response);
         _send_reply(client, response);
     }
     return (code);

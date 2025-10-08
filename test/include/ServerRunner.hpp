@@ -8,7 +8,7 @@
 
 class ServerRunner {
 	public:
-		ServerRunner(Server& server);
+		ServerRunner(Server& s);
 		virtual ~ServerRunner();
 
 		void				start();
@@ -17,10 +17,10 @@ class ServerRunner {
 		std::string			get_last_error() const;
 
 	private:
-		Server& 			_server;
-		std::thread 		_thread;
-		std::atomic<bool>	_isRunning;
-		std::string			_lastError;
+		Server&						_server;
+		std::thread 				_thread;
+		std::atomic<bool>			_isRunning;
+		std::string					_lastError;
 };
 
 #endif

@@ -1,6 +1,7 @@
 #include "ServerRunner.hpp"
 
 #include "LogManager.hpp"
+#include "consts.hpp"
 #include "signal_handler.hpp"
 #include "testUtils.hpp"
 
@@ -12,7 +13,7 @@
  *		🥚 CONSTRUCTORS & DESTRUCTOR						*
  ************************************************************/
 
-ServerRunner::ServerRunner(Server& server) : _server(server), _isRunning(false) {}
+ServerRunner::ServerRunner(Server& s) : _server(s), _isRunning(false) {}
 
 ServerRunner::~ServerRunner()
 {
@@ -53,7 +54,7 @@ void ServerRunner::stop()
     if (!_isRunning)
         return;
 
-    LOG_TEST.debug("Stopping server...");
+    LOG_d_TEST("Stopping server...");
 
     // Signal the server to stop
     globalSignal = SIGINT;

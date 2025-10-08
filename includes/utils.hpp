@@ -32,7 +32,7 @@ template <size_t N> char& safe_at(char (&arr)[N], size_t index)
     return arr[index];
 }
 
-bool is_valid_pattern(const std::string& pattern, const std::string& str);
+bool is_matching_pattern(const std::string& pattern, const std::string& str);
 
 /**
  * @struct MatchPattern

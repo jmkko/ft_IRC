@@ -55,7 +55,6 @@ Server::Server(const unsigned short port, const std::string& password) : _psswd(
 
 Server::~Server()
 {
-    LOG_SERVER.debug("Server destructor");
     _clean();
     // server socket should auto close
 }
@@ -79,7 +78,7 @@ void Server::start()
     while (globalSignal != SIGINT && globalSignal != SIGABRT) {
         int pollResult = poll(_pfds.data(), _pfds.size(), POLL_TIMEOUT); // Timeout 1 second
         if (pollResult == -1) {
-            LOG_SERVER.error("Poll failed: " + TO_STRING(strerror(errno)));
+            LOG_W_SERVER("Poll failed", strerror(errno));
             break;
         }
         if (pollResult == 0) {
@@ -87,8 +86,7 @@ void Server::start()
         }
 
         // review each client socket
-        LOG_SERVER.debug("Server::start --> event(s) detected on socket " + TO_STRING(pollResult));
-
+        LOG_DT_SERVER("event detected",  pollResult);
         for (int i = 0; i < static_cast<int>(_pfds.size()); i++) {
             if (globalSignal == SIGINT && globalSignal == SIGABRT)
                 break;
@@ -192,7 +190,7 @@ void Server::_handle_client_disconnection(int pfdIndex)
  */
 void Server::_handle_client_input(int pfdIndex)
 {
-    LOG_SERVER.debug("Server::_handle_client_input");
+    LOG_dt_SERVER("");
     Socket  socket = _pfds[pfdIndex].fd;
     Client* client = _clients[socket];
     if (!client) {
@@ -217,8 +215,7 @@ void Server::_handle_client_input(int pfdIndex)
         if (utils::safe_at(buffer, bytesRead))
             utils::safe_at(buffer, bytesRead) = '\0';
         client->append_to_read_buffer(std::string(static_cast<char*>(buffer)));
-    	LOG_SERVER.debug("Server::_handle_client_input --> client read buffer: \n" + client->get_read_buffer());
-        this->_handle_command(pfdIndex);
+        this->_handle_commands(pfdIndex);
     }
 }
 
@@ -231,7 +228,6 @@ void Server::_handle_client_input(int pfdIndex)
 */
 void Server::_handle_client_output(int pfdIndex)
 {
-    LOG_SERVER.info("Server::_handle_client_output");
     Socket  socket = _pfds[pfdIndex].fd;
     Client* client = _clients[socket];
     if (!client) {
@@ -242,7 +238,6 @@ void Server::_handle_client_output(int pfdIndex)
     std::string sendBuffer = client->get_send_buffer();
     if (!sendBuffer.empty()) {
 
-        LOG_SERVER.info("Server::_handle_client_output --> Client send buffer: \n" + sendBuffer);
         ssize_t bytesSent = send(socket, sendBuffer.c_str(), sendBuffer.length(), 0);
 
         if (bytesSent == -1) {
@@ -259,7 +254,7 @@ void Server::_handle_client_output(int pfdIndex)
             client->set_send_buffer(sendBuffer.substr(bytesSent));
         } else {
             client->get_send_buffer().clear();
-        	LOG_SERVER.info("Server::_handle_client_output --> Message sent, unsuscribe from POLLOUT");
+            LOG_d_SERVER("Message sent, unsuscribe from POLLOUT");
             _pfds[pfdIndex].events &= ~POLLOUT;
         }
     } else {
@@ -267,7 +262,7 @@ void Server::_handle_client_output(int pfdIndex)
     }
 }
 
-void Server::_handle_command(int pfdIndex)
+void Server::_handle_commands(int pfdIndex)
 {
     Socket      socket = _pfds[pfdIndex].fd;
     Client*     client = _clients[socket];
@@ -283,7 +278,6 @@ void Server::_handle_command(int pfdIndex)
         // parse and create the appropriate command, NULL is returned if a faillure has happen
         ICommand* cmd = _parse_command(*client, line);
         if (cmd) {
-            LOG_SERVER.debug("Server::_handle_command --> executing command");
             cmd->execute(*this, *client);
             delete cmd;
             std::istringstream iss(line);
@@ -298,6 +292,7 @@ void Server::_handle_command(int pfdIndex)
 // return NULL if command has failed amd print
 ICommand* Server::_parse_command(Client& client, std::string line)
 {
+	LOG_CMD.receiving(__FILE_NAME__, __FUNCTION__, line, &client);
     CmdFactory commandBuilder;
     ICommand*  cmd = commandBuilder.make_command(*this, client, line);
 
@@ -335,7 +330,7 @@ int Server::index_of(Client& client)
 void Server::add_events_of(Client& client, int event)
 {
     int index = index_of(client);
-    LOG_SERVER.debug("Server::add_envents_of --> " + EVENT_TO_STR(event) + " on index: " + TO_STRING(index));
+    LOG_dt_SERVER("Server::add_envents_of --> " + EVENT_TO_STR(event) + " on index: " + TO_STRING(index));
     if (index >= 0) {
         _pfds[index].events = static_cast<short>(_pfds[index].events | event); // ADD to existing events
     }
@@ -360,11 +355,7 @@ void Server::_clean()
     }
 
     // Clean up channels
-    LOG_SERVER.debug(std::string("cleaning ") + TO_STRING(channels.size()) + " channels");
-    for (std::map<std::string, Channel*>::iterator it = channels.begin(); it != channels.end(); ++it) {
-        delete it->second; // NOLINT
-    }
-    channels.clear();
+    cleanup_channels();
 
     // Reset signal
     globalSignal = 0;
@@ -394,10 +385,21 @@ void Server::cleanup_socket_and_client(int pfdIndex)
     if (c) {
         if (!c->get_nickname().empty())
             _clientsByNick.erase(c->get_nickname());
-        LOG_SERVER.debug("cleanup: deleting client");
-        delete c; // NOLINT
+		LOG_SERVER.debug("cleanup: deleting client");
+		c->remove_from_all_channels();
+        delete c;
     }
     _pfds.erase(_pfds.begin() + pfdIndex);
+}
+
+void                 Server::cleanup_channels()
+{
+    LOG_dt_SERVER(std::string("cleaning ") + TO_STRING(channels.size()) + " channels");
+    for (std::map<std::string, Channel*>::iterator it = channels.begin(); it != channels.end(); ++it) {
+        delete it->second; // NOLINT
+    }
+    channels.clear();
+
 }
 
 std::vector<Client*> Server::find_clients_by_pattern(const std::string& pattern) const

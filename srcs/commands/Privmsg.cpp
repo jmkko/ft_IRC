@@ -90,13 +90,12 @@ ReplyCode Privmsg::check_args(Server& server, Client& client, std::string& param
 		}
 		std::map<std::string, Channel*>::iterator chan = server.channels.find(target);
 		if (chan != server.channels.end()) {
-			LOG_CMD.debug("Privmsg::check_args -> add channel: " + target);
+			LOG_D_CMD("add channel", target);
 			targetList += target + " ";
 		} else if (server.find_client_by_nickname(target)) {
-			LOG_CMD.debug("Privmsg::check_args -> add client: " + target);
+			LOG_D_CMD("add client", target);
 			targetList += target + " ";
 		} else {
-			LOG_CMD.error("Privmsg::check_args -> " + target + " is not a channel nor a client");
 			rh.process_response(client, ERR_NOSUCHNICK, target);
 		}
 		targetLimit--;

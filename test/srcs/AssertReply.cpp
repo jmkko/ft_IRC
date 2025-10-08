@@ -2,7 +2,9 @@
 #include "AssertReply.hpp"
 #include "LogManager.hpp"
 #include "consts.hpp"
+#include "reply_codes.hpp"
 #include "utils.hpp"
+#include "Config.hpp"
 
 #include <algorithm>
 #include <sstream>
@@ -30,9 +32,8 @@ AssertReply::~AssertReply(void) {}
  *		🛠️ FUNCTIONS											*
  *************************************************************/
 
-bool AssertReply::_has_message_code(const Message& msg, const std::string& expected, std::string* actual)
+bool AssertReply::_has_message_code(const Message& msg, const std::string& expected, std::string* actual) const
 {
-
     if (msg.cmdOrCode != expected) {
         if (msg.cmdOrCode.empty())
             *actual = "nothing";
@@ -43,7 +44,7 @@ bool AssertReply::_has_message_code(const Message& msg, const std::string& expec
     return true;
 }
 
-bool AssertReply::_is_message_ending_with(const Message& msg, const std::string& trailing, std::string* actual)
+bool AssertReply::_is_message_trailing(const Message& msg, const std::string& trailing, std::string* actual) const
 {
     if (msg.trailing != trailing) {
         *actual = msg.trailing;
@@ -52,7 +53,16 @@ bool AssertReply::_is_message_ending_with(const Message& msg, const std::string&
     return true;
 }
 
-bool AssertReply::_is_message_empty(const Message& msg, std::string* actual)
+bool AssertReply::_is_message_starting_with(const Message& msg, const std::string& start, std::string* actual) const
+{
+    if (!msg.raw.starts_with(start)) {
+        *actual = msg.raw;
+        return false;
+    }
+    return true;
+}
+
+bool AssertReply::_is_message_empty(const Message& msg, std::string* actual) const
 {
     if (!msg.raw.empty()) {
         *actual = msg.raw;
@@ -61,7 +71,7 @@ bool AssertReply::_is_message_empty(const Message& msg, std::string* actual)
     return true;
 }
 
-bool AssertReply::_is_message_matching_entirely(const Message& msg, const std::string& message, std::string* actual)
+bool AssertReply::_is_message_matching_entirely(const Message& msg, const std::string& message, std::string* actual) const
 {
     if (msg.raw != message) {
         *actual = msg.raw;
@@ -70,7 +80,7 @@ bool AssertReply::_is_message_matching_entirely(const Message& msg, const std::s
     return true;
 }
 
-bool AssertReply::_is_message_containing(const Message& msg, const std::string& token) { return msg.raw.find(token); }
+bool AssertReply::_is_message_containing(const Message& msg, const std::string& token) const { return msg.raw.find(token) != std::string::npos; }
 
 AssertReply& AssertReply::has_code(ReplyCode code)
 {
@@ -84,8 +94,12 @@ AssertReply& AssertReply::has_code(ReplyCode code)
             break;
         }
     }
+	const std::string& expectedCodeStr = ircCodes.str(code);
+	std::string actualCodeStr = std::string("");
+	if (!actual.empty())
+		actualCodeStr = ircCodes.str(static_cast<ReplyCode>(std::atoi(actual.c_str())));
     if (!isMatching)
-        throw AssertFail("code", oss.str(), actual);
+        throw AssertFail("code", std::string(oss.str()) + " [" + expectedCodeStr + "]", std::string(actual) + " [" + actualCodeStr + "]" );
     return *this;
 }
 
@@ -94,13 +108,29 @@ AssertReply& AssertReply::ends_with(const std::string& trailing)
     std::string actual     = "";
     bool        isMatching = false;
     for (std::vector<Message>::iterator it = _messages.begin(); it != _messages.end(); ++it) {
-        if (_is_message_ending_with(*it, trailing, &actual)) {
+        if (_is_message_trailing(*it, trailing, &actual)) {
             isMatching = true;
             break;
         }
     }
     if (!isMatching) {
         throw AssertFail("trailing message ", trailing, actual);
+    }
+    return *this;
+}
+
+AssertReply& AssertReply::starts_with(const std::string& start)
+{
+    std::string actual = "";
+    bool        isMatching = false;
+    for (std::vector<Message>::iterator it = _messages.begin(); it != _messages.end(); ++it) {
+        if (_is_message_starting_with(*it, start, &actual)) {
+            isMatching = true;
+            break;
+        }
+    }
+    if (!isMatching) {
+        throw AssertFail("trailing message ", start, actual);
     }
     return *this;
 }
@@ -167,6 +197,20 @@ AssertReply& AssertReply::is_empty()
     return *this;
 }
 
+/**
+ * @brief checks full message based on code
+ * @todo implement by getting client nick
+ * @param code 
+ * @return AsserReply& 
+ */
+AssertReply&  AssertReply::is_formatted(ReplyCode code, const std::string& clientNick)
+{
+    std::string expectedStart = ircConfig.get_name();
+    expectedStart += ": " + ircCodes.str(code) + " " + clientNick + " ";
+    const std::string& expectedTrailing = ircCodes.trailing(code);
+    return this->starts_with(expectedStart).ends_with(expectedTrailing);
+}
+
 AssertReply& AssertReply::handle_new_reply(const std::string& reply)
 {
     _reply = reply;
@@ -190,25 +234,25 @@ void AssertReply::_process_reply()
     }
 
     while (std::getline(iss, rawMsg, '\n')) {
-        LOG_TEST.debug("process_reply : parsing raw Msg ", rawMsg);
+        LOG_DTV_TEST(rawMsg);
         std::istringstream issMsg(rawMsg);
         if (rawMsg[0] == ':') {
             issMsg >> msgPrefix;
-            LOG_TEST.debug("process_reply : msgPrefix ", msgPrefix);
+            LOG_DTV_TEST(msgPrefix);
         }
         issMsg >> msgCmdOrCode;
-        LOG_TEST.debug("process_reply : msgCmdOrCode ", msgCmdOrCode);
+        LOG_DTV_TEST(msgCmdOrCode);
         std::string token;
         while (issMsg >> token) {
             if (token[0] == ':') {
                 msgTrailing = token;
                 while (issMsg >> token)
                     msgTrailing += token;
-                LOG_TEST.debug("process_reply : msgTrailing ", msgTrailing);
+                LOG_DTV_TEST(msgTrailing);
                 break;
             }
             msgArgs.push_back(token);
-            LOG_TEST.debug("process_reply : msgArg ", token);
+            LOG_DT_TEST("msgArg", token);
         }
         Message msg = {.args = msgArgs, .cmdOrCode = msgCmdOrCode, .prefix = msgPrefix, .trailing = msgTrailing, .raw = rawMsg};
         _messages.push_back(msg);
