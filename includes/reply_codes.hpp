@@ -14,10 +14,10 @@
 #define RPL_MYINFO_MSG   "" // <servername> <version> <available user modes> <available channel modes>
 
 // Error Responses
-#define ERR_NEEDMOREPARAMS_MSG    " :Not enough parameters "
+#define ERR_NEEDMOREPARAMS_MSG   " :Not enough parameters "
 #define ERR_ALREADYREGISTRED_MSG " :Unauthorized command (already registered)"
-#define ERR_UNKNOWNCOMMAND_MSG    " :Command is not handled (sorry guys) "
-#define ERR_NOTEXTTOSEND_MSG " :NO text to send"
+#define ERR_UNKNOWNCOMMAND_MSG   " :Command is not handled (sorry guys) "
+#define ERR_NOTEXTTOSEND_MSG     " :NO text to send"
 // =============================================================================
 // PASS Command Responses
 // =============================================================================
@@ -156,12 +156,14 @@
 // ERR_PASSWDMISMATCH_MSG (reused)
 #define ERR_NOOPERHOST_MSG " :No O-lines for your host"
 
-#define RPL_ENDOFWHO_MSG " :End of WHO list"
+#define RPL_ENDOFWHO_MSG  " :End of WHO list"
+#define RPL_MOTDSTART_MSG " :Message of the Day"
+#define RPL_ENDOFMOTD_MSG " :End of /MOTD command."
 /// @brief https://datatracker.ietf.org/doc/html/rfc2812#section-5
 enum ReplyCode {
 
     ////////////////////// NON RFC
-    RPL_SUCCESS = 0,	// internal logic
+    RPL_SUCCESS = 0, // internal logic
     RPL_NOTICE  = 101,
     RPL_PASS    = 201,
     RPL_USER    = 202,
@@ -172,7 +174,7 @@ enum ReplyCode {
     RPL_MODE    = 207,
     RPL_QUIT    = 208,
 
- 	RPL_NONE            = 300,	// no answer
+    RPL_NONE            = 300, // no answer
     SERVER_ERR          = 801,
     FORMAT_ERR          = 802,
     PWD_ERR             = 803,
@@ -180,12 +182,12 @@ enum ReplyCode {
     ERR_WRONG_FORMAT    = 805,
 
     ////////////////////// RFC REPLIES
-    RPL_WELCOME  = 001,	// after registering (PASS NICK USER)
+    RPL_WELCOME  = 001, // after registering (PASS NICK USER)
     RPL_YOURHOST = 002,
     RPL_CREATED  = 003,
     RPL_MYINFO   = 004,
 
-    RPL_ISUPPORT           = 005,    // Supported features by server
+    RPL_ISUPPORT = 005, // Supported features by server
     // RPL_BOUNCE             = 010,    // Obsolete
     // RPL_USERHOST           = 302,    // USERHOST
     // RPL_ISON               = 303,    // ISON
@@ -200,37 +202,37 @@ enum ReplyCode {
     // RPL_WHOISCHANNELS      = 319,    // WHOIS
     // RPL_WHOWASUSER         = 314,    // WHOWAS
     // RPL_ENDOFWHOWAS        = 369,    // WHOWAS
-    RPL_LISTSTART          = 321,    // LIST
-    RPL_LIST               = 322,    // LIST
-    RPL_LISTEND            = 323,    // LIST
-    RPL_CHANNELMODEIS      = 324,    // MODE
-    RPL_NOTOPIC            = 331,    // TOPIC (no topic)
-    RPL_TOPIC              = 332,    // TOPIC
-    RPL_TOPICWHOTIME       = 333,    // TOPIC (who and when
-    RPL_INVITING           = 341,    // INVITE
+    RPL_LISTSTART     = 321, // LIST
+    RPL_LIST          = 322, // LIST
+    RPL_LISTEND       = 323, // LIST
+    RPL_CHANNELMODEIS = 324, // MODE
+    RPL_NOTOPIC       = 331, // TOPIC (no topic)
+    RPL_TOPIC         = 332, // TOPIC
+    RPL_TOPICWHOTIME  = 333, // TOPIC (who and when
+    RPL_INVITING      = 341, // INVITE
     // RPL_SUMMONING          = 342,    // SUMMON (obsolete)
-    RPL_INVITELIST         = 346,    // MODE +I
-    RPL_ENDOFINVITELIST    = 347,    // MODE +I
-    RPL_EXCEPTLIST         = 348,    // MODE +e
-    RPL_ENDOFEXCEPTLIST    = 349,    // MODE +e
+    RPL_INVITELIST      = 346, // MODE +I
+    RPL_ENDOFINVITELIST = 347, // MODE +I
+    RPL_EXCEPTLIST      = 348, // MODE +e
+    RPL_ENDOFEXCEPTLIST = 349, // MODE +e
     // RPL_VERSION            = 351,    // VERSION
-    RPL_WHOREPLY           = 352,    // WHO
-    RPL_ENDOFWHO           = 315,    // WHO
-    RPL_NAMREPLY           = 353,    // NAMES, WHO
-    RPL_ENDOFNAMES         = 366,    // NAMES
+    RPL_WHOREPLY   = 352, // WHO
+    RPL_ENDOFWHO   = 315, // WHO
+    RPL_NAMREPLY   = 353, // NAMES, WHO
+    RPL_ENDOFNAMES = 366, // NAMES
     // RPL_LINKS              = 364,    // LINKS
     // RPL_ENDOFLINKS         = 365,    // LINKS
-    RPL_BANLIST            = 367,    // MODE +b
-    RPL_ENDOFBANLIST       = 368,    // MODE +b
-    RPL_INFO               = 371,    // INFO
-    RPL_ENDOFINFO          = 374,    // INFO
-    RPL_MOTDSTART          = 375,    // MOTD
-    RPL_MOTD               = 372,    // MOTD
-    RPL_ENDOFMOTD          = 376,    // MOTD
-    RPL_YOUREOPER          = 381,    // OPER
+    RPL_BANLIST      = 367, // MODE +b
+    RPL_ENDOFBANLIST = 368, // MODE +b
+    RPL_INFO         = 371, // INFO
+    RPL_ENDOFINFO    = 374, // INFO
+    RPL_MOTDSTART    = 375, // MOTD
+    RPL_MOTD         = 372, // MOTD
+    RPL_ENDOFMOTD    = 376, // MOTD
+    RPL_YOUREOPER    = 381, // OPER
     // RPL_REHASHING          = 382,    // REHASH
-    RPL_YOURSERVICE        = 383,    // SERVICE (obsolte)
-    RPL_TIME               = 391,    // TIME
+    RPL_YOURSERVICE = 383, // SERVICE (obsolte)
+    RPL_TIME        = 391, // TIME
     // RPL_USERSSTART         = 392,    // USERS (obsolete)
     // RPL_USERS              = 393,    // USERS (obsolete)
     // RPL_ENDOFUSERS         = 394,    // USERS (obsolete)
@@ -274,52 +276,52 @@ enum ReplyCode {
     // RPL_ADMINEMAIL         = 259,    // ADMIN
 
     ////////////////////// RFC ERRORS
-   	ERR_NOSUCHNICK        = 401,    // NICK, PRIVMSG, WHOIS, etc.
+    ERR_NOSUCHNICK = 401, // NICK, PRIVMSG, WHOIS, etc.
     // ERR_NOSUCHSERVER      = 402,    // SQUERY, SQUIT
-    ERR_NOSUCHCHANNEL     = 403,    // JOIN, PRIVMSG, MODE, TOPIC, etc.
-    ERR_CANNOTSENDTOCHAN  = 404,    // PRIVMSG
-    ERR_TOOMANYCHANNELS   = 405,    // JOIN
+    ERR_NOSUCHCHANNEL    = 403, // JOIN, PRIVMSG, MODE, TOPIC, etc.
+    ERR_CANNOTSENDTOCHAN = 404, // PRIVMSG
+    ERR_TOOMANYCHANNELS  = 405, // JOIN
     // ERR_WASNOSUCHNICK     = 406,    // WHOIS
-    ERR_TOOMANYTARGETS    = 407,    // PRIVMSG
+    ERR_TOOMANYTARGETS = 407, // PRIVMSG
     // ERR_NOSUCHSERVICE     = 408,    // SQUERY
-    ERR_NOORIGIN          = 409,    // PING, PONG
-    ERR_NORECIPIENT       = 411,    // PRIVMSG, NOTICE
-    ERR_NOTEXTTOSEND      = 412,    // PRIVMSG, NOTICE
-    ERR_NOTOPLEVEL        = 413,    // PRIVMSG, NOTICE
-    ERR_WILDTOPLEVEL      = 414,    // PRIVMSG, NOTICE
-    ERR_UNKNOWNCOMMAND    = 421,
-    ERR_NOMOTD            = 422,    // MOTD
+    ERR_NOORIGIN       = 409, // PING, PONG
+    ERR_NORECIPIENT    = 411, // PRIVMSG, NOTICE
+    ERR_NOTEXTTOSEND   = 412, // PRIVMSG, NOTICE
+    ERR_NOTOPLEVEL     = 413, // PRIVMSG, NOTICE
+    ERR_WILDTOPLEVEL   = 414, // PRIVMSG, NOTICE
+    ERR_UNKNOWNCOMMAND = 421,
+    ERR_NOMOTD         = 422, // MOTD
     // ERR_NOADMININFO       = 423,    // ADMIN
-    ERR_FILEERROR         = 424,    // All if file processing
-    ERR_NONICKNAMEGIVEN   = 431,    // NICK
-    ERR_ERRONEUSNICKNAME  = 432,    // NICK
-    ERR_NICKNAMEINUSE     = 433,    // NICK
-    ERR_NICKCOLLISION     = 436,    // NICK
-    ERR_UNAVAILRESOURCE   = 437,    // NICK, CHANNEL
-    ERR_USERNOTINCHANNEL  = 441,    // KICK, INVITE
-    ERR_NOTONCHANNEL      = 442,    // PRIVMSG, MODE, etc.
-    ERR_USERONCHANNEL     = 443,    // INVITE
-    ERR_NOLOGIN           = 444,    // USER
+    ERR_FILEERROR        = 424, // All if file processing
+    ERR_NONICKNAMEGIVEN  = 431, // NICK
+    ERR_ERRONEUSNICKNAME = 432, // NICK
+    ERR_NICKNAMEINUSE    = 433, // NICK
+    ERR_NICKCOLLISION    = 436, // NICK
+    ERR_UNAVAILRESOURCE  = 437, // NICK, CHANNEL
+    ERR_USERNOTINCHANNEL = 441, // KICK, INVITE
+    ERR_NOTONCHANNEL     = 442, // PRIVMSG, MODE, etc.
+    ERR_USERONCHANNEL    = 443, // INVITE
+    ERR_NOLOGIN          = 444, // USER
     // ERR_SUMMONDISABLED    = 445,    // SUMMON
     // ERR_USERSDISABLED     = 446,    // USERS
-    ERR_NOTREGISTERED     = 451,    // All if not registered (NICK/USER)
-    ERR_NEEDMOREPARAMS    = 461,    // All
-    ERR_ALREADYREGISTRED  = 462,    // NICK/USER (already registered)
+    ERR_NOTREGISTERED    = 451, // All if not registered (NICK/USER)
+    ERR_NEEDMOREPARAMS   = 461, // All
+    ERR_ALREADYREGISTRED = 462, // NICK/USER (already registered)
     // ERR_NOPERMFORHOST     = 463,    // NICK (forbidden on host)
-    ERR_PASSWDMISMATCH    = 464,    // PASS
-    ERR_YOUREBANNEDCREEP  = 465,    // after BAN
-    ERR_KEYSET            = 467,    // JOIN (if +k already set)
-    ERR_CHANNELISFULL     = 471,    // JOIN (if +l)
-    ERR_UNKNOWNMODE       = 472,    // MODE (unknown mode)
-    ERR_INVITEONLYCHAN    = 473,    // JOIN (if +i)
-    ERR_BANNEDFROMCHAN    = 474,    // JOIN (if +b)
-    ERR_BADCHANNELKEY     = 475,    // JOIN (if +k)
-    ERR_BADCHANMASK       = 476,    // JOIN
-    ERR_NOPRIVILEGES      = 481,    // MODE, KICK, etc.
-    ERR_CHANOPRIVSNEEDED  = 482,    // MODE, KICK, etc.
+    ERR_PASSWDMISMATCH   = 464, // PASS
+    ERR_YOUREBANNEDCREEP = 465, // after BAN
+    ERR_KEYSET           = 467, // JOIN (if +k already set)
+    ERR_CHANNELISFULL    = 471, // JOIN (if +l)
+    ERR_UNKNOWNMODE      = 472, // MODE (unknown mode)
+    ERR_INVITEONLYCHAN   = 473, // JOIN (if +i)
+    ERR_BANNEDFROMCHAN   = 474, // JOIN (if +b)
+    ERR_BADCHANNELKEY    = 475, // JOIN (if +k)
+    ERR_BADCHANMASK      = 476, // JOIN
+    ERR_NOPRIVILEGES     = 481, // MODE, KICK, etc.
+    ERR_CHANOPRIVSNEEDED = 482, // MODE, KICK, etc.
     // ERR_CANTKILLSERVER    = 483,    // KILL (impossible to kill a server)
     // ERR_NOOPERHOST        = 491,    // OPER (unauthorized host)
-    ERR_UMODEUNKNOWNFLAG  = 501    // MODE (unknown user mode)
+    ERR_UMODEUNKNOWNFLAG = 501 // MODE (unknown user mode)
 };
 
 #endif

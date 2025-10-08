@@ -6,6 +6,7 @@
 #include "Kick.hpp"
 #include "LogManager.hpp"
 #include "Mode.hpp"
+#include "Motd.hpp"
 #include "Nick.hpp"
 #include "Pass.hpp"
 #include "Privmsg.hpp"
@@ -51,7 +52,7 @@ ICommand* CmdFactory::make_command(Server& server, Client& client, std::string& 
     std::string        commandLine = "";
     std::istringstream iss(params); // NOLINT(clang-diagnostic-vexing-parse)
     std::string        available[NB_AVAILABLE_CMD]
-        = {"USER", "PASS", "NICK", "QUIT", "INVITE", "JOIN", "PART", "MODE", "OPER", "PRIVMSG", "WHO", "KICK"};
+        = {"USER", "PASS", "NICK", "QUIT", "INVITE", "JOIN", "PART", "MODE", "OPER", "PRIVMSG", "WHO", "KICK", "MOTD"};
     ICommand* (CmdFactory::* ptr[NB_AVAILABLE_CMD])(Server&, Client&, std::string&) = {&CmdFactory::user_cmd,
                                                                                        &CmdFactory::pass_cmd,
                                                                                        &CmdFactory::nick_cmd,
@@ -64,7 +65,7 @@ ICommand* CmdFactory::make_command(Server& server, Client& client, std::string& 
                                                                                        &CmdFactory::privmsg_cmd,
                                                                                        &CmdFactory::who_cmd,
                                                                                        &CmdFactory::kick_cmd,
-                                                                                    };
+                                                                                       &CmdFactory::motd_cmd};
 
     iss >> commandLine;
     for (size_t i = 0; i < NB_AVAILABLE_CMD; i++) {
@@ -186,12 +187,11 @@ ICommand* CmdFactory::join_cmd(Server& server, Client& client, std::string& para
 
 ICommand* CmdFactory::mode_cmd(Server& server, Client& client, std::string& params)
 {
-    ReplyHandler&   rh = ReplyHandler::get_instance(&server);
+    ReplyHandler&            rh = ReplyHandler::get_instance(&server);
     std::vector<std::string> vectorParams;
-    std::istringstream iss(params);
-    std::string token = "";
-    while (std::getline(iss, token, ' '))
-    {
+    std::istringstream       iss(params);
+    std::string              token = "";
+    while (std::getline(iss, token, ' ')) {
         vectorParams.push_back(token);
     }
     ReplyCode replyCode = Mode::check_args(server, client, vectorParams);
@@ -281,4 +281,11 @@ ICommand* CmdFactory::privmsg_cmd(Server& server, Client& client, std::string& p
     // }
 
     return privmsg;
+};
+
+ICommand* CmdFactory::motd_cmd(Server& server, Client& client, std::string& params)
+{
+    (void)server;
+    (void)client;
+    return new Motd(params);
 };
