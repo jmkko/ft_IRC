@@ -22,6 +22,8 @@ template <typename T> std::string to_string(const T& value)
     return oss.str();
 }
 
+const std::string code_to_str(ReplyCode code);
+
 long string_to_ulong(const std::string& str);
 std::string event_to_str(int event);
 

@@ -17,7 +17,7 @@ int main(int ac, char** av)
 {
     LogManager& lm = LogManager::get_instance();
 #ifdef DEB
-    lm.set_global_level(DEBUG);
+    lm.set_global_level(DETAIL);
 #else
     lm.set_global_level(ERROR);
 #endif
@@ -39,6 +39,7 @@ int main(int ac, char** av)
             functions["WHO"]     = &test_who;
             functions["JOIN"]    = &test_join;
             functions["PRIVMSG"] = &test_privmsg;
+            functions["PING"]    = &test_ping;
 
             functions[av[1]](*s);
         } else {
@@ -48,6 +49,7 @@ int main(int ac, char** av)
             test_who(*s);
             test_join(*s);
             test_privmsg(*s);
+            test_ping(*s);
         }
 
         LOG_TEST.info("All tests completed, stopping server...");

@@ -29,11 +29,16 @@ class TestFixture
 
 };
 
+#ifdef DEB
+    #define DEBUG_PRINT(test) \
+        std::cout << BWHITE << "=====================START OF TEST " << __FUNCTION__ << "=====================" << RESET << '\n';
+#else
+    #define DEBUG_PRINT(test)
+#endif
+
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define TEST_SETUP(test, s, nbSockets) \
 	TestFixture test(s); \
 	auto sockets = (test).setup(nbSockets); \
-    if (std::getenv("DEB") != nullptr) { \
-        std::cout << BWHITE << "=====================START OF TEST " << __FUNCTION__ << "=====================" << RESET << '\n'; \
-    }
+    DEBUG_PRINT(test);
 #endif

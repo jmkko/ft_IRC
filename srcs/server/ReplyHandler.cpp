@@ -21,14 +21,6 @@ ReplyHandler::ReplyHandler(Server* server) : _server(server) {}
  *		🛠️ FUNCTIONS											*
  *************************************************************/
 
-static const std::string code_to_str(ReplyCode code)
-{
-    std::stringstream ss;
-    ss << " " << std::setw(3) << std::setfill('0') << code;
-    ss << " ";
-    return ss.str();
-}
-
 /*
 <message>  ::= [':' <prefix> <SPACE> ] <command> <params> <crlf>
 <prefix>   ::= <servername> | <nick> [ '!' <user> ] [ '@' <host> ]
@@ -92,15 +84,17 @@ std::string ReplyHandler::get_id_of(Client& client, const std::string& nickname)
 std::string ReplyHandler::select_response(Client& client, ReplyCode code, const std::string& parameters, Client* sender)
 {
     std::string nick = client.get_nickname();
-    std::string response(":" + ircConfig.get_name());
-    std::string responseWithCode        = response + code_to_str(code) + " ";
+    std::string response(":" + ircConfig.get_name() + " ");
+    std::string responseWithCode        = response + utils::code_to_str(code) + " ";
     std::string responseWithCodeAndNick = responseWithCode + nick + " ";
-
+    LOG_D_CMD("resp w code and nick", responseWithCodeAndNick);
     if (!sender)
         sender = &client;
     switch (code) {
     case RPL_WELCOME:
-        return (response + code_to_str(code) + nick + RPL_WELCOME_MSG);
+        return (response + utils::code_to_str(code) + nick + RPL_WELCOME_MSG);
+    case RPL_PING:
+        return response + parameters; // PONG :token
     case RPL_NICK:
         return (get_id_of(client, parameters) + " NICK " + nick);
     case RPL_JOIN:
@@ -114,23 +108,23 @@ std::string ReplyHandler::select_response(Client& client, ReplyCode code, const 
     case RPL_QUIT:
         return sender->get_nickname() + " has quit " + ircConfig.get_name() + parameters;
     case RPL_INVITING:
-        return (response + code_to_str(code) + nick + " " + parameters);
+        return (response + utils::code_to_str(code) + nick + " " + parameters);
     case RPL_INVITING_TARGET:
         return (get_id_of(*sender, "") + parameters);
     case RPL_WHOREPLY:
-        return (response + code_to_str(code) + parameters);
+        return (response + utils::code_to_str(code) + parameters);
     case RPL_ENDOFWHO:
-        return (response + code_to_str(code) + nick + " " + parameters + RPL_ENDOFWHO_MSG);
+        return (response + utils::code_to_str(code) + nick + " " + parameters + RPL_ENDOFWHO_MSG);
     case RPL_MODE:
         return (response + " MODE " + parameters);
     case RPL_TOPIC:
-        return (response + code_to_str(code) + nick + " " + parameters);
+        return (response + utils::code_to_str(code) + nick + " " + parameters);
     case RPL_NAMREPLY:
-        return (response + code_to_str(code) + nick + " = " + parameters);
+        return (response + utils::code_to_str(code) + nick + " = " + parameters);
     case RPL_ENDOFNAMES:
-        return (response + code_to_str(code) + nick + " " + parameters + RPL_ENDOFNAMES_MSG);
+        return (response + utils::code_to_str(code) + nick + " " + parameters + RPL_ENDOFNAMES_MSG);
     case RPL_NOTOPIC:
-        return (response + code_to_str(code) + nick + " " + parameters + RPL_NOTOPIC_MSG);
+        return (response + utils::code_to_str(code) + nick + " " + parameters + RPL_NOTOPIC_MSG);
     case RPL_CHANNELMODEIS:
         return (responseWithCodeAndNick + parameters + " " + ircCodes.trailing(code));
     case ERR_CHANOPRIVSNEEDED:
@@ -161,26 +155,18 @@ std::string ReplyHandler::select_response(Client& client, ReplyCode code, const 
         return (std::string("464") + ERR_PASSWDMISMATCH_MSG);
     case ERR_NOTREGISTERED:
         return (TO_STRING(ERR_NOTREGISTERED) + "* " + parameters + " :You have not registered");
-    case ERR_NOTONCHANNEL:
-        return (responseWithCodeAndNick + parameters + ERR_NOTONCHANNEL_MSG);
     case ERR_ALREADYREGISTRED:
-        return (std::string("464") + ERR_ALREADYREGISTRED_MSG);
     case ERR_BADCHANMASK:
-        return (responseWithCodeAndNick + parameters + ERR_BADCHANMASK_MSG);
     case ERR_BADCHANNELKEY:
-        return (responseWithCodeAndNick + parameters + ERR_BADCHANNELKEY_MSG);
-    case ERR_CHANNELISFULL:
-        return (response + code_to_str(code) + nick + " " + parameters + ERR_CHANNELISFULL_MSG);
-    case ERR_INVITEONLYCHAN:
-        return (response + code_to_str(code) + nick + " " + parameters + ERR_INVITEONLYCHAN_MSG);
     case ERR_BANNEDFROMCHAN:
-        return (response + code_to_str(code) + nick + " " + parameters + ERR_BANNEDFROMCHAN_MSG);
-    case ERR_WRONG_FORMAT:
-        return (responseWithCodeAndNick + parameters + ircCodes.trailing(ERR_WRONG_FORMAT));
-    case ERR_UNKNOWNMODE:
-        return (responseWithCodeAndNick + parameters + ircCodes.trailing(ERR_UNKNOWNMODE));
+    case ERR_CHANNELISFULL:
+    case ERR_INVITEONLYCHAN:
     case ERR_KEYSET:
-        return (responseWithCodeAndNick + parameters + ircCodes.trailing(ERR_KEYSET));    
+    case ERR_NOORIGIN:
+    case ERR_NOTONCHANNEL:
+    case ERR_UNKNOWNMODE:
+    case ERR_WRONG_FORMAT:
+        return (responseWithCodeAndNick + parameters + ircCodes.trailing(code));    
     default:
         return ("");
     }
@@ -208,7 +194,7 @@ int ReplyHandler::process_response(Client& client, ReplyCode code, const std::st
 int ReplyHandler::process_code_response(Client& client, ReplyCode code, const std::string& parameters)
 {
     std::string response(":" + ircConfig.get_name());
-    response = response + code_to_str(code) + " " + parameters;
+    response = response + utils::code_to_str(code) + " " + parameters;
 
     if (!response.empty()) {
         LOG_CMD.info("ReplyHandler::process_response --> response to " + client.get_nickname() + ":\n" + response);

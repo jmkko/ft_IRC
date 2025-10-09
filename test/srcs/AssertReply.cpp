@@ -205,8 +205,8 @@ AssertReply& AssertReply::is_empty()
  */
 AssertReply&  AssertReply::is_formatted(ReplyCode code, const std::string& clientNick)
 {
-    std::string expectedStart = ircConfig.get_name();
-    expectedStart += ": " + ircCodes.str(code) + " " + clientNick + " ";
+    std::string expectedStart = std::string(":" + ircConfig.get_name());
+    expectedStart += " " + utils::code_to_str(code) + " " + clientNick + " ";
     const std::string& expectedTrailing = ircCodes.trailing(code);
     return this->starts_with(expectedStart).ends_with(expectedTrailing);
 }
@@ -247,7 +247,7 @@ void AssertReply::_process_reply()
             if (token[0] == ':') {
                 msgTrailing = token;
                 while (issMsg >> token)
-                    msgTrailing += token;
+                    msgTrailing += " " + token;
                 LOG_DTV_TEST(msgTrailing);
                 break;
             }
