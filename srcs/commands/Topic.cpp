@@ -6,16 +6,43 @@
 #include "ReplyHandler.hpp"
 
 // Default constructor
-Topic::Topic(void) {}
+Topic::Topic(void): _topic(""), _chan(NULL) {}
+
 Topic::Topic(Server& s, std::string& params) {
-	build_args(s, params);
+	std::istringstream iss(params);
+	std::string channel;
+
+	// first param = channel
+	iss >> channel;
+
+	std::string rest;
+	std::getline(iss, rest);
+
+	if (!rest.empty()) {
+		std::string::size_type start = rest.find_first_not_of(" \t\n\r\f\v");
+		if (start != std::string::npos)
+			rest.erase(0, start);
+		else
+			rest.clear(); // string is all spaces
+	}
+	if (!rest.empty() && rest[0] == ':')
+		rest.erase(0, 1);
+	_chan = s.find_channel_by_name(channel);
+	_topic = rest;
+
 }
 
 // Copy constructor
-Topic::Topic(const Topic &other) {(void) other;}
+Topic::Topic(const Topic &other): _topic(other._topic), _chan(other._chan) {}
 
 // Assignment operator overload
-Topic &Topic::operator=(const Topic &other) {(void) other;  return (*this);}
+Topic &Topic::operator=(const Topic &other) {
+	if (this != &other) {
+		_chan = other._chan;
+		_topic = other._topic;
+	}
+	return (*this);
+}
 
 // Destructor
 Topic::~Topic(void) {}
@@ -26,52 +53,50 @@ void Topic::execute(Server& s, Client& c) {
 
 	if (_chan) {
 		if (_topic.empty()) {
-			std::string ChannelTopic = _chan->get_topic();
-			if (ChannelTopic.empty()) {
+			std::string channelTopic = _chan->get_topic();
+			if (channelTopic.empty()) {
 				rh.process_response(c, RPL_NOTOPIC, _chan->get_name());
+			} else {
+				rh.process_response(c, RPL_TOPIC, _chan->get_name() + " :" + _chan->get_topic());
 			}
-			rh.process_response(c, RPL_TOPIC, _chan->get_name() + " :" + _chan->get_topic());
 		} else {
 			ReplyCode code = _chan->set_topic(c, _topic);
 			if (code == RPL_SUCCESS) {
+				LOG_CMD.debug("success on TOPIC !");
 				_chan->broadcast(s, RPL_TOPIC, _chan->get_name() + " :" + _chan->get_topic());
 			} else {
 				rh.process_response(c, code, _chan->get_name());
 			}
 		}
-	}
-}
-
-void	Topic::build_args(Server& s, std::string& params) {
-	std::istringstream iss(params);
-	std::string token;
-
-	iss >> token;
-	_chan = s.find_channel_by_name(token);
-	iss >> token;
-	if (token.empty()) {
-		_topic = "";
 	} else {
-		_topic = token.substr(token.find(" :") + 2);
+		LOG_CMD.error("Topic::execute --> Channel is INVALID");
 	}
 }
 
 ReplyCode Topic::check_args(Server& s, Client& c, std::string& params) {
 	std::istringstream iss(params);
 	std::string token;
-
 	Channel* chan = NULL;
 
-	iss >> token;
-	if (token.empty()) {
-		return (ERR_NEEDMOREPARAMS);
-	}
+	if (!(iss >> token))
+		return ERR_NEEDMOREPARAMS;
+
 	chan = s.find_channel_by_name(token);
-	if (chan) {
-		if (chan->is_member(c)) {
-			return (RPL_SUCCESS);
-		}
-		return (ERR_NOTONCHANNEL);
-	}
-	return (ERR_NOSUCHCHANNEL);
+	if (!chan)
+		return ERR_NOSUCHCHANNEL;
+
+	if (!chan->is_member(c))
+		return ERR_NOTONCHANNEL;
+
+	std::string next;
+	if (!(iss >> next))
+		return RPL_SUCCESS;
+
+	// if (next[0] != ':') {
+	// 	std::string extra;
+	// 	if (iss >> extra)  // any more tokens = invalid
+	// 		return ERR_TOOMANYPARAMS;
+	// }
+
+	return RPL_SUCCESS;
 }

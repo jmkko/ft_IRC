@@ -314,5 +314,11 @@ ICommand* CmdFactory::topic_cmd(Server& server, Client& client, std::string& par
 {
     (void)server;
     (void)client;
+	ReplyHandler rh = ReplyHandler::get_instance(&server);
+	ReplyCode code = Topic::check_args(server, client, params);
+	if (code != RPL_SUCCESS) {
+		rh.process_response(client, code, params);
+		return NULL;
+	}
     return new Topic(server, params);
 };
