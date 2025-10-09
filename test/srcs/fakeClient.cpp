@@ -1,9 +1,8 @@
-#include "fakeClient.hpp"
-
 #include "LogManager.hpp"
 #include "TcpSocket.hpp"
 #include "colors.hpp"
 #include "consts.hpp"
+#include "fakeClient.hpp"
 #include "testUtils.hpp"
 #include "utils.hpp"
 
@@ -141,4 +140,10 @@ std::string recv_lines(const TcpSocket& so)
     }
     std::this_thread::sleep_for(std::chrono::milliseconds(SERVER_PROCESS_TIME_MS));
     return result;
+}
+
+void do_cmd(const TcpSocket& so, const std::string& msg)
+{
+    send_line(so, msg);
+    recv_lines(so);
 }

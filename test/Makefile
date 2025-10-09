@@ -56,6 +56,7 @@ IRC_SRCS_FILES	:=	utils.cpp\
 					commands/Privmsg.cpp\
 					commands/Quit.cpp\
 					commands/User.cpp\
+					commands/Motd.cpp\
 					commands/Who.cpp\
 
 EXT				:= .cpp
