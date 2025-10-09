@@ -1,9 +1,8 @@
-#include "fakeClient.hpp"
-
 #include "LogManager.hpp"
 #include "TcpSocket.hpp"
 #include "colors.hpp"
 #include "consts.hpp"
+#include "fakeClient.hpp"
 #include "testUtils.hpp"
 #include "utils.hpp"
 
@@ -141,4 +140,10 @@ std::string recv_lines(const TcpSocket& so)
         }
     }
     return result;
+}
+
+void do_cmd(const TcpSocket& so, const std::string& msg)
+{
+    send_line(so, msg);
+    recv_lines(so);
 }
