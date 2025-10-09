@@ -174,6 +174,7 @@ enum ReplyCode {
     RPL_MODE    = 207,
     RPL_QUIT    = 208,
     RPL_PING    = 209,
+    RPL_BOT     = 299,
 
     RPL_NONE            = 300, // no answer
     SERVER_ERR          = 801,

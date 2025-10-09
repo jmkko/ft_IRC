@@ -11,7 +11,7 @@ class Privmsg : public ICommand
   public:
     Privmsg(void);
     Privmsg(const Privmsg& other);
-    Privmsg(const std::string& msg);
+    Privmsg(const std::string& msg, bool isBotMsg);
     Privmsg& operator=(const Privmsg& other);
     ~Privmsg();
 
@@ -25,6 +25,7 @@ class Privmsg : public ICommand
     std::string           _msg;
     std::vector<Channel*> _chans;
     std::vector<Client*>  _dests;
+    bool                  _isBotMsg;
 };
 
 #endif

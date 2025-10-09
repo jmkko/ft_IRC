@@ -1,13 +1,16 @@
 #include "Privmsg.hpp"
+#include "BotReply.hpp"
 #include "Server.hpp"
 #include "reply_codes.hpp"
 #include "utils.hpp"
 #include "Client.hpp"
+#include "BotReply.hpp"
+#include <sstream>
 
 // Default constructor
-Privmsg::Privmsg(void): _msg(""), _chans(0), _dests(0) {}
-Privmsg::Privmsg(const std::string &msg): _msg(msg), _chans(0), _dests(0) {} 
-Privmsg::Privmsg(const Privmsg &other): _msg(other._msg), _chans(other._chans), _dests(other._dests) {}
+Privmsg::Privmsg(void): _msg(""), _chans(0), _dests(0), _isBotMsg(false) {}
+Privmsg::Privmsg(const std::string &msg, bool isBotMsg): _msg(msg), _chans(0), _dests(0), _isBotMsg(isBotMsg) {} 
+Privmsg::Privmsg(const Privmsg &other): _msg(other._msg), _chans(other._chans), _dests(other._dests), _isBotMsg(other._isBotMsg) {}
 
 // Assignment operator overload
 Privmsg &Privmsg::operator=(const Privmsg &other)
@@ -16,6 +19,7 @@ Privmsg &Privmsg::operator=(const Privmsg &other)
 		_msg = other._msg;
 		_chans = other._chans;
 		_dests = other._dests;
+        _isBotMsg = other._isBotMsg;
 	}
 	return (*this);
 }
@@ -27,6 +31,25 @@ void Privmsg::execute(Server& server, Client& client)
 {
 	ReplyHandler rh = ReplyHandler::get_instance(&server);
 
+    if (_isBotMsg)
+    {
+        LOG_D_CMD("is bot msg", _msg);
+        std::istringstream iss(_msg);
+        std::string prefix;
+        std::string botParams;
+
+        iss >> prefix;
+        iss >> botParams;
+
+        ReplyCode code = BotReply::check_args(server, client, _chans, botParams);
+        if (code != RPL_SUCCESS)
+        {
+            rh.process_code_response(client, ERR_WRONG_FORMAT, _msg);
+        }
+        BotReply br(botParams);
+        br.execute(server, client, _chans[0]);
+        return ;
+    }
 	for (std::vector<Channel*>::iterator it = _chans.begin(); it != _chans.end(); it++) {
 		(*it)->broadcast(server, RPL_PRIVMSG, (*it)->get_name() + _msg, &client);
 	}
@@ -42,19 +65,32 @@ void			Privmsg::build_args(Server& server, std::string& params)
 	std::istringstream iss(params);
 	std::string target;
 	Client* client = NULL;
-	std::map<std::string, Channel*>::iterator chan ;
-	while (iss >> target) {
-		chan = server.channels.find(target);
-		if (chan != server.channels.end()) {
-			add_channel(chan->second);
-		}
-		client = server.find_client_by_nickname(target);
-		if (client) {
-			add_client(server.find_client_by_nickname(target));
-		} else {
-			LOG_CMD.error(target + " is not a channel nor a client");
-		}
-	}
+
+    LOG_DV_CMD(_isBotMsg);
+    if (_isBotMsg)
+    {
+        std::map<std::string, Channel*>::iterator chan;
+        iss >> target;
+        chan = server.channels.find(target);
+        if (chan != server.channels.end()) {
+            add_channel(chan->second);
+        }
+    }
+    else {
+        std::map<std::string, Channel*>::iterator chan ;
+        while (iss >> target) {
+            chan = server.channels.find(target);
+            if (chan != server.channels.end()) {
+                add_channel(chan->second);
+            }
+            client = server.find_client_by_nickname(target);
+            if (client) {
+                add_client(server.find_client_by_nickname(target));
+            } else {
+                LOG_CMD.error(target + " is not a channel nor a client");
+            }
+        }
+    }
 }
 
 /**
@@ -82,6 +118,12 @@ ReplyCode Privmsg::check_args(Server& server, Client& client, std::string& param
 	params = params.substr(0, pos);
 	std::stringstream ss(params);
 	std::string target;
+
+    if (msg.find("!reply") != std::string::npos)
+    {
+        LOG_D_CMD("found bot command in params", params);
+        return RPL_SUCCESS;
+    }
 
 	while (std::getline(ss, target, ',')) {
 		if (--targetLimit < 0) {

@@ -253,24 +253,36 @@ ICommand* CmdFactory::privmsg_cmd(Server& server, Client& client, std::string& p
 {
     LOG_CMD.debug("PIVMSG params: " + params);
     ReplyHandler rh   = ReplyHandler::get_instance(&server);
+
+
+    std::string            msg;
+    std::string::size_type pos = params.find(" :");
+    LOG_DV_CMD(params);
+    bool isBotMsg = false;
+
+    if (pos != std::string::npos) {
+        msg = params.substr(pos);
+        std::string::size_type exclamationPos = params.find('!', pos + 2);
+        if (exclamationPos == pos + 2)
+            isBotMsg = true;
+    }
+    LOG_DV_CMD(msg);
+    LOG_DV_CMD(isBotMsg);
+
     ReplyCode    code = Privmsg::check_args(server, client, params);
     if (code != RPL_SUCCESS) {
         rh.process_response(client, code, params, NULL);
         return (NULL);
     }
 
-    std::string            msg;
-    std::string::size_type pos = params.find(" :");
-    if (pos != std::string::npos) {
-        msg = params.substr(pos);
-    }
 
-    Privmsg* privmsg = new Privmsg(msg);
+    Privmsg* privmsg = new Privmsg(msg, isBotMsg);
 
     // std::string                               word;
     // std::istringstream                        iss(params);
     // Client*                                   dest = NULL;
     // std::map<std::string, Channel*>::iterator chan;
+    LOG_DV_CMD(params);
     privmsg->build_args(server, params);
     // while (iss >> word) {
     //     chan = server.channels.find(word);

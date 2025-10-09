@@ -127,6 +127,8 @@ std::string ReplyHandler::select_response(Client& client, ReplyCode code, const 
         return (response + utils::code_to_str(code) + nick + " " + parameters + RPL_NOTOPIC_MSG);
     case RPL_CHANNELMODEIS:
         return (responseWithCodeAndNick + parameters + " " + ircCodes.trailing(code));
+    case RPL_BOT:
+        return (parameters);
     case ERR_CHANOPRIVSNEEDED:
         return (responseWithCodeAndNick + parameters + ERR_CHANOPRIVSNEEDED_MSG);
     case ERR_UNKNOWNCOMMAND:
