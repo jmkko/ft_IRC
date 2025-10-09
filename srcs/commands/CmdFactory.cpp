@@ -8,6 +8,7 @@
 #include "Mode.hpp"
 #include "Motd.hpp"
 #include "Nick.hpp"
+#include "Topic.hpp"
 #include "Pass.hpp"
 #include "Privmsg.hpp"
 #include "Quit.hpp"
@@ -52,10 +53,11 @@ ICommand* CmdFactory::make_command(Server& server, Client& client, std::string& 
     std::string        commandLine = "";
     std::istringstream iss(params); // NOLINT(clang-diagnostic-vexing-parse)
     std::string        available[NB_AVAILABLE_CMD]
-        = {"USER", "PASS", "NICK", "QUIT", "INVITE", "JOIN", "PART", "MODE", "OPER", "PRIVMSG", "WHO", "KICK", "MOTD"};
+        = {"USER", "PASS", "NICK", "TOPIC", "QUIT", "INVITE", "JOIN", "PART", "MODE", "OPER", "PRIVMSG", "WHO", "KICK", "MOTD"};
     ICommand* (CmdFactory::* ptr[NB_AVAILABLE_CMD])(Server&, Client&, std::string&) = {&CmdFactory::user_cmd,
                                                                                        &CmdFactory::pass_cmd,
                                                                                        &CmdFactory::nick_cmd,
+                                                                                       &CmdFactory::topic_cmd,
                                                                                        &CmdFactory::quit_cmd,
                                                                                        &CmdFactory::invite_cmd,
                                                                                        &CmdFactory::join_cmd,
@@ -288,4 +290,11 @@ ICommand* CmdFactory::motd_cmd(Server& server, Client& client, std::string& para
     (void)server;
     (void)client;
     return new Motd(params);
+};
+
+ICommand* CmdFactory::topic_cmd(Server& server, Client& client, std::string& params)
+{
+    (void)server;
+    (void)client;
+    return new Topic(server, params);
 };

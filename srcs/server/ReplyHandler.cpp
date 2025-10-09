@@ -124,13 +124,13 @@ std::string ReplyHandler::select_response(Client& client, ReplyCode code, const 
     case RPL_MODE:
         return (response + " MODE " + parameters);
     case RPL_TOPIC:
-        return (response + code_to_str(code) + nick + " " + parameters);
+        return (responseWithCodeAndNick + " " + parameters);
+    case RPL_NOTOPIC:
+        return (responseWithCodeAndNick + " " + parameters + RPL_NOTOPIC_MSG);
     case RPL_NAMREPLY:
         return (response + code_to_str(code) + nick + " = " + parameters);
     case RPL_ENDOFNAMES:
         return (response + code_to_str(code) + nick + " " + parameters + RPL_ENDOFNAMES_MSG);
-    case RPL_NOTOPIC:
-        return (response + code_to_str(code) + nick + " " + parameters + RPL_NOTOPIC_MSG);
     case RPL_CHANNELMODEIS:
         return (responseWithCodeAndNick + parameters + " " + ircCodes.trailing(code));
     case ERR_CHANOPRIVSNEEDED:

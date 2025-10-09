@@ -26,6 +26,7 @@ class CmdFactory
     ICommand* join_cmd(Server& server, Client& client, std::string& params);
     ICommand* part_cmd(Server& server, Client& client, std::string& params);
     ICommand* mode_cmd(Server& server, Client& client, std::string& params);
+    ICommand* topic_cmd(Server& server, Client& client, std::string& params);
     ICommand* privmsg_cmd(Server& server, Client& client, std::string& params);
     ICommand* oper_cmd(Server& server, Client& client, std::string& params);
     ICommand* invite_cmd(Server& server, Client& client, std::string& params);
