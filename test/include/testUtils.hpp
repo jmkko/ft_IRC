@@ -103,6 +103,9 @@ static const std::string& invalidModeNoChanMsg 			= "MODE +l 4\r\n";
 
 static const std::string& validPartMsg 					= "PART #chan\r\n";
 
+static const std::string& validPingMsg 					= "PING token\r\n";
+static const std::string& invalidPingMsg 				= "PING\r\n";
+
 static const std::string& validTopicMsg 				= "TOPIC #chan :New topic\r\n";
 
 static const std::string& validQuitMsg 					= "QUIT\r\n";

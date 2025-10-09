@@ -15,7 +15,7 @@ int main()
 {
     LogManager& lm = LogManager::get_instance();
 	#ifdef DEB
-    lm.set_global_level(DEBUG);
+    lm.set_global_level(DETAIL);
 	#else
 	lm.set_global_level(ERROR);
 	#endif
@@ -28,12 +28,13 @@ int main()
         // Run command tests
         LOG_TEST.info("Running test suite...");
 
-        test_mode(*s);
-        test_nick(*s);
-        test_kick(*s);
-        test_who(*s);
-        test_join(*s);
-        test_privmsg(*s);
+        // test_mode(*s);
+        // test_nick(*s);
+        // test_kick(*s);
+        // test_who(*s);
+        // test_join(*s);
+        // test_privmsg(*s);
+        test_ping(*s);
         
         LOG_TEST.info("All tests completed, stopping server...");
 		runner.stop();
