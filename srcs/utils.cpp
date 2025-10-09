@@ -44,6 +44,14 @@ bool check_args(int ac, char** av, int* port)
 
 namespace utils
 {
+
+const std::string code_to_str(ReplyCode code)
+{
+    std::stringstream ss;
+    ss << std::setw(3) << std::setfill('0') << code;
+    return ss.str();
+}
+
 long string_to_ulong(const std::string& str)
 {
     std::stringstream ss(str);

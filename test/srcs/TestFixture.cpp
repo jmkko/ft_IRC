@@ -36,8 +36,6 @@ std::vector<TcpSocket*> TestFixture::setup(size_t nbSockets)
 
 void TestFixture::cleanup()
 {
-	// wait to process replies
-	std::this_thread::sleep_for(std::chrono::milliseconds(SERVER_PROCESS_TIME_MS));
     #ifdef DEB
     std::cout << BWHITE << "=====================END OF TEST=====================" << RESET << '\n';
     #endif
