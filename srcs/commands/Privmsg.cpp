@@ -6,6 +6,7 @@
 #include "Client.hpp"
 #include "BotReply.hpp"
 #include <sstream>
+#include <string>
 
 // Default constructor
 Privmsg::Privmsg(void): _msg(""), _chans(0), _dests(0), _isBotMsg(false) {}
@@ -39,15 +40,16 @@ void Privmsg::execute(Server& server, Client& client)
         std::string botParams;
 
         iss >> prefix;
-        iss >> botParams;
+        std::getline(iss >> std::ws, botParams);
 
-        ReplyCode code = BotReply::check_args(server, client, _chans, botParams);
+        ReplyCode code = BotReply::check_args(server, client, _dests, _chans, botParams);
         if (code != RPL_SUCCESS)
         {
-            rh.process_code_response(client, ERR_WRONG_FORMAT, _msg);
+            rh.process_code_response(client, code, _msg);
+            return ;
         }
         BotReply br(botParams);
-        br.execute(server, client, _chans[0]);
+        br.execute(server, client, _dests, _chans[0]);
         return ;
     }
 	for (std::vector<Channel*>::iterator it = _chans.begin(); it != _chans.end(); it++) {
@@ -62,35 +64,49 @@ void			Privmsg::add_channel(Channel* chan) {if (!chan) {return;} _chans.push_bac
 void			Privmsg::add_client(Client *client) {if (!client) {return;} _dests.push_back(client);};
 void			Privmsg::build_args(Server& server, std::string& params)
 {
-	std::istringstream iss(params);
+	std::string            trimmedParams;
+    std::string::size_type pos = params.find(" :");
+    if (pos != std::string::npos) {
+        trimmedParams = params.substr(0, pos);
+    }
+    else {
+        trimmedParams = params;
+    }
+
+    std::istringstream iss(trimmedParams);
 	std::string target;
 	Client* client = NULL;
 
     LOG_DV_CMD(_isBotMsg);
-    if (_isBotMsg)
-    {
-        std::map<std::string, Channel*>::iterator chan;
-        iss >> target;
-        chan = server.channels.find(target);
-        if (chan != server.channels.end()) {
-            add_channel(chan->second);
-        }
-    }
-    else {
+    // bot will only take the first channel
+    // if (_isBotMsg)
+    // {
+    //     std::map<std::string, Channel*>::iterator chan;
+    //     iss >> target;
+    //     chan = server.channels.find(target);
+    //     if (chan != server.channels.end()) {
+    //         add_channel(chan->second);
+    //     }
+    // }
+    // else {
         std::map<std::string, Channel*>::iterator chan ;
         while (iss >> target) {
+            LOG_D_CMD("target", "|" + target + "|");
             chan = server.channels.find(target);
             if (chan != server.channels.end()) {
                 add_channel(chan->second);
+                continue;
             }
-            client = server.find_client_by_nickname(target);
-            if (client) {
-                add_client(server.find_client_by_nickname(target));
-            } else {
-                LOG_CMD.error(target + " is not a channel nor a client");
+            else {            
+                client = server.find_client_by_nickname(target);
+                if (client) {
+                    add_client(server.find_client_by_nickname(target));
+                } else {
+                    LOG_CMD.error(target + " is not a channel nor a client");
+                }
             }
         }
-    }
+    // }
 }
 
 /**
@@ -119,11 +135,34 @@ ReplyCode Privmsg::check_args(Server& server, Client& client, std::string& param
 	std::stringstream ss(params);
 	std::string target;
 
-    if (msg.find("!reply") != std::string::npos)
-    {
-        LOG_D_CMD("found bot command in params", params);
-        return RPL_SUCCESS;
-    }
+    // if (msg.find('!') == 1)
+    // {
+    //     std::getline(ss, target, ',');
+    //     LOG_D_CMD("found bot command in msg", msg);
+
+    //     while (std::getline(ss, target, ',')) {
+    //         if (--targetLimit < 0) {
+    //             rh.process_response(client, ERR_TOOMANYTARGETS, target);
+    //             break;
+    //         }
+    //         std::map<std::string, Channel*>::iterator chan = server.channels.find(target);
+    //         if (chan != server.channels.end()) {
+    //             LOG_D_CMD("add channel", target);
+    //             targetList += target + " ";
+    //         } else if (server.find_client_by_nickname(target)) {
+    //             LOG_D_CMD("add client", target);
+    //             targetList += target + " ";
+    //         } else {
+    //             rh.process_response(client, ERR_NOSUCHNICK, target);
+    //         }
+    //         targetLimit--;
+	//     }
+    //     if (targetList.empty())
+	// 	    return (ERR_NORECIPIENT);
+
+	//     params = targetList + msg;
+    //     return RPL_SUCCESS;
+    // }
 
 	while (std::getline(ss, target, ',')) {
 		if (--targetLimit < 0) {

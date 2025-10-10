@@ -254,12 +254,10 @@ ICommand* CmdFactory::privmsg_cmd(Server& server, Client& client, std::string& p
     LOG_CMD.debug("PIVMSG params: " + params);
     ReplyHandler rh   = ReplyHandler::get_instance(&server);
 
-
     std::string            msg;
     std::string::size_type pos = params.find(" :");
     LOG_DV_CMD(params);
     bool isBotMsg = false;
-
     if (pos != std::string::npos) {
         msg = params.substr(pos);
         std::string::size_type exclamationPos = params.find('!', pos + 2);
@@ -274,7 +272,6 @@ ICommand* CmdFactory::privmsg_cmd(Server& server, Client& client, std::string& p
         rh.process_response(client, code, params, NULL);
         return (NULL);
     }
-
 
     Privmsg* privmsg = new Privmsg(msg, isBotMsg);
 

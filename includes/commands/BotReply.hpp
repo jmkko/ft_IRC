@@ -7,14 +7,15 @@
 #include "Server.hpp"
 #include "reply_codes.hpp"
 
+#define BOT_PROCESS_TIME_MS 200
 class BotReply
 {
 
   public:
     BotReply(const std::string& params);
     ~BotReply();
-    static ReplyCode check_args(Server& s, Client& c, std::vector<Channel*>& channels, std::string& params);
-    void             execute(Server& s, Client& c, Channel* channel);
+    static ReplyCode check_args(Server& s, Client& c, std::vector<Client*>& clients, std::vector<Channel*>& channels, std::string& params);
+    void             execute(Server& s, Client& c, std::vector<Client*>& clients, Channel* channel);
 
   private:
     std::string _params;
