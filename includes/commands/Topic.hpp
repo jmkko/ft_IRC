@@ -18,7 +18,6 @@ class Topic : public ICommand
 
     void      execute(Server& s, Client& c);
     static ReplyCode check_args(Server& s, Client& c, std::string& params);
-    void      build_args(Server& s, std::string& params);
 
   private:
     std::string _topic;

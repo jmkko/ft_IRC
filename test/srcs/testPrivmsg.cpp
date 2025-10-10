@@ -22,78 +22,78 @@
 #include <string>
 #include <thread>
 
-	void no_params_should_err(Server& s)
-	{
-		try {
-			TEST_SETUP(test, s, 1);
-			TcpSocket& soOp = *sockets.at(0);
-			make_op(soOp);
+void no_params_should_err(Server& s)
+{
+	try {
+		TEST_SETUP(test, s, 1);
+		TcpSocket& soOp = *sockets.at(0);
+		make_op(soOp);
 
-			// test
-			send_line(soOp, noparamsPrivmsg);
-			std::string reply = recv_lines(soOp);
-			AssertReply ar(reply);
-			ar.has_code(ERR_NEEDMOREPARAMS);
-		} catch (const std::runtime_error& e) {
-			LOG_TEST.error(e.what());
-		}
+		// test
+		send_line(soOp, noparamsPrivmsg);
+		std::string reply = recv_lines(soOp);
+		AssertReply ar(reply);
+		ar.has_code(ERR_NEEDMOREPARAMS);
+	} catch (const std::runtime_error& e) {
+		LOG_TEST.error(e.what());
 	}
+}
 
-	void invalid_nickname_should_err(Server& s)
-	{
-		try {
-			TEST_SETUP(test, s, 1);
-			TcpSocket& soOp = *sockets.at(0);
-			make_op(soOp);
+void invalid_nickname_should_err(Server& s)
+{
+	try {
+		TEST_SETUP(test, s, 1);
+		TcpSocket& soOp = *sockets.at(0);
+		make_op(soOp);
 
-			// test
-			send_line(soOp, invalidnicknamePrivmsg);
-			std::string reply = recv_lines(soOp);
-			AssertReply ar(reply);
-			ar.has_code(ERR_NOSUCHNICK);
-		} catch (const std::runtime_error& e) {
-			LOG_TEST.error(e.what());
-		}
+		// test
+		send_line(soOp, invalidnicknamePrivmsg);
+		std::string reply = recv_lines(soOp);
+		AssertReply ar(reply);
+		ar.has_code(ERR_NOSUCHNICK);
+	} catch (const std::runtime_error& e) {
+		LOG_TEST.error(e.what());
 	}
+}
 
-	void too_many_target_should_notice(Server& s)
-	{
-		try {
-			TEST_SETUP(test, s, 1);
-			TcpSocket& soOp = *sockets.at(0);
-			make_op(soOp);
+void too_many_target_should_notice(Server& s)
+{
+	try {
+		TEST_SETUP(test, s, 1);
+		TcpSocket& soOp = *sockets.at(0);
+		make_op(soOp);
 
-			// test
-			send_line(soOp, toomanytargetPrivmsg);
-			std::string reply = recv_lines(soOp);
-			AssertReply ar(reply);
-			ar.has_code(ERR_TOOMANYTARGETS);
-		} catch (const std::runtime_error& e) {
-			LOG_TEST.error(e.what());
-		}
+		// test
+		send_line(soOp, toomanytargetPrivmsg);
+		std::string reply = recv_lines(soOp);
+		AssertReply ar(reply);
+		ar.has_code(ERR_TOOMANYTARGETS);
+	} catch (const std::runtime_error& e) {
+		LOG_TEST.error(e.what());
 	}
+}
 
-	void no_text_should_err(Server& s)
-	{
-		try {
-			TEST_SETUP(test, s, 1);
-			TcpSocket& soOp = *sockets.at(0);
-			make_op(soOp);
+void no_text_should_err(Server& s)
+{
+	try {
+		TEST_SETUP(test, s, 1);
+		TcpSocket& soOp = *sockets.at(0);
+		make_op(soOp);
 
-			send_line(soOp, notextPrivmsg);
-			std::string reply = recv_lines(soOp);
-			AssertReply ar(reply);
-			ar.has_code(ERR_NOTEXTTOSEND);
-		} catch (const std::runtime_error& e) {
-			LOG_TEST.error(e.what());
-		}
+		send_line(soOp, notextPrivmsg);
+		std::string reply = recv_lines(soOp);
+		AssertReply ar(reply);
+		ar.has_code(ERR_NOTEXTTOSEND);
+	} catch (const std::runtime_error& e) {
+		LOG_TEST.error(e.what());
 	}
+}
 
-	void test_privmsg(Server& s)
-	{
-		print_test_series("command PRIMSG");
-		run_test([&] { no_params_should_err(s); }, "PRIVMSG with no params");
-		run_test([&] { invalid_nickname_should_err(s); }, "PRIVMSG to non existant nickname");
-		run_test([&] { too_many_target_should_notice(s); }, "PRIVMSG with too many target");
-		run_test([&] { no_text_should_err(s); }, "PRIVMSG with no message");
-	}
+void test_privmsg(Server& s)
+{
+	print_test_series("command PRIMSG");
+	run_test([&] { no_params_should_err(s); }, "PRIVMSG with no params");
+	run_test([&] { invalid_nickname_should_err(s); }, "PRIVMSG to non existant nickname");
+	run_test([&] { too_many_target_should_notice(s); }, "PRIVMSG with too many target");
+	run_test([&] { no_text_should_err(s); }, "PRIVMSG with no message");
+}

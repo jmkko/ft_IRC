@@ -12,23 +12,22 @@ Topic::Topic(Server& s, std::string& params) {
 	std::istringstream iss(params);
 	std::string channel;
 
-	// first param = channel
 	iss >> channel;
 
-	std::string rest;
-	std::getline(iss, rest);
+	std::string topic;
+	std::getline(iss, topic);
 
-	if (!rest.empty()) {
-		std::string::size_type start = rest.find_first_not_of(" \t\n\r\f\v");
+	if (!topic.empty()) {
+		std::string::size_type start = topic.find_first_not_of(" \t\n\r\f\v");
 		if (start != std::string::npos)
-			rest.erase(0, start);
+			topic.erase(0, start);
 		else
-			rest.clear(); // string is all spaces
+			topic.clear(); // string is all spaces
 	}
-	if (!rest.empty() && rest[0] == ':')
-		rest.erase(0, 1);
+	if (!topic.empty() && topic[0] == ':')
+		topic.erase(0, 1);
 	_chan = s.find_channel_by_name(channel);
-	_topic = rest;
+	_topic = topic;
 
 }
 
@@ -62,7 +61,6 @@ void Topic::execute(Server& s, Client& c) {
 		} else {
 			ReplyCode code = _chan->set_topic(c, _topic);
 			if (code == RPL_SUCCESS) {
-				LOG_CMD.debug("success on TOPIC !");
 				_chan->broadcast(s, RPL_TOPIC, _chan->get_name() + " :" + _chan->get_topic());
 			} else {
 				rh.process_response(c, code, _chan->get_name());
