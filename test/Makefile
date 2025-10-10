@@ -36,6 +36,7 @@ SRCS_FILES		:= 	main.cpp\
 					testJoin.cpp\
 					testPing.cpp\
 					testPrivmsg.cpp\
+					testTopic.cpp\
 
 IRC_SRCS_FILES	:=	utils.cpp\
 					signal_handler.cpp\
@@ -52,7 +53,6 @@ IRC_SRCS_FILES	:=	utils.cpp\
 					commands/Join.cpp\
 					commands/Kick.cpp\
 					commands/Mode.cpp\
-					commands/Motd.cpp\
 					commands/Nick.cpp\
 					commands/Pass.cpp\
 					commands/Ping.cpp\
@@ -61,6 +61,7 @@ IRC_SRCS_FILES	:=	utils.cpp\
 					commands/User.cpp\
 					commands/Motd.cpp\
 					commands/Who.cpp\
+					commands/Topic.cpp\
 
 EXT				:= .cpp
 

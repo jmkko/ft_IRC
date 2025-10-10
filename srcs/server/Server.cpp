@@ -1,3 +1,5 @@
+#include "Server.hpp"
+
 #include "Channel.hpp"
 #include "Client.hpp"
 #include "CmdFactory.hpp"
@@ -5,7 +7,6 @@
 #include "ICommand.hpp"
 #include "LogManager.hpp"
 #include "ReplyHandler.hpp"
-#include "Server.hpp"
 #include "consts.hpp"
 #include "signal_handler.hpp"
 #include "utils.hpp"
@@ -26,7 +27,7 @@
 #include <unistd.h> // close
 
 /************************************************************
- *		🥚 CONSTRUCTORS & DESTRUCTOR	            *
+ *		🥚 CONSTRUCTORS & DESTRUCTOR*
  ************************************************************/
 
 /**
@@ -86,7 +87,7 @@ void Server::start()
         }
 
         // review each client socket
-        LOG_DT_SERVER("event detected",  pollResult);
+        LOG_DT_SERVER("event detected", pollResult);
         for (int i = 0; i < static_cast<int>(_pfds.size()); i++) {
             if (globalSignal == SIGINT && globalSignal == SIGABRT)
                 break;
@@ -292,7 +293,7 @@ void Server::_handle_commands(int pfdIndex)
 // return NULL if command has failed amd print
 ICommand* Server::_parse_command(Client& client, std::string line)
 {
-	LOG_CMD.receiving(__FILE_NAME__, __FUNCTION__, line, &client);
+    LOG_CMD.receiving(__FILE_NAME__, __FUNCTION__, line, &client);
     CmdFactory commandBuilder;
     ICommand*  cmd = commandBuilder.make_command(*this, client, line);
 
@@ -385,21 +386,20 @@ void Server::cleanup_socket_and_client(int pfdIndex)
     if (c) {
         if (!c->get_nickname().empty())
             _clientsByNick.erase(c->get_nickname());
-		LOG_SERVER.debug("cleanup: deleting client");
-		c->remove_from_all_channels();
+        LOG_SERVER.debug("cleanup: deleting client");
+        c->remove_from_all_channels();
         delete c;
     }
     _pfds.erase(_pfds.begin() + pfdIndex);
 }
 
-void                 Server::cleanup_channels()
+void Server::cleanup_channels()
 {
     LOG_dt_SERVER(std::string("cleaning ") + TO_STRING(channels.size()) + " channels");
     for (std::map<std::string, Channel*>::iterator it = channels.begin(); it != channels.end(); ++it) {
         delete it->second; // NOLINT
     }
     channels.clear();
-
 }
 
 std::vector<Client*> Server::find_clients_by_pattern(const std::string& pattern) const
@@ -410,4 +410,13 @@ std::vector<Client*> Server::find_clients_by_pattern(const std::string& pattern)
             result.push_back(it->second);
     }
     return result;
+}
+
+Channel* Server::find_channel_by_name(const std::string& name)
+{
+	std::map<std::string, Channel*>::iterator chan = channels.find(name);
+    if (chan != channels.end()) {
+        return chan->second;
+    }
+    return NULL;
 }

@@ -10,5 +10,6 @@ void test_nick(Server& s);
 void test_who(Server& s);
 void test_privmsg(Server& s);
 void test_ping(Server& s);
+void test_topic(Server& s);
 
 #endif

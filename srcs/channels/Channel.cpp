@@ -35,7 +35,7 @@ bool Channel::is_valid_channel_name(const std::string& name)
 
 /// @throw exception if name is invalid
 Channel::Channel(const std::string& name) :
-    _topic("No topic is set"), _key(""), _mode(CHANMODE_INIT), _userLimit(NO_LIMIT), _members(), _invites(), _operators()
+    _topic(""), _key(""), _mode(CHANMODE_INIT), _userLimit(NO_LIMIT), _members(), _invites(), _operators()
 {
     set_name(name);
 }
@@ -53,7 +53,7 @@ Channel::Channel(const Channel& other) :
 }
 
 Channel::Channel(void) :
-    _name(""), _topic("No topic is set"), _key(""), _mode(CHANMODE_INIT), _userLimit(NO_LIMIT), _members(), _invites(), _operators()
+    _name(""), _topic(""), _key(""), _mode(CHANMODE_INIT), _userLimit(NO_LIMIT), _members(), _invites(), _operators()
 {
 }
 

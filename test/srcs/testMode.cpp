@@ -28,144 +28,144 @@
  *		WAITING FOR PART									*
  ************************************************************/
 
-// /**
-//  @brief integration test - normal case
-//  @todo implement PART to test it
-// */
-// void mode_plusk_should_allow_op_to_join_without_key()
-// {
-//     try {
-//         TEST_SETUP(test, s, 2);
+/**
+ @brief integration test - normal case
+ @todo implement PART to test it
+*/
+void mode_plusk_should_allow_op_to_join_without_key(Server& s)
+{
+    try {
+        TEST_SETUP(test, s, 2);
        
-// 		TcpSocket& sop = *sockets.at(0);
-// 		TcpSocket& sop2 = *sockets.at(1);
-// 		make_two_ops(sop, sop2);
+		TcpSocket& sop = *sockets.at(0);
+		TcpSocket& sop2 = *sockets.at(1);
+		make_two_ops(sop, sop2);
 
-// 		// test 1 - +k
-// 		send_line(sop, validModePlusKMsg);
-// 		std::string reply = recv_lines(sop);
-//         AssertReply ar(reply);
-//         ar.contains("MODE").contains("+k");
-// 		// test 2 - part and re-join
-// 		send_line(sop2, validPartMsg);
-// 		join_assert(sop2);
+		// test 1 - +k
+		send_line(sop, validModePlusKMsg);
+		std::string reply = recv_lines(sop);
+        AssertReply ar(reply);
+        ar.contains("MODE").contains("+k");
+		// test 2 - part and re-join
+		send_line(sop2, validPartMsg);
+		join_assert(sop2);
 
-//     } catch (const std::runtime_error& e) {
-//         LOG_TEST.error(e.what());
-//     }
-// }
+    } catch (const std::runtime_error& e) {
+        LOG_TEST.error(e.what());
+    }
+}
 
-// /**
-//  @brief integration test - normal case
-// */
-// void mode_plusi_should_allow_op_to_join_without_invite()
-// {
-//     try {
-//         TEST_SETUP(test, s, 2);
-// 		TcpSocket& sop = *sockets.at(0);
-// 		TcpSocket& sop2 = *sockets.at(1);
-// 		make_two_ops(sop, sop2);
+/**
+ @brief integration test - normal case
+*/
+void mode_plusi_should_allow_op_to_join_without_invite(Server& s)
+{
+    try {
+        TEST_SETUP(test, s, 2);
+		TcpSocket& sop = *sockets.at(0);
+		TcpSocket& sop2 = *sockets.at(1);
+		make_two_ops(sop, sop2);
 
-// 		// test 1 - +k
-// 		send_line(sop, validModePlusIMsg);
-// 		std::string reply = recv_lines(sop);
-//         AssertReply ar(reply);
-//         ar.contains("MODE").contains("+i");
-// 		// test 2 - part and re-join
-// 		send_line(sop2, validPartMsg);
-// 		join_assert(sop2);
+		// test 1 - +k
+		send_line(sop, validModePlusIMsg);
+		std::string reply = recv_lines(sop);
+        AssertReply ar(reply);
+        ar.contains("MODE").contains("+i");
+		// test 2 - part and re-join
+		send_line(sop2, validPartMsg);
+		join_assert(sop2);
 
-//     } catch (const std::runtime_error& e) {
-//         LOG_TEST.error(e.what());
-//     }
-// }
+    } catch (const std::runtime_error& e) {
+        LOG_TEST.error(e.what());
+    }
+}
 
-// /**
-//  @brief integration test - normal case
-// */
-// void mode_plusl_should_allow_op_to_join_if_max_reached()
-// {
-//     try {
-//         TEST_SETUP(test, s, 2);
-// 		TcpSocket& sop = *sockets.at(0);
-// 		TcpSocket& sop2 = *sockets.at(1);
-// 		make_two_ops(sop, sop2);
+/**
+ @brief integration test - normal case
+*/
+void mode_plusl_should_allow_op_to_join_if_max_reached(Server& s)
+{
+    try {
+        TEST_SETUP(test, s, 2);
+		TcpSocket& sop = *sockets.at(0);
+		TcpSocket& sop2 = *sockets.at(1);
+		make_two_ops(sop, sop2);
 
-// 		// test 1 - +l
-// 		send_line(sop, validModePlusLMsg);
-// 		std::string reply = recv_lines(sop);
-//         AssertReply ar(reply);
-//         ar.contains("MODE").contains("+l");
-// 		// test 2 - part and re-join
-// 		send_line(sop2, validPartMsg);
-// 		join_assert(sop2);
+		// test 1 - +l
+		send_line(sop, validModePlusLMsg);
+		std::string reply = recv_lines(sop);
+        AssertReply ar(reply);
+        ar.contains("MODE").contains("+l");
+		// test 2 - part and re-join
+		send_line(sop2, validPartMsg);
+		join_assert(sop2);
 
-//     } catch (const std::runtime_error& e) {
-//         LOG_TEST.error(e.what());
-//     }
-// }
+    } catch (const std::runtime_error& e) {
+        LOG_TEST.error(e.what());
+    }
+}
 
 /************************************************************
  *		WAITING FOR TOPIC									*
  ************************************************************/
 
-// /**
-//  @brief integration test - normal case
-// */
-// void mode_minust_should_grant_topic_to_all(Server& s)
-// {
-//     try {
-//         TEST_SETUP(test, s, 2);
-// 		TcpSocket& sop = *sockets.at(0);
-// 		TcpSocket& so = *sockets.at(1);
-// 		make_op(sop);
-// 		authenticate(so);
-// 		send_line(sop, validModePlusTMsg); // 1
-// 		recv_lines(sop);
+/**
+ @brief integration test - normal case
+*/
+void mode_minust_should_grant_topic_to_all(Server& s)
+{
+    try {
+        TEST_SETUP(test, s, 2);
+		TcpSocket& sop = *sockets.at(0);
+		TcpSocket& so = *sockets.at(1);
+		make_op(sop);
+		authenticate(so);
+		send_line(sop, validModePlusTMsg); // 1
+		recv_lines(sop);
 
-// 		// test 1
-// 		send_line(sop, validModeMinusTMsg); // 1
-// 		std::string reply = recv_lines(sop);
-//         AssertReply ar(reply);
-//         ar.contains("MODE").contains("-t");
-// 		// test 2
-// 		send_line(so, validTopicMsg);
-// 		reply = recv_lines(so);
-// 		ar.handle_new_reply(reply);
-// 		ar.has_code(RPL_TOPIC);
+		// test 1
+		send_line(sop, validModeMinusTMsg); // 1
+		std::string reply = recv_lines(sop);
+        AssertReply ar(reply);
+        ar.contains("MODE").contains("-t");
+		// test 2
+		send_line(so, validTopicMsg);
+		reply = recv_lines(so);
+		ar.handle_new_reply(reply);
+		ar.has_code(RPL_TOPIC);
 
-//     } catch (const std::runtime_error& e) {
-//         LOG_TEST.error(e.what());
-//     }
-// }
+    } catch (const std::runtime_error& e) {
+        LOG_TEST.error(e.what());
+    }
+}
 
-// /**
-//  @brief integration test - normal case
-// */
-// void mode_plust_should_reserve_topic_to_op(Server& s)
-// {
-//     try {
-//         TEST_SETUP(test, s, 2);
-// 		TcpSocket& sop = *sockets.at(0);
-// 		TcpSocket& so = *sockets.at(1);
-// 		make_op(sop);
-// 		authenticate(so);
+/**
+ @brief integration test - normal case
+*/
+void mode_plust_should_reserve_topic_to_op(Server& s)
+{
+    try {
+        TEST_SETUP(test, s, 2);
+		TcpSocket& sop = *sockets.at(0);
+		TcpSocket& so = *sockets.at(1);
+		make_op(sop);
+		authenticate(so);
 
-// 		// test 1
-// 		send_line(sop, validModePlusTMsg); // 1
-// 		std::string reply = recv_lines(sop);
-//         AssertReply ar(reply);
-//         ar.contains("MODE").contains("+t");
-// 		// test 2
-// 		send_line(so, validTopicMsg);
-// 		reply = recv_lines(so);
-// 		ar.handle_new_reply(reply);
-// 		ar.has_code(ERR_CHANOPRIVSNEEDED);
+		// test 1
+		send_line(sop, validModePlusTMsg); // 1
+		std::string reply = recv_lines(sop);
+        AssertReply ar(reply);
+        ar.contains("MODE").contains("+t");
+		// test 2
+		send_line(so, validTopicMsg);
+		reply = recv_lines(so);
+		ar.handle_new_reply(reply);
+		ar.has_code(ERR_CHANOPRIVSNEEDED);
 
-//     } catch (const std::runtime_error& e) {
-//         LOG_TEST.error(e.what());
-//     }
-// }
+    } catch (const std::runtime_error& e) {
+        LOG_TEST.error(e.what());
+    }
+}
 
 /************************************************************
  *		✅  VALID											*
@@ -681,11 +681,11 @@ void test_mode(Server& s)
 {
     print_test_series("command MODE");
     // Waiting for implementations
-    // run_test([&] { mode_plusk_should_allow_op_to_join_without_key(s); }, "+k <key> (op)");
-    // run_test([&] { mode_plusi_should_allow_op_to_join_without_invite(s); }, "+i (op)");
-    // run_test([&] { mode_plusl_should_allow_op_to_join_if_max_reached(s); }, "+l <limit> (op)"); 
-    // run_test([&] { mode_minust_should_grant_topic_to_all(s); }, "-t");
-    // run_test([&] { mode_plust_should_reserve_topic_to_op(s); }, "+t");
+    run_test([&] { mode_plusk_should_allow_op_to_join_without_key(s); }, "+k <key> (op)");
+    run_test([&] { mode_plusi_should_allow_op_to_join_without_invite(s); }, "+i (op)");
+    run_test([&] { mode_plusl_should_allow_op_to_join_if_max_reached(s); }, "+l <limit> (op)"); 
+    run_test([&] { mode_minust_should_grant_topic_to_all(s); }, "-t");
+    run_test([&] { mode_plust_should_reserve_topic_to_op(s); }, "+t");
 
     run_test([&] { mode_no_option_should_send_modes_list(s); }, "list");
     run_test([&] { mode_plusk_should_block_join_if_no_key(s); }, "+k <key>");

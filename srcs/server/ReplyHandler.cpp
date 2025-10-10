@@ -92,7 +92,7 @@ std::string ReplyHandler::select_response(Client& client, ReplyCode code, const 
         sender = &client;
     switch (code) {
     case RPL_WELCOME:
-        return (response + utils::code_to_str(code) + nick + RPL_WELCOME_MSG);
+        return (responseWithCodeAndNick + RPL_WELCOME_MSG);
     case RPL_PING:
         return response + parameters; // PONG :token
     case RPL_NICK:
@@ -118,13 +118,13 @@ std::string ReplyHandler::select_response(Client& client, ReplyCode code, const 
     case RPL_MODE:
         return (response + " MODE " + parameters);
     case RPL_TOPIC:
-        return (response + utils::code_to_str(code) + nick + " " + parameters);
+        return (responseWithCodeAndNick + " " + parameters);
+    case RPL_NOTOPIC:
+        return (responseWithCodeAndNick + " " + parameters + RPL_NOTOPIC_MSG);
     case RPL_NAMREPLY:
         return (response + utils::code_to_str(code) + nick + " = " + parameters);
     case RPL_ENDOFNAMES:
         return (response + utils::code_to_str(code) + nick + " " + parameters + RPL_ENDOFNAMES_MSG);
-    case RPL_NOTOPIC:
-        return (response + utils::code_to_str(code) + nick + " " + parameters + RPL_NOTOPIC_MSG);
     case RPL_CHANNELMODEIS:
         return (responseWithCodeAndNick + parameters + " " + ircCodes.trailing(code));
     case ERR_CHANOPRIVSNEEDED:
@@ -177,7 +177,7 @@ int ReplyHandler::process_response(Client& client, ReplyCode code, const std::st
     std::string response = select_response(client, code, parameters, sender);
 
     if (!response.empty()) {
-        LOG_CMD.sending(__FILE_NAME__, __FUNCTION__, response, &client);
+        LOG_CMD.sending(__FILE_NAME__, __FUNCTION__, "\n" + response, &client);
         _send_reply(client, response);
     }
     return (code);

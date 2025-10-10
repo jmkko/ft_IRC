@@ -35,6 +35,7 @@ class Server
     void                 start();
     void                 stop();
     Client*              find_client_by_nickname(const std::string& nick);
+	Channel*			 find_channel_by_name(const std::string& name);
     int                  index_of(Client& client);
     void                 add_events_of(Client& client, int event);
     std::vector<Client*> find_clients_by_pattern(const std::string& pattern) const;

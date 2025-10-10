@@ -124,6 +124,10 @@ static const std::string& invalidnicknamePrivmsg = "PRIVMSG nonexistant :message
 static const std::string& toomanytargetPrivmsg   = "PRIVMSG roro,toto,charlie,#chan,doc,#leo :message\r\n";
 static const std::string& notextPrivmsg          = "PRIVMSG #chan\r\n";
 
+static const std::string& noparamsTopic				= "TOPIC\r\n";
+static const std::string& invalidChannelTopic		= "TOPIC $notvalid\r\n";
+static const std::string& notAChannelMemberTopic	= "TOPIC #chan\r\n";
+
 static const std::string& validInvite = "INVITE roro #chan\r\n";
 
 // with assertions
