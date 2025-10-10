@@ -133,6 +133,9 @@ fclean : clean
 re : fclean
 	@make
 
+run sanitize : all
+	ASAN_OPTIONS=detect_leaks=1:log_path=asan.log:atexit_print_stats=true ./ircserv 9999 password
+
 .PHONY : all clean fclean re
 
 -include $(DEPS)
