@@ -28,7 +28,11 @@ void Privmsg::execute(Server& server, Client& client)
 	ReplyHandler rh = ReplyHandler::get_instance(&server);
 
 	for (std::vector<Channel*>::iterator it = _chans.begin(); it != _chans.end(); it++) {
-		(*it)->broadcast(server, RPL_PRIVMSG, (*it)->get_name() + _msg, &client);
+		if ((*it)->is_member(client)) {
+			(*it)->broadcast(server, RPL_PRIVMSG, (*it)->get_name() + _msg, &client);
+		} else {
+			rh.process_response(client, ERR_NOTONCHANNEL, "");
+		}
 	}
 	for (std::vector<Client*>::iterator it = _dests.begin(); it != _dests.end(); it++) {
 		rh.process_response(*(*it), RPL_PRIVMSG, (*it)->get_nickname() + _msg, &client);
@@ -51,8 +55,6 @@ void			Privmsg::build_args(Server& server, std::string& params)
 		client = server.find_client_by_nickname(target);
 		if (client) {
 			add_client(server.find_client_by_nickname(target));
-		} else {
-			LOG_CMD.error(target + " is not a channel nor a client");
 		}
 	}
 }
@@ -71,9 +73,8 @@ ReplyCode Privmsg::check_args(Server& server, Client& client, std::string& param
 
 	if (params.empty())
 		return (ERR_NEEDMOREPARAMS);
-	if (pos == std::string::npos || pos + 2 > params.size()) {
+	if (pos == std::string::npos || pos + 2 > params.size())
 		return ERR_NOTEXTTOSEND;
-	} 
 
 	ReplyHandler rh = ReplyHandler::get_instance(&server);
 	std::string msg = params.substr(pos);
@@ -96,11 +97,14 @@ ReplyCode Privmsg::check_args(Server& server, Client& client, std::string& param
 			LOG_D_CMD("add client", target);
 			targetList += target + " ";
 		} else {
-			rh.process_response(client, ERR_NOSUCHNICK, target);
+			if (!target.empty() && (target[0] == '#' || target[0] == '&' || target[0] == '+' || target[0] == '!'))
+				rh.process_response(client, ERR_NOSUCHCHANNEL, target);
+			else
+				rh.process_response(client, ERR_NOSUCHNICK, target);
 		}
 		targetLimit--;
-
 	}
+
 	if (targetList.empty())
 		return (ERR_NORECIPIENT);
 	params = targetList + msg;

@@ -1,0 +1,14 @@
+[2025-10-10 16:03:52] [INFO ] SERVER Logger initialized - file: logs/SERVER.log
+[2025-10-10 16:03:52] [INFO ] Server hazardous.irc.serv start at port :2222
+[2025-10-10 16:03:56] [DEBUG] Server.cpp: _handle_client_output()               Message sent, unsuscribe from POLLOUT
+[2025-10-10 16:03:56] [DEBUG] Server.cpp: _handle_client_output()               Message sent, unsuscribe from POLLOUT
+[2025-10-10 16:03:56] [DEBUG] Server.cpp: _handle_client_output()               Message sent, unsuscribe from POLLOUT
+[2025-10-10 16:04:00] [DEBUG] cleanup: deleting client
+[2025-10-10 16:04:28] [INFO ] SERVER Logger initialized - file: logs/SERVER.log
+[2025-10-10 16:04:28] [INFO ] Server hazardous.irc.serv start at port :2222
+[2025-10-10 16:04:31] [WARN ] Server.cpp: start()                               Poll failed -> Interrupted system call
+[2025-10-10 16:04:31] [DEBUG] cleaning 0 clients
+[2025-10-10 16:04:31] [DEBUG] Server cleaned and ready for reuse
+[2025-10-10 16:04:31] [DEBUG] cleaning 0 clients
+[2025-10-10 16:04:31] [DEBUG] Server cleaned and ready for reuse
+[2025-10-10 16:04:31] [INFO ] SERVER Logger shutting down

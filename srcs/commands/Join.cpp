@@ -137,7 +137,7 @@ void Join::execute(Server& server, Client& client)
             rh.process_response(client, RPL_MODE, channel->get_name() + " +o ");
             LOG_CMD.info(client.get_nickname() + " is operator of channel: " + channel->get_name());
         }
-        if (channel->get_topic() == "No topic is set") {
+        if (channel->get_topic().empty()) {
             rh.process_response(client, RPL_NOTOPIC, channel->get_name());
         } else {
             rh.process_response(client, RPL_TOPIC, channel->get_name() + " :" + channel->get_topic());
