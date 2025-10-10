@@ -63,6 +63,7 @@ void Topic::execute(Server& s, Client& c) {
 			if (code == RPL_SUCCESS) {
 				_chan->broadcast(s, RPL_TOPIC, _chan->get_name() + " :" + _chan->get_topic());
 			} else {
+				LOG_CMD.info("Topic::execute --> cannot change topic");
 				rh.process_response(c, code, _chan->get_name());
 			}
 		}
