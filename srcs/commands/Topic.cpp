@@ -4,6 +4,7 @@
 #include "Topic.hpp"
 #include "Server.hpp"
 #include "ReplyHandler.hpp"
+#include "reply_codes.hpp"
 
 // Default constructor
 Topic::Topic(void): _topic(""), _chan(NULL) {}
@@ -60,7 +61,7 @@ void Topic::execute(Server& s, Client& c) {
 			}
 		} else {
 			ReplyCode code = _chan->set_topic(c, _topic);
-			if (code == RPL_SUCCESS) {
+			if (code == CORRECT_FORMAT) {
 				_chan->broadcast(s, RPL_TOPIC, _chan->get_name() + " :" + _chan->get_topic());
 			} else {
 				rh.process_response(c, code, _chan->get_name());
@@ -88,7 +89,7 @@ ReplyCode Topic::check_args(Server& s, Client& c, std::string& params) {
 
 	std::string next;
 	if (!(iss >> next))
-		return RPL_SUCCESS;
+		return CORRECT_FORMAT;
 
 	// if (next[0] != ':') {
 	// 	std::string extra;
@@ -96,5 +97,5 @@ ReplyCode Topic::check_args(Server& s, Client& c, std::string& params) {
 	// 		return ERR_TOOMANYPARAMS;
 	// }
 
-	return RPL_SUCCESS;
+	return CORRECT_FORMAT;
 }

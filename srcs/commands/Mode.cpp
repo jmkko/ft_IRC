@@ -65,7 +65,7 @@ ReplyCode Mode::check_args(Server& server, Client& client, std::vector<std::stri
 	if (args.size() == 1 && Channel::is_valid_channel_name(args[0]))
     {
         LOG_d_CMD("its ok !");
-		return RPL_SUCCESS;
+		return CORRECT_FORMAT;
     }
     if (args.size() < 2)
         return ERR_NEEDMOREPARAMS;
@@ -96,12 +96,12 @@ ReplyCode Mode::check_args(Server& server, Client& client, std::vector<std::stri
 		if (modes[i] == 'l' && operation == '+')
         {
             if (modeParams[i].find_first_not_of(digits) != std::string::npos)
-                return ERR_WRONG_FORMAT;
+                return CUSTOMERR_WRONG_FORMAT;
             if (std::atol(modeParams[i].c_str()) > std::numeric_limits<int>::max())
-                return ERR_WRONG_FORMAT;
+                return CUSTOMERR_WRONG_FORMAT;
         }
 	}
-	return RPL_SUCCESS;
+	return CORRECT_FORMAT;
 }
 
  /************************************************************
@@ -148,7 +148,7 @@ void Mode::execute(Server& server, Client& client)
 	if (_args.size() == 1)
 	{
         LOG_d_CMD("args == 1");
-        std::string modeIsReply = "";
+        std::string modeIsReply = channel->get_name() + " ";
 		std::string modeIsParams("");
 		std::string modeIsParamsVal("");
 		if (!(currentModes & CHANMODE_INIT))
@@ -168,9 +168,9 @@ void Mode::execute(Server& server, Client& client)
 			}
 		}
 		if (!modeIsParamsVal.empty())
-			modeIsReply = modeIsParams + " " + modeIsParamsVal;
+			modeIsReply += " " + modeIsParams + " " + modeIsParamsVal;
         else
-            modeIsReply = modeIsParams;
+            modeIsReply += " " + modeIsParams;
 		rh.process_response(client, RPL_CHANNELMODEIS, modeIsReply);
 	}
 
@@ -269,5 +269,5 @@ void Mode::execute(Server& server, Client& client)
 
 	// send confirmation
 	std::string confirmationMsg = channelName + " " + validModes + validModeParams;
-	rh.process_response(client, RPL_MODE, confirmationMsg);
+	rh.process_response(client, RPL_CHANNELMODEIS, confirmationMsg);
 }

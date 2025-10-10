@@ -30,7 +30,7 @@ ReplyCode	Quit::check_args(Server& server, Client& client, std::string& params)
 	(void) server;
 	(void) client;
 	(void) params;
-	return RPL_SUCCESS;
+	return CORRECT_FORMAT;
 }
 
 /**
@@ -46,7 +46,7 @@ void	Quit::execute(Server& server, Client& client)
 	std::string trailingMsg = _quitMsg;
 	if (trailingMsg.empty())
 		trailingMsg = QUIT_TRAILING_MSG;
-	client.broadcast_to_all_channels(server, RPL_QUIT, trailingMsg);
+	client.broadcast_to_all_channels(server, TRANSFER_QUIT, trailingMsg);
 	// usleep(SLEEP_FOR_BROADCAST_MS);
 	server.add_events_of(client, 0);
 	server.cleanup_socket_and_client(pfdIndex);

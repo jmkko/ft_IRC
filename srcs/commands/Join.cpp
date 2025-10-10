@@ -69,7 +69,7 @@ ReplyCode Join::check_args(Server& server, Client& client, std::vector<std::stri
         rank++;
     }
     params = channelsLst;
-    return (RPL_SUCCESS);
+    return (CORRECT_FORMAT);
 }
 
 /**
@@ -94,7 +94,7 @@ void Join::execute(Server& server, Client& client)
     std::vector<std::string>::iterator it = _channelsLst.begin();
     std::string                        chanName;
     std::string                        chanKey;
-    ReplyCode                          replyCode = RPL_SUCCESS;
+    ReplyCode                          replyCode = CORRECT_FORMAT;
 
     while (it != _channelsLst.end()) {
         std::istringstream iss(*it);
@@ -123,9 +123,9 @@ void Join::execute(Server& server, Client& client)
             continue;
         }
         replyCode = channel->add_member(client);
-        if (replyCode == RPL_SUCCESS) {
-            rh.process_response(client, RPL_JOIN, channel->get_name());
-            channel->broadcast(server, RPL_JOIN, channel->get_name(), &client);
+        if (replyCode == CORRECT_FORMAT) {
+            rh.process_response(client, TRANSFER_JOIN, channel->get_name());
+            channel->broadcast(server, TRANSFER_JOIN, channel->get_name(), &client);
             LOG_CONN.info(client.get_nickname() + " joined channel: " + channel->get_name());
         } else {
             rh.process_response(client, replyCode, channel->get_name());
@@ -134,7 +134,7 @@ void Join::execute(Server& server, Client& client)
         }
         if (channel->get_nb_members() == 1) {
             channel->make_operator(client);
-            rh.process_response(client, RPL_MODE, channel->get_name() + " +o ");
+            rh.process_response(client, RPL_CHANNELMODEIS, channel->get_name() + " +o ");
             LOG_CMD.info(client.get_nickname() + " is operator of channel: " + channel->get_name());
         }
         if (channel->get_topic() == "No topic is set") {

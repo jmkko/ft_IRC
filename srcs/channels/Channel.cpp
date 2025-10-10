@@ -135,7 +135,7 @@ ReplyCode Channel::set_name(const std::string& name)
         _name = name;
     else
         return ERR_BADCHANMASK;
-    return RPL_SUCCESS;
+    return CORRECT_FORMAT;
 }
 
 ReplyCode Channel::set_topic(Client& client, const std::string& topic)
@@ -144,13 +144,13 @@ ReplyCode Channel::set_topic(Client& client, const std::string& topic)
         _topic = topic;
     else
         return ERR_CHANOPRIVSNEEDED;
-    return RPL_SUCCESS;
+    return CORRECT_FORMAT;
 }
 
 ReplyCode Channel::set_key(const std::string& key)
 {
     _key = key;
-    return RPL_SUCCESS;
+    return CORRECT_FORMAT;
 }
 
 void Channel::set_user_limit(int limit)
@@ -168,7 +168,7 @@ void Channel::invite_client(Client& client) { _invites.insert(&client); }
 ReplyCode Channel::add_member(Client& client)
 {
     if (is_member(client))
-        return RPL_SUCCESS;
+        return CORRECT_FORMAT;
     if (_userLimit != NO_LIMIT && _members.size() >= static_cast<size_t>(_userLimit))
         return ERR_CHANNELISFULL;
     if (is_invite_only() && !is_invited(client)) {
@@ -181,7 +181,7 @@ ReplyCode Channel::add_member(Client& client)
         return ERR_BANNEDFROMCHAN;
     _members.insert(&client);
     client.add_joined_channel(*this);
-    return RPL_SUCCESS;
+    return CORRECT_FORMAT;
 }
 
 void Channel::remove_member(Client& client) { _members.erase(&client); }
@@ -192,7 +192,7 @@ ReplyCode Channel::ban_member(Client& client)
 {
     if (is_member(client)) {
         _banList.insert(&client);
-        return RPL_SUCCESS;
+        return CORRECT_FORMAT;
     }
     return ERR_USERNOTINCHANNEL;
 }
@@ -203,7 +203,7 @@ ReplyCode Channel::make_operator(Client& client)
 {
     if (is_member(client)) {
         _operators.insert(&client);
-        return RPL_SUCCESS;
+        return CORRECT_FORMAT;
     }
     return ERR_USERNOTINCHANNEL;
 }

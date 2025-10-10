@@ -28,10 +28,10 @@ void Privmsg::execute(Server& server, Client& client)
 	ReplyHandler rh = ReplyHandler::get_instance(&server);
 
 	for (std::vector<Channel*>::iterator it = _chans.begin(); it != _chans.end(); it++) {
-		(*it)->broadcast(server, RPL_PRIVMSG, (*it)->get_name() + _msg, &client);
+		(*it)->broadcast(server, TRANSFER_PRIVMSG, (*it)->get_name() + _msg, &client);
 	}
 	for (std::vector<Client*>::iterator it = _dests.begin(); it != _dests.end(); it++) {
-		rh.process_response(*(*it), RPL_PRIVMSG, (*it)->get_nickname() + _msg, &client);
+		rh.process_response(*(*it), TRANSFER_PRIVMSG, (*it)->get_nickname() + _msg, &client);
 	}
 }
 
@@ -104,5 +104,5 @@ ReplyCode Privmsg::check_args(Server& server, Client& client, std::string& param
 	if (targetList.empty())
 		return (ERR_NORECIPIENT);
 	params = targetList + msg;
-	return RPL_SUCCESS;
+	return CORRECT_FORMAT;
 }

@@ -100,7 +100,7 @@ ICommand* CmdFactory::nick_cmd(Server& server, Client& client, std::string& para
     ReplyHandler& rh        = ReplyHandler::get_instance(&server);
     ReplyCode     replyCode = Nick::check_args(server, client, params);
 
-    if (replyCode == RPL_SUCCESS)
+    if (replyCode == CORRECT_FORMAT)
         return (new Nick(params));
     else {
         rh.process_response(client, replyCode, params);
@@ -115,7 +115,7 @@ ICommand* CmdFactory::user_cmd(Server& server, Client& client, std::string& para
     ReplyCode     replyCode = User::check_args(server, client, params);
     ReplyHandler& rh        = ReplyHandler::get_instance(&server);
 
-    if (replyCode == RPL_SUCCESS) {
+    if (replyCode == CORRECT_FORMAT) {
         std::istringstream iss(params);
         iss >> username;
         std::getline(iss, realname);
@@ -135,7 +135,7 @@ ICommand* CmdFactory::pass_cmd(Server& server, Client& client, std::string& para
     ReplyHandler& rh        = ReplyHandler::get_instance(&server);
     ReplyCode     replyCode = Pass::check_args(server, client, params);
 
-    if (replyCode == RPL_SUCCESS) {
+    if (replyCode == CORRECT_FORMAT) {
         return new Pass(params);
     } else {
         rh.process_response(client, replyCode, params);
@@ -155,7 +155,7 @@ ICommand* CmdFactory::kick_cmd(Server& server, Client& client, std::string& para
         LOG_CMD.debug("factory token", token);
     }
     ReplyCode replyCode = Kick::check_args(server, client, vectorParams);
-    if (replyCode == RPL_SUCCESS) {
+    if (replyCode == CORRECT_FORMAT) {
         return new Kick(vectorParams);
     } else {
         rh.process_response(client, replyCode, "KICK");
@@ -168,7 +168,7 @@ ICommand* CmdFactory::quit_cmd(Server& server, Client& client, std::string& para
     ReplyHandler& rh = ReplyHandler::get_instance(&server);
 
     ReplyCode replyCode = Quit::check_args(server, client, params);
-    if (replyCode == RPL_SUCCESS) {
+    if (replyCode == CORRECT_FORMAT) {
         return new Quit(params);
     } else {
         rh.process_response(client, replyCode, params);
@@ -182,7 +182,7 @@ ICommand* CmdFactory::join_cmd(Server& server, Client& client, std::string& para
     std::vector<std::string> vectorParams;
     vectorParams.push_back(params);
     ReplyCode replyCode = Join::check_args(server, client, vectorParams);
-    if (replyCode == RPL_SUCCESS) {
+    if (replyCode == CORRECT_FORMAT) {
         return new Join(vectorParams);
     } else {
         rh.process_response(client, replyCode, params);
@@ -200,7 +200,7 @@ ICommand* CmdFactory::mode_cmd(Server& server, Client& client, std::string& para
         vectorParams.push_back(token);
     }
     ReplyCode replyCode = Mode::check_args(server, client, vectorParams);
-    if (replyCode == RPL_SUCCESS) {
+    if (replyCode == CORRECT_FORMAT) {
         return new Mode(vectorParams);
     } else {
         rh.process_response(client, replyCode, params);
@@ -232,7 +232,7 @@ ICommand* CmdFactory::invite_cmd(Server& server, Client& client, std::string& pa
 {
     ReplyHandler& rh        = ReplyHandler::get_instance(&server);
     ReplyCode     replyCode = Invite::check_args(server, client, params);
-    if (replyCode != RPL_SUCCESS) {
+    if (replyCode != CORRECT_FORMAT) {
         rh.process_response(client, replyCode, params);
         return NULL;
     }
@@ -243,7 +243,7 @@ ICommand* CmdFactory::who_cmd(Server& server, Client& client, std::string& param
 {
     ReplyHandler& rh        = ReplyHandler::get_instance(&server);
     ReplyCode     replyCode = Who::check_args(server, client, params);
-    if (replyCode == RPL_SUCCESS) {
+    if (replyCode == CORRECT_FORMAT) {
         return new Who(params);
     } else {
         rh.process_response(client, replyCode, params);
@@ -256,7 +256,7 @@ ICommand* CmdFactory::privmsg_cmd(Server& server, Client& client, std::string& p
     LOG_CMD.debug("PIVMSG params: " + params);
     ReplyHandler rh   = ReplyHandler::get_instance(&server);
     ReplyCode    code = Privmsg::check_args(server, client, params);
-    if (code != RPL_SUCCESS) {
+    if (code != CORRECT_FORMAT) {
         rh.process_response(client, code, params, NULL);
         return (NULL);
     }
@@ -294,7 +294,7 @@ ICommand* CmdFactory::ping_cmd(Server& server, Client& client, std::string& para
     (void)client;
     ReplyHandler rh   = ReplyHandler::get_instance(&server);
     ReplyCode code = Ping::check_args(server, client, params);
-    if (code != RPL_SUCCESS)
+    if (code != CORRECT_FORMAT)
     {
         rh.process_response(client, code, params);
         return NULL;
@@ -316,7 +316,7 @@ ICommand* CmdFactory::topic_cmd(Server& server, Client& client, std::string& par
     (void)client;
 	ReplyHandler rh = ReplyHandler::get_instance(&server);
 	ReplyCode code = Topic::check_args(server, client, params);
-	if (code != RPL_SUCCESS) {
+	if (code != CORRECT_FORMAT) {
 		rh.process_response(client, code, params);
 		return NULL;
 	}

@@ -75,5 +75,5 @@ ReplyCode User::check_args(Server& server, Client& client, std::string& params)
         return (ERR_ALREADYREGISTRED);
     }
     params = username + " " + realname;
-    return (RPL_SUCCESS);
+    return (CORRECT_FORMAT);
 }

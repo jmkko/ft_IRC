@@ -50,5 +50,5 @@ ReplyCode Pass::check_args(Server& server, Client& client, std::string& params)
         return (ERR_ALREADYREGISTRED);
     }
     params = pass;
-    return (RPL_SUCCESS);
+    return (CORRECT_FORMAT);
 }

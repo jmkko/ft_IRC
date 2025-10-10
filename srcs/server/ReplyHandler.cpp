@@ -67,15 +67,15 @@ ReplyHandler::ReplyHandler(Server* server) : _server(server) {}
  * @param nickname [TODO:if not given, id will be contruct with client.get_nickname()]
  * @return [TODO: string <nick>!<user>@<host>]
  */
-std::string ReplyHandler::get_id_of(Client& client, const std::string& nickname)
+std::string ReplyHandler::get_user_id_of(Client& client)
 {
     std::string identity(":");
 
-    if (nickname.empty()) {
-        identity += client.get_nickname();
-    } else {
-        identity += nickname;
-    }
+    // if (nickname.empty()) {
+    //     identity += client.get_nickname();
+    // } else {
+    //     identity += nickname;
+    // }
     identity += "!" + client.get_user_name() + "@" + ircConfig.get_name();
 
     return (identity);
@@ -83,89 +83,62 @@ std::string ReplyHandler::get_id_of(Client& client, const std::string& nickname)
 
 std::string ReplyHandler::select_response(Client& client, ReplyCode code, const std::string& parameters, Client* sender)
 {
-    std::string nick = client.get_nickname();
     std::string response(":" + ircConfig.get_name() + " ");
-    std::string responseWithCode        = response + utils::code_to_str(code) + " ";
-    std::string responseWithCodeAndNick = responseWithCode + nick + " ";
+    std::string responseWithCodeAndNick = ":" + ircConfig.get_name() + " " + utils::code_to_str(code) + " " + client.get_nickname() + " ";
     LOG_D_CMD("resp w code and nick", responseWithCodeAndNick);
     if (!sender)
         sender = &client;
     switch (code) {
-    case RPL_WELCOME:
-        return (responseWithCodeAndNick + RPL_WELCOME_MSG);
-    case RPL_PING:
-        return response + parameters; // PONG :token
-    case RPL_NICK:
-        return (get_id_of(client, parameters) + " NICK " + nick);
-    case RPL_JOIN:
-        return (get_id_of(*sender, "") + " JOIN :" + parameters);
-    case RPL_NOTICE:
-        return (response + " NOTICE " + nick + " :" + parameters);
-    case RPL_PRIVMSG:
-        return (get_id_of(*sender) + " PRIVMSG " + parameters);
-    case RPL_KICK:
-        return (response + sender->get_full_userhost() + " KICK " + parameters);
-    case RPL_QUIT:
-        return sender->get_nickname() + " has quit " + ircConfig.get_name() + parameters;
-    case RPL_INVITING:
-        return (response + utils::code_to_str(code) + nick + " " + parameters);
-    case RPL_INVITING_TARGET:
-        return (get_id_of(*sender, "") + parameters);
-    case RPL_WHOREPLY:
-        return (response + utils::code_to_str(code) + parameters);
-    case RPL_ENDOFWHO:
-        return (response + utils::code_to_str(code) + nick + " " + parameters + RPL_ENDOFWHO_MSG);
-    case RPL_MODE:
-        return (response + " MODE " + parameters);
-    case RPL_TOPIC:
-        return (responseWithCodeAndNick + " " + parameters);
-    case RPL_NOTOPIC:
-        return (responseWithCodeAndNick + " " + parameters + RPL_NOTOPIC_MSG);
-    case RPL_NAMREPLY:
-        return (response + utils::code_to_str(code) + nick + " = " + parameters);
-    case RPL_ENDOFNAMES:
-        return (response + utils::code_to_str(code) + nick + " " + parameters + RPL_ENDOFNAMES_MSG);
+    case TRANSFER_NICK: // should be sent before effective nick change otherwise it wont have format ":old!u@h NICK :new"
+        return (get_user_id_of(*sender) + "NICK " + parameters);
+    case TRANSFER_JOIN:
+        return (get_user_id_of(*sender) + "JOIN " + parameters);
+    case TRANSFER_PRIVMSG:
+        return (get_user_id_of(*sender) + "PRIVMSG " + parameters);
+    case TRANSFER_KICK:
+        return (get_user_id_of(*sender)+ "KICK " + parameters);
+    case TRANSFER_INVITE:
+        return (get_user_id_of(*sender) + "INVITE " + parameters);
+    case TRANSFER_QUIT:
+        return (get_user_id_of(*sender)+ "QUIT " + parameters);
+    case TRANSFER_MODE:
+        return (get_user_id_of(*sender)+ "MODE " + parameters);
+    case MSG_PING:
+        return response + "PONG " + parameters; // PONG :token
     case RPL_CHANNELMODEIS:
-        return (responseWithCodeAndNick + parameters + " " + ircCodes.trailing(code));
-    case ERR_CHANOPRIVSNEEDED:
-        return (responseWithCodeAndNick + parameters + ERR_CHANOPRIVSNEEDED_MSG);
-    case ERR_UNKNOWNCOMMAND:
-        return (std::string("421") + ERR_UNKNOWNCOMMAND_MSG + parameters);
-    case ERR_NEEDMOREPARAMS:
-        return (responseWithCodeAndNick + parameters + ERR_NEEDMOREPARAMS_MSG);
-    case ERR_USERNOTINCHANNEL:
-        return (responseWithCodeAndNick + parameters + ERR_USERNOTINCHANNEL_MSG);
-    case ERR_USERONCHANNEL:
-        return (responseWithCodeAndNick + parameters + ERR_USERONCHANNEL_MSG);
-    case ERR_NOSUCHCHANNEL:
-        return (responseWithCodeAndNick + parameters + ERR_NOSUCHCHANNEL_MSG);
-    case ERR_NONICKNAMEGIVEN:
-        return (std::string("431") + ERR_NONICKNAMEGIVEN_MSG);
-    case ERR_TOOMANYTARGETS:
-        return (responseWithCodeAndNick + parameters + " :too many recipients (you dont have that much friends)");
-    case ERR_NOSUCHNICK:
-        return (responseWithCodeAndNick + parameters + " :No such nickname (imaginary friend issue)");
-    case ERR_NOTEXTTOSEND:
-        return (responseWithCodeAndNick + ERR_NOTEXTTOSEND_MSG);
-    case ERR_ERRONEUSNICKNAME:
-        return (std::string("432") + ERR_ERRONEUSNICKNAME_MSG);
-    case ERR_NICKNAMEINUSE:
-        return (responseWithCodeAndNick + ERR_NICKNAMEINUSE_MSG);
-    case ERR_PASSWDMISMATCH:
-        return (std::string("464") + ERR_PASSWDMISMATCH_MSG);
-    case ERR_NOTREGISTERED:
-        return (TO_STRING(ERR_NOTREGISTERED) + "* " + parameters + " :You have not registered");
+    case RPL_ENDOFNAMES:
+    case RPL_ENDOFWHO:
+    case RPL_INVITING:
+    case RPL_NAMREPLY:
+    case RPL_NOTOPIC:
+    case RPL_TOPIC:
+    case RPL_WELCOME:
+    case RPL_WHOREPLY:
     case ERR_ALREADYREGISTRED:
     case ERR_BADCHANMASK:
     case ERR_BADCHANNELKEY:
     case ERR_BANNEDFROMCHAN:
     case ERR_CHANNELISFULL:
-    case ERR_INVITEONLYCHAN:
+    case ERR_CHANOPRIVSNEEDED:
+    case ERR_ERRONEUSNICKNAME:
     case ERR_KEYSET:
+    case ERR_INVITEONLYCHAN:
+    case ERR_NEEDMOREPARAMS:
+    case ERR_NICKNAMEINUSE:
     case ERR_NOORIGIN:
+    case ERR_NOSUCHCHANNEL:
+    case ERR_NOSUCHNICK:
+    case ERR_NOTEXTTOSEND:
+    case ERR_NONICKNAMEGIVEN:
     case ERR_NOTONCHANNEL:
+    case ERR_NOTREGISTERED:
+    case ERR_PASSWDMISMATCH:
+    case ERR_TOOMANYTARGETS:
+    case ERR_UNKNOWNCOMMAND:
     case ERR_UNKNOWNMODE:
-    case ERR_WRONG_FORMAT:
+    case ERR_USERNOTINCHANNEL:
+    case ERR_USERONCHANNEL:
+    case CUSTOMERR_WRONG_FORMAT:
         return (responseWithCodeAndNick + parameters + ircCodes.trailing(code));    
     default:
         return ("");

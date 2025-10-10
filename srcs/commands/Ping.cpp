@@ -56,7 +56,7 @@ ReplyCode Ping::check_args(Server& s, Client& c, std::string& params)
     LOG_DV_CMD(token);
     if (token.empty())
         return ERR_NOORIGIN;
-    return RPL_SUCCESS;
+    return CORRECT_FORMAT;
 }
 
 /**
@@ -68,7 +68,6 @@ ReplyCode Ping::check_args(Server& s, Client& c, std::string& params)
 void			 Ping::execute(Server& s, Client& c)
 {
     ReplyHandler& rh = ReplyHandler::get_instance(&s);
-    LOG_d_CMD("sending PONG");
-    rh.process_response(c, RPL_PING, std::string("PONG :" + _token));
+    rh.process_response(c, MSG_PING, _token);
 }
 

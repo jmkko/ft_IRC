@@ -163,26 +163,26 @@
 enum ReplyCode {
 
     ////////////////////// NON RFC
-    RPL_SUCCESS = 0, // internal logic
-    RPL_NOTICE  = 101,
-    RPL_PASS    = 201,
-    RPL_USER    = 202,
-    RPL_JOIN    = 203,
-    RPL_NICK    = 204,
-    RPL_KICK    = 205,
-    RPL_PRIVMSG = 206,
-    RPL_MODE    = 207,
-    RPL_QUIT    = 208,
-    RPL_PING    = 209,
+    CORRECT_FORMAT = 0, // internal logic
+    // RPL_NOTICE  = 101,
+    // RPL_PASS    = 201,
+    // RPL_USER    = 210,
+    TRANSFER_INVITE  = 202,
+    TRANSFER_JOIN    = 203,
+    TRANSFER_NICK    = 204,
+    TRANSFER_KICK    = 205,
+    TRANSFER_PRIVMSG = 206,
+    TRANSFER_MODE    = 207,
+    TRANSFER_QUIT    = 208,
+    MSG_PING         = 209,
 
+    // SERVER_ERR          = 801,
+    // FORMAT_ERR          = 802,
+    // PWD_ERR             = 803,
+    CUSTOMERR_WRONG_FORMAT    = 805,
+    
+    ////////////////////// RFC REPLIES (with code defined by RFC)
     RPL_NONE            = 300, // no answer
-    SERVER_ERR          = 801,
-    FORMAT_ERR          = 802,
-    PWD_ERR             = 803,
-    RPL_INVITING_TARGET = 804,
-    ERR_WRONG_FORMAT    = 805,
-
-    ////////////////////// RFC REPLIES
     RPL_WELCOME  = 001, // after registering (PASS NICK USER)
     RPL_YOURHOST = 002,
     RPL_CREATED  = 003,

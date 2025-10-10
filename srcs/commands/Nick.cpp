@@ -5,6 +5,7 @@
 #include "LogManager.hpp"
 #include "ReplyHandler.hpp"
 #include "Server.hpp"
+#include "reply_codes.hpp"
 #include "utils.hpp"
 
 #include <iostream>
@@ -17,7 +18,6 @@ void Nick::execute(Server& server, Client& client)
 {
 	(void)server;
 	std::string oldNickname = client.get_nickname();
-	client.set_nickname(_nickname);
 	ReplyHandler& rh = ReplyHandler::get_instance(&server);
 	// welcome sequence complete for first time
 	if (oldNickname.empty() && client.get_user_name().empty() && client.is_authenticated()) {
@@ -27,9 +27,10 @@ void Nick::execute(Server& server, Client& client)
 	} else if (!oldNickname.empty() && !client.get_user_name().empty() && client.is_registered()) {
 		// send the message to every user in every channel that this client takes part in
 		// NOT WORKING (client._joinedChannel is empty)
-		client.broadcast_to_all_channels(server, RPL_NICK, oldNickname); // ! \\ ;
-	 	rh.process_response(client, RPL_NICK, oldNickname);
+		client.broadcast_to_all_channels(server, TRANSFER_NICK, _nickname); // ! \\ ;
+	 	rh.process_response(client, TRANSFER_NICK, _nickname);
 	}
+    client.set_nickname(_nickname);
 }
 
 ReplyCode Nick::check_args(Server& server, Client& client, std::string& params)
@@ -57,5 +58,5 @@ ReplyCode Nick::check_args(Server& server, Client& client, std::string& params)
     // if (client.get_nickname().empty() && !client.get_user_name().empty() && client.is_registered()) {
     //     return (RPL_WELCOME);
     // }
-    return (RPL_SUCCESS);
+    return (CORRECT_FORMAT);
 }

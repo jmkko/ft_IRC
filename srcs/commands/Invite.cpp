@@ -43,7 +43,7 @@ ReplyCode Invite::check_args(Server& s, Client& c, std::string& params)
     iss >> chan;
     if (params.empty() || chan.empty())
         return (ERR_NEEDMOREPARAMS);
-    return (RPL_SUCCESS);
+    return (CORRECT_FORMAT);
 }
 
 /**
@@ -90,5 +90,5 @@ void Invite::execute(Server& s, Client& c)
     }
     channel->invite_client(*target);
     rh.process_response(c, RPL_INVITING, nick + " " + chan);
-    rh.process_response(*target, RPL_INVITING_TARGET, " INVITE " + nick + " :" + chan, &c);
+    rh.process_response(*target, TRANSFER_INVITE, " INVITE " + nick + " :" + chan, &c);
 }

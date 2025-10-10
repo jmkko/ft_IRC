@@ -649,7 +649,7 @@ void mode_l_negativearg_should_err(Server& s)
 		send_line(sop, invalidModePlusLNegativeMsg);
 		std::string reply = recv_lines(sop);
         AssertReply ar(reply);
-        ar.has_code(ERR_WRONG_FORMAT);
+        ar.has_code(CUSTOMERR_WRONG_FORMAT);
 
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());

@@ -41,7 +41,7 @@ static ReplyCode parse_args(std::vector<std::string>& args,
     if (it != args.end())
         *comment = *it;
 
-    return RPL_SUCCESS;
+    return CORRECT_FORMAT;
 }
 
 /************************************************************
@@ -66,12 +66,12 @@ ReplyCode Kick::check_args(Server& server, Client& client, std::vector<std::stri
     // ReplyHandler& 	rh = ReplyHandler::get_instance(&server);
 
     ReplyCode code = parse_args(args, &channelNames, &nicknames, &comment);
-    if (code != RPL_SUCCESS) {
+    if (code != CORRECT_FORMAT) {
         LOG_CMD.warning(TO_STRING(code) + " = parsing error");
         return code;
     }
     (void)comment;
-    return RPL_SUCCESS;
+    return CORRECT_FORMAT;
 }
 
 /************************************************************
@@ -144,8 +144,8 @@ void Kick::execute(Server& server, Client& client)
                 std::string messageParam = channel->get_name() + " " + targetUser->get_nickname();
                 if (!comment.empty())
                     messageParam.append(" :").append(comment);
-                channel->broadcast(server, RPL_KICK, messageParam, &client);
-                rh.process_response(*targetUser, RPL_KICK, messageParam, &client);
+                channel->broadcast(server, TRANSFER_KICK, messageParam, &client);
+                rh.process_response(*targetUser, TRANSFER_KICK, messageParam, &client);
             }
         }
     }
