@@ -29,7 +29,8 @@ class AssertReply
     AssertReply& contains(const std::string& token);
     AssertReply& do_not_contains(const std::string& token);
     AssertReply& matches_entirely(const std::string& message);
-    AssertReply& is_formatted(ReplyCode code, const std::string& clientNick);
+    AssertReply& is_formatted(ReplyCode code, const std::string& clientNick, const std::string& params = "", const std::string& trailing = "");
+    AssertReply& is_formatted_transfer(const std::string& clientNick, const std::string& params, const std::string& trailing = "");
 
     AssertReply& handle_new_reply(const std::string& reply);
 

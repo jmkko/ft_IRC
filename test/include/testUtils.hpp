@@ -4,6 +4,7 @@
 #include "AssertFail.hpp"
 #include "TcpSocket.hpp"
 #include "printUtils.hpp"
+#include "reply_codes.hpp"
 
 #define SERVER_PROCESS_TIME_MS 10
 #define SERVER_SEND_WAIT_MS    15
@@ -38,23 +39,25 @@ template <typename Func> void run_test(Func&& f, const char* name)
     - opname2			op2
     - channel1 : 		#chan
     - channel2 : 		#chan2
+    username will be same as <nick>
     Messages names are prefixed with valid if they are syntaxically correct and parseable
     Messages names are suffixed with `CommandnameMsg`
 */
 
 static const std::string& userNick     = "roro";
 static const std::string& user2Nick    = "toto";
-static const std::string& userOp       = "op";
+static const std::string& opNick   = "op";
+static const std::string& op2Nick  = "op2";
 static const std::string& channelName  = "#chan";
 static const std::string& channel2Name = "#chan2";
 
 static const std::string& validPassMsg = std::string("PASS ") + DEFAULT_PASSWORD + "\r\n";
 
-static const std::string& validUserMsg             = "USER roro 0 * :Ronnie Reagan\r\n";
-static const std::string& validUser2Msg            = "USER toto 0 * :Tony Parker\r\n";
-static const std::string& validUserOpMsg           = "USER op 0 * :Channel_Op\r\n";
-static const std::string& validUserOp2Msg          = "USER op2 0 * :Channel_Op2\r\n";
-static const std::string& invalidUserNoUsernameMsg = "USER 0 * :Channel_Op2\r\n";
+static const std::string& validUserMsg             = "USER roro 0 * :realroro\r\n";
+static const std::string& validUser2Msg            = "USER toto 0 * :realtoto\r\n";
+static const std::string& validUserOpMsg           = "USER op 0 * :realop\r\n";
+static const std::string& validUserOp2Msg          = "USER op2 0 * :realop2\r\n";
+static const std::string& invalidUserNoUsernameMsg = "USER 0 * :realop2\r\n";
 
 static const std::string& validNickMsg             = "NICK roro\r\n";
 static const std::string& validNick2Msg            = "NICK toto\r\n";

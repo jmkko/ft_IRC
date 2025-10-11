@@ -62,6 +62,7 @@ void Topic::execute(Server& s, Client& c) {
 		} else {
 			ReplyCode code = _chan->set_topic(c, _topic);
 			if (code == CORRECT_FORMAT) {
+                LOG_D_CMD("channel topic", _chan->get_topic());
 				_chan->broadcast(s, RPL_TOPIC, _chan->get_name() + " :" + _chan->get_topic());
 			} else {
 				rh.process_response(c, code, _chan->get_name());

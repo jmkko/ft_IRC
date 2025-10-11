@@ -77,7 +77,7 @@ void chan1op_should_notice(Server& s)
         send_line(soOp, chan1OpWho);
         std::string reply = recv_lines(soOp);
         AssertReply ar(reply);
-        ar.contains(userOp).has_code(RPL_WHOREPLY).has_code(RPL_ENDOFWHO).contains(channelName).do_not_contains(userNick);
+        ar.contains(opNick).has_code(RPL_WHOREPLY).has_code(RPL_ENDOFWHO).contains(channelName).do_not_contains(userNick);
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());
     }
@@ -96,7 +96,7 @@ void good_pattern_should_notice(Server& s)
         send_line(soOp, goodPatternWho);
         std::string reply = recv_lines(soOp);
         AssertReply ar(reply);
-        ar.contains(userNick).has_code(RPL_WHOREPLY).has_code(RPL_ENDOFWHO).contains(channelName).do_not_contains(userOp);
+        ar.contains(userNick).has_code(RPL_WHOREPLY).has_code(RPL_ENDOFWHO).contains(channelName).do_not_contains(opNick);
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());
     }
@@ -115,7 +115,7 @@ void bad_user_should_notice(Server& s)
         send_line(soOp, badUserWho);
         std::string reply = recv_lines(soOp);
         AssertReply ar(reply);
-        ar.do_not_contains(userNick).has_code(RPL_ENDOFWHO).contains(channelName).do_not_contains(userOp);
+        ar.do_not_contains(userNick).has_code(RPL_ENDOFWHO).contains(channelName).do_not_contains(opNick);
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());
     }
@@ -134,7 +134,7 @@ void bad_pattern_should_notice(Server& s)
         send_line(soOp, badPatternWho);
         std::string reply = recv_lines(soOp);
         AssertReply ar(reply);
-        ar.do_not_contains(userNick).has_code(RPL_ENDOFWHO).contains(channelName).do_not_contains(userOp);
+        ar.do_not_contains(userNick).has_code(RPL_ENDOFWHO).contains(channelName).do_not_contains(opNick);
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());
     }
@@ -153,7 +153,7 @@ void all_user_should_notice(Server& s)
         send_line(soOp, allUserWho);
         std::string reply = recv_lines(soOp);
         AssertReply ar(reply);
-        ar.contains(userNick).has_code(RPL_WHOREPLY).has_code(RPL_ENDOFWHO).contains(channelName).contains(userOp);
+        ar.contains(userNick).has_code(RPL_WHOREPLY).has_code(RPL_ENDOFWHO).contains(channelName).contains(opNick);
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());
     }

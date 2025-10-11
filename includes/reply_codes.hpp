@@ -180,6 +180,7 @@ enum ReplyCode {
     // FORMAT_ERR          = 802,
     // PWD_ERR             = 803,
     CUSTOMERR_WRONG_FORMAT    = 805,
+    PROCESSED_ERROR = 806,
     
     ////////////////////// RFC REPLIES (with code defined by RFC)
     RPL_NONE            = 300, // no answer

@@ -117,12 +117,6 @@ $(BUILD_DIR)/%.o: %.cpp | $(DIRS)
 			1) anim="०ᵒ०ᵒ०";; \
 			2) anim="०००००";; \
 			3) anim="ᵒ०ᵒ०ᵒ";; \
-			4) anim="००ooᵒ";; \
-			5) anim="०ᵒᵒᵒ०";; \
-			6) anim="००o००";; \
-			7) anim="०o०ᵒ०";; \
-			8) anim="०o०o०";; \
-			9) anim="०ᵒ०ᵒ०";; \
 			*) anim="०ooo०";; \
 		esac; \
 		printf "                                                                     "; \

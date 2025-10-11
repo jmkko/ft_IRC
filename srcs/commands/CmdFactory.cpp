@@ -202,6 +202,8 @@ ICommand* CmdFactory::mode_cmd(Server& server, Client& client, std::string& para
     ReplyCode replyCode = Mode::check_args(server, client, vectorParams);
     if (replyCode == CORRECT_FORMAT) {
         return new Mode(vectorParams);
+    } else if (replyCode == PROCESSED_ERROR) {
+        return NULL;
     } else {
         rh.process_response(client, replyCode, params);
     }

@@ -61,116 +61,145 @@ ReplyHandler::ReplyHandler(Server* server) : _server(server) {}
 */
 
 /**
- * @brief [TODO:return the id sequence <nick|parameter>!<user>@<host>]
+ * @brief return client identifier formatted as nick!username@hostname
  *
- * @param client [TODO:Client]
- * @param nickname [TODO:if not given, id will be contruct with client.get_nickname()]
- * @return [TODO: string <nick>!<user>@<host>]
+ * @param client
+ * @param nickname
+ * @return formatted identifier
  */
-std::string ReplyHandler::get_user_id_of(Client& client)
+static std::string get_user_id_of(Client& client)
 {
-    std::string identity(":");
-
     // if (nickname.empty()) {
     //     identity += client.get_nickname();
     // } else {
     //     identity += nickname;
     // }
-    identity += "!" + client.get_user_name() + "@" + ircConfig.get_name();
-
-    return (identity);
+    return ":" + client.get_nickname() + "!" + client.get_user_name() + "@" + ircConfig.get_name() + " ";
 }
 
-std::string ReplyHandler::select_response(Client& client, ReplyCode code, const std::string& parameters, Client* sender)
-{
-    std::string response(":" + ircConfig.get_name() + " ");
-    std::string responseWithCodeAndNick = ":" + ircConfig.get_name() + " " + utils::code_to_str(code) + " " + client.get_nickname() + " ";
-    LOG_D_CMD("resp w code and nick", responseWithCodeAndNick);
-    if (!sender)
-        sender = &client;
-    switch (code) {
-    case TRANSFER_NICK: // should be sent before effective nick change otherwise it wont have format ":old!u@h NICK :new"
-        return (get_user_id_of(*sender) + "NICK " + parameters);
-    case TRANSFER_JOIN:
-        return (get_user_id_of(*sender) + "JOIN " + parameters);
-    case TRANSFER_PRIVMSG:
-        return (get_user_id_of(*sender) + "PRIVMSG " + parameters);
-    case TRANSFER_KICK:
-        return (get_user_id_of(*sender)+ "KICK " + parameters);
-    case TRANSFER_INVITE:
-        return (get_user_id_of(*sender) + "INVITE " + parameters);
-    case TRANSFER_QUIT:
-        return (get_user_id_of(*sender)+ "QUIT " + parameters);
-    case TRANSFER_MODE:
-        return (get_user_id_of(*sender)+ "MODE " + parameters);
-    case MSG_PING:
-        return response + "PONG " + parameters; // PONG :token
-    case RPL_CHANNELMODEIS:
-    case RPL_ENDOFNAMES:
-    case RPL_ENDOFWHO:
-    case RPL_INVITING:
-    case RPL_NAMREPLY:
-    case RPL_NOTOPIC:
-    case RPL_TOPIC:
-    case RPL_WELCOME:
-    case RPL_WHOREPLY:
-    case ERR_ALREADYREGISTRED:
-    case ERR_BADCHANMASK:
-    case ERR_BADCHANNELKEY:
-    case ERR_BANNEDFROMCHAN:
-    case ERR_CHANNELISFULL:
-    case ERR_CHANOPRIVSNEEDED:
-    case ERR_ERRONEUSNICKNAME:
-    case ERR_KEYSET:
-    case ERR_INVITEONLYCHAN:
-    case ERR_NEEDMOREPARAMS:
-    case ERR_NICKNAMEINUSE:
-    case ERR_NOORIGIN:
-    case ERR_NOSUCHCHANNEL:
-    case ERR_NOSUCHNICK:
-    case ERR_NOTEXTTOSEND:
-    case ERR_NONICKNAMEGIVEN:
-    case ERR_NOTONCHANNEL:
-    case ERR_NOTREGISTERED:
-    case ERR_PASSWDMISMATCH:
-    case ERR_TOOMANYTARGETS:
-    case ERR_UNKNOWNCOMMAND:
-    case ERR_UNKNOWNMODE:
-    case ERR_USERNOTINCHANNEL:
-    case ERR_USERONCHANNEL:
-    case CUSTOMERR_WRONG_FORMAT:
-        return (responseWithCodeAndNick + parameters + ircCodes.trailing(code));    
-    default:
-        return ("");
-    }
-}
-
-int ReplyHandler::process_response(Client& client, ReplyCode code, const std::string& parameters, Client* sender)
-{
-    std::string response = select_response(client, code, parameters, sender);
-
-    if (!response.empty()) {
-        LOG_CMD.sending(__FILE_NAME__, __FUNCTION__, "\n" + response, &client);
-        _send_reply(client, response);
-    }
-    return (code);
-}
+// std::string ReplyHandler::select_response(Client& client, ReplyCode code, const std::string& parameters, Client* sender)
+// {
+//     std::string response(":" + ircConfig.get_name() + " ");
+//     std::string responseWithCodeAndNick = ":" + ircConfig.get_name() + " " + utils::code_to_str(code) + " " + client.get_nickname() + " ";
+//     LOG_D_CMD("resp w code and nick", responseWithCodeAndNick);
+//     if (!sender)
+//         sender = &client;
+//     switch (code) {
+//     case TRANSFER_NICK: // should be sent before effective nick change otherwise it wont have format ":old!u@h NICK :new"
+//         return (get_user_id_of(*sender) + "NICK " + parameters);
+//     case TRANSFER_JOIN:
+//         return (get_user_id_of(*sender) + "JOIN " + parameters);
+//     case TRANSFER_PRIVMSG:
+//         return (get_user_id_of(*sender) + "PRIVMSG " + parameters);
+//     case TRANSFER_KICK:
+//         return (get_user_id_of(*sender)+ "KICK " + parameters);
+//     case TRANSFER_INVITE:
+//         return (get_user_id_of(*sender) + "INVITE " + parameters);
+//     case TRANSFER_QUIT:
+//         return (get_user_id_of(*sender)+ "QUIT " + parameters);
+//     case TRANSFER_MODE:
+//         return (get_user_id_of(*sender)+ "MODE " + parameters);
+//     case MSG_PING:
+//         return response + "PONG " + parameters; // PONG :token
+//     case RPL_CHANNELMODEIS:
+//     case RPL_ENDOFNAMES:
+//     case RPL_ENDOFWHO:
+//     case RPL_INVITING:
+//     case RPL_NAMREPLY:
+//     case RPL_NOTOPIC:
+//     case RPL_TOPIC:
+//     case RPL_WELCOME:
+//     case RPL_WHOREPLY:
+//     case ERR_ALREADYREGISTRED:
+//     case ERR_BADCHANMASK:
+//     case ERR_BADCHANNELKEY:
+//     case ERR_BANNEDFROMCHAN:
+//     case ERR_CHANNELISFULL:
+//     case ERR_CHANOPRIVSNEEDED:
+//     case ERR_ERRONEUSNICKNAME:
+//     case ERR_KEYSET:
+//     case ERR_INVITEONLYCHAN:
+//     case ERR_NEEDMOREPARAMS:
+//     case ERR_NICKNAMEINUSE:
+//     case ERR_NOORIGIN:
+//     case ERR_NOSUCHCHANNEL:
+//     case ERR_NOSUCHNICK:
+//     case ERR_NOTEXTTOSEND:
+//     case ERR_NONICKNAMEGIVEN:
+//     case ERR_NOTONCHANNEL:
+//     case ERR_NOTREGISTERED:
+//     case ERR_PASSWDMISMATCH:
+//     case ERR_TOOMANYTARGETS:
+//     case ERR_UNKNOWNCOMMAND:
+//     case ERR_UNKNOWNMODE:
+//     case ERR_USERNOTINCHANNEL:
+//     case ERR_USERONCHANNEL:
+//     case CUSTOMERR_WRONG_FORMAT:
+//         return (responseWithCodeAndNick + parameters + " " + ircCodes.trailing(code));    
+//     default:
+//         return ("");
+//     }
+// }
 
 /**
- * @brief send RFC_2812 formmated message to the client
+ * @brief generates RFC_2812 formmated code response
  *
  * @param client who waiting response from the server
  * @param code of response
  * @param parameters message corresponding of the code
- * @return
+ * @return formatted code response
  */
-int ReplyHandler::process_code_response(Client& client, ReplyCode code, const std::string& parameters)
+static std::string generate_code_response(Client& client, ReplyCode code, const std::string& parameters)
 {
-    std::string response(":" + ircConfig.get_name());
-    response = response + utils::code_to_str(code) + " " + parameters;
+    std::string serverPrefixAndNick = ":" + ircConfig.get_name() + " " + utils::code_to_str(code) + " " + client.get_nickname() + " ";
+    if (parameters.empty())
+        return (serverPrefixAndNick + ircCodes.trailing(code));
+    else    
+        return (serverPrefixAndNick + parameters + " " + ircCodes.trailing(code));
+}
+
+static std::string generate_non_numerical_response(Client& client, ReplyCode code, const std::string& parameters, Client* sender)
+{
+    if (!sender)
+        sender = &client;
+
+    switch (code) {
+        case TRANSFER_NICK:
+            return (get_user_id_of(*sender) + "NICK " + parameters);
+        case TRANSFER_JOIN:
+            return (get_user_id_of(*sender) + "JOIN " + parameters);
+        case TRANSFER_PRIVMSG:
+            return (get_user_id_of(*sender) + "PRIVMSG " + parameters);
+        case TRANSFER_KICK:
+            return (get_user_id_of(*sender)+ "KICK " + parameters);
+        case TRANSFER_INVITE:
+            return (get_user_id_of(*sender) + "INVITE " + parameters);
+        case TRANSFER_QUIT:
+            return (get_user_id_of(*sender)+ "QUIT " + parameters);
+        case TRANSFER_MODE:
+            return (get_user_id_of(*sender)+ "MODE " + parameters);
+        case MSG_PING:
+            return ":" + ircConfig.get_name() + " " + "PONG " + parameters; 
+        default:
+            return "";
+    }
+}
+
+static bool is_numerical_response(ReplyCode code)
+{
+    return (code < LOWER_CUSTOM_CODE || (code > UPPER_CUSTOM_CODE && code < LOWER_EXTRA_CUSTOM_CODE));
+}
+
+int ReplyHandler::process_response(Client& client, ReplyCode code, const std::string& parameters, Client* sender)
+{
+    std::string response = "";
+    if (is_numerical_response(code))
+        response = generate_code_response(client, code, parameters);
+    else
+        response = generate_non_numerical_response(client, code, parameters, sender);
 
     if (!response.empty()) {
-        LOG_CMD.info("ReplyHandler::process_response --> response to " + client.get_nickname() + ":\n" + response);
+        LOG_CMD.sending(__FILE_NAME__, __FUNCTION__, "\n\t\t\t\t\t\t\t\t\t\t\t   " + response, &client);
         _send_reply(client, response);
     }
     return (code);

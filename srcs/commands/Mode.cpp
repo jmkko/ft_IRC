@@ -58,40 +58,51 @@ ReplyCode Mode::check_args(Server& server, Client& client, std::vector<std::stri
 	char 		operation = '\0';
 	std::string modes;
 	std::vector<std::string> modeParams;
+    ReplyHandler rh = ReplyHandler::get_instance(&server);
     
     LOG_DV_CMD(args[0]);
     LOG_DV_CMD(args.size());
     LOG_DV_CMD(args.size());
 	if (args.size() == 1 && Channel::is_valid_channel_name(args[0]))
     {
-        LOG_d_CMD("its ok !");
 		return CORRECT_FORMAT;
     }
     if (args.size() < 2)
-        return ERR_NEEDMOREPARAMS;
+    {
+        rh.process_response(client, ERR_NEEDMOREPARAMS, "MODE");
+        return PROCESSED_ERROR;
+    }
     parse_args(args, &channel, &operation, &modes, &modeParams);
     LOG_DV_CMD(operation);
     LOG_DV_CMD(modes);
     if (!modeParams.empty())
         LOG_DV_CMD(modeParams[0]);
 	if (channel.empty() || modes.empty())
-		return ERR_NEEDMOREPARAMS;
+    {
+		rh.process_response(client, ERR_NEEDMOREPARAMS, "MODE");
+        return PROCESSED_ERROR;
+    }
 
-	if(modes.find_first_not_of(authorizedModes) != std::string::npos)
+	unsigned long idx = modes.find_first_not_of(authorizedModes);
+    if (idx != std::string::npos)
     {
         LOG_CMD.log(WARN, __FILE_NAME__, __FUNCTION__,"unknown option (other than kilot)", modes);
-		return ERR_UNKNOWNMODE;
+		rh.process_response(client, ERR_UNKNOWNMODE, &(modes.at(idx)));
+        return PROCESSED_ERROR;
     }
-	if (std::string(1, operation).find_first_not_of(authorizedOps) != std::string::npos)
+	unsigned long opIdx = (std::string(1, operation).find_first_not_of(authorizedOps));
+    if (opIdx != std::string::npos)
     {
-         LOG_CMD.log(WARN, __FILE_NAME__, __FUNCTION__, "unknown operator (other than +-)", operation);
-         return ERR_UNKNOWNMODE;
+        LOG_CMD.log(WARN, __FILE_NAME__, __FUNCTION__, "unknown operator (other than +-)", operation);
+        rh.process_response(client, ERR_UNKNOWNMODE, std::string(1, operation));
+        return PROCESSED_ERROR;
     }
 	for (size_t i = 0; i < modes.size(); ++i)
 	{
 		if (modesRequiringArg.find(modes[i]) != std::string::npos && operation == '+' && i >= modeParams.size())
         {
-			return ERR_NEEDMOREPARAMS;
+			rh.process_response(client, ERR_NEEDMOREPARAMS, "MODE");
+            return PROCESSED_ERROR;
         }
 		if (modes[i] == 'l' && operation == '+')
         {
@@ -137,7 +148,7 @@ void Mode::execute(Server& server, Client& client)
 	std::map<std::string, Channel*>::iterator it = server.channels.find(channelName);
 	if (it == server.channels.end())
 	{
-		rh.process_response(client, ERR_NOSUCHCHANNEL);
+		rh.process_response(client, ERR_NOSUCHCHANNEL, channelName);
 		return ;
 	}
 	else
@@ -148,7 +159,7 @@ void Mode::execute(Server& server, Client& client)
 	if (_args.size() == 1)
 	{
         LOG_d_CMD("args == 1");
-        std::string modeIsReply = channel->get_name() + " ";
+        std::string modeIsReply = channel->get_name();
 		std::string modeIsParams("");
 		std::string modeIsParamsVal("");
 		if (!(currentModes & CHANMODE_INIT))
@@ -169,15 +180,16 @@ void Mode::execute(Server& server, Client& client)
 		}
 		if (!modeIsParamsVal.empty())
 			modeIsReply += " " + modeIsParams + " " + modeIsParamsVal;
-        else
+        else if (!modeIsParams.empty())
             modeIsReply += " " + modeIsParams;
 		rh.process_response(client, RPL_CHANNELMODEIS, modeIsReply);
-	}
+        return ;
+    }
 
 	// checking client privileges
 	if (!channel->is_operator(client))
 	{
-		rh.process_response(client, ERR_CHANOPRIVSNEEDED);
+		rh.process_response(client, ERR_CHANOPRIVSNEEDED, channel->get_name());
 		return ;
 	}
 
@@ -193,7 +205,7 @@ void Mode::execute(Server& server, Client& client)
 			{
                 if (channel->get_mode() & CHANMODE_KEY)
 				{
-                    rh.process_response(client, ERR_KEYSET);
+                    rh.process_response(client, ERR_KEYSET, channel->get_name());
 				}
 				else
 				{
@@ -269,5 +281,5 @@ void Mode::execute(Server& server, Client& client)
 
 	// send confirmation
 	std::string confirmationMsg = channelName + " " + validModes + validModeParams;
-	rh.process_response(client, RPL_CHANNELMODEIS, confirmationMsg);
+	rh.process_response(client, TRANSFER_MODE, confirmationMsg);
 }
