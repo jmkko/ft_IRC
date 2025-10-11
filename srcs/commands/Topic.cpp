@@ -12,24 +12,29 @@ Topic::Topic(void): _topic(""), _chan(NULL) {}
 Topic::Topic(Server& s, std::string& params) {
 	std::istringstream iss(params);
 	std::string channel;
+	std::string topic;
+    std::string token;
 
 	iss >> channel;
-
-	std::string topic;
-	std::getline(iss, topic);
-
+    iss >> topic;
+    while (iss >> token)
+    {
+        topic += " " + token;
+    }
 	if (!topic.empty()) {
-		std::string::size_type start = topic.find_first_not_of(" \t\n\r\f\v");
-		if (start != std::string::npos)
-			topic.erase(0, start);
-		else
-			topic.clear(); // string is all spaces
-	}
-	if (!topic.empty() && topic[0] == ':')
-		topic.erase(0, 1);
-	_chan = s.find_channel_by_name(channel);
+        topic = topic.substr(1);
+    }
+	// 	std::string::size_type start = topic.find_first_not_of(" \t\n\r\f\v");
+	// 	if (start != std::string::npos)
+	// 		topic.erase(0, start);
+	// 	else
+	// 		topic.clear(); // string is all spaces
+	// }
+	// if (!topic.empty() && topic[0] == ':')
+	// 	topic.erase(0, 1);
+    _chan = s.find_channel_by_name(channel);
+    LOG_D_CMD("topic", "|" +topic + "|");
 	_topic = topic;
-
 }
 
 // Copy constructor
@@ -57,13 +62,13 @@ void Topic::execute(Server& s, Client& c) {
 			if (channelTopic.empty()) {
 				rh.process_response(c, RPL_NOTOPIC, _chan->get_name());
 			} else {
-				rh.process_response(c, RPL_TOPIC, _chan->get_name() + " :" + _chan->get_topic());
+				rh.process_response(c, RPL_TOPIC, _chan->get_name(), NULL, _chan->get_topic());
 			}
 		} else {
 			ReplyCode code = _chan->set_topic(c, _topic);
 			if (code == CORRECT_FORMAT) {
                 LOG_D_CMD("channel topic", _chan->get_topic());
-				_chan->broadcast(s, RPL_TOPIC, _chan->get_name() + " :" + _chan->get_topic());
+				_chan->broadcast(s, RPL_TOPIC, _chan->get_name(), NULL, _chan->get_topic());
 			} else {
 				rh.process_response(c, code, _chan->get_name());
 			}

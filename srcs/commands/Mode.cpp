@@ -107,7 +107,10 @@ ReplyCode Mode::check_args(Server& server, Client& client, std::vector<std::stri
 		if (modes[i] == 'l' && operation == '+')
         {
             if (modeParams[i].find_first_not_of(digits) != std::string::npos)
+            {
+                LOG_DV_CMD(modeParams[i]);
                 return CUSTOMERR_WRONG_FORMAT;
+            }
             if (std::atol(modeParams[i].c_str()) > std::numeric_limits<int>::max())
                 return CUSTOMERR_WRONG_FORMAT;
         }

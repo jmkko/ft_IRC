@@ -78,6 +78,19 @@ bool AssertReply::_is_message_matching_entirely(const Message& msg, const std::s
 {
     if (msg.raw != message) {
         *actual = msg.raw;
+        // Debug output to show invisible differences
+        // printf("DEBUG: String comparison failed\n");
+        // printf("Expected: '%s' (length: %zu)\n", message.c_str(), message.length());
+        // printf("Actual  : '%s' (length: %zu)\n", msg.raw.c_str(), msg.raw.length());
+        // printf("Expected bytes: ");
+        // for (size_t i = 0; i < message.length(); ++i) {
+        //     printf("[%02X]", (unsigned char)message[i]);
+        // }
+        // printf("\nActual bytes  : ");
+        // for (size_t i = 0; i < msg.raw.length(); ++i) {
+        //     printf("[%02X]", (unsigned char)msg.raw[i]);
+        // }
+        // printf("\n");
         return false;
     }
     return true;
@@ -173,7 +186,6 @@ AssertReply& AssertReply::matches_entirely(const std::string& message)
     std::string actual     = "";
     bool        isMatching = false;
     for (std::vector<Message>::iterator it = _messages.begin(); it != _messages.end(); ++it) {
-        LOG_D_TEST("testing message", it->raw);
         if (_is_message_matching_entirely(*it, message, &actual)) {
             isMatching = true;
             break;
@@ -251,10 +263,27 @@ void AssertReply::_process_reply()
     }
 
     while (std::getline(iss, rawMsg, '\n')) {
+        // Reset variables for each message
+        msgPrefix.clear();
+        msgCmdOrCode.clear();
+        msgTrailing.clear();
+        msgArgs.clear();
+        
         std::istringstream issMsg(rawMsg);
-        if (rawMsg[rawMsg.length() - 1] == '\r')
+        
+        // Strip \r if present
+        if (!rawMsg.empty() && rawMsg[rawMsg.length() - 1] == '\r')
             rawMsg = rawMsg.substr(0, rawMsg.length() - 1);
-        if (rawMsg[0] == ':') {
+            
+        // // Strip trailing whitespace
+        // size_t start = rawMsg.find_first_not_of(" \t");
+        // size_t end = rawMsg.find_last_not_of(" \t");
+        // if (start != std::string::npos && end != std::string::npos)
+        //     rawMsg = rawMsg.substr(start, end - start + 1);
+        // else if (start == std::string::npos)
+        //     rawMsg.clear(); // String is all whitespace
+        
+        if (!rawMsg.empty() && rawMsg[0] == ':') {
             issMsg >> msgPrefix;
             LOG_DTV_TEST(msgPrefix);
         }

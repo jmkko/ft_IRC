@@ -10,9 +10,10 @@
 class Server;
 class Channel;
 
+//NOLINTNEXTLINE(performance-enum-size)
 enum ClientStatus {
     UNAUTHENTICATED, // before anything
-	AUTHENTICATED,	 // after PASS
+    AUTHENTICATED,	 // after PASS
     REGISTERED,      // after PASS + NICK + USER
 };
 
@@ -55,7 +56,7 @@ class Client
     void append_to_send_buffer(const std::string& msg);
     void append_to_read_buffer(const std::string& msg);
 
-	void	broadcast_to_all_channels(Server& server, ReplyCode code, std::string& msg);
+	void broadcast_to_all_channels(Server& server, ReplyCode code, const std::string& params, const std::string& trailing = "");
 	Channel* get_channel(const std::string& name);
 
   private:

@@ -149,13 +149,15 @@ static std::string get_user_id_of(Client& client)
  * @param parameters message corresponding of the code
  * @return formatted code response
  */
-static std::string generate_code_response(Client& client, ReplyCode code, const std::string& parameters)
+static std::string generate_code_response(Client& client, ReplyCode code, const std::string& parameters, const std::string& trailing)
 {
-    std::string serverPrefixAndNick = ":" + ircConfig.get_name() + " " + utils::code_to_str(code) + " " + client.get_nickname() + " ";
+    std::string numericPrefix = ":" + ircConfig.get_name() + " " + utils::code_to_str(code) + " " + client.get_nickname() + " ";
     if (parameters.empty())
-        return (serverPrefixAndNick + ircCodes.trailing(code));
-    else    
-        return (serverPrefixAndNick + parameters + " " + ircCodes.trailing(code));
+        return (numericPrefix + ircCodes.trailing(code));
+    else if (trailing.empty())
+        return (numericPrefix + parameters + " " + ircCodes.trailing(code));
+    else
+        return (numericPrefix + parameters + " :" + trailing);
 }
 
 static std::string generate_non_numerical_response(Client& client, ReplyCode code, const std::string& parameters, Client* sender)
@@ -187,14 +189,14 @@ static std::string generate_non_numerical_response(Client& client, ReplyCode cod
 
 static bool is_numerical_response(ReplyCode code)
 {
-    return (code < LOWER_CUSTOM_CODE || (code > UPPER_CUSTOM_CODE && code < LOWER_EXTRA_CUSTOM_CODE));
+    return (code < LOWER_CUSTOM_CODE || (code > UPPER_CUSTOM_CODE && code < LOWER_CUSTOM_NONNUMERICAL_CODE));
 }
 
-int ReplyHandler::process_response(Client& client, ReplyCode code, const std::string& parameters, Client* sender)
+int ReplyHandler::process_response(Client& client, ReplyCode code, const std::string& parameters, Client* sender, const std::string& trailing)
 {
     std::string response = "";
     if (is_numerical_response(code))
-        response = generate_code_response(client, code, parameters);
+        response = generate_code_response(client, code, parameters, trailing);
     else
         response = generate_non_numerical_response(client, code, parameters, sender);
 

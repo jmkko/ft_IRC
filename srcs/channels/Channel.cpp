@@ -95,7 +95,7 @@ std::ostream&	operator<<(std::ostream& os, const Channel& c)
  *		🛠️ FUNCTIONS											*
  *************************************************************/
 
-void Channel::broadcast(Server& server, ReplyCode replyCode, const std::string& message, Client* sender) const
+void Channel::broadcast(Server& server, ReplyCode replyCode, const std::string& params, Client* sender, const std::string& trailing) const
 {
     ReplyHandler& rh = ReplyHandler::get_instance(&server);
     for (std::set<Client*>::iterator it = _members.begin(); it != _members.end(); ++it) {
@@ -103,7 +103,7 @@ void Channel::broadcast(Server& server, ReplyCode replyCode, const std::string& 
         if (sender && recipient == sender)
            continue;
         LOG_DT_SERVER(recipient->get_nickname() + " received a broadcast from " + get_name(), "");
-        rh.process_response(*recipient, replyCode, message, sender);
+        rh.process_response(*recipient, replyCode, params, sender, trailing);
     }
 }
 
@@ -140,6 +140,7 @@ ReplyCode Channel::set_name(const std::string& name)
 
 ReplyCode Channel::set_topic(Client& client, const std::string& topic)
 {
+    LOG_DV_CMD(topic);
     if ((_mode & CHANMODE_TOPIC && is_operator(client)) || (!(_mode & CHANMODE_TOPIC)))
         _topic = topic;
     else

@@ -175,12 +175,14 @@ enum ReplyCode {
     TRANSFER_MODE    = 207,
     TRANSFER_QUIT    = 208,
     MSG_PING         = 209,
+    PROCESSED_ERROR  = 806,
 
     // SERVER_ERR          = 801,
     // FORMAT_ERR          = 802,
     // PWD_ERR             = 803,
-    CUSTOMERR_WRONG_FORMAT    = 805,
-    PROCESSED_ERROR = 806,
+
+    //////////////////////  numerical errors
+    CUSTOMERR_WRONG_FORMAT = 705,
     
     ////////////////////// RFC REPLIES (with code defined by RFC)
     RPL_NONE            = 300, // no answer
