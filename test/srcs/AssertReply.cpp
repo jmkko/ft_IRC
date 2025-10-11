@@ -275,7 +275,7 @@ void AssertReply::_process_reply()
         if (!rawMsg.empty() && rawMsg[rawMsg.length() - 1] == '\r')
             rawMsg = rawMsg.substr(0, rawMsg.length() - 1);
             
-        // // Strip trailing whitespace
+        // Strip trailing whitespace
         // size_t start = rawMsg.find_first_not_of(" \t");
         // size_t end = rawMsg.find_last_not_of(" \t");
         // if (start != std::string::npos && end != std::string::npos)

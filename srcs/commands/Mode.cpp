@@ -77,7 +77,7 @@ ReplyCode Mode::check_args(Server& server, Client& client, std::vector<std::stri
     LOG_DV_CMD(modes);
     if (!modeParams.empty())
         LOG_DV_CMD(modeParams[0]);
-	if (channel.empty() || modes.empty())
+    if (channel.empty() || modes.empty())
     {
 		rh.process_response(client, ERR_NEEDMOREPARAMS, "MODE");
         return PROCESSED_ERROR;

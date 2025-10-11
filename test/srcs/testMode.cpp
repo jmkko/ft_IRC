@@ -201,175 +201,6 @@ void mode_no_option_should_send_modes_list(Server& s)
 /**
  @brief integration test - normal case
 */
-void mode_plusk_should_block_join_if_no_key(Server& s)
-{
-    try {
-
-        TEST_SETUP(test, s, 2);
-        TcpSocket& sop = *sockets.at(0);
-		TcpSocket& so = *sockets.at(1);
-		make_op(sop);
-		authenticate(so);
-
-		// test 1
-		send_line(sop, validModePlusKMsg);
-		std::string reply = recv_lines(sop);
-        AssertReply ar(reply);
-        ar.is_formatted_transfer(opNick,"MODE #chan +k key");
-
-		// test 2
-		send_line(so, validJoinMsg);
-		reply = recv_lines(so);
-		ar.handle_new_reply(reply);
-        ar.is_formatted(ERR_BADCHANNELKEY, userNick, "#chan");
-
-    } catch (const std::runtime_error& e) {
-        LOG_TEST.error(e.what());
-    }
-}
-
-/**
- @brief integration test - normal case
-*/
-void mode_minusk_should_lift_block(Server& s)
-{
-    try {
-        TEST_SETUP(test, s, 2);
-        TcpSocket& sop = *sockets.at(0);
-		TcpSocket& so = *sockets.at(1);
-		make_op(sop);
-		authenticate(so);
-
-		// test 1
-		send_line(sop, validModeMinusKMsg);
-		std::string reply = recv_lines(sop);
-        AssertReply ar(reply);
-        ar.is_formatted_transfer(opNick,"MODE #chan -k");
-
-		// test 2
-		send_line(so, validJoinMsg);
-		reply = recv_lines(so);
-		ar.handle_new_reply(reply);
-        ar.is_formatted(RPL_ENDOFNAMES, userNick, "#chan");
-
-    } catch (const std::runtime_error& e) {
-        LOG_TEST.error(e.what());
-    }
-}
-
-/**
- @brief integration test - normal case
-*/
-void mode_plusi_should_send_rpl_and_block_join_if_no_invite(Server& s)
-{
-    try {
-        TEST_SETUP(test, s, 2);
-        TcpSocket& sop = *sockets.at(0);
-		TcpSocket& so = *sockets.at(1);
-		make_op(sop);
-		authenticate(so);
-
-		// test 1
-		send_line(sop, validModePlusIMsg);
-		std::string reply = recv_lines(sop);
-        AssertReply ar(reply);
-        ar.is_formatted_transfer(opNick,"MODE #chan +i");
-
-		// test 2
-		send_line(so, validJoinMsg);
-		reply = recv_lines(so);
-		ar.handle_new_reply(reply);
-        ar.is_formatted(ERR_INVITEONLYCHAN, userNick, "#chan");
-
-    } catch (const std::runtime_error& e) {
-        LOG_TEST.error(e.what());
-    }
-}
-
-/**
- @brief integration test - normal case
-*/
-void mode_minusi_should_lift_block(Server& s)
-{
-    try {
-        TEST_SETUP(test, s, 2);
-		TcpSocket& sop = *sockets.at(0);
-		TcpSocket& so = *sockets.at(1);
-		make_op(sop);
-		authenticate(so);
-
-		// test 1 - -i
-		send_line(sop, validModeMinusIMsg);
-		std::string reply = recv_lines(sop);
-        AssertReply ar(reply);
-        ar.is_formatted_transfer(opNick,"MODE #chan -i");
-
-		// test 2 - user can join
-		join_assert(so);
-
-    } catch (const std::runtime_error& e) {
-        LOG_TEST.error(e.what());
-    }
-}
-
-/**
- @brief integration test - normal case
-*/
-void mode_plusl_should_block_join_if_max_reached(Server& s)
-{
-    try {
-        TEST_SETUP(test, s, 2);
-		TcpSocket& sop = *sockets.at(0);
-		TcpSocket& so = *sockets.at(1);
-		make_op(sop);
-		authenticate(so);
-
-		// test 1
-		send_line(sop, validModePlusLMsg); // 1
-		std::string reply = recv_lines(sop);
-        AssertReply ar(reply);
-        ar.is_formatted_transfer(opNick,"MODE #chan +l 1");
-
-		// test 2
-		send_line(so, validJoinMsg);
-		reply = recv_lines(so);
-		ar.handle_new_reply(reply);
-        ar.is_formatted(ERR_CHANNELISFULL, userNick, "#chan");
-
-    } catch (const std::runtime_error& e) {
-        LOG_TEST.error(e.what());
-    }
-}
-
-/**
- @brief integration test - normal case
-*/
-void mode_minusl_should_lift_block(Server& s)
-{
-    try {
-        TEST_SETUP(test, s, 2);
-		TcpSocket& sop = *sockets.at(0);
-		TcpSocket& so = *sockets.at(1);
-		make_op(sop);
-		authenticate(so);
-
-		// test 1
-		send_line(sop, validModeMinusLMsg); // 1
-		std::string reply = recv_lines(sop);
-        AssertReply ar(reply);
-        ar.is_formatted_transfer(opNick,"MODE #chan -l");
-
-		// test 2
-		join_assert(so);
-
-    } catch (const std::runtime_error& e) {
-        LOG_TEST.error(e.what());
-    }
-}
-
-/**
- @brief integration test - normal case
-*/
 void mode_pluso_should_grant_op_and_kick(Server& s)
 {
     try {
@@ -464,34 +295,6 @@ void many_modes_work(Server& s)
 *		❔ EDGE CASES										*
 ************************************************************/
 
-/**
- @brief integration test - error case
-*/
-void mode_l_zeroarg_should_block_join(Server& s)
-{
-    try {
-        TEST_SETUP(test, s, 2);
-		TcpSocket& sop = *sockets.at(0);
-		TcpSocket& so = *sockets.at(1);
-		make_op(sop);
-		authenticate(so);
-
-		// test 1
-		send_line(sop, validModePlusLZeroMsg);
-		std::string reply = recv_lines(sop);
-        AssertReply ar(reply);
-        ar.is_formatted_transfer(opNick,"MODE #chan +l 0");
-
-		// test 2
-		send_line(so, validJoinMsg);
-		reply = recv_lines(so);
-        ar.handle_new_reply(reply);
-        ar.is_formatted(ERR_CHANNELISFULL, userNick, "#chan");
-
-    } catch (const std::runtime_error& e) {
-        LOG_TEST.error(e.what());
-    }
-}
 
 /************************************************************
 *		❌ ERRORS											*
@@ -702,17 +505,9 @@ void test_mode(Server& s)
     run_test([&] { mode_minust_should_grant_topic_to_all(s); }, "-t");
     run_test([&] { mode_plust_should_reserve_topic_to_op(s); }, "+t");
     run_test([&] { mode_no_option_should_send_modes_list(s); }, "list");
-    run_test([&] { mode_plusk_should_block_join_if_no_key(s); }, "+k <key>");
-    run_test([&] { mode_minusk_should_lift_block(s); }, "-k <key>");
-    run_test([&] { mode_plusi_should_send_rpl_and_block_join_if_no_invite(s); }, "+i");
-    run_test([&] { mode_minusi_should_lift_block(s); }, "-i");
-    run_test([&] { mode_plusl_should_block_join_if_max_reached(s); }, "+l <limit>");
-    run_test([&] { mode_minusl_should_lift_block(s); }, "-l");
     run_test([&] { mode_pluso_should_grant_op_and_kick(s); }, "+o <user>");
     run_test([&] { mode_minuso_should_remove_op_and_kick(s); }, "-o <user>");
     run_test([&] { many_modes_work(s); }, "+kl <key> <limit>");
-
-    run_test([&] { mode_l_zeroarg_should_block_join(s); }, "+l 0");
 
     run_test([&] { no_chan_should_err(s); }, "no chan");
 	run_test([&] { no_keyarg_should_err(s); }, "+k no arg");

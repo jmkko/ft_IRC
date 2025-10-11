@@ -47,7 +47,6 @@ ReplyCode Join::check_args(Server& server, Client& client, std::vector<std::stri
     iss >> tokenChannels;
     iss >> tokenKeys;
     if (tokenChannels.empty()) {
-        LOG_CMD.warning(TO_STRING(ERR_NEEDMOREPARAMS) + " ERR_NEEDMOREPARAMS");
         return (ERR_NEEDMOREPARAMS);
     }
     std::istringstream issChannels(tokenChannels);
@@ -135,16 +134,16 @@ void Join::execute(Server& server, Client& client)
         if (channel->get_nb_members() == 1) {
             channel->make_operator(client);
             rh.process_response(client, RPL_CHANNELMODEIS, channel->get_name() + " +o ");
-            LOG_CMD.info(client.get_nickname() + " is operator of channel: " + channel->get_name());
+            // LOG_CMD.info(client.get_nickname() + " is operator of channel: " + channel->get_name());
         }
-        if (channel->get_topic() == "No topic is set") {
+        if (channel->get_topic().empty()) {
             rh.process_response(client, RPL_NOTOPIC, channel->get_name());
         } else {
-            rh.process_response(client, RPL_TOPIC, channel->get_name() + " :" + channel->get_topic());
+            rh.process_response(client, RPL_TOPIC, channel->get_name(), NULL, channel->get_topic());
         }
         std::vector<std::string> users = channel->get_members_list();
         for (size_t i = 0; i < users.size(); ++i) {
-            rh.process_response(client, RPL_NAMREPLY, channel->get_name() + " :" + users[i]);
+            rh.process_response(client, RPL_NAMREPLY, channel->get_name(), NULL, users[i]);
         }
         rh.process_response(client, RPL_ENDOFNAMES, channel->get_name());
         ++it;

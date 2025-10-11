@@ -35,13 +35,14 @@ void noparams_should_err(Server& s)
         send_line(soOp, noparamsJoin);
         std::string reply = recv_lines(soOp);
         AssertReply ar(reply);
-        ar.has_code(ERR_NEEDMOREPARAMS);
+        ar.is_formatted(ERR_NEEDMOREPARAMS, opNick, "JOIN");
+
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());
     }
 }
 
-void no_spec_char_should_err(Server& s)
+void name_no_prefix_should_err(Server& s)
 {
     try {
         // init test_join
@@ -53,13 +54,14 @@ void no_spec_char_should_err(Server& s)
         send_line(soOp, noSpecCharJoin);
         std::string reply = recv_lines(soOp);
         AssertReply ar(reply);
-        ar.has_code(ERR_BADCHANMASK);
+        ar.is_formatted(ERR_BADCHANMASK, opNick, "chan");
+
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());
     }
 }
 
-void toobigname_should_err(Server& s)
+void name_too_big_should_err(Server& s)
 {
     try {
         // init test_join
@@ -71,59 +73,73 @@ void toobigname_should_err(Server& s)
         send_line(soOp, toobigJoin);
         std::string reply = recv_lines(soOp);
         AssertReply ar(reply);
-        ar.has_code(ERR_BADCHANMASK);
+        ar.is_formatted(ERR_BADCHANMASK, opNick, "#chanllllllllllllllllllllllllllllllllllllllllllllllllll");
+
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());
     }
 }
 
-void valid_join_should_notice(Server& s)
-{
-    try {
-        // init test_join
-        TEST_SETUP(test, s, 1);
-        TcpSocket& soOp = *sockets.at(0);
-        make_op(soOp);
-
-        // test
-        send_line(soOp, validJoinMsg);
-        std::string reply = recv_lines(soOp);
-        AssertReply ar(reply);
-
-        // LOG_TEST.error(reply);
-        ar.contains(":" + s.get_name() + " MODE #chan +o");
-        ar.contains(":" + s.get_name() + " 331 op #chan :No topic is set");
-        ar.contains(":" + s.get_name() + " 353 op = #chan :@op");
-        ar.contains(":" + s.get_name() + " 366 op #chan :End of NAMES list");
-    } catch (const std::runtime_error& e) {
-        LOG_TEST.error(e.what());
-    }
-}
-
-void invalid_join_inv_only_should_err(Server& s)
+void valid_join_should_send_rpl_and_broadcast(Server& s)
 {
     try {
         // init test_join
         TEST_SETUP(test, s, 2);
         TcpSocket& soOp = *sockets.at(0);
-        TcpSocket& so   = *sockets.at(1);
         make_op(soOp);
-        send_line(soOp, validModePlusIMsg);
-        recv_lines(soOp);
+        TcpSocket& so = *sockets.at(1);
         authenticate(so);
-        send_line(so, validJoinMsg);
 
-        // test
+        // test 1 new member receives messages
+        send_line(so, validJoinMsg);
         std::string reply = recv_lines(so);
         AssertReply ar(reply);
+        ar.is_formatted_transfer(userNick, "JOIN #chan", "");
+        ar.is_formatted(RPL_NOTOPIC, userNick, "#chan");
+        ar.is_formatted(RPL_NAMREPLY, userNick, "#chan", "@" + opNick + " " + userNick);
+        ar.is_formatted(RPL_ENDOFNAMES, userNick, "#chan");
 
-        ar.has_code(ERR_INVITEONLYCHAN);
+        // test 2
+        reply = recv_lines(soOp);
+        ar.handle_new_reply(reply);
+        ar.is_formatted_transfer(userNick, "JOIN #chan", "");
+        
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());
     }
 }
 
-void invalid_join_no_key_should_err(Server& s)
+/**
+ @brief integration test - normal case
+*/
+void mode_plusk_no_key_should_err(Server& s)
+{
+    try {
+
+        TEST_SETUP(test, s, 2);
+        TcpSocket& sop = *sockets.at(0);
+		TcpSocket& so = *sockets.at(1);
+		make_op(sop);
+		authenticate(so);
+
+		// test 1
+		send_line(sop, validModePlusKMsg);
+		std::string reply = recv_lines(sop);
+        AssertReply ar(reply);
+        ar.is_formatted_transfer(opNick,"MODE #chan +k key");
+
+		// test 2
+		send_line(so, validJoinMsg);
+		reply = recv_lines(so);
+		ar.handle_new_reply(reply);
+        ar.is_formatted(ERR_BADCHANNELKEY, userNick, "#chan");
+
+    } catch (const std::runtime_error& e) {
+        LOG_TEST.error(e.what());
+    }
+}
+
+void mode_plusk_wrong_yek_should_err(Server& s)
 {
     try {
         // init test_join
@@ -134,42 +150,19 @@ void invalid_join_no_key_should_err(Server& s)
         send_line(soOp, validModePlusKMsg);
         recv_lines(soOp);
         authenticate(so);
-        send_line(so, validJoinMsg);
-
+        
         // test
-        std::string reply = recv_lines(so);
-        AssertReply ar(reply);
-
-        ar.has_code(ERR_BADCHANNELKEY);
-    } catch (const std::runtime_error& e) {
-        LOG_TEST.error(e.what());
-    }
-}
-
-void invalid_join_wrong_yek_should_err(Server& s)
-{
-    try {
-        // init test_join
-        TEST_SETUP(test, s, 2);
-        TcpSocket& soOp = *sockets.at(0);
-        TcpSocket& so   = *sockets.at(1);
-        make_op(soOp);
-        send_line(soOp, validModePlusKMsg);
-        recv_lines(soOp);
-        authenticate(so);
         send_line(so, invalidJoinWithYekMsg);
-
-        // test
         std::string reply = recv_lines(so);
         AssertReply ar(reply);
+        ar.is_formatted(ERR_BADCHANNELKEY, userNick, "#chan");
 
-        ar.has_code(ERR_BADCHANNELKEY);
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());
     }
 }
 
-void invalid_join_wrong_keyy_should_err(Server& s)
+void mode_plusk_wrong_keyy_should_err(Server& s)
 {
     try {
         // init test_join
@@ -180,19 +173,19 @@ void invalid_join_wrong_keyy_should_err(Server& s)
         send_line(soOp, validModePlusKMsg);
         recv_lines(soOp);
         authenticate(so);
-        send_line(so, invalidJoinWithKeyyMsg);
-
+        
         // test
+        send_line(so, invalidJoinWithKeyyMsg);
         std::string reply = recv_lines(so);
         AssertReply ar(reply);
+        ar.is_formatted(ERR_BADCHANNELKEY, userNick, "#chan");
 
-        ar.has_code(ERR_BADCHANNELKEY);
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());
     }
 }
 
-void valid_join_inv_only_should_notice(Server& s)
+void mode_plusi_with_invite_should_send_rpl_and_broadcast(Server& s)
 {
     try {
         // init test_join
@@ -203,71 +196,188 @@ void valid_join_inv_only_should_notice(Server& s)
         do_cmd(soOp, validModePlusIMsg);
         authenticate(so);
         do_cmd(soOp, validInvite);
+        recv_lines(so);
 
-        // test
+        // test 1 new member gets replies
         send_line(so, validJoinMsg);
         std::string reply = recv_lines(so);
         AssertReply ar(reply);
-        ar.has_code(RPL_NAMREPLY);
-
-        std::string identity = userNick + "!" + userNick + "@" + s.get_name();
-        ar.contains(":" + identity + " JOIN :#chan");
-        ar.contains(":" + s.get_name() + " 331 " + userNick + " #chan :No topic is set");
-        ar.contains(":" + s.get_name() + " 366 roro #chan :End of NAMES list");
-        std::string reply2 = recv_lines(soOp);
-        AssertReply ar2(reply2);
-        ar2.contains(":" + identity + " JOIN :#chan");
-    } catch (const std::runtime_error& e) {
-        LOG_TEST.error(e.what());
-    }
-}
-
-void valid_join_key_should_notice(Server& s)
-{
-    try {
-        // init test_join
-        TEST_SETUP(test, s, 2);
-        TcpSocket& soOp = *sockets.at(0);
-        TcpSocket& so   = *sockets.at(1);
-        make_op(soOp);
-        do_cmd(soOp, validModePlusKMsg);
-        authenticate(so);
-
-        // test
-        send_line(so, validJoinWithKeyMsg);
-        std::string reply = recv_lines(so);
-        AssertReply ar(reply);
-        ar.has_code(RPL_NAMREPLY);
-        std::string identity = userNick + "!" + userNick + "@" + s.get_name();
-        ar.contains(":" + identity + " JOIN :#chan");
-        ar.contains(":" + s.get_name() + " 331 " + userNick + " #chan :No topic is set");
-        ar.contains(":" + s.get_name() + " 353 " + userNick + " = #chan :@op roro");
-        ar.contains(":" + s.get_name() + " 366 roro #chan :End of NAMES list");
-        std::string reply2 = recv_lines(soOp);
-        AssertReply ar2(reply2);
-        ar2.contains(":" + identity + " JOIN :#chan");
+        ar.is_formatted(RPL_NOTOPIC, userNick, "#chan");
+        ar.is_formatted(RPL_NAMREPLY, userNick, "#chan", "@" + opNick + " " + userNick);
+        ar.is_formatted(RPL_ENDOFNAMES, userNick, "#chan");
+        
+        // test 2 other members get broadcast message
+        reply = recv_lines(soOp);
+        ar.handle_new_reply(reply);
+        ar.is_formatted_transfer(userNick, "JOIN #chan", "");
 
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());
     }
 }
 
-void invalid_join_limit1_should_err(Server& s)
+/**
+ @brief integration test - normal case
+*/
+void mode_plusi_no_invite_should_err(Server& s)
 {
     try {
-        // init test_join
         TEST_SETUP(test, s, 2);
-        TcpSocket& soOp = *sockets.at(0);
-        TcpSocket& so   = *sockets.at(1);
-        make_op(soOp);
-        do_cmd(soOp, validModePlusLMsg);
-        authenticate(so);
+        TcpSocket& sop = *sockets.at(0);
+		TcpSocket& so = *sockets.at(1);
+		make_op(sop);
+		authenticate(so);
 
-        // test
-        send_line(so, validJoinMsg);
-        std::string reply = recv_lines(so);
+		// test 1
+		send_line(sop, validModePlusIMsg);
+		std::string reply = recv_lines(sop);
         AssertReply ar(reply);
-        ar.has_code(ERR_CHANNELISFULL);
+        ar.is_formatted_transfer(opNick,"MODE #chan +i");
+
+		// test 2
+		send_line(so, validJoinMsg);
+		reply = recv_lines(so);
+		ar.handle_new_reply(reply);
+        ar.is_formatted(ERR_INVITEONLYCHAN, userNick, "#chan");
+
+    } catch (const std::runtime_error& e) {
+        LOG_TEST.error(e.what());
+    }
+}
+
+/**
+ @brief integration test - normal case
+*/
+void mode_plusl_should_block_join_if_max_reached(Server& s)
+{
+    try {
+        TEST_SETUP(test, s, 2);
+		TcpSocket& sop = *sockets.at(0);
+		TcpSocket& so = *sockets.at(1);
+		make_op(sop);
+		authenticate(so);
+
+		// test 1
+		send_line(sop, validModePlusLMsg); // 1
+		std::string reply = recv_lines(sop);
+        AssertReply ar(reply);
+        ar.is_formatted_transfer(opNick,"MODE #chan +l 1");
+
+		// test 2
+		send_line(so, validJoinMsg);
+		reply = recv_lines(so);
+		ar.handle_new_reply(reply);
+        ar.is_formatted(ERR_CHANNELISFULL, userNick, "#chan");
+
+    } catch (const std::runtime_error& e) {
+        LOG_TEST.error(e.what());
+    }
+}
+
+/**
+ @brief integration test - error case
+*/
+void mode_plusl_zeroarg_should_block_join(Server& s)
+{
+    try {
+        TEST_SETUP(test, s, 2);
+		TcpSocket& sop = *sockets.at(0);
+		TcpSocket& so = *sockets.at(1);
+		make_op(sop);
+		authenticate(so);
+
+		// test 1
+		send_line(sop, validModePlusLZeroMsg);
+		std::string reply = recv_lines(sop);
+        AssertReply ar(reply);
+        ar.is_formatted_transfer(opNick,"MODE #chan +l 0");
+
+		// test 2
+		send_line(so, validJoinMsg);
+		reply = recv_lines(so);
+        ar.handle_new_reply(reply);
+        ar.is_formatted(ERR_CHANNELISFULL, userNick, "#chan");
+
+    } catch (const std::runtime_error& e) {
+        LOG_TEST.error(e.what());
+    }
+}
+
+/**
+ @brief integration test - normal case
+*/
+void mode_minusk_should_lift_block(Server& s)
+{
+    try {
+        TEST_SETUP(test, s, 2);
+        TcpSocket& sop = *sockets.at(0);
+		TcpSocket& so = *sockets.at(1);
+		make_op(sop);
+		authenticate(so);
+
+		// test 1
+		send_line(sop, validModeMinusKMsg);
+		std::string reply = recv_lines(sop);
+        AssertReply ar(reply);
+        ar.is_formatted_transfer(opNick,"MODE #chan -k");
+
+		// test 2
+		send_line(so, validJoinMsg);
+		reply = recv_lines(so);
+		ar.handle_new_reply(reply);
+        ar.is_formatted(RPL_ENDOFNAMES, userNick, "#chan");
+
+    } catch (const std::runtime_error& e) {
+        LOG_TEST.error(e.what());
+    }
+}
+
+/**
+ @brief integration test - normal case
+*/
+void mode_minusi_should_lift_block(Server& s)
+{
+    try {
+        TEST_SETUP(test, s, 2);
+		TcpSocket& sop = *sockets.at(0);
+		TcpSocket& so = *sockets.at(1);
+		make_op(sop);
+		authenticate(so);
+
+		// test 1 - -i
+		send_line(sop, validModeMinusIMsg);
+		std::string reply = recv_lines(sop);
+        AssertReply ar(reply);
+        ar.is_formatted_transfer(opNick,"MODE #chan -i");
+
+		// test 2 - user can join
+		join_assert(so);
+
+    } catch (const std::runtime_error& e) {
+        LOG_TEST.error(e.what());
+    }
+}
+
+/**
+ @brief integration test - normal case
+*/
+void mode_minusl_should_lift_block(Server& s)
+{
+    try {
+        TEST_SETUP(test, s, 2);
+		TcpSocket& sop = *sockets.at(0);
+		TcpSocket& so = *sockets.at(1);
+		make_op(sop);
+		authenticate(so);
+
+		// test 1
+		send_line(sop, validModeMinusLMsg); // 1
+		std::string reply = recv_lines(sop);
+        AssertReply ar(reply);
+        ar.is_formatted_transfer(opNick,"MODE #chan -l");
+
+		// test 2
+		join_assert(so);
 
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());
@@ -277,15 +387,18 @@ void invalid_join_limit1_should_err(Server& s)
 void test_join(Server& s)
 {
     print_test_series("command JOIN");
+    run_test([&] { valid_join_should_send_rpl_and_broadcast(s); }, "JOIN #chan (op user)");
     run_test([&] { noparams_should_err(s); }, "JOIN with no params");
-    run_test([&] { no_spec_char_should_err(s); }, "JOIN chan");
-    run_test([&] { toobigname_should_err(s); }, "JOIN more 50 char channel name");
-    run_test([&] { valid_join_should_notice(s); }, "JOIN #chan (op user)");
-    run_test([&] { invalid_join_inv_only_should_err(s); }, "A user try to join invite only chan");
-    run_test([&] { invalid_join_no_key_should_err(s); }, "A user try to join with no key");
-    run_test([&] { invalid_join_wrong_yek_should_err(s); }, "A user try to join with wrong yek");
-    run_test([&] { invalid_join_wrong_keyy_should_err(s); }, "A user try to join with wrong keyy");
-    run_test([&] { valid_join_inv_only_should_notice(s); }, "Joining A channel invite only after being invited.");
-    run_test([&] { valid_join_key_should_notice(s); }, "Joining A channel with a valid key");
-    run_test([&] { invalid_join_limit1_should_err(s); }, "Joining A channel wich is full");
+    run_test([&] { name_no_prefix_should_err(s); }, "JOIN chan");
+    run_test([&] { name_too_big_should_err(s); }, "JOIN more 50 char channel name");
+    run_test([&] { mode_plusi_no_invite_should_err(s); }, "+i");
+    run_test([&] { mode_plusk_no_key_should_err(s); }, "+k <key>");
+    run_test([&] { mode_plusk_wrong_yek_should_err(s); }, "A user try to join with wrong yek");
+    run_test([&] { mode_plusk_wrong_keyy_should_err(s); }, "A user try to join with wrong keyy");
+    run_test([&] { mode_plusi_with_invite_should_send_rpl_and_broadcast(s); }, "Joining A channel invite only after being invited.");
+    run_test([&] { mode_plusl_should_block_join_if_max_reached(s); }, "+l <limit>");
+    run_test([&] { mode_plusl_zeroarg_should_block_join(s); }, "+l 0");
+    run_test([&] { mode_minusk_should_lift_block(s); }, "-k <key>");
+    run_test([&] { mode_minusi_should_lift_block(s); }, "-i");
+    run_test([&] { mode_minusl_should_lift_block(s); }, "-l");
 }

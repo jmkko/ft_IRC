@@ -184,6 +184,8 @@ ICommand* CmdFactory::join_cmd(Server& server, Client& client, std::string& para
     ReplyCode replyCode = Join::check_args(server, client, vectorParams);
     if (replyCode == CORRECT_FORMAT) {
         return new Join(vectorParams);
+    } else if (replyCode == ERR_NEEDMOREPARAMS) {
+        rh.process_response(client, replyCode, "JOIN");
     } else {
         rh.process_response(client, replyCode, params);
     }

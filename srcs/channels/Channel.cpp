@@ -228,8 +228,10 @@ std::vector<std::string> Channel::get_members_list() const
         Client* c = *it;
         if (is_operator(*c))
             users.append("@");
-        users.append(c->get_nickname() + " ");
+        users.append(c->get_nickname());
         ++it;
+        if (it != _members.end())
+        users.append(" ");
         ++count;
         if (count % nbUserPerLine == 0) {
             list.push_back(users);
