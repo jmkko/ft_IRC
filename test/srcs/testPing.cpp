@@ -32,7 +32,7 @@ void valid_ping_should_pong(Server& s)
         // test
         std::string reply = recv_lines(so);
         AssertReply ar(reply);
-        ar.contains("PONG").ends_with(std::string(":" + token));
+        ar.matches_entirely(":" + ircConfig.get_name() + " PONG :" + token);
 
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());
@@ -58,7 +58,7 @@ void invalid_ping_should_err(Server& s)
         // test
         std::string reply = recv_lines(so);
         AssertReply ar(reply);
-        ar.is_formatted(ERR_NOORIGIN, userNick, "");
+        ar.is_formatted(ERR_NOORIGIN, userNick);
 
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());

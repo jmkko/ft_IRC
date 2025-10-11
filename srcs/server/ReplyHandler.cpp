@@ -152,8 +152,10 @@ static std::string get_user_id_of(Client& client)
 static std::string generate_code_response(Client& client, ReplyCode code, const std::string& parameters, const std::string& trailing)
 {
     std::string numericPrefix = ":" + ircConfig.get_name() + " " + utils::code_to_str(code) + " " + client.get_nickname() + " ";
-    if (parameters.empty())
+    if (parameters.empty() && trailing.empty())
         return (numericPrefix + ircCodes.trailing(code));
+    else if (parameters.empty() && !trailing.empty())
+        return (numericPrefix + ":" + trailing);
     else if (trailing.empty())
         return (numericPrefix + parameters + " " + ircCodes.trailing(code));
     else
@@ -181,7 +183,7 @@ static std::string generate_non_numerical_response(Client& client, ReplyCode cod
         case TRANSFER_MODE:
             return (get_user_id_of(*sender)+ "MODE " + parameters);
         case MSG_PING:
-            return ":" + ircConfig.get_name() + " " + "PONG " + parameters; 
+            return ":" + ircConfig.get_name() + " " + "PONG :" + parameters; 
         default:
             return "";
     }

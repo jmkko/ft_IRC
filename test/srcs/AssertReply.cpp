@@ -222,8 +222,12 @@ AssertReply& AssertReply::is_empty()
 AssertReply&  AssertReply::is_formatted(ReplyCode code, const std::string& clientNick, const std::string& params, const std::string& trailing)
 {
     std::string expectedStart = std::string(":" + ircConfig.get_name()) + " " + utils::code_to_str(code) + " " + clientNick + " ";
-    if (trailing.empty())
+    if (params.empty() && trailing.empty())
+        return this->has_code(code).matches_entirely(expectedStart + ircCodes.trailing(code));
+    else if (!params.empty() && trailing.empty())
         return this->has_code(code).matches_entirely(expectedStart + params + " " + ircCodes.trailing(code));
+    else if (params.empty() && !trailing.empty())
+        return this->has_code(code).matches_entirely(expectedStart + ":" + trailing);
     else
         return this->has_code(code).matches_entirely(expectedStart + params + " :" + trailing);
 }
