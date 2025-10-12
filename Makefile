@@ -4,8 +4,13 @@ NAME			:=	ircserv
 OS 				:= $(shell uname)
 
 CXX				:=	clang++
-CXXFLAGS		:=	-Wall -Wextra -Werror -std=c++98 -g -MMD -O0 -fsanitize=address
+CXXFLAGS		:=	-Wall -Wextra -Werror -std=c++98 -MMD
+ASANFLAGS		:=	-g -O0 -fsanitize=address
 MAKEFLAGS		:=	--no-print-directory
+
+ifeq ($(MAKECMDGOALS),asan)
+CXXFLAGS += $(ASANFLAGS)
+endif
 
 INCLUDES		:=	-Iincludes\
 					-Iincludes/channels\
@@ -132,8 +137,8 @@ fclean : clean
 re : fclean
 	@make
 
-run sanitize : all
-	ASAN_OPTIONS=detect_leaks=1:log_path=asan.log:atexit_print_stats=true ./ircserv 9999 password
+asan : all
+	ASAN_OPTIONS=detect_leaks=1:log_path=logs/asan.log:atexit_print_stats=true ./ircserv 9999 password
 
 .PHONY : all clean fclean re
 
