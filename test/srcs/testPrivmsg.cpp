@@ -33,7 +33,8 @@ void no_params_should_err(Server& s)
         send_line(soOp, noparamsPrivmsg);
         std::string reply = recv_lines(soOp);
         AssertReply ar(reply);
-        ar.has_code(ERR_NEEDMOREPARAMS);
+        ar.is_formatted(ERR_NEEDMOREPARAMS, opNick, "PRIVMSG");
+
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());
     }

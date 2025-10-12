@@ -276,6 +276,9 @@ ICommand* CmdFactory::privmsg_cmd(Server& server, Client& client, std::string& p
     if (code == ERR_NOTEXTTOSEND) {
         rh.process_response(client, code, "");
         return (NULL);
+    } else if (code == ERR_NEEDMOREPARAMS) {
+        rh.process_response(client, code, "PRIVMSG");
+        return (NULL);
     } else if (code != CORRECT_FORMAT) {
         rh.process_response(client, code, params, NULL);
         return (NULL);
