@@ -29,7 +29,8 @@ void User::execute(Server& server, Client& client)
 {
     (void)server;
     client.set_user_name(_username);
-    client.set_real_name(_realname);
+    client.set_real_name(_realname.substr(1));
+    LOG_DV_CMD(_realname);
     ReplyHandler& rh = ReplyHandler::get_instance(&server);
     if (!client.get_nickname().empty() && client.get_status() == AUTHENTICATED) {
 		client.set_status(REGISTERED);

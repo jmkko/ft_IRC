@@ -52,7 +52,7 @@ void			Privmsg::build_args(Server& server, std::string& params)
 		if (client) {
 			add_client(server.find_client_by_nickname(target));
 		} else {
-			LOG_CMD.error(target + " is not a channel nor a client");
+			LOG_CMD.warning(target + " is not a channel nor a client");
 		}
 	}
 }

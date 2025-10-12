@@ -200,7 +200,9 @@ int ReplyHandler::process_response(Client& client, ReplyCode code, const std::st
     LOG_DT_CMD("processing", ircCodes.str(code));
     std::string response = "";
     if (is_numerical_response(code))
+    {
         response = generate_code_response(client, code, parameters, trailing);
+    }
     else
         response = generate_non_numerical_response(client, code, parameters, sender);
 
