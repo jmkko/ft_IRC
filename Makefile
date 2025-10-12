@@ -4,7 +4,7 @@ NAME			:=	ircserv
 OS 				:= $(shell uname)
 
 CXX				:=	clang++
-CXXFLAGS		:=	-Wall -Wextra -Werror -std=c++98 -g -MMD
+CXXFLAGS		:=	-Wall -Wextra -Werror -std=c++98 -g -MMD -O0 -fsanitize=address
 MAKEFLAGS		:=	--no-print-directory
 
 INCLUDES		:=	-Iincludes\
@@ -76,7 +76,7 @@ all : $(NAME)
 
 $(NAME) : $(OBJS)
 	@echo "\n$(BOLD)=== Linkage ... generating binaries ===$(NOC)"
-	@$(CXX) $(INCLUDES) $^ -o $@
+	@$(CXX) $(CXXFLAGS) $(INCLUDES) $^ -o $@
 
 $(OBJS) :$(OBJS_DIR)/%.o : %.cpp | $(OBJ_DIRS)
 ifeq ($(OS), Linux)
@@ -132,6 +132,9 @@ fclean : clean
 
 re : fclean
 	@make
+
+run sanitize : all
+	ASAN_OPTIONS=detect_leaks=1:log_path=asan.log:atexit_print_stats=true ./ircserv 9999 password
 
 .PHONY : all clean fclean re
 

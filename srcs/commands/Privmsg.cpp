@@ -29,7 +29,11 @@ void Privmsg::execute(Server& server, Client& client)
     ReplyHandler rh = ReplyHandler::get_instance(&server);
 
     for (std::vector<Channel*>::iterator it = _chans.begin(); it != _chans.end(); it++) {
-        (*it)->broadcast(server, TRANSFER_PRIVMSG, (*it)->get_name() + _msg, &client);
+        if ((*it)->is_member(client)) {
+			(*it)->broadcast(server, TRANSFER_PRIVMSG, (*it)->get_name() + _msg, &client);
+		} else {
+			rh.process_response(client, ERR_NOTONCHANNEL, "");
+		}
     }
     for (std::vector<Client*>::iterator it = _dests.begin(); it != _dests.end(); it++) {
         rh.process_response(*(*it), TRANSFER_PRIVMSG, (*it)->get_nickname() + _msg, &client);
@@ -83,11 +87,10 @@ ReplyCode Privmsg::check_args(Server& server, Client& client, std::string& param
 
     std::string::size_type pos = params.find(" :");
 
-    if (params.empty())
-        return (ERR_NEEDMOREPARAMS);
-    if (pos == std::string::npos || pos + 2 > params.size()) {
-        return ERR_NOTEXTTOSEND;
-    }
+	if (params.empty())
+		return (ERR_NEEDMOREPARAMS);
+	if (pos == std::string::npos || pos + 2 > params.size())
+		return ERR_NOTEXTTOSEND;
 
     ReplyHandler rh          = ReplyHandler::get_instance(&server);
     std::string  msg         = params.substr(pos);
