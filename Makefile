@@ -36,7 +36,6 @@ SRCS			:=	srcs/main.cpp\
 					srcs/commands/Join.cpp\
 					srcs/commands/Who.cpp\
 					srcs/commands/Invite.cpp\
-					srcs/commands/Motd.cpp\
 					srcs/commands/Topic.cpp\
 					srcs/server/ReplyHandler.cpp\
 
