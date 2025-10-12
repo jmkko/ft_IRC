@@ -17,8 +17,8 @@ int main(int ac, char** av)
     LogManager& lm = LogManager::get_instance();
 
     t_results results;
-    results.failedTests = 0;
-    results.passedTests = 0;
+    results.failedTests   = 0;
+    results.passedTests   = 0;
     results.launchedTests = 0;
 
 #ifdef DEB
