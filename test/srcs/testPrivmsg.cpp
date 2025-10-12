@@ -104,11 +104,11 @@ void no_text_should_err(Server& s)
     }
 }
 
-void test_privmsg(Server& s)
+void test_privmsg(Server& s, t_results* r)
 {
     print_test_series("command PRIMSG");
-    run_test([&] { no_params_should_err(s); }, "PRIVMSG with no params");
-    run_test([&] { invalid_nickname_should_err(s); }, "PRIVMSG to non existent nickname");
-    run_test([&] { too_many_target_should_err(s); }, "PRIVMSG with too many target");
-    run_test([&] { no_text_should_err(s); }, "PRIVMSG with no message");
+    run_test(r, [&] { no_params_should_err(s); }, "PRIVMSG with no params");
+    run_test(r, [&] { invalid_nickname_should_err(s); }, "PRIVMSG to non existent nickname");
+    run_test(r, [&] { too_many_target_should_err(s); }, "PRIVMSG with too many target");
+    run_test(r, [&] { no_text_should_err(s); }, "PRIVMSG with no message");
 }

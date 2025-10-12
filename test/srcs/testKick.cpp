@@ -252,15 +252,15 @@ void op_valid_inexistent_channel_should_err(Server& s)
     }
 }
 
-void test_kick(Server& s)
+void test_kick(Server& s, t_results* r)
 {
     print_test_series("command KICK");
-    run_test([&] { op_existing_chan_valid_user_should_notice(s); }, "single kick");
-    run_test([&] { op_existing_chan_valid_users_should_notice(s); }, "combo double kick");
-    run_test([&] { no_op_should_err(s); }, "no op");
-    run_test([&] { op_missing_chan_should_err(s); }, "no chan");
-    run_test([&] { op_missing_user_should_err(s); }, "no user");
-    run_test([&] { op_user_not_in_channel_should_err(s); }, "not in chan");
-    run_test([&] { op_invalid_channel_should_err(s); }, "invalid chan");
-    run_test([&] { op_valid_inexistent_channel_should_err(s); }, "inexisting chan");
+    run_test(r, [&] { op_existing_chan_valid_user_should_notice(s); }, "single kick");
+    run_test(r, [&] { op_existing_chan_valid_users_should_notice(s); }, "combo double kick");
+    run_test(r, [&] { no_op_should_err(s); }, "no op");
+    run_test(r, [&] { op_missing_chan_should_err(s); }, "no chan");
+    run_test(r, [&] { op_missing_user_should_err(s); }, "no user");
+    run_test(r, [&] { op_user_not_in_channel_should_err(s); }, "not in chan");
+    run_test(r, [&] { op_invalid_channel_should_err(s); }, "invalid chan");
+    run_test(r, [&] { op_valid_inexistent_channel_should_err(s); }, "inexisting chan");
 }

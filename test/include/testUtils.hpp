@@ -12,6 +12,14 @@
 #define SERVER_STOP_WAIT_MS    20
 #define TEST_PORT              4343
 
+class Server;
+typedef struct Sresults
+{
+    int launchedTests;
+    int passedTests;
+    int failedTests;
+}   t_results;
+
 /**
  * @brief uses std::forward to preserve category of argument
  * by casting it to an rvalue.
@@ -21,13 +29,16 @@
  * @param f
  * @param name
  */
-template <typename Func> void run_test(Func&& f, const char* name)
+template <typename Func> void run_test(t_results* results, Func&& f, const char* name)
 {
     try {
+        results->launchedTests++;
         std::forward<Func>(f)();
         print_success(name);
+        results->passedTests++;
     } catch (AssertFail& e) {
         print_error(name, e.what());
+        results->failedTests++;
     }
 }
 
@@ -158,6 +169,13 @@ void make_op(const TcpSocket& so);
 void make_two_ops(const TcpSocket& so, const TcpSocket& so2);
 void skip_lines(const TcpSocket& so, int nb);
 
-// simple
+void test_join(Server& s, t_results* r);
+void test_kick(Server& s, t_results* r);
+void test_mode(Server& s, t_results* r);
+void test_nick(Server& s, t_results* r);
+void test_who(Server& s, t_results* r);
+void test_privmsg(Server& s, t_results* r);
+void test_ping(Server& s, t_results* r);
+void test_topic(Server& s, t_results* r);
 
 #endif

@@ -492,7 +492,7 @@ void mode_o_unknown_user_should_err(Server& s)
     }
 }
 
-void test_mode(Server& s)
+void test_mode(Server& s, t_results* r)
 {
     print_test_series("command MODE");
     // Waiting for implementations
@@ -500,20 +500,20 @@ void test_mode(Server& s)
     // run_test([&] { mode_plusi_should_allow_op_to_join_without_invite(s); }, "+i (op)");
     // run_test([&] { mode_plusl_should_allow_op_to_join_if_max_reached(s); }, "+l <limit> (op)");
 
-    run_test([&] { mode_minust_should_grant_topic_to_all(s); }, "-t");
-    run_test([&] { mode_plust_should_reserve_topic_to_op(s); }, "+t");
-    run_test([&] { mode_no_option_should_send_modes_list(s); }, "list");
-    run_test([&] { mode_pluso_should_grant_op_and_kick(s); }, "+o <user>");
-    run_test([&] { mode_minuso_should_remove_op_and_kick(s); }, "-o <user>");
-    run_test([&] { many_modes_work(s); }, "+kl <key> <limit>");
+    run_test(r, [&] { mode_minust_should_grant_topic_to_all(s); }, "-t");
+    run_test(r, [&] { mode_plust_should_reserve_topic_to_op(s); }, "+t");
+    run_test(r, [&] { mode_no_option_should_send_modes_list(s); }, "list");
+    run_test(r, [&] { mode_pluso_should_grant_op_and_kick(s); }, "+o <user>");
+    run_test(r, [&] { mode_minuso_should_remove_op_and_kick(s); }, "-o <user>");
+    run_test(r, [&] { many_modes_work(s); }, "+kl <key> <limit>");
 
-    run_test([&] { no_chan_should_err(s); }, "no chan");
-    run_test([&] { no_keyarg_should_err(s); }, "+k no arg");
-    run_test([&] { no_limitarg_should_err(s); }, "+l no arg");
-    run_test([&] { no_oparg_should_err(s); }, "+o no arg");
-    run_test([&] { key_already_set_should_err(s); }, "+k already set");
-    run_test([&] { unknown_mode_should_err(s); }, "+z");
-    run_test([&] { unknown_chan_should_err(s); }, "unknown chan");
-    run_test([&] { mode_l_negativearg_should_err(s); }, "+l -1");
-    run_test([&] { mode_o_unknown_user_should_err(s); }, "+o unknown");
+    run_test(r, [&] { no_chan_should_err(s); }, "no chan");
+    run_test(r, [&] { no_keyarg_should_err(s); }, "+k no arg");
+    run_test(r, [&] { no_limitarg_should_err(s); }, "+l no arg");
+    run_test(r, [&] { no_oparg_should_err(s); }, "+o no arg");
+    run_test(r, [&] { key_already_set_should_err(s); }, "+k already set");
+    run_test(r, [&] { unknown_mode_should_err(s); }, "+z");
+    run_test(r, [&] { unknown_chan_should_err(s); }, "unknown chan");
+    run_test(r, [&] { mode_l_negativearg_should_err(s); }, "+l -1");
+    run_test(r, [&] { mode_o_unknown_user_should_err(s); }, "+o unknown");
 }

@@ -154,12 +154,12 @@ void taken_should_err(Server& s)
     }
 }
 
-void test_nick(Server& s)
+void test_nick(Server& s, t_results* r)
 {
     print_test_series("command NICK");
-    run_test([&] { valid_nick_should_void(s); }, "roro");
-    run_test([&] { valid_nick_special_should_void(s); }, "[roro]");
-    run_test([&] { no_arg_should_err(s); }, "no arg");
-    run_test([&] { starting_with_number_should_err(s); }, "3oro");
-    run_test([&] { taken_should_err(s); }, "taken");
+    run_test(r, [&] { valid_nick_should_void(s); }, "roro");
+    run_test(r, [&] { valid_nick_special_should_void(s); }, "[roro]");
+    run_test(r, [&] { no_arg_should_err(s); }, "no arg");
+    run_test(r, [&] { starting_with_number_should_err(s); }, "3oro");
+    run_test(r, [&] { taken_should_err(s); }, "taken");
 }

@@ -188,15 +188,15 @@ void pattern_wildcard_should_send_rpl(Server& s)
     }
 }
 
-void test_who(Server& s)
+void test_who(Server& s, t_results* r)
 {
     print_test_series("command WHO");
 
-    run_test([&] { noparams_should_send_rpl(s); }, "No params WHO");
-    run_test([&] { chan1_should_send_rpl(s); }, "WHO #chan1");
-    run_test([&] { chan1op_should_send_rpl_with_flag(s); }, "WHO #chan1 o");
-    run_test([&] { good_pattern_should_send_rpl(s); }, "WHO ro*");
-    run_test([&] { bad_user_should_send_only_rplend(s); }, "WHO resu");
-    run_test([&] { bad_pattern_should_send_only_rplend(s); }, "WHO *x*");
-    run_test([&] { pattern_wildcard_should_send_rpl(s); }, "WHO *");
+    run_test(r, [&] { noparams_should_send_rpl(s); }, "No params WHO");
+    run_test(r, [&] { chan1_should_send_rpl(s); }, "WHO #chan1");
+    run_test(r, [&] { chan1op_should_send_rpl_with_flag(s); }, "WHO #chan1 o");
+    run_test(r, [&] { good_pattern_should_send_rpl(s); }, "WHO ro*");
+    run_test(r, [&] { bad_user_should_send_only_rplend(s); }, "WHO resu");
+    run_test(r, [&] { bad_pattern_should_send_only_rplend(s); }, "WHO *x*");
+    run_test(r, [&] { pattern_wildcard_should_send_rpl(s); }, "WHO *");
 }

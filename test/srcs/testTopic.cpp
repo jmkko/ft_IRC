@@ -78,10 +78,10 @@ void not_a_channel_member_should_err(Server& s)
     }
 }
 
-void test_topic(Server& s)
+void test_topic(Server& s, t_results* r)
 {
     print_test_series("command TOPIC");
-    run_test([&] { no_params_should_err_topic(s); }, "TOPIC with no params");
-    run_test([&] { invalid_channel_should_err(s); }, "TOPIC on non existant channel");
-    run_test([&] { not_a_channel_member_should_err(s); }, "TOPIC user is not a channel member");
+    run_test(r, [&] { no_params_should_err_topic(s); }, "TOPIC with no params");
+    run_test(r, [&] { invalid_channel_should_err(s); }, "TOPIC on non existant channel");
+    run_test(r, [&] { not_a_channel_member_should_err(s); }, "TOPIC user is not a channel member");
 }
