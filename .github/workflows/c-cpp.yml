@@ -18,8 +18,8 @@ jobs:
         clang-tidy-12 --version
         pip install scan-build
         which scan-build
-        - name: format
-        run: make formator
+    - name: format
+      run: make formator
     - name: static checks
       run: make tidy
   test:
