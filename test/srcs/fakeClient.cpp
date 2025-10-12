@@ -1,8 +1,9 @@
+#include "fakeClient.hpp"
+
 #include "LogManager.hpp"
 #include "TcpSocket.hpp"
 #include "colors.hpp"
 #include "consts.hpp"
-#include "fakeClient.hpp"
 #include "testUtils.hpp"
 #include "utils.hpp"
 

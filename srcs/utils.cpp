@@ -1,9 +1,9 @@
+#include "utils.hpp"
+
 #include "LogManager.hpp"
 #include "consts.hpp"
-#include "utils.hpp"
+
 #include <poll.h>
-
-
 
 bool is_special_abnf(char c)
 {
@@ -63,19 +63,20 @@ long string_to_ulong(const std::string& str)
     return result;
 }
 
-std::string event_to_str(int event){
-	switch (event) {
-		case POLLIN:
-			return ("POLLIN");
-		case POLLOUT:
-			return ("POLLOUT");
-		case POLLERR:
-			return ("POLLERR");
-		case POLLNVAL:
-			return ("POLLNVAL");
-		default:
-			return ("undefined");
-	}
+std::string event_to_str(int event)
+{
+    switch (event) {
+    case POLLIN:
+        return ("POLLIN");
+    case POLLOUT:
+        return ("POLLOUT");
+    case POLLERR:
+        return ("POLLERR");
+    case POLLNVAL:
+        return ("POLLNVAL");
+    default:
+        return ("undefined");
+    }
 }
 /**
  * @brief test if the string matching a wildcard with * pattern

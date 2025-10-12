@@ -1,10 +1,11 @@
-#include "AssertFail.hpp"
 #include "AssertReply.hpp"
+
+#include "AssertFail.hpp"
+#include "Config.hpp"
 #include "LogManager.hpp"
 #include "consts.hpp"
 #include "reply_codes.hpp"
 #include "utils.hpp"
-#include "Config.hpp"
 
 #include <algorithm>
 #include <sstream>
@@ -20,10 +21,7 @@
 /// arguments
 /// trailing message
 /// @param reply
-AssertReply::AssertReply(const std::string& reply) : _reply(reply), _messages() 
-{ 
-    _process_reply(); 
-}
+AssertReply::AssertReply(const std::string& reply) : _reply(reply), _messages() { _process_reply(); }
 
 AssertReply::~AssertReply(void) {}
 
@@ -96,7 +94,10 @@ bool AssertReply::_is_message_matching_entirely(const Message& msg, const std::s
     return true;
 }
 
-bool AssertReply::_is_message_containing(const Message& msg, const std::string& token) const { return msg.raw.find(token) != std::string::npos; }
+bool AssertReply::_is_message_containing(const Message& msg, const std::string& token) const
+{
+    return msg.raw.find(token) != std::string::npos;
+}
 
 AssertReply& AssertReply::has_code(ReplyCode code)
 {
@@ -110,12 +111,13 @@ AssertReply& AssertReply::has_code(ReplyCode code)
             break;
         }
     }
-	const std::string& expectedCodeStr = ircCodes.str(code);
-	std::string actualCodeStr = std::string("");
-	if (!actual.empty())
-		actualCodeStr = ircCodes.str(static_cast<ReplyCode>(std::atoi(actual.c_str())));
+    const std::string& expectedCodeStr = ircCodes.str(code);
+    std::string        actualCodeStr   = std::string("");
+    if (!actual.empty())
+        actualCodeStr = ircCodes.str(static_cast<ReplyCode>(std::atoi(actual.c_str())));
     if (!isMatching)
-        throw AssertFail("code", std::string(oss.str()) + " [" + expectedCodeStr + "]", std::string(actual) + " [" + actualCodeStr + "]" );
+        throw AssertFail(
+            "code", std::string(oss.str()) + " [" + expectedCodeStr + "]", std::string(actual) + " [" + actualCodeStr + "]");
     return *this;
 }
 
@@ -137,7 +139,7 @@ AssertReply& AssertReply::ends_with(const std::string& trailing)
 
 AssertReply& AssertReply::starts_with(const std::string& start)
 {
-    std::string actual = "";
+    std::string actual     = "";
     bool        isMatching = false;
     for (std::vector<Message>::iterator it = _messages.begin(); it != _messages.end(); ++it) {
         if (_is_message_starting_with(*it, start, &actual)) {
@@ -216,10 +218,11 @@ AssertReply& AssertReply::is_empty()
 /**
  * @brief checks full message based on code
  * @todo implement by getting client nick
- * @param code 
- * @return AsserReply& 
+ * @param code
+ * @return AsserReply&
  */
-AssertReply&  AssertReply::is_formatted(ReplyCode code, const std::string& clientNick, const std::string& params, const std::string& trailing)
+AssertReply&
+AssertReply::is_formatted(ReplyCode code, const std::string& clientNick, const std::string& params, const std::string& trailing)
 {
     std::string expectedStart = std::string(":" + ircConfig.get_name()) + " " + utils::code_to_str(code) + " " + clientNick + " ";
     if (params.empty() && trailing.empty())
@@ -232,7 +235,8 @@ AssertReply&  AssertReply::is_formatted(ReplyCode code, const std::string& clien
         return this->has_code(code).matches_entirely(expectedStart + params + " :" + trailing);
 }
 
-AssertReply&  AssertReply::is_formatted_transfer(const std::string& clientNick, const std::string& params, const std::string& trailing)
+AssertReply&
+AssertReply::is_formatted_transfer(const std::string& clientNick, const std::string& params, const std::string& trailing)
 {
     std::string expectedStart = std::string(":" + clientNick + "!" + clientNick + "@" + ircConfig.get_name()) + " ";
     if (trailing.empty())
@@ -272,13 +276,13 @@ void AssertReply::_process_reply()
         msgCmdOrCode.clear();
         msgTrailing.clear();
         msgArgs.clear();
-        
+
         std::istringstream issMsg(rawMsg);
-        
+
         // Strip \r if present
         if (!rawMsg.empty() && rawMsg[rawMsg.length() - 1] == '\r')
             rawMsg = rawMsg.substr(0, rawMsg.length() - 1);
-            
+
         // Strip trailing whitespace
         // size_t start = rawMsg.find_first_not_of(" \t");
         // size_t end = rawMsg.find_last_not_of(" \t");
@@ -286,7 +290,7 @@ void AssertReply::_process_reply()
         //     rawMsg = rawMsg.substr(start, end - start + 1);
         // else if (start == std::string::npos)
         //     rawMsg.clear(); // String is all whitespace
-        
+
         if (!rawMsg.empty() && rawMsg[0] == ':') {
             issMsg >> msgPrefix;
             LOG_DTV_TEST(msgPrefix);

@@ -157,8 +157,7 @@ void Kick::execute(Server& server, Client& client)
         if (!validChans.empty())
             validChans += ",";
         validChans += *chanNamesIt;
-        broadcastMsg.append(validChans).append(" ").append(validUsers); 
+        broadcastMsg.append(validChans).append(" ").append(validUsers);
         channel->broadcast(server, TRANSFER_KICK, broadcastMsg, &client, comment);
-
     }
 }

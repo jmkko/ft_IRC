@@ -23,14 +23,14 @@
 #include <thread>
 
 /**
- * @brief ensure params respect syntax  
+ * @brief ensure params respect syntax
  * <channel> <username> <host> <server> <nick> <flags>"
  * channel 'is an arbitrary channel the client is joined to or a literal asterisk character ('*', 0x2A) if no channel is returned'
- * @return std::string 
+ * @return std::string
  */
 static std::string build_who_params(const std::string& foundNick, const std::string& chan, const std::string& flag)
 {
-    return chan + " " + "~"+foundNick + " localhost " + ircConfig.get_name() + " " + foundNick + " " + flag;
+    return chan + " " + "~" + foundNick + " localhost " + ircConfig.get_name() + " " + foundNick + " " + flag;
 }
 
 /*************************************************************

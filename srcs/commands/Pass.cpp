@@ -27,8 +27,8 @@ Pass::~Pass(void) {}
 void Pass::execute(Server& server, Client& client)
 {
     (void)server;
-	(void)client;
-	client.set_status(AUTHENTICATED);
+    (void)client;
+    client.set_status(AUTHENTICATED);
     LOG_CMD.info("PASS - correct");
 }
 

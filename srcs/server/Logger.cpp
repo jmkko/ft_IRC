@@ -40,8 +40,9 @@ void Logger::log(LogLevel level, const std::string& message)
     std::string spacingAfterName = "\t ";
     if (_name == "CONNECTION")
         spacingAfterName = " ";
-    std::string terminalMessage = timestamp + " " + color + "[" + levelStr + "]" + RESET + " " + _name + spacingAfterName + message;
-    std::string fileMessage     = timestamp + " [" + levelStr + "] " + message;
+    std::string terminalMessage
+        = timestamp + " " + color + "[" + levelStr + "]" + RESET + " " + _name + spacingAfterName + message;
+    std::string fileMessage = timestamp + " [" + levelStr + "] " + message;
     if (level == ERROR)
         std::cerr << terminalMessage << '\n';
     else
@@ -51,18 +52,18 @@ void Logger::log(LogLevel level, const std::string& message)
         _logFile.flush();
     }
 }
-void Logger::receiving(const std::string& file, const std::string& function, const std::string& rawMessage, Client* client) 
+void Logger::receiving(const std::string& file, const std::string& function, const std::string& rawMessage, Client* client)
 {
 
-	log(INFO, file, function, std::string("") + "⬅️  receiving from " + BWHITE + client->get_nickname() + RESET, rawMessage);
+    log(INFO, file, function, std::string("") + "⬅️  receiving from " + BWHITE + client->get_nickname() + RESET, rawMessage);
 }
 
-void Logger::sending(const std::string& file, const std::string& function, const std::string& rawMessage, Client* client) 
+void Logger::sending(const std::string& file, const std::string& function, const std::string& rawMessage, Client* client)
 {
-	std::string context = "";
-	if (rawMessage.find("ERR") != std::string::npos)
-		context = "⚠️  ";
-	log(INFO, file, function, std::string(context) + "➡️  sending to " + BWHITE + client->get_nickname() + RESET, rawMessage);
+    std::string context = "";
+    if (rawMessage.find("ERR") != std::string::npos)
+        context = "⚠️  ";
+    log(INFO, file, function, std::string(context) + "➡️  sending to " + BWHITE + client->get_nickname() + RESET, rawMessage);
 }
 
 void Logger::debug(const std::string& desc, const std::string& message) { log(DEBUG, desc + " -> " + message); }
@@ -71,10 +72,7 @@ void Logger::info(const std::string& message) { log(INFO, message); }
 void Logger::warning(const std::string& message) { log(WARN, message); }
 void Logger::error(const std::string& message) { log(ERROR, message); }
 
-std::string	Logger::get_name() const
-{
-	return _name;
-}
+std::string Logger::get_name() const { return _name; }
 
 void Logger::set_min_level(LogLevel level) { _minLevel = level; }
 

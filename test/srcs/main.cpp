@@ -40,7 +40,7 @@ int main(int ac, char** av)
             functions["JOIN"]    = &test_join;
             functions["PRIVMSG"] = &test_privmsg;
             functions["PING"]    = &test_ping;
-            functions["TOPIC"]    = &test_topic;
+            functions["TOPIC"]   = &test_topic;
 
             functions[av[1]](*s);
         } else {
@@ -51,7 +51,7 @@ int main(int ac, char** av)
             test_join(*s);
             test_privmsg(*s);
             test_ping(*s);
-			test_topic(*s);
+            test_topic(*s);
         }
 
         LOG_TEST.info("All tests completed, stopping server...");

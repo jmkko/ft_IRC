@@ -115,8 +115,7 @@ void Join::execute(Server& server, Client& client)
             channel = existingChannel->second;
         }
         LOG_DV_CMD(std::bitset<8>(channel->get_mode()));
-        if ((channel->get_mode() & CHANMODE_KEY) && (chanKey != channel->get_key()))
-        {
+        if ((channel->get_mode() & CHANMODE_KEY) && (chanKey != channel->get_key())) {
             rh.process_response(client, ERR_BADCHANNELKEY, channel->get_name());
             ++it;
             continue;

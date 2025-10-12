@@ -16,20 +16,20 @@ Nick::~Nick(void) {}
 
 void Nick::execute(Server& server, Client& client)
 {
-	(void)server;
-	std::string oldNickname = client.get_nickname();
-	ReplyHandler& rh = ReplyHandler::get_instance(&server);
-	// welcome sequence complete for first time
-	if (oldNickname.empty() && client.get_user_name().empty() && client.is_authenticated()) {
+    (void)server;
+    std::string   oldNickname = client.get_nickname();
+    ReplyHandler& rh          = ReplyHandler::get_instance(&server);
+    // welcome sequence complete for first time
+    if (oldNickname.empty() && client.get_user_name().empty() && client.is_authenticated()) {
         LOG_dt_CMD("first change");
-		// rh.process_response(client, RPL_WELCOME);
-		// normal success behavior
-	} else if (!oldNickname.empty() && !client.get_user_name().empty() && client.is_registered()) {
-		// send the message to every user in every channel that this client takes part in
-		// NOT WORKING (client._joinedChannel is empty)
-		client.broadcast_to_all_channels(server, TRANSFER_NICK, _nickname); // ! \\ ;
-	 	rh.process_response(client, TRANSFER_NICK, _nickname);
-	}
+        // rh.process_response(client, RPL_WELCOME);
+        // normal success behavior
+    } else if (!oldNickname.empty() && !client.get_user_name().empty() && client.is_registered()) {
+        // send the message to every user in every channel that this client takes part in
+        // NOT WORKING (client._joinedChannel is empty)
+        client.broadcast_to_all_channels(server, TRANSFER_NICK, _nickname); // ! \\ ;
+        rh.process_response(client, TRANSFER_NICK, _nickname);
+    }
     client.set_nickname(_nickname);
 }
 
@@ -48,10 +48,10 @@ ReplyCode Nick::check_args(Server& server, Client& client, std::string& params)
     } else if (nickname.length() > ircConfig.get_nickname_max_len()) {
         nickname = nickname.substr(0, ircConfig.get_nickname_max_len());
     }
-	// TODO what if the user wants to change nickname ? -> move to execute with proper checks
-	// checks args checks params
-	// execute checks logic involving server or client ?
-    if (server.find_client_by_nickname(nickname)) { 
+    // TODO what if the user wants to change nickname ? -> move to execute with proper checks
+    // checks args checks params
+    // execute checks logic involving server or client ?
+    if (server.find_client_by_nickname(nickname)) {
         return (ERR_NICKNAMEINUSE);
     }
     params = nickname;

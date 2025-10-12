@@ -1,4 +1,5 @@
 #include "Channel.hpp"
+
 #include "Client.hpp"
 #include "Config.hpp"
 #include "ICommand.hpp"
@@ -68,7 +69,7 @@ Channel& Channel::operator=(const Channel& other)
     if (this != &other) {
         _name      = other._name;
         _topic     = other._topic;
-        _key	   = other._key;
+        _key       = other._key;
         _userLimit = other._userLimit;
         _members   = other._members;
         _operators = other._operators;
@@ -95,7 +96,8 @@ std::ostream&	operator<<(std::ostream& os, const Channel& c)
  *		🛠️ FUNCTIONS											*
  *************************************************************/
 
-void Channel::broadcast(Server& server, ReplyCode replyCode, const std::string& params, Client* sender, const std::string& trailing) const
+void Channel::broadcast(
+    Server& server, ReplyCode replyCode, const std::string& params, Client* sender, const std::string& trailing) const
 {
     ReplyHandler& rh = ReplyHandler::get_instance(&server);
     LOG_DV_CMD(_members.size());
@@ -232,7 +234,7 @@ std::vector<std::string> Channel::get_members_list() const
         users.append(c->get_nickname());
         ++it;
         if (it != _members.end())
-        users.append(" ");
+            users.append(" ");
         ++count;
         if (count % nbUserPerLine == 0) {
             list.push_back(users);

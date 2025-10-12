@@ -1,13 +1,14 @@
-#include "LogManager.hpp"
 #include "Motd.hpp"
+
+#include "LogManager.hpp"
 #include "ReplyHandler.hpp"
 #include "consts.hpp"
 
-#include <ostream>
-#include <fstream>
 #include <ctime>
-#include <sstream>
+#include <fstream>
 #include <iomanip>
+#include <ostream>
+#include <sstream>
 
 Motd::Motd() {}
 Motd::~Motd() {}

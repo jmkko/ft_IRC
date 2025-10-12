@@ -1,7 +1,8 @@
+#include "ReplyHandler.hpp"
+
 #include "Client.hpp"
 #include "Config.hpp"
 #include "LogManager.hpp"
-#include "ReplyHandler.hpp"
 #include "Server.hpp"
 #include "reply_codes.hpp"
 #include "utils.hpp"
@@ -85,9 +86,10 @@ static std::string get_user_id_of(Client& client)
  * @param parameters message corresponding of the code
  * @return formatted code response
  */
-static std::string generate_code_response(Client& client, ReplyCode code, const std::string& parameters, const std::string& trailing)
+static std::string
+generate_code_response(Client& client, ReplyCode code, const std::string& parameters, const std::string& trailing)
 {
-    std::string nick = client.get_nickname().empty() ? "*" : client.get_nickname();
+    std::string nick          = client.get_nickname().empty() ? "*" : client.get_nickname();
     std::string numericPrefix = ":" + ircConfig.get_name() + " " + utils::code_to_str(code) + " " + nick + " ";
     if (parameters.empty() && trailing.empty())
         return (numericPrefix + ircCodes.trailing(code));
@@ -105,24 +107,24 @@ static std::string generate_non_numerical_response(Client& client, ReplyCode cod
         sender = &client;
 
     switch (code) {
-        case TRANSFER_NICK:
-            return (get_user_id_of(*sender) + "NICK " + parameters);
-        case TRANSFER_JOIN:
-            return (get_user_id_of(*sender) + "JOIN " + parameters);
-        case TRANSFER_PRIVMSG:
-            return (get_user_id_of(*sender) + "PRIVMSG " + parameters);
-        case TRANSFER_KICK:
-            return (get_user_id_of(*sender)+ "KICK " + parameters);
-        case TRANSFER_INVITE:
-            return (get_user_id_of(*sender) + "INVITE " + parameters);
-        case TRANSFER_QUIT:
-            return (get_user_id_of(*sender)+ "QUIT " + parameters);
-        case TRANSFER_MODE:
-            return (get_user_id_of(*sender)+ "MODE " + parameters);
-        case MSG_PING:
-            return ":" + ircConfig.get_name() + " " + "PONG :" + parameters; 
-        default:
-            return "";
+    case TRANSFER_NICK:
+        return (get_user_id_of(*sender) + "NICK " + parameters);
+    case TRANSFER_JOIN:
+        return (get_user_id_of(*sender) + "JOIN " + parameters);
+    case TRANSFER_PRIVMSG:
+        return (get_user_id_of(*sender) + "PRIVMSG " + parameters);
+    case TRANSFER_KICK:
+        return (get_user_id_of(*sender) + "KICK " + parameters);
+    case TRANSFER_INVITE:
+        return (get_user_id_of(*sender) + "INVITE " + parameters);
+    case TRANSFER_QUIT:
+        return (get_user_id_of(*sender) + "QUIT " + parameters);
+    case TRANSFER_MODE:
+        return (get_user_id_of(*sender) + "MODE " + parameters);
+    case MSG_PING:
+        return ":" + ircConfig.get_name() + " " + "PONG :" + parameters;
+    default:
+        return "";
     }
 }
 
@@ -131,15 +133,14 @@ static bool is_numerical_response(ReplyCode code)
     return (code < LOWER_CUSTOM_CODE || (code > UPPER_CUSTOM_CODE && code < LOWER_CUSTOM_NONNUMERICAL_CODE));
 }
 
-int ReplyHandler::process_response(Client& client, ReplyCode code, const std::string& parameters, Client* sender, const std::string& trailing)
+int ReplyHandler::process_response(
+    Client& client, ReplyCode code, const std::string& parameters, Client* sender, const std::string& trailing)
 {
     LOG_DT_CMD("processing", ircCodes.str(code));
     std::string response = "";
-    if (is_numerical_response(code))
-    {
+    if (is_numerical_response(code)) {
         response = generate_code_response(client, code, parameters, trailing);
-    }
-    else
+    } else
         response = generate_non_numerical_response(client, code, parameters, sender);
 
     if (!response.empty()) {

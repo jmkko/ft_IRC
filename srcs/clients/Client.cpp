@@ -1,10 +1,10 @@
 #include "Client.hpp"
 
-#include "LogManager.hpp"
-#include "utils.hpp"
 #include "Channel.hpp"
 #include "Config.hpp"
+#include "LogManager.hpp"
 #include "consts.hpp"
+#include "utils.hpp"
 
 #include <algorithm>
 #include <iostream>
@@ -21,7 +21,7 @@ Client::Client(Socket socket, sockaddr_in addr) :
 Client::~Client(void) {}
 
 /************************************************************
-*		➕ OPERATORS											*
+ *		➕ OPERATORS											*
  ************************************************************/
 
 // clang-format off

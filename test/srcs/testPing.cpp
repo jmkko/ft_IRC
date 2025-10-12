@@ -65,7 +65,6 @@ void invalid_ping_should_err(Server& s)
     }
 }
 
-
 void test_ping(Server& s)
 {
     print_test_series("command PING");

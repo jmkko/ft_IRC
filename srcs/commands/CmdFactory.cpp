@@ -1,5 +1,6 @@
-#include "Client.hpp"
 #include "CmdFactory.hpp"
+
+#include "Client.hpp"
 #include "ICommand.hpp"
 #include "Invite.hpp"
 #include "Join.hpp"
@@ -8,13 +9,13 @@
 #include "Mode.hpp"
 #include "Motd.hpp"
 #include "Nick.hpp"
-#include "Topic.hpp"
 #include "Pass.hpp"
 #include "Ping.hpp"
 #include "Privmsg.hpp"
 #include "Quit.hpp"
 #include "ReplyHandler.hpp"
 #include "Server.hpp"
+#include "Topic.hpp"
 #include "User.hpp"
 #include "Who.hpp"
 #include "consts.hpp"
@@ -53,8 +54,21 @@ ICommand* CmdFactory::make_command(Server& server, Client& client, std::string& 
     ReplyHandler&      rh          = ReplyHandler::get_instance(&server);
     std::string        commandLine = "";
     std::istringstream iss(params); // NOLINT(clang-diagnostic-vexing-parse)
-    std::string        available[NB_AVAILABLE_CMD]
-        = {"USER", "PASS", "NICK", "TOPIC", "QUIT", "INVITE", "JOIN", "PART", "MODE", "OPER", "PRIVMSG", "WHO", "KICK", "MOTD", "PING"};
+    std::string        available[NB_AVAILABLE_CMD]                                  = {"USER",
+                                                                                       "PASS",
+                                                                                       "NICK",
+                                                                                       "TOPIC",
+                                                                                       "QUIT",
+                                                                                       "INVITE",
+                                                                                       "JOIN",
+                                                                                       "PART",
+                                                                                       "MODE",
+                                                                                       "OPER",
+                                                                                       "PRIVMSG",
+                                                                                       "WHO",
+                                                                                       "KICK",
+                                                                                       "MOTD",
+                                                                                       "PING"};
     ICommand* (CmdFactory::* ptr[NB_AVAILABLE_CMD])(Server&, Client&, std::string&) = {&CmdFactory::user_cmd,
                                                                                        &CmdFactory::pass_cmd,
                                                                                        &CmdFactory::nick_cmd,
@@ -69,8 +83,7 @@ ICommand* CmdFactory::make_command(Server& server, Client& client, std::string& 
                                                                                        &CmdFactory::who_cmd,
                                                                                        &CmdFactory::kick_cmd,
                                                                                        &CmdFactory::motd_cmd,
-                                                                                       &CmdFactory::ping_cmd
-                                                                                    };
+                                                                                       &CmdFactory::ping_cmd};
 
     iss >> commandLine;
     for (size_t i = 0; i < NB_AVAILABLE_CMD; i++) {
@@ -157,8 +170,7 @@ ICommand* CmdFactory::kick_cmd(Server& server, Client& client, std::string& para
     ReplyCode replyCode = Kick::check_args(server, client, vectorParams);
     if (replyCode == CORRECT_FORMAT) {
         return new Kick(vectorParams);
-    }
-     else {
+    } else {
         rh.process_response(client, replyCode, "KICK");
     }
     return NULL;
@@ -301,9 +313,8 @@ ICommand* CmdFactory::ping_cmd(Server& server, Client& client, std::string& para
     (void)server;
     (void)client;
     ReplyHandler rh   = ReplyHandler::get_instance(&server);
-    ReplyCode code = Ping::check_args(server, client, params);
-    if (code != CORRECT_FORMAT)
-    {
+    ReplyCode    code = Ping::check_args(server, client, params);
+    if (code != CORRECT_FORMAT) {
         rh.process_response(client, code, params);
         return NULL;
     }
@@ -322,14 +333,14 @@ ICommand* CmdFactory::topic_cmd(Server& server, Client& client, std::string& par
 {
     (void)server;
     (void)client;
-	ReplyHandler rh = ReplyHandler::get_instance(&server);
-	ReplyCode code = Topic::check_args(server, client, params);
+    ReplyHandler rh   = ReplyHandler::get_instance(&server);
+    ReplyCode    code = Topic::check_args(server, client, params);
     if (code == ERR_NEEDMOREPARAMS) {
         rh.process_response(client, code, "TOPIC");
-		return NULL;
+        return NULL;
     } else if (code != CORRECT_FORMAT) {
-		rh.process_response(client, code, params);
-		return NULL;
-	}
+        rh.process_response(client, code, params);
+        return NULL;
+    }
     return new Topic(server, params);
 };

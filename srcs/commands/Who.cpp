@@ -1,4 +1,5 @@
 #include "Who.hpp"
+
 #include "utils.hpp"
 
 #include <string>
@@ -76,7 +77,11 @@ void Who::execute(Server& server, Client& client)
                 std::set<Client*>                 clients  = itChan->second->get_members();
                 std::set<Client*>::const_iterator itClient = clients.begin();
                 for (; itClient != clients.end(); itClient++) {
-                    rh.process_response(client, RPL_WHOREPLY, _who_msg(*itClient, itChan->second, server), NULL,  std::string("0 ") + (*itClient)->get_real_name());
+                    rh.process_response(client,
+                                        RPL_WHOREPLY,
+                                        _who_msg(*itClient, itChan->second, server),
+                                        NULL,
+                                        std::string("0 ") + (*itClient)->get_real_name());
                 }
                 rh.process_response(client, RPL_ENDOFWHO, itChan->second->get_name());
             }
@@ -85,7 +90,8 @@ void Who::execute(Server& server, Client& client)
         std::vector<Client*>           clients = server.find_clients_by_pattern(mask);
         std::vector<Client*>::iterator it      = clients.begin();
         for (; it != clients.end(); it++) {
-            rh.process_response(client, RPL_WHOREPLY, _who_msg(*it, NULL, server), NULL,  std::string("0 ") + (*it)->get_real_name());
+            rh.process_response(
+                client, RPL_WHOREPLY, _who_msg(*it, NULL, server), NULL, std::string("0 ") + (*it)->get_real_name());
         }
         rh.process_response(client, RPL_ENDOFWHO, mask);
     }
@@ -102,8 +108,8 @@ void Who::execute(Server& server, Client& client)
  * :irc.example.com 352 user1 #chan1 bob bobhost irc.example.com bob H@ :0 Bob Realname
  * :irc.example.com 315 user1 #chan1 :End of WHO list
  * <client> <channel> <username> <host> <server> <nick> <flags> :<hopcount> <realname>
- * Flags : Away status: the letter H ('H', 0x48) to indicate that the user is here, or the letter G ('G', 0x47) to indicate that the user is gone.
- * Optionally, a literal asterisk character ('*', 0x2A) to indicate that the user is a server operator.
+ * Flags : Away status: the letter H ('H', 0x48) to indicate that the user is here, or the letter G ('G', 0x47) to indicate that
+ * the user is gone. Optionally, a literal asterisk character ('*', 0x2A) to indicate that the user is a server operator.
  * Optionally, the highest channel membership prefix that the client has in <channel>, if the client has one.
  * Optionally, one or more user mode characters and other arbitrary server-specific flags.
  */
