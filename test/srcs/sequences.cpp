@@ -37,6 +37,15 @@ void authenticate(const TcpSocket& so)
     recv_lines(so);
 }
 
+void authenticate(const TcpSocket& so, const std::string& nick)
+{
+    send_line(so, validPassMsg);
+    send_line(so, "NICK " + nick + "\r\n");
+    send_line(so, "USER " + nick + " 0 * :real" + nick + "\r\n");
+    recv_lines(so);
+}
+
+
 void send_pass_nick(const TcpSocket& so)
 {
     send_line(so, validPassMsg);
@@ -57,6 +66,12 @@ void authenticate_and_join(const TcpSocket& so)
     authenticate(so);
     send_line(so, validJoinMsg);
     recv_lines(so);
+}
+
+void authenticate_and_join(const TcpSocket& so, const std::string& nick, const std::string& chan)
+{
+    authenticate(so, nick);
+    send_line(so, "JOIN " + chan + "\r\n");
 }
 
 void authenticate_and_join_op2(const TcpSocket& so)

@@ -84,7 +84,8 @@ ReplyCode Privmsg::check_args(Server& server, Client& client, std::string& param
 	std::string target;
 
 	while (std::getline(ss, target, ',')) {
-		if (--targetLimit < 0) {
+        LOG_DTV_CMD(target);
+		if (targetLimit <= 0) {
 			rh.process_response(client, ERR_TOOMANYTARGETS, target);
 			break;
 		}

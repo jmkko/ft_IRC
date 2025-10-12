@@ -35,6 +35,9 @@ template <typename Func> void run_test(Func&& f, const char* name)
     to remain coherent we keep the same names for valid cases
     - username1 : 		roro
     - username2 : 		toto
+    - username3         riri
+    - username4         titi
+    - username5         rara
     - opname1			op
     - opname2			op2
     - channel1 : 		#chan
@@ -46,6 +49,10 @@ template <typename Func> void run_test(Func&& f, const char* name)
 
 static const std::string& userNick     = "roro";
 static const std::string& user2Nick    = "toto";
+static const std::string& user3Nick    = "riri";
+static const std::string& user4Nick    = "titi";
+static const std::string& user5Nick    = "rara";
+static const std::string& user6Nick    = "tata";
 static const std::string& opNick   = "op";
 static const std::string& op2Nick  = "op2";
 static const std::string& channelName  = "#chan";
@@ -123,8 +130,8 @@ static const std::string& badPatternWho  = "WHO *x*\r\n";
 static const std::string& allUserWho     = "WHO *\r\n";
 
 static const std::string& noparamsPrivmsg        = "PRIVMSG\r\n";
-static const std::string& invalidnicknamePrivmsg = "PRIVMSG nonexistant :message\r\n";
-static const std::string& toomanytargetPrivmsg   = "PRIVMSG roro,toto,charlie,#chan,doc,#leo :message\r\n";
+static const std::string& invalidnicknamePrivmsg = "PRIVMSG nonexistent :message\r\n";
+static const std::string& toomanytargetPrivmsg   = "PRIVMSG roro,toto,riri,titi,rara,tata :message\r\n";
 static const std::string& notextPrivmsg          = "PRIVMSG #chan\r\n";
 
 static const std::string& noparamsTopic				= "TOPIC\r\n";
@@ -141,6 +148,8 @@ void join_assert(const TcpSocket& so);
 // with receive
 void send_pass_nick(const TcpSocket& so);
 void authenticate(const TcpSocket& so);
+void authenticate(const TcpSocket& so, const std::string& nick);
+void authenticate_and_join(const TcpSocket& so, const std::string& nick, const std::string& chan);
 void authenticate_and_join(const TcpSocket& so);
 void authenticate_and_join_second_user(const TcpSocket& so);
 void authenticate_and_join_op2(const TcpSocket& so);

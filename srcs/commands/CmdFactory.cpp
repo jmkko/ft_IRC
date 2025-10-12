@@ -157,7 +157,8 @@ ICommand* CmdFactory::kick_cmd(Server& server, Client& client, std::string& para
     ReplyCode replyCode = Kick::check_args(server, client, vectorParams);
     if (replyCode == CORRECT_FORMAT) {
         return new Kick(vectorParams);
-    } else {
+    }
+     else {
         rh.process_response(client, replyCode, "KICK");
     }
     return NULL;
@@ -260,7 +261,10 @@ ICommand* CmdFactory::privmsg_cmd(Server& server, Client& client, std::string& p
     LOG_CMD.debug("PIVMSG params: " + params);
     ReplyHandler rh   = ReplyHandler::get_instance(&server);
     ReplyCode    code = Privmsg::check_args(server, client, params);
-    if (code != CORRECT_FORMAT) {
+    if (code == ERR_NOTEXTTOSEND) {
+        rh.process_response(client, code, "");
+        return (NULL);
+    } else if (code != CORRECT_FORMAT) {
         rh.process_response(client, code, params, NULL);
         return (NULL);
     }

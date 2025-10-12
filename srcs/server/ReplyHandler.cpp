@@ -151,7 +151,8 @@ static std::string get_user_id_of(Client& client)
  */
 static std::string generate_code_response(Client& client, ReplyCode code, const std::string& parameters, const std::string& trailing)
 {
-    std::string numericPrefix = ":" + ircConfig.get_name() + " " + utils::code_to_str(code) + " " + client.get_nickname() + " ";
+    std::string nick = client.get_nickname().empty() ? "*" : client.get_nickname();
+    std::string numericPrefix = ":" + ircConfig.get_name() + " " + utils::code_to_str(code) + " " + nick + " ";
     if (parameters.empty() && trailing.empty())
         return (numericPrefix + ircCodes.trailing(code));
     else if (parameters.empty() && !trailing.empty())
@@ -196,6 +197,7 @@ static bool is_numerical_response(ReplyCode code)
 
 int ReplyHandler::process_response(Client& client, ReplyCode code, const std::string& parameters, Client* sender, const std::string& trailing)
 {
+    LOG_DT_CMD("processing", ircCodes.str(code));
     std::string response = "";
     if (is_numerical_response(code))
         response = generate_code_response(client, code, parameters, trailing);
