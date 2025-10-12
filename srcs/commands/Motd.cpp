@@ -39,7 +39,7 @@ void Motd::execute(Server& server, Client& client)
     inputFile.open(filename);
     if (inputFile.is_open()) {
         std::string nick = client.get_nickname();
-        rh.process_response(client, RPL_MOTDSTART, nick + RPL_MOTDSTART_MSG);
+        rh.process_response(client, RPL_MOTDSTART, nick);
         while (getline(inputFile, line)) {
             newline = _str_replace(line, "$(servername)", server.get_name());
             newline = _str_replace(newline, "$(nick)", nick);
@@ -48,7 +48,7 @@ void Motd::execute(Server& server, Client& client)
             rh.process_response(client, RPL_MOTD, nick + " :- " + newline.c_str());
             newline.clear();
         }
-        rh.process_response(client, RPL_ENDOFMOTD, nick + RPL_ENDOFMOTD_MSG);
+        rh.process_response(client, RPL_ENDOFMOTD, nick);
     }
     inputFile.close();
 }

@@ -69,23 +69,23 @@ void Invite::execute(Server& s, Client& c)
     Client*  target  = s.find_client_by_nickname(nick);
     Channel* channel = s.channels[chan];
     if (!target) {
-        rh.process_response(c, ERR_NOSUCHNICK, nick + ERR_NOSUCHNICK_MSG);
+        rh.process_response(c, ERR_NOSUCHNICK, nick);
         return;
     }
     if (!channel) {
-        rh.process_response(c, ERR_NOSUCHCHANNEL, chan + ERR_NOSUCHCHANNEL_MSG);
+        rh.process_response(c, ERR_NOSUCHCHANNEL, chan);
         return;
     }
     if (!channel->is_member(c)) {
-        rh.process_response(c, ERR_NOTONCHANNEL, chan + ERR_NOTONCHANNEL_MSG);
+        rh.process_response(c, ERR_NOTONCHANNEL);
         return;
     }
     if (channel->is_member(*target)) {
-        rh.process_response(c, ERR_USERONCHANNEL, nick + " " + chan + ERR_USERONCHANNEL_MSG);
+        rh.process_response(c, ERR_USERONCHANNEL, nick + " " + chan);
         return;
     }
     if (channel->is_invite_only() && !channel->is_operator(c)) {
-        rh.process_response(c, ERR_CHANOPRIVSNEEDED, chan + ERR_CHANOPRIVSNEEDED_MSG);
+        rh.process_response(c, ERR_CHANOPRIVSNEEDED, chan);
         return;
     }
     channel->invite_client(*target);
