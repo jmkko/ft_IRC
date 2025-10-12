@@ -98,10 +98,11 @@ std::ostream&	operator<<(std::ostream& os, const Channel& c)
 void Channel::broadcast(Server& server, ReplyCode replyCode, const std::string& params, Client* sender, const std::string& trailing) const
 {
     ReplyHandler& rh = ReplyHandler::get_instance(&server);
+    LOG_DV_CMD(_members.size());
     for (std::set<Client*>::iterator it = _members.begin(); it != _members.end(); ++it) {
         Client* recipient = *it;
-        if (sender && recipient == sender)
-           continue;
+        // if (sender && recipient == sender)
+        //    continue;
         LOG_DT_SERVER(recipient->get_nickname() + " received a broadcast from " + get_name(), "");
         rh.process_response(*recipient, replyCode, params, sender, trailing);
     }

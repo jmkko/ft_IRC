@@ -117,17 +117,20 @@ void Kick::execute(Server& server, Client& client)
     t_params      channelNames;
     t_params      nicknames;
     std::string   comment;
+    std::string   validChans = "";
+    std::string   validUsers = "";
+    std::string   broadcastMsg;
 
     parse_args(_args, &channelNames, &nicknames, &comment);
 
     for (t_params::iterator chanNamesIt = channelNames.begin(); chanNamesIt != channelNames.end(); ++chanNamesIt) {
         if (!Channel::is_valid_channel_name(*chanNamesIt)) {
-            rh.process_response(client, ERR_BADCHANMASK);
+            rh.process_response(client, ERR_BADCHANMASK, *chanNamesIt);
             continue;
         }
         std::map<std::string, Channel*>::iterator chanIt = server.channels.find(*chanNamesIt);
         if (chanIt == server.channels.end()) {
-            rh.process_response(client, ERR_NOSUCHCHANNEL);
+            rh.process_response(client, ERR_NOSUCHCHANNEL, *chanNamesIt);
             continue;
         }
         Channel* channel = chanIt->second;
@@ -138,15 +141,24 @@ void Kick::execute(Server& server, Client& client)
         for (t_params::iterator nickIt = nicknames.begin(); nickIt != nicknames.end(); ++nickIt) {
             Client* targetUser = server.find_client_by_nickname(static_cast<const std::string&>(*nickIt));
             if (!channel->is_member(*targetUser)) {
-                rh.process_response(client, ERR_USERNOTINCHANNEL);
+                rh.process_response(client, ERR_USERNOTINCHANNEL, channel->get_name());
             } else {
+                if (!validUsers.empty())
+                    validUsers += ",";
+                validUsers += *nickIt;
                 channel->remove_member(*targetUser);
                 std::string messageParam = channel->get_name() + " " + targetUser->get_nickname();
-                if (!comment.empty())
-                    messageParam.append(" :").append(comment);
-                channel->broadcast(server, TRANSFER_KICK, messageParam, &client);
-                rh.process_response(*targetUser, TRANSFER_KICK, messageParam, &client);
+                // if (!comment.empty())
+                //     messageParam.append(" :").append(comment);
+                LOG_dt_CMD("before broadcast");
+                rh.process_response(*targetUser, TRANSFER_KICK, messageParam, &client, comment);
             }
         }
+        if (!validChans.empty())
+            validChans += ",";
+        validChans += *chanNamesIt;
+        broadcastMsg.append(validChans).append(" ").append(validUsers); 
+        channel->broadcast(server, TRANSFER_KICK, broadcastMsg, &client, comment);
+
     }
 }
