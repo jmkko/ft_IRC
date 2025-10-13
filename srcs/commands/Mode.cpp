@@ -99,6 +99,10 @@ ReplyCode Mode::check_args(Server& server, Client& client, std::vector<std::stri
             rh.process_response(client, ERR_NEEDMOREPARAMS, "MODE");
             return PROCESSED_ERROR;
         }
+        if (modes[i] == 'o' && operation == '-' && i >= modeParams.size()) {
+            rh.process_response(client, ERR_NEEDMOREPARAMS, "MODE");
+            return PROCESSED_ERROR;
+        }
         if (modes[i] == 'l' && operation == '+') {
             if (modeParams[i].find_first_not_of(digits) != std::string::npos) {
                 LOG_DV_CMD(modeParams[i]);

@@ -492,6 +492,27 @@ void mode_o_unknown_user_should_err(Server& s)
     }
 }
 
+/**
+ @brief integration test - error case
+*/
+void mode_minuso_noarg_user_should_err(Server& s)
+{
+    try {
+        TEST_SETUP(test, s, 2);
+        TcpSocket& sop = *sockets.at(0);
+        make_op(sop);
+
+        // test 1
+        send_line(sop, invalidModeMinusONoUserMsg);
+        std::string reply = recv_lines(sop);
+        AssertReply ar(reply);
+        ar.is_formatted(ERR_NEEDMOREPARAMS, opNick, "MODE");
+
+    } catch (const std::runtime_error& e) {
+        LOG_TEST.error(e.what());
+    }
+}
+
 void test_mode(Server& s, t_results* r)
 {
     print_test_series("command MODE");
@@ -516,4 +537,5 @@ void test_mode(Server& s, t_results* r)
     run_test(r, [&] { unknown_chan_should_err(s); }, "unknown chan");
     run_test(r, [&] { mode_l_negativearg_should_err(s); }, "+l -1");
     run_test(r, [&] { mode_o_unknown_user_should_err(s); }, "+o unknown");
+    run_test(r, [&] { mode_minuso_noarg_user_should_err(s); }, "-o no user");
 }
