@@ -1,5 +1,4 @@
 #include "Channel.hpp"
-
 #include "Client.hpp"
 #include "Config.hpp"
 #include "ICommand.hpp"
@@ -103,8 +102,8 @@ void Channel::broadcast(
     LOG_DV_CMD(_members.size());
     for (std::set<Client*>::iterator it = _members.begin(); it != _members.end(); ++it) {
         Client* recipient = *it;
-        // if (sender && recipient == sender)
-        //    continue;
+        if (sender && recipient == sender)
+            continue;
         LOG_DT_SERVER(recipient->get_nickname() + " received a broadcast from " + get_name(), "");
         rh.process_response(*recipient, replyCode, params, sender, trailing);
     }

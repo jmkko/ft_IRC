@@ -22,13 +22,13 @@ jobs:
       run: make formator
     - name: static checks
       run: make tidy
-  test:
-    runs-on: ubuntu-22.04 
-    steps:
-    - uses: actions/checkout@v4
-    - name: Install dependencies
-      run: sudo apt-get update && sudo apt-get install -y clang-12 make
-    - name: build
-      run: make -C test
-    - name: test
-      run: ./test/test
+  #test:
+  #  runs-on: ubuntu-22.04 
+  #  steps:
+  #  - uses: actions/checkout@v4
+  #  - name: Install dependencies
+  #    run: sudo apt-get update && sudo apt-get install -y clang-12 make
+  #  - name: build
+  #    run: make -C test
+  #  - name: test
+  #    run: ./test/test

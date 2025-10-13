@@ -1,6 +1,5 @@
-#include "Join.hpp"
-
 #include "Channel.hpp"
+#include "Join.hpp"
 #include "LogManager.hpp"
 #include "ReplyHandler.hpp"
 #include "Server.hpp"
@@ -142,7 +141,7 @@ void Join::execute(Server& server, Client& client)
         }
         std::vector<std::string> users = channel->get_members_list();
         for (size_t i = 0; i < users.size(); ++i) {
-            rh.process_response(client, RPL_NAMREPLY, channel->get_name(), NULL, users[i]);
+            rh.process_response(client, RPL_NAMREPLY, "= " + channel->get_name(), NULL, users[i]);
         }
         rh.process_response(client, RPL_ENDOFNAMES, channel->get_name());
         ++it;
