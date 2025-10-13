@@ -1,5 +1,3 @@
-#include "Server.hpp"
-
 #include "Channel.hpp"
 #include "Client.hpp"
 #include "CmdFactory.hpp"
@@ -7,6 +5,7 @@
 #include "ICommand.hpp"
 #include "LogManager.hpp"
 #include "ReplyHandler.hpp"
+#include "Server.hpp"
 #include "consts.hpp"
 #include "signal_handler.hpp"
 #include "utils.hpp"
@@ -91,8 +90,14 @@ void Server::start()
         for (int i = 0; i < static_cast<int>(_pfds.size()); i++) {
             if (globalSignal == SIGINT && globalSignal == SIGABRT)
                 break;
+
+            // Check if index is still valid (in case vector was modified)
+            if (i >= static_cast<int>(_pfds.size()))
+                break;
+
             // new connection
             if (i == 0 && (_pfds[i].revents & POLLIN)) {
+                _pfds[i].revents = 0; // Reset events
                 _handle_new_connection(i);
             }
             // Client socket : data or disconnection
@@ -103,15 +108,25 @@ void Server::start()
                     cleanup_socket_and_client(i--);
                     continue;
                 }
-                if (_pfds[i].revents & (POLLHUP | POLLNVAL | POLLERR)) {
+
+                // Store revents before processing and reset it
+                short events     = _pfds[i].revents;
+                _pfds[i].revents = 0;
+
+                if (events & (POLLHUP | POLLNVAL | POLLERR)) {
                     _handle_client_disconnection(i--);
-                } else if (_pfds[i].revents & POLLIN) {
+                } else if (events & POLLIN) {
+                    Socket originalSocket = _pfds[i].fd;
+                    size_t originalSize   = _pfds.size();
                     _handle_client_input(i);
-                } else if (_pfds[i].revents & POLLOUT) {
+                    // Check if client was disconnected during input handling
+                    if (_pfds.size() < originalSize || i >= static_cast<int>(_pfds.size()) || _pfds[i].fd != originalSocket) {
+                        i--; // Client was removed, adjust index
+                    }
+                } else if (events & POLLOUT) {
                     _handle_client_output(i);
                 }
             }
-            _pfds[i].revents = 0; // Reset events
         }
     }
     _clean();
@@ -216,7 +231,11 @@ void Server::_handle_client_input(int pfdIndex)
         if (utils::safe_at(buffer, bytesRead))
             utils::safe_at(buffer, bytesRead) = '\0';
         client->append_to_read_buffer(std::string(static_cast<char*>(buffer)));
-        this->_handle_commands(pfdIndex);
+        bool clientDisconnected = this->_handle_commands(pfdIndex);
+        if (clientDisconnected) {
+            // Client was disconnected by QUIT command, pfdIndex is no longer valid
+            return;
+        }
     }
 }
 
@@ -263,7 +282,7 @@ void Server::_handle_client_output(int pfdIndex)
     }
 }
 
-void Server::_handle_commands(int pfdIndex)
+bool Server::_handle_commands(int pfdIndex)
 {
     Socket      socket = _pfds[pfdIndex].fd;
     Client*     client = _clients[socket];
@@ -284,9 +303,10 @@ void Server::_handle_commands(int pfdIndex)
             std::istringstream iss(line);
             iss >> cmdName;
             if (cmdName == "QUIT")
-                break;
+                return true; // Client has been disconnected
         }
     }
+    return false; // Client is still connected
 }
 
 // Make and return a command object from the command line if valid command;

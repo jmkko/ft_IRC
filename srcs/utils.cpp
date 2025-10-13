@@ -1,7 +1,6 @@
-#include "utils.hpp"
-
 #include "LogManager.hpp"
 #include "consts.hpp"
+#include "utils.hpp"
 
 #include <poll.h>
 
@@ -97,6 +96,8 @@ std::string event_to_str(int event)
  */
 bool is_matching_pattern(const std::string& pattern, const std::string& str)
 {
+    if (pattern.empty() || str.empty())
+        return false;
     size_t p = 0, s = 0, star = std::string::npos, match = 0;
 
     while (s < str.size()) {

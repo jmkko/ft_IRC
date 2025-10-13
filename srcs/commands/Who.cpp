@@ -1,5 +1,4 @@
 #include "Who.hpp"
-
 #include "utils.hpp"
 
 #include <string>
@@ -122,7 +121,7 @@ std::string Who::_who_msg(Client* client, Channel* channel, Server& server)
         op = std::string(channel->is_operator(*client) ? "@" : "");
     } else
         msg.append("*");
-    msg.append(" ~" + client->get_user_name());
+    msg.append(" " + client->get_user_name());
     msg.append(" localhost");
     msg.append(" " + server.get_name());
     msg.append(" " + client->get_nickname());

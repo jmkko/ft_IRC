@@ -66,7 +66,7 @@ class Server
     void      _handle_client_output(int pfdIndex);
     void      _listen_to_socket(Socket toListen, uint32_t flags);
     ICommand* _parse_command(Client& c, std::string line);
-    void      _handle_commands(int pfdIndex);
+    bool      _handle_commands(int pfdIndex);
 };
 
 #endif
