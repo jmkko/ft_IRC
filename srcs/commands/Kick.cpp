@@ -148,9 +148,7 @@ void Kick::execute(Server& server, Client& client)
                 validUsers += *nickIt;
                 channel->remove_member(*targetUser);
                 std::string messageParam = channel->get_name() + " " + targetUser->get_nickname();
-                // if (!comment.empty())
-                //     messageParam.append(" :").append(comment);
-                LOG_dt_CMD("before broadcast");
+                LOG_d_CMD("before broadcast");
                 rh.process_response(*targetUser, TRANSFER_KICK, messageParam, &client, comment);
             }
         }
@@ -159,5 +157,6 @@ void Kick::execute(Server& server, Client& client)
         validChans += *chanNamesIt;
         broadcastMsg.append(validChans).append(" ").append(validUsers);
         channel->broadcast(server, TRANSFER_KICK, broadcastMsg, &client, comment);
+        rh.process_response(client, TRANSFER_KICK, broadcastMsg, &client, comment);
     }
 }
