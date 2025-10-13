@@ -27,8 +27,8 @@ Pass::~Pass(void) {}
 void Pass::execute(Server& server, Client& client)
 {
     (void)server;
-	(void)client;
-	client.set_status(AUTHENTICATED);
+    (void)client;
+    client.set_status(AUTHENTICATED);
     LOG_CMD.info("PASS - correct");
 }
 
@@ -50,5 +50,5 @@ ReplyCode Pass::check_args(Server& server, Client& client, std::string& params)
         return (ERR_ALREADYREGISTRED);
     }
     params = pass;
-    return (RPL_SUCCESS);
+    return (CORRECT_FORMAT);
 }

@@ -4,7 +4,8 @@ NAME			:=	ircserv
 OS 				:= $(shell uname)
 
 CXX				:=	clang++
-CXXFLAGS		:=	-Wall -Wextra -Werror -std=c++98 -g -MMD -O0 -fsanitize=address
+CXXFLAGS		:=	-Wall -Wextra -Werror -std=c++98 -g -MMD -O0 -fsanitize=address -fno-omit-frame-pointer
+LDFLAGS			:=	-no-pie -fsanitize=address
 MAKEFLAGS		:=	--no-print-directory
 
 INCLUDES		:=	-Iincludes\
@@ -36,7 +37,6 @@ SRCS			:=	srcs/main.cpp\
 					srcs/commands/Join.cpp\
 					srcs/commands/Who.cpp\
 					srcs/commands/Invite.cpp\
-					srcs/commands/Motd.cpp\
 					srcs/commands/Topic.cpp\
 					srcs/server/ReplyHandler.cpp\
 
@@ -76,7 +76,7 @@ all : $(NAME)
 
 $(NAME) : $(OBJS)
 	@echo "\n$(BOLD)=== Linkage ... generating binaries ===$(NOC)"
-	@$(CXX) $(CXXFLAGS) $(INCLUDES) $^ -o $@
+	@$(CXX) $(LDFLAGS) $(INCLUDES) $^ -o $@
 
 $(OBJS) :$(OBJS_DIR)/%.o : %.cpp | $(OBJ_DIRS)
 ifeq ($(OS), Linux)
@@ -100,6 +100,9 @@ endif
 $(OBJ_DIRS) :
 	@mkdir -p $@
 	@mkdir -p logs
+
+asan : all
+	ASAN_OPTIONS=detect_leaks=1:log_path=logs/asan.log:atexit_print_stats=true ./ircserv 9999 password
 
 forminette:
 	@echo "$(YELLOW)=== Checking code format ===$(NOC)"

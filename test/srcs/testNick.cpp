@@ -105,7 +105,7 @@ void no_arg_should_err(Server& s)
         send_line(so, invalidNickMissingArgMsg);
         std::string reply = recv_lines(so);
         AssertReply ar(reply);
-        ar.has_code(ERR_NONICKNAMEGIVEN);
+        ar.is_formatted(ERR_NONICKNAMEGIVEN, "*");
 
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());
@@ -125,7 +125,7 @@ void starting_with_number_should_err(Server& s)
         send_line(so, invalidNick3oroMsg);
         std::string reply = recv_lines(so);
         AssertReply ar(reply);
-        ar.has_code(ERR_ERRONEUSNICKNAME);
+        ar.is_formatted(ERR_ERRONEUSNICKNAME, "*", "3oro");
 
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());
@@ -147,19 +147,19 @@ void taken_should_err(Server& s)
         send_line(so2, validNickMsg);
         std::string reply = recv_lines(so2);
         AssertReply ar(reply);
-        ar.has_code(ERR_NICKNAMEINUSE);
+        ar.is_formatted(ERR_NICKNAMEINUSE, "*", "roro");
 
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());
     }
 }
 
-void test_nick(Server& s)
+void test_nick(Server& s, t_results* r)
 {
     print_test_series("command NICK");
-    run_test([&] { valid_nick_should_void(s); }, "roro");
-    run_test([&] { valid_nick_special_should_void(s); }, "[roro]");
-    run_test([&] { no_arg_should_err(s); }, "no arg");
-    run_test([&] { starting_with_number_should_err(s); }, "3oro");
-    run_test([&] { taken_should_err(s); }, "taken");
+    run_test(r, [&] { valid_nick_should_void(s); }, "roro");
+    run_test(r, [&] { valid_nick_special_should_void(s); }, "[roro]");
+    run_test(r, [&] { no_arg_should_err(s); }, "no arg");
+    run_test(r, [&] { starting_with_number_should_err(s); }, "3oro");
+    run_test(r, [&] { taken_should_err(s); }, "taken");
 }

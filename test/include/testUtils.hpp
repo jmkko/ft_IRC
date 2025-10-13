@@ -4,12 +4,21 @@
 #include "AssertFail.hpp"
 #include "TcpSocket.hpp"
 #include "printUtils.hpp"
+#include "reply_codes.hpp"
 
 #define SERVER_PROCESS_TIME_MS 10
 #define SERVER_SEND_WAIT_MS    15
 #define SERVER_START_WAIT_MS   50
 #define SERVER_STOP_WAIT_MS    20
 #define TEST_PORT              4343
+
+class Server;
+typedef struct Sresults
+{
+    int launchedTests;
+    int passedTests;
+    int failedTests;
+}   t_results;
 
 /**
  * @brief uses std::forward to preserve category of argument
@@ -20,13 +29,16 @@
  * @param f
  * @param name
  */
-template <typename Func> void run_test(Func&& f, const char* name)
+template <typename Func> void run_test(t_results* results, Func&& f, const char* name)
 {
     try {
+        results->launchedTests++;
         std::forward<Func>(f)();
         print_success(name);
+        results->passedTests++;
     } catch (AssertFail& e) {
         print_error(name, e.what());
+        results->failedTests++;
     }
 }
 
@@ -34,27 +46,36 @@ template <typename Func> void run_test(Func&& f, const char* name)
     to remain coherent we keep the same names for valid cases
     - username1 : 		roro
     - username2 : 		toto
+    - username3         riri
+    - username4         titi
+    - username5         rara
     - opname1			op
     - opname2			op2
     - channel1 : 		#chan
     - channel2 : 		#chan2
+    username will be same as <nick>
     Messages names are prefixed with valid if they are syntaxically correct and parseable
     Messages names are suffixed with `CommandnameMsg`
 */
 
 static const std::string& userNick     = "roro";
 static const std::string& user2Nick    = "toto";
-static const std::string& userOp       = "op";
+static const std::string& user3Nick    = "riri";
+static const std::string& user4Nick    = "titi";
+static const std::string& user5Nick    = "rara";
+static const std::string& user6Nick    = "tata";
+static const std::string& opNick   = "op";
+static const std::string& op2Nick  = "op2";
 static const std::string& channelName  = "#chan";
 static const std::string& channel2Name = "#chan2";
 
 static const std::string& validPassMsg = std::string("PASS ") + DEFAULT_PASSWORD + "\r\n";
 
-static const std::string& validUserMsg             = "USER roro 0 * :Ronnie Reagan\r\n";
-static const std::string& validUser2Msg            = "USER toto 0 * :Tony Parker\r\n";
-static const std::string& validUserOpMsg           = "USER op 0 * :Channel_Op\r\n";
-static const std::string& validUserOp2Msg          = "USER op2 0 * :Channel_Op2\r\n";
-static const std::string& invalidUserNoUsernameMsg = "USER 0 * :Channel_Op2\r\n";
+static const std::string& validUserMsg             = "USER roro 0 * :realroro\r\n";
+static const std::string& validUser2Msg            = "USER toto 0 * :realtoto\r\n";
+static const std::string& validUserOpMsg           = "USER op 0 * :realop\r\n";
+static const std::string& validUserOp2Msg          = "USER op2 0 * :realop2\r\n";
+static const std::string& invalidUserNoUsernameMsg = "USER 0 * :realop2\r\n";
 
 static const std::string& validNickMsg             = "NICK roro\r\n";
 static const std::string& validNick2Msg            = "NICK toto\r\n";
@@ -120,8 +141,8 @@ static const std::string& badPatternWho  = "WHO *x*\r\n";
 static const std::string& allUserWho     = "WHO *\r\n";
 
 static const std::string& noparamsPrivmsg        = "PRIVMSG\r\n";
-static const std::string& invalidnicknamePrivmsg = "PRIVMSG nonexistant :message\r\n";
-static const std::string& toomanytargetPrivmsg   = "PRIVMSG roro,toto,charlie,#chan,doc,#leo :message\r\n";
+static const std::string& invalidnicknamePrivmsg = "PRIVMSG nonexistent :message\r\n";
+static const std::string& toomanytargetPrivmsg   = "PRIVMSG roro,toto,riri,titi,rara,tata :message\r\n";
 static const std::string& notextPrivmsg          = "PRIVMSG #chan\r\n";
 
 static const std::string& noparamsTopic				= "TOPIC\r\n";
@@ -138,6 +159,8 @@ void join_assert(const TcpSocket& so);
 // with receive
 void send_pass_nick(const TcpSocket& so);
 void authenticate(const TcpSocket& so);
+void authenticate(const TcpSocket& so, const std::string& nick);
+void authenticate_and_join(const TcpSocket& so, const std::string& nick, const std::string& chan);
 void authenticate_and_join(const TcpSocket& so);
 void authenticate_and_join_second_user(const TcpSocket& so);
 void authenticate_and_join_op2(const TcpSocket& so);
@@ -146,6 +169,13 @@ void make_op(const TcpSocket& so);
 void make_two_ops(const TcpSocket& so, const TcpSocket& so2);
 void skip_lines(const TcpSocket& so, int nb);
 
-// simple
+void test_join(Server& s, t_results* r);
+void test_kick(Server& s, t_results* r);
+void test_mode(Server& s, t_results* r);
+void test_nick(Server& s, t_results* r);
+void test_who(Server& s, t_results* r);
+void test_privmsg(Server& s, t_results* r);
+void test_ping(Server& s, t_results* r);
+void test_topic(Server& s, t_results* r);
 
 #endif

@@ -1,13 +1,14 @@
-#include "LogManager.hpp"
 #include "Motd.hpp"
+
+#include "LogManager.hpp"
 #include "ReplyHandler.hpp"
 #include "consts.hpp"
 
-#include <ostream>
-#include <fstream>
 #include <ctime>
-#include <sstream>
+#include <fstream>
 #include <iomanip>
+#include <ostream>
+#include <sstream>
 
 Motd::Motd() {}
 Motd::~Motd() {}
@@ -39,16 +40,16 @@ void Motd::execute(Server& server, Client& client)
     inputFile.open(filename);
     if (inputFile.is_open()) {
         std::string nick = client.get_nickname();
-        rh.process_code_response(client, RPL_MOTDSTART, nick + RPL_MOTDSTART_MSG);
+        rh.process_response(client, RPL_MOTDSTART, nick);
         while (getline(inputFile, line)) {
             newline = _str_replace(line, "$(servername)", server.get_name());
             newline = _str_replace(newline, "$(nick)", nick);
             newline = _str_replace(newline, "$(date)", _get_current_time());
             newline.append("\r\n");
-            rh.process_code_response(client, RPL_MOTD, nick + " :- " + newline.c_str());
+            rh.process_response(client, RPL_MOTD, nick + " :- " + newline.c_str());
             newline.clear();
         }
-        rh.process_code_response(client, RPL_ENDOFMOTD, nick + RPL_ENDOFMOTD_MSG);
+        rh.process_response(client, RPL_ENDOFMOTD, nick);
     }
     inputFile.close();
 }

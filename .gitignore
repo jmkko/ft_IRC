@@ -1,3 +1,5 @@
+logs/*
+
 # analysis
 .cache
 compile_commands.json

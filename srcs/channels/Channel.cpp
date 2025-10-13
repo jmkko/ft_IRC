@@ -1,4 +1,5 @@
 #include "Channel.hpp"
+
 #include "Client.hpp"
 #include "Config.hpp"
 #include "ICommand.hpp"
@@ -68,7 +69,7 @@ Channel& Channel::operator=(const Channel& other)
     if (this != &other) {
         _name      = other._name;
         _topic     = other._topic;
-        _key	   = other._key;
+        _key       = other._key;
         _userLimit = other._userLimit;
         _members   = other._members;
         _operators = other._operators;
@@ -95,15 +96,17 @@ std::ostream&	operator<<(std::ostream& os, const Channel& c)
  *		🛠️ FUNCTIONS											*
  *************************************************************/
 
-void Channel::broadcast(Server& server, ReplyCode replyCode, const std::string& message, Client* sender) const
+void Channel::broadcast(
+    Server& server, ReplyCode replyCode, const std::string& params, Client* sender, const std::string& trailing) const
 {
     ReplyHandler& rh = ReplyHandler::get_instance(&server);
+    LOG_DV_CMD(_members.size());
     for (std::set<Client*>::iterator it = _members.begin(); it != _members.end(); ++it) {
         Client* recipient = *it;
-        if (sender && recipient == sender)
-           continue;
+        // if (sender && recipient == sender)
+        //    continue;
         LOG_DT_SERVER(recipient->get_nickname() + " received a broadcast from " + get_name(), "");
-        rh.process_response(*recipient, replyCode, message, sender);
+        rh.process_response(*recipient, replyCode, params, sender, trailing);
     }
 }
 
@@ -135,22 +138,23 @@ ReplyCode Channel::set_name(const std::string& name)
         _name = name;
     else
         return ERR_BADCHANMASK;
-    return RPL_SUCCESS;
+    return CORRECT_FORMAT;
 }
 
 ReplyCode Channel::set_topic(Client& client, const std::string& topic)
 {
+    LOG_DV_CMD(topic);
     if ((_mode & CHANMODE_TOPIC && is_operator(client)) || (!(_mode & CHANMODE_TOPIC)))
         _topic = topic;
     else
         return ERR_CHANOPRIVSNEEDED;
-    return RPL_SUCCESS;
+    return CORRECT_FORMAT;
 }
 
 ReplyCode Channel::set_key(const std::string& key)
 {
     _key = key;
-    return RPL_SUCCESS;
+    return CORRECT_FORMAT;
 }
 
 void Channel::set_user_limit(int limit)
@@ -168,7 +172,7 @@ void Channel::invite_client(Client& client) { _invites.insert(&client); }
 ReplyCode Channel::add_member(Client& client)
 {
     if (is_member(client))
-        return RPL_SUCCESS;
+        return CORRECT_FORMAT;
     if (_userLimit != NO_LIMIT && _members.size() >= static_cast<size_t>(_userLimit))
         return ERR_CHANNELISFULL;
     if (is_invite_only() && !is_invited(client)) {
@@ -181,7 +185,7 @@ ReplyCode Channel::add_member(Client& client)
         return ERR_BANNEDFROMCHAN;
     _members.insert(&client);
     client.add_joined_channel(*this);
-    return RPL_SUCCESS;
+    return CORRECT_FORMAT;
 }
 
 void Channel::remove_member(Client& client) { _members.erase(&client); }
@@ -192,7 +196,7 @@ ReplyCode Channel::ban_member(Client& client)
 {
     if (is_member(client)) {
         _banList.insert(&client);
-        return RPL_SUCCESS;
+        return CORRECT_FORMAT;
     }
     return ERR_USERNOTINCHANNEL;
 }
@@ -203,7 +207,7 @@ ReplyCode Channel::make_operator(Client& client)
 {
     if (is_member(client)) {
         _operators.insert(&client);
-        return RPL_SUCCESS;
+        return CORRECT_FORMAT;
     }
     return ERR_USERNOTINCHANNEL;
 }
@@ -227,8 +231,10 @@ std::vector<std::string> Channel::get_members_list() const
         Client* c = *it;
         if (is_operator(*c))
             users.append("@");
-        users.append(c->get_nickname() + " ");
+        users.append(c->get_nickname());
         ++it;
+        if (it != _members.end())
+            users.append(" ");
         ++count;
         if (count % nbUserPerLine == 0) {
             list.push_back(users);

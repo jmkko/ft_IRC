@@ -10,8 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "LogManager.hpp"
 #include "TcpSocket.hpp"
+
+#include "LogManager.hpp"
 #include "utils.hpp"
 
 #include <arpa/inet.h> // hton*, ntoh*, inet_addr

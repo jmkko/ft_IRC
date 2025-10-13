@@ -414,7 +414,7 @@ std::vector<Client*> Server::find_clients_by_pattern(const std::string& pattern)
 
 Channel* Server::find_channel_by_name(const std::string& name)
 {
-	std::map<std::string, Channel*>::iterator chan = channels.find(name);
+    std::map<std::string, Channel*>::iterator chan = channels.find(name);
     if (chan != channels.end()) {
         return chan->second;
     }

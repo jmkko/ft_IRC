@@ -1,3 +1,0 @@
-[2025-10-10 16:03:56] [INFO ] CONNECTION Logger initialized - file: logs/CONNECTION.log
-[2025-10-10 16:03:56] [INFO ] New connection accepted on socket 8 => Client[socket_fd = 8 address = 127.0.0.1 status=unauthenticated nick= to receive=0 to send=0 joined channels=0]
-[2025-10-10 16:03:56] [INFO ] first joined channel: #chanone

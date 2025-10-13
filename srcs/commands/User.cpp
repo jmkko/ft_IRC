@@ -29,10 +29,11 @@ void User::execute(Server& server, Client& client)
 {
     (void)server;
     client.set_user_name(_username);
-    client.set_real_name(_realname);
+    client.set_real_name(_realname.substr(1));
+    LOG_DV_CMD(_realname);
     ReplyHandler& rh = ReplyHandler::get_instance(&server);
     if (!client.get_nickname().empty() && client.get_status() == AUTHENTICATED) {
-		client.set_status(REGISTERED);
+        client.set_status(REGISTERED);
         rh.process_response(client, RPL_WELCOME);
     } else {
         LOG_CMD.info("202 RPL_USER");
@@ -75,5 +76,5 @@ ReplyCode User::check_args(Server& server, Client& client, std::string& params)
         return (ERR_ALREADYREGISTRED);
     }
     params = username + " " + realname;
-    return (RPL_SUCCESS);
+    return (CORRECT_FORMAT);
 }

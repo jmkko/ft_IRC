@@ -52,7 +52,7 @@ class Channel
     size_t                   get_nb_members() const;
     std::set<Client*>        get_members() const;
 
-    void        broadcast(Server& server, ReplyCode replyCode, const std::string& message, Client* sender = NULL) const;
+    void        broadcast(Server& server, ReplyCode replyCode, const std::string& params, Client* sender = NULL, const std::string& trailing = "") const;
     static bool is_valid_channel_name(const std::string& name);
 
   private:
