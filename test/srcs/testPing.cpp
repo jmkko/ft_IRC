@@ -32,7 +32,7 @@ void valid_ping_should_pong(Server& s)
         // test
         std::string reply = recv_lines(so);
         AssertReply ar(reply);
-        ar.matches_entirely(":" + ircConfig.get_name() + " PONG :" + token);
+        ar.matches_entirely(":" + ircConfigTest.get_name() + " PONG :" + token);
 
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());

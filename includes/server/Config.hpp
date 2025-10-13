@@ -45,6 +45,7 @@ class Config
 	void _set_nickname_max_len(std::string& value);
 };
 extern const Config ircConfig;
+extern const Config ircConfigTest;
 extern const Config ircCodes;
 
 #endif

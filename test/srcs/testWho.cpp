@@ -30,7 +30,7 @@
  */
 static std::string build_who_params(const std::string& foundNick, const std::string& chan, const std::string& flag)
 {
-    return chan + " " + foundNick + " localhost " + ircConfig.get_name() + " " + foundNick + " " + flag;
+    return chan + " " + foundNick + " localhost " + ircConfigTest.get_name() + " " + foundNick + " " + flag;
 }
 
 /*************************************************************

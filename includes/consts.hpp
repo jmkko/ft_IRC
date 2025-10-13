@@ -6,7 +6,7 @@
 /*   By: fpetit <fpetit@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 23:38:52 by npolack           #+#    #+#             */
-/*   Updated: 2025/10/08 14:16:13 by fpetit           ###   ########.fr       */
+/*   Updated: 2025/10/13 23:25:51 by fpetit           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 #define PERM_777                  777
 #define EPOCH_TIME_START          1900
 #define NO_LIMIT                  (-1)
-#define SERVER_NAME               "hazardous.irc"
+#define SERVER_NAME               "hazardous.irc.serv"
 #define SERVER_CONF_FILE          "irc.conf"
 #define SERVER_CONF_FILE_FOR_TEST "../irc.conf"
 #define CODES_CONF_FILE           "codes.conf"

@@ -9,6 +9,7 @@
 
 const Config ircConfig(SERVER_CONF_FILE);
 const Config ircCodes(CODES_CONF_FILE);
+const Config ircConfigTest(SERVER_CONF_FILE_FOR_TEST);
 
 Config::Config() :
     _name(SERVER_NAME),

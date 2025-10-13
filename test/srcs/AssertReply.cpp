@@ -224,7 +224,7 @@ AssertReply& AssertReply::is_empty()
 AssertReply&
 AssertReply::is_formatted(ReplyCode code, const std::string& clientNick, const std::string& params, const std::string& trailing)
 {
-    std::string expectedStart = std::string(":" + ircConfig.get_name()) + " " + utils::code_to_str(code) + " " + clientNick + " ";
+    std::string expectedStart = std::string(":" + ircConfigTest.get_name()) + " " + utils::code_to_str(code) + " " + clientNick + " ";
     if (params.empty() && trailing.empty())
         return this->has_code(code).matches_entirely(expectedStart + ircCodes.trailing(code));
     else if (!params.empty() && trailing.empty())
@@ -238,7 +238,7 @@ AssertReply::is_formatted(ReplyCode code, const std::string& clientNick, const s
 AssertReply&
 AssertReply::is_formatted_transfer(const std::string& clientNick, const std::string& params, const std::string& trailing)
 {
-    std::string expectedStart = std::string(":" + clientNick + "!" + clientNick + "@" + ircConfig.get_name()) + " ";
+    std::string expectedStart = std::string(":" + clientNick + "!" + clientNick + "@" + ircConfigTest.get_name()) + " ";
     if (trailing.empty())
         return this->matches_entirely(expectedStart + params);
     else

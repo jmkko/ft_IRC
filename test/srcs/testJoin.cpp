@@ -201,10 +201,9 @@ void mode_plusi_with_invite_should_send_rpl_and_broadcast(Server& s)
         // test 1 new member gets replies
         send_line(so, validJoinMsg);
         std::string reply = recv_lines(so);
-        LOG_E_CMD("rpl for +i test", reply);
         AssertReply ar(reply);
         ar.is_formatted(RPL_NOTOPIC, userNick, "#chan");
-        ar.is_formatted(RPL_NAMREPLY, userNick, "= #chan", "@" + opNick + " " + userNick);
+        ar.is_formatted(RPL_NAMREPLY, userNick, "= #chan", userNick + " @" + opNick);
         ar.is_formatted(RPL_ENDOFNAMES, userNick, "#chan");
 
         // test 2 other members get broadcast message
@@ -396,10 +395,7 @@ void test_join(Server& s, t_results* r)
     run_test(r, [&] { mode_plusk_no_key_should_err(s); }, "+k <key>");
     run_test(r, [&] { mode_plusk_wrong_yek_should_err(s); }, "A user try to join with wrong yek");
     run_test(r, [&] { mode_plusk_wrong_keyy_should_err(s); }, "A user try to join with wrong keyy");
-    run_test(
-        r,
-        [&] { mode_plusi_with_invite_should_send_rpl_and_broadcast(s); },
-        "+i after being invited.");
+    run_test(r, [&] { mode_plusi_with_invite_should_send_rpl_and_broadcast(s); }, "+i after being invited.");
     run_test(r, [&] { mode_plusl_should_block_join_if_max_reached(s); }, "+l <limit>");
     run_test(r, [&] { mode_plusl_zeroarg_should_block_join(s); }, "+l 0");
     run_test(r, [&] { mode_minusk_should_lift_block(s); }, "-k <key>");
