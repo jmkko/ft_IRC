@@ -1,8 +1,7 @@
-#include "Nick.hpp"
-
 #include "Client.hpp"
 #include "Config.hpp"
 #include "LogManager.hpp"
+#include "Nick.hpp"
 #include "ReplyHandler.hpp"
 #include "Server.hpp"
 #include "reply_codes.hpp"
@@ -25,13 +24,20 @@ void Nick::execute(Server& server, Client& client)
     if (oldNickname.empty() && !client.get_user_name().empty()) {
         LOG_dt_CMD("Nick after USER");
         client.set_status(REGISTERED);
-        rh.process_response(client, RPL_WELCOME);
+        rh.process_response(client,
+                            RPL_WELCOME,
+                            "",
+                            NULL,
+                            ircCodes.trailing(RPL_WELCOME) + " " + _nickname + "!" + client.get_user_name() + "@localhost");
+        rh.process_response(client, RPL_YOURHOST, "", NULL, ircCodes.trailing(RPL_YOURHOST) + " " + server.get_name());
+        rh.process_response(client, RPL_CREATED);
+        rh.process_response(client, RPL_MYINFO, "", NULL, server.get_name() + " 1.0  0 0");
         // normal success behavior
     } else if (!oldNickname.empty() && !client.get_user_name().empty() && client.is_registered()) {
         // send the message to every user in every channel that this client takes part in
         // NOT WORKING (client._joinedChannel is empty)
         client.broadcast_to_all_channels(server, TRANSFER_NICK, _nickname); // ! \\ ;
-        rh.process_response(client, TRANSFER_NICK, _nickname);
+        // rh.process_response(client, TRANSFER_NICK, _nickname);
     }
     client.set_nickname(_nickname);
 }

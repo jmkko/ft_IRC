@@ -1,6 +1,5 @@
-#include "Client.hpp"
-
 #include "Channel.hpp"
+#include "Client.hpp"
 #include "Config.hpp"
 #include "LogManager.hpp"
 #include "consts.hpp"
@@ -76,9 +75,9 @@ std::string&        Client::get_read_buffer() { return _readBuffer; }
 
 bool               Client::has_data_to_send() const { return _sendBuffer.empty(); }
 
-bool               Client::is_registered() const { return _status == REGISTERED; }
+bool               Client::is_registered() const { return _status & REGISTERED; }
 
-bool               Client::is_authenticated () const { return _status == AUTHENTICATED; }
+bool               Client::is_authenticated () const { return _status & AUTHENTICATED; }
 
 int                Client::get_nb_joined_channels() const { return static_cast<int>(_joinedChannels.size()); }
 
@@ -88,7 +87,7 @@ void               Client::set_user_name(const std::string& userName) { _userNam
 
 void               Client::set_real_name(const std::string& realName) { _realName = realName; }
 
-void               Client::set_status(ClientStatus status) { _status = status; }
+void               Client::set_status(ClientStatus status) { _status = _status | status; }
 
 void               Client::add_joined_channel(Channel& channel) { _joinedChannels[channel.get_name()] = &channel; }
 

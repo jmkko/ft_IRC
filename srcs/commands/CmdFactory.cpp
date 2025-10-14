@@ -1,6 +1,5 @@
-#include "CmdFactory.hpp"
-
 #include "Client.hpp"
+#include "CmdFactory.hpp"
 #include "ICommand.hpp"
 #include "Invite.hpp"
 #include "Join.hpp"
@@ -45,7 +44,7 @@ bool CmdFactory::check_in(Client& client, std::string& command)
 {
     if (!client.is_authenticated() && command != "PASS" && command != "QUIT")
         return false;
-    if (client.is_authenticated() && !client.is_registered() && command != "USER" && command != "NICK")
+    if (!client.is_registered() && command != "USER" && command != "NICK" && command != "PASS" && command != "QUIT")
         return false;
     return true;
 }
