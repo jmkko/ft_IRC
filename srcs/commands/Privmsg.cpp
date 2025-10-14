@@ -5,86 +5,11 @@
 #include "reply_codes.hpp"
 #include "utils.hpp"
 
-// Default constructor
-Privmsg::Privmsg(void) : _msg(""), _chans(0), _dests(0) {}
-Privmsg::Privmsg(const std::string& msg) : _msg(msg), _chans(0), _dests(0) {}
-Privmsg::Privmsg(const Privmsg& other) : _msg(other._msg), _chans(other._chans), _dests(other._dests) {}
+/************************************************************
+ *		📁 CLASS METHODS									*
+ ************************************************************/
 
-// Assignment operator overload
-Privmsg& Privmsg::operator=(const Privmsg& other)
-{
-    if (this != &other) {
-        _msg   = other._msg;
-        _chans = other._chans;
-        _dests = other._dests;
-    }
-    return (*this);
-}
-
-// Destructor
-Privmsg::~Privmsg(void) {}
-
-void Privmsg::execute(Server& server, Client& client)
-{
-    ReplyHandler rh = ReplyHandler::get_instance(&server);
-
-    LOG_DV_CMD(_msg);
-    for (std::vector<Channel*>::iterator it = _chans.begin(); it != _chans.end(); it++) {
-        if ((*it)->is_member(client)) {
-			(*it)->broadcast(server, TRANSFER_PRIVMSG, (*it)->get_name(), &client, _msg);
-		} else {
-			rh.process_response(client, ERR_NOTONCHANNEL, (*it)->get_name());
-		}
-    }
-    for (std::vector<Client*>::iterator it = _dests.begin(); it != _dests.end(); it++) {
-        rh.process_response(*(*it), TRANSFER_PRIVMSG, (*it)->get_nickname(), &client, _msg);
-    }
-}
-
-void Privmsg::add_channel(Channel* chan)
-{
-    if (!chan) {
-        return;
-    }
-    _chans.push_back(chan);
-};
-void Privmsg::add_client(Client* client)
-{
-    if (!client) {
-        return;
-    }
-    _dests.push_back(client);
-};
-void Privmsg::build_args(Server& server, std::string& params)
-{
-    std::istringstream                        iss(params);
-    std::string                               target;
-    Client*                                   client = NULL;
-    std::map<std::string, Channel*>::iterator chan;
-    while (iss >> target && target[0] != ':') {
-        chan = server.channels.find(target);
-        if (chan != server.channels.end()) {
-            add_channel(chan->second);
-        }
-        client = server.find_client_by_nickname(target);
-        if (client) {
-            add_client(server.find_client_by_nickname(target));
-        }
-        if (chan == server.channels.end() && !client) {
-            LOG_w_CMD(target + " is not a channel nor a client");
-        }
-    }
-
-    std::string::size_type pos = params.find(" :");
-    if (pos != std::string::npos) {
-        _msg = params.substr(pos + 2);
-    }
-    else {
-        _msg = "";
-    }
-}
-
-/**
+ /**
  * @brief [TODO:check arguments: TARGET_LIMIT include invalid targets. targets should be separated by a coma]
  *
  * @param server [TODO:parameter]
@@ -132,3 +57,78 @@ ReplyCode Privmsg::check_args(Server& server, Client& client, std::string& param
     params = targetList + msg;
     return CORRECT_FORMAT;
 }
+
+/************************************************************
+ *		🥚 CONSTRUCTORS & DESTRUCTOR						*
+ ************************************************************/
+
+Privmsg::Privmsg(const std::string& params) : _params(params), _chans(0), _dests(0) {}
+
+Privmsg::~Privmsg(void) {}
+
+/*************************************************************
+ *		🛠️ FUNCTIONS											*
+ *************************************************************/
+
+void Privmsg::execute(Server& server, Client& client)
+{
+    _build_args(server, _params);
+
+    ReplyHandler rh = ReplyHandler::get_instance(&server);
+
+    LOG_DV_CMD(_msg);
+    for (std::vector<Channel*>::iterator it = _chans.begin(); it != _chans.end(); it++) {
+        if ((*it)->is_member(client)) {
+			(*it)->broadcast(server, TRANSFER_PRIVMSG, (*it)->get_name(), &client, _msg);
+		} else {
+			rh.process_response(client, ERR_NOTONCHANNEL, (*it)->get_name());
+		}
+    }
+    for (std::vector<Client*>::iterator it = _dests.begin(); it != _dests.end(); it++) {
+        rh.process_response(*(*it), TRANSFER_PRIVMSG, (*it)->get_nickname(), &client, _msg);
+    }
+}
+
+void Privmsg::_add_channel(Channel* chan)
+{
+    if (!chan) {
+        return;
+    }
+    _chans.push_back(chan);
+};
+void Privmsg::_add_client(Client* client)
+{
+    if (!client) {
+        return;
+    }
+    _dests.push_back(client);
+};
+void Privmsg::_build_args(Server& server, std::string& params)
+{
+    std::istringstream                        iss(params);
+    std::string                               target;
+    Client*                                   client = NULL;
+    std::map<std::string, Channel*>::iterator chan;
+    while (iss >> target && target[0] != ':') {
+        chan = server.channels.find(target);
+        if (chan != server.channels.end()) {
+            _add_channel(chan->second);
+        }
+        client = server.find_client_by_nickname(target);
+        if (client) {
+            _add_client(server.find_client_by_nickname(target));
+        }
+        if (chan == server.channels.end() && !client) {
+            LOG_w_CMD(target + " is not a channel nor a client");
+        }
+    }
+
+    std::string::size_type pos = params.find(" :");
+    if (pos != std::string::npos) {
+        _msg = params.substr(pos + 2);
+    }
+    else {
+        _msg = "";
+    }
+}
+

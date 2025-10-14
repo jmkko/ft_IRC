@@ -271,11 +271,10 @@ ICommand* CmdFactory::who_cmd(Server& server, Client& client, std::string& param
 
 ICommand* CmdFactory::privmsg_cmd(Server& server, Client& client, std::string& params)
 {
-    // LOG_CMD.debug("PIVMSG params: " + params);
     ReplyHandler rh   = ReplyHandler::get_instance(&server);
     ReplyCode    code = Privmsg::check_args(server, client, params);
     if (code == ERR_NOTEXTTOSEND) {
-        rh.process_response(client, code, "");
+        rh.process_response(client, code);
         return (NULL);
     } else if (code == ERR_NEEDMOREPARAMS) {
         rh.process_response(client, code, "PRIVMSG");
@@ -284,27 +283,7 @@ ICommand* CmdFactory::privmsg_cmd(Server& server, Client& client, std::string& p
         rh.process_response(client, code, params, NULL);
         return (NULL);
     }
-
-
-
     Privmsg* privmsg = new Privmsg(params);
-
-    // std::string                               word;
-    // std::istringstream                        iss(params);
-    // Client*                                   dest = NULL;
-    // std::map<std::string, Channel*>::iterator chan;
-    privmsg->build_args(server, params);
-    // while (iss >> word) {
-    //     chan = server.channels.find(word);
-    //     if (chan != server.channels.end()) {
-    //         privmsg->add_channel(chan->second);
-    //     }
-    //     dest = server.find_client_by_nickname(word);
-    //     if (dest) {
-    //         privmsg->add_client(dest);
-    //     }
-    // }
-
     return privmsg;
 };
 
