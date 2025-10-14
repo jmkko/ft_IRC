@@ -22,6 +22,7 @@
 
 class Client;
 class Server;
+class ReplyHandler;
 
 class Join : public ICommand
 {
@@ -33,6 +34,9 @@ class Join : public ICommand
     static ReplyCode check_args(Server& s, Client& c, std::vector<std::string>& params);
     static ReplyCode check_args(Server& s, Client& c, std::string& params);
 
+	void send_list_of_names(ReplyHandler& rh, Client& client, Channel& channel);
+	void display_topic(ReplyHandler& rh, Client& client, Channel& channel);
+	
   private:
 	std::map<std::string, std::string> 	_chans;
 	std::string 			_channelkey;

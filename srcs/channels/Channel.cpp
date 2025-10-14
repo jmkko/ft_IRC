@@ -58,6 +58,9 @@ bool Channel::is_valid_channel_key(const std::string& key)
 Channel::Channel(const std::string& name, const std::string& key) :
     _topic(""), _key(key), _mode(CHANMODE_INIT), _userLimit(NO_LIMIT), _members(), _invites(), _operators()
 {
+	if (!key.empty()) {
+		this->add_mode(CHANMODE_KEY);
+	}
     set_name(name);
 }
 
