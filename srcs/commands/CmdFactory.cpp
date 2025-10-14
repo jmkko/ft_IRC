@@ -21,6 +21,7 @@
 #include "consts.hpp"
 #include "reply_codes.hpp"
 #include "utils.hpp"
+#include "colors.hpp"
 
 #include <iostream>
 #include <sstream>
@@ -88,7 +89,7 @@ ICommand* CmdFactory::make_command(Server& server, Client& client, std::string& 
     iss >> commandLine;
     for (size_t i = 0; i < NB_AVAILABLE_CMD; i++) {
         if (commandLine == available[i]) {
-            LOG_d_CMD(commandLine);
+            LOG_d_CMD(GREEN + commandLine + NC);
             if (!check_in(client, commandLine)) {
                 rh.process_response(client, ERR_NOTREGISTERED, commandLine);
                 return NULL;
@@ -270,7 +271,7 @@ ICommand* CmdFactory::who_cmd(Server& server, Client& client, std::string& param
 
 ICommand* CmdFactory::privmsg_cmd(Server& server, Client& client, std::string& params)
 {
-    LOG_CMD.debug("PIVMSG params: " + params);
+    // LOG_CMD.debug("PIVMSG params: " + params);
     ReplyHandler rh   = ReplyHandler::get_instance(&server);
     ReplyCode    code = Privmsg::check_args(server, client, params);
     if (code == ERR_NOTEXTTOSEND) {
@@ -284,13 +285,9 @@ ICommand* CmdFactory::privmsg_cmd(Server& server, Client& client, std::string& p
         return (NULL);
     }
 
-    std::string            msg;
-    std::string::size_type pos = params.find(" :");
-    if (pos != std::string::npos) {
-        msg = params.substr(pos);
-    }
 
-    Privmsg* privmsg = new Privmsg(msg);
+
+    Privmsg* privmsg = new Privmsg(params);
 
     // std::string                               word;
     // std::istringstream                        iss(params);

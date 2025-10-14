@@ -28,15 +28,16 @@ void Privmsg::execute(Server& server, Client& client)
 {
     ReplyHandler rh = ReplyHandler::get_instance(&server);
 
+    LOG_DV_CMD(_msg);
     for (std::vector<Channel*>::iterator it = _chans.begin(); it != _chans.end(); it++) {
         if ((*it)->is_member(client)) {
-			(*it)->broadcast(server, TRANSFER_PRIVMSG, (*it)->get_name() + _msg, &client);
+			(*it)->broadcast(server, TRANSFER_PRIVMSG, (*it)->get_name(), &client, _msg);
 		} else {
-			rh.process_response(client, ERR_NOTONCHANNEL, "");
+			rh.process_response(client, ERR_NOTONCHANNEL, (*it)->get_name());
 		}
     }
     for (std::vector<Client*>::iterator it = _dests.begin(); it != _dests.end(); it++) {
-        rh.process_response(*(*it), TRANSFER_PRIVMSG, (*it)->get_nickname() + _msg, &client);
+        rh.process_response(*(*it), TRANSFER_PRIVMSG, (*it)->get_nickname(), &client, _msg);
     }
 }
 
@@ -60,7 +61,7 @@ void Privmsg::build_args(Server& server, std::string& params)
     std::string                               target;
     Client*                                   client = NULL;
     std::map<std::string, Channel*>::iterator chan;
-    while (iss >> target) {
+    while (iss >> target && target[0] != ':') {
         chan = server.channels.find(target);
         if (chan != server.channels.end()) {
             add_channel(chan->second);
@@ -68,9 +69,18 @@ void Privmsg::build_args(Server& server, std::string& params)
         client = server.find_client_by_nickname(target);
         if (client) {
             add_client(server.find_client_by_nickname(target));
-        } else {
-            LOG_CMD.warning(target + " is not a channel nor a client");
         }
+        if (chan == server.channels.end() && !client) {
+            LOG_w_CMD(target + " is not a channel nor a client");
+        }
+    }
+
+    std::string::size_type pos = params.find(" :");
+    if (pos != std::string::npos) {
+        _msg = params.substr(pos + 2);
+    }
+    else {
+        _msg = "";
     }
 }
 
@@ -86,10 +96,9 @@ ReplyCode Privmsg::check_args(Server& server, Client& client, std::string& param
 {
 
     std::string::size_type pos = params.find(" :");
-
 	if (params.empty())
 		return (ERR_NEEDMOREPARAMS);
-	if (pos == std::string::npos || pos + 2 > params.size())
+	if (pos == std::string::npos || pos + 2 >= params.size())
 		return ERR_NOTEXTTOSEND;
 
     ReplyHandler rh          = ReplyHandler::get_instance(&server);

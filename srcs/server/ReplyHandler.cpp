@@ -101,7 +101,7 @@ generate_code_response(Client& client, ReplyCode code, const std::string& parame
         return (numericPrefix + parameters + " :" + trailing);
 }
 
-static std::string generate_non_numerical_response(Client& client, ReplyCode code, const std::string& parameters, Client* sender)
+static std::string generate_non_numerical_response(Client& client, ReplyCode code, const std::string& parameters, Client* sender, const std::string& trailing)
 {
     if (!sender)
         sender = &client;
@@ -112,7 +112,7 @@ static std::string generate_non_numerical_response(Client& client, ReplyCode cod
     case TRANSFER_JOIN:
         return (get_user_id_of(*sender) + "JOIN " + parameters);
     case TRANSFER_PRIVMSG:
-        return (get_user_id_of(*sender) + "PRIVMSG " + parameters);
+        return (get_user_id_of(*sender) + "PRIVMSG " + parameters + " :" + trailing);
     case TRANSFER_KICK:
         return (get_user_id_of(*sender) + "KICK " + parameters);
     case TRANSFER_INVITE:
@@ -141,7 +141,7 @@ int ReplyHandler::process_response(
     if (is_numerical_response(code)) {
         response = generate_code_response(client, code, parameters, trailing);
     } else
-        response = generate_non_numerical_response(client, code, parameters, sender);
+        response = generate_non_numerical_response(client, code, parameters, sender, trailing);
 
     if (!response.empty()) {
         LOG_CMD.sending(__FILE_NAME__, __FUNCTION__, "\n\t\t\t\t\t\t\t\t\t\t\t   " + response, &client);

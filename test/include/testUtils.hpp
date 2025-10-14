@@ -141,10 +141,18 @@ static const std::string& badUserWho     = "WHO resu\r\n";
 static const std::string& badPatternWho  = "WHO *x*\r\n";
 static const std::string& allUserWho     = "WHO *\r\n";
 
-static const std::string& noparamsPrivmsg        = "PRIVMSG\r\n";
-static const std::string& invalidnicknamePrivmsg = "PRIVMSG nonexistent :message\r\n";
-static const std::string& toomanytargetPrivmsg   = "PRIVMSG roro,toto,riri,titi,rara,tata :message\r\n";
-static const std::string& notextPrivmsg          = "PRIVMSG #chan\r\n";
+static const std::string& validPrivmsgSingleUser        = "PRIVMSG roro :hi\r\n";
+static const std::string& validPrivmsgSingleChan        = "PRIVMSG #chan :hi\r\n";
+static const std::string& validPrivMsgTwoChans          = "PRIVMSG #chan,#chan2 :hi\r\n";
+static const std::string& validPrivmsgChanUser          = "PRIVMSG roro,#chan :hi\r\n";
+static const std::string& validPrivmsgNonExistentUser   = "PRIVMSG nonexistent :message\r\n";
+static const std::string& validPrivMsgToomanytarget     = "PRIVMSG roro,toto,riri,titi,rara,tata :message\r\n";
+static const std::string& invalidPrivmsgNoParams        = "PRIVMSG\r\n";
+static const std::string& invalidPrivmsgNoText          = "PRIVMSG #chan\r\n";
+static const std::string& invalidPrivmsgEmptyTrailing   = "PRIVMSG #chan :\r\n";
+static const std::string& validPrivmsgBlank             = "PRIVMSG #chan : \r\n";
+static const std::string& invalidPrivMsgSpaceAfterComma = "PRIVMSG roro, toto :hi\r\n";
+static const std::string& invalidPrivMsgInArg           = "PRIVMSG roro, toto hi\r\n";
 
 static const std::string& noparamsTopic				= "TOPIC\r\n";
 static const std::string& invalidChannelTopic		= "TOPIC $notvalid\r\n";
