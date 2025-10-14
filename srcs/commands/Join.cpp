@@ -1,5 +1,6 @@
-#include "Channel.hpp"
 #include "Join.hpp"
+
+#include "Channel.hpp"
 #include "LogManager.hpp"
 #include "ReplyHandler.hpp"
 #include "Server.hpp"
@@ -21,6 +22,28 @@ Join& Join::operator=(const Join& other)
 }
 
 Join::Join(const std::vector<std::string>& channelsLst) : _channelsLst(channelsLst) {}
+Join::Join(const std::string& params)
+{
+    std::istringstream iss(params);
+	std::string		channels;
+	std::string		keys;
+
+
+    iss >> channels;
+    iss >> keys;
+
+    std::string        currentChannel, currentKey;
+    std::istringstream issChannels(channels), issKeys(keys);
+    while (std::getline(issChannels, currentChannel, ',')) {
+        std::getline(issKeys, currentKey, ',');
+        if (!currentChannel.empty() && Channel::is_valid_channel_name(currentChannel)) {
+			_chans[currentChannel] = currentKey;
+			LOG_CMD.debug("JOIN construcotr: created channel " + currentChannel + " key: " + currentKey);
+        }
+		currentChannel.clear();
+        currentKey.clear();
+    }
+}
 
 /**
  * @brief check if there is no params for command Join, and parse the params
@@ -31,6 +54,44 @@ Join::Join(const std::vector<std::string>& channelsLst) : _channelsLst(channelsL
  * @param params
  * @return vector of string formarted
  */
+ReplyCode Join::check_args(Server& server, Client& client, std::string& params)
+{
+    ReplyHandler       rh = ReplyHandler::get_instance(&server);
+    std::istringstream iss(params);
+    std::string        channels;
+    std::string        keys;
+    std::string        channelsNames;
+    std::string        channelsKeys;
+
+    iss >> channels;
+    iss >> keys;
+    if (channels.empty()) {
+        return (ERR_NEEDMOREPARAMS);
+    }
+
+    std::string        currentChannel, currentKey;
+    std::istringstream issChannels(channels), issKeys(keys);
+    while (std::getline(issChannels, currentChannel, ',')) {
+        std::getline(issKeys, currentKey, ',');
+        if (currentChannel.empty() || !Channel::is_valid_channel_name(currentChannel)) {
+            LOG_CMD.debug("Join::chek_args() --> no such channel: ");
+            rh.process_response(client, ERR_NOSUCHCHANNEL, client.get_nickname());
+        } else if (Channel::is_valid_channel_key(currentKey)) {
+            channelsNames += currentChannel + ",";
+            channelsKeys += currentKey + ",";
+        } else {
+            rh.process_response(client, ERR_BADCHANNELKEY, client.get_nickname() + " " + currentChannel);
+        }
+        currentChannel.clear();
+        currentKey.clear();
+    }
+
+    if (channelsNames.empty())
+        return (PROCESSED_ERROR);
+    params = channelsNames + " " + channelsKeys;
+    return (CORRECT_FORMAT);
+}
+
 ReplyCode Join::check_args(Server& server, Client& client, std::vector<std::string>& params)
 {
     (void)server;
@@ -70,6 +131,52 @@ ReplyCode Join::check_args(Server& server, Client& client, std::vector<std::stri
     return (CORRECT_FORMAT);
 }
 
+void Join::execute(Server& server, Client& client)
+{
+    ReplyHandler&                      				rh = ReplyHandler::get_instance(&server);
+    std::map<std::string, std::string>::iterator 	it = _chans.begin();
+    ReplyCode                          				replyCode = CORRECT_FORMAT;
+
+    for (;it != _chans.end(); ++it) {
+		std::string         chanName         = it->first;
+		std::string			chanKey			= it->second;
+        Channel * channel = server.find_channel_by_name(chanName);
+
+        if (!channel) {
+            channel                              = new Channel(chanName, chanKey); // NOLINT
+            server.channels[chanName] = channel;
+			channel->make_operator(client);
+            LOG_I_CMD("#️⃣ New channel", channel->get_name());
+        } else if ((channel->get_mode() & CHANMODE_KEY) && (chanKey != channel->get_key())) {
+        	LOG_DV_CMD(std::bitset<8>(channel->get_mode()));
+            rh.process_response(client, ERR_BADCHANNELKEY, channel->get_name());
+        } else {
+			replyCode = channel->add_member(client);
+			if (replyCode == CORRECT_FORMAT) {
+				rh.process_response(client, TRANSFER_JOIN, channel->get_name());
+				channel->broadcast(server, TRANSFER_JOIN, channel->get_name(), &client);
+				if (channel->get_nb_members() == 1) {
+					channel->make_operator(client);
+            		rh.process_response(client, RPL_CHANNELMODEIS, channel->get_name() + " +o ");
+				} else {
+					std::vector<std::string> users = channel->get_members_list();
+					for (size_t i = 0; i < users.size(); ++i) {
+						rh.process_response(client, RPL_NAMREPLY, "= " + channel->get_name(), NULL, users[i]);
+					}
+					rh.process_response(client, RPL_ENDOFNAMES, channel->get_name());
+				}
+				if (channel->get_topic().empty()) {
+					rh.process_response(client, RPL_NOTOPIC, channel->get_name());
+				} else {
+					rh.process_response(client, RPL_TOPIC, channel->get_name(), NULL, channel->get_topic());
+				}
+				LOG_CONN.info(client.get_nickname() + " joined channel: " + channel->get_name());
+			} else {
+				rh.process_response(client, replyCode, channel->get_name());
+			}
+		}
+    }
+}
 /**
  * @brief Allows a client to join a channel or create it if it does not exist
  * after checking if the name of the channel is valid accordind to the RFC_2812
@@ -86,64 +193,64 @@ ReplyCode Join::check_args(Server& server, Client& client, std::vector<std::stri
  *	:irc.example.com 353 user1 = #chan1 :user6 @user1 user7 user8 user9
  *	:irc.example.com 366 user1 #chan1 :End of NAMES listV
  */
-void Join::execute(Server& server, Client& client)
-{
-    ReplyHandler&                      rh = ReplyHandler::get_instance(&server);
-    std::vector<std::string>::iterator it = _channelsLst.begin();
-    std::string                        chanName;
-    std::string                        chanKey;
-    ReplyCode                          replyCode = CORRECT_FORMAT;
-
-    while (it != _channelsLst.end()) {
-        std::istringstream iss(*it);
-        iss >> chanName;
-        iss >> chanKey;
-        if (!Channel::is_valid_channel_name(chanName)) {
-            rh.process_response(client, ERR_BADCHANMASK, chanName);
-            it++;
-            continue;
-        }
-        Channel*                                  channel         = NULL;
-        std::map<std::string, Channel*>::iterator existingChannel = server.channels.find(chanName);
-
-        if (existingChannel == server.channels.end()) {
-            channel                              = new Channel(chanName); // NOLINT
-            server.channels[channel->get_name()] = channel;
-            LOG_I_CMD("#️⃣ New channel", channel->get_name());
-        } else {
-            channel = existingChannel->second;
-        }
-        LOG_DV_CMD(std::bitset<8>(channel->get_mode()));
-        if ((channel->get_mode() & CHANMODE_KEY) && (chanKey != channel->get_key())) {
-            rh.process_response(client, ERR_BADCHANNELKEY, channel->get_name());
-            ++it;
-            continue;
-        }
-        replyCode = channel->add_member(client);
-        if (replyCode == CORRECT_FORMAT) {
-            rh.process_response(client, TRANSFER_JOIN, channel->get_name());
-            channel->broadcast(server, TRANSFER_JOIN, channel->get_name(), &client);
-            LOG_CONN.info(client.get_nickname() + " joined channel: " + channel->get_name());
-        } else {
-            rh.process_response(client, replyCode, channel->get_name());
-            ++it;
-            continue;
-        }
-        if (channel->get_nb_members() == 1) {
-            channel->make_operator(client);
-            rh.process_response(client, RPL_CHANNELMODEIS, channel->get_name() + " +o ");
-            // LOG_CMD.info(client.get_nickname() + " is operator of channel: " + channel->get_name());
-        }
-        if (channel->get_topic().empty()) {
-            rh.process_response(client, RPL_NOTOPIC, channel->get_name());
-        } else {
-            rh.process_response(client, RPL_TOPIC, channel->get_name(), NULL, channel->get_topic());
-        }
-        std::vector<std::string> users = channel->get_members_list();
-        for (size_t i = 0; i < users.size(); ++i) {
-            rh.process_response(client, RPL_NAMREPLY, "= " + channel->get_name(), NULL, users[i]);
-        }
-        rh.process_response(client, RPL_ENDOFNAMES, channel->get_name());
-        ++it;
-    }
-}
+// void Join::execute(Server& server, Client& client)
+// {
+//     ReplyHandler&                      rh = ReplyHandler::get_instance(&server);
+//     std::vector<std::string>::iterator it = _channelsLst.begin();
+//     std::string                        chanName;
+//     std::string                        chanKey;
+//     ReplyCode                          replyCode = CORRECT_FORMAT;
+//
+//     while (it != _channelsLst.end()) {
+//         std::istringstream iss(*it);
+//         iss >> chanName;
+//         iss >> chanKey;
+//         if (!Channel::is_valid_channel_name(chanName)) {
+//             rh.process_response(client, ERR_BADCHANMASK, chanName);
+//             it++;
+//             continue;
+//         }
+//         Channel*                                  channel         = NULL;
+//         std::map<std::string, Channel*>::iterator existingChannel = server.channels.find(chanName);
+//
+//         if (existingChannel == server.channels.end()) {
+//             channel                              = new Channel(chanName); // NOLINT
+//             server.channels[channel->get_name()] = channel;
+//             LOG_I_CMD("#️⃣ New channel", channel->get_name());
+//         } else {
+//             channel = existingChannel->second;
+//         }
+//         LOG_DV_CMD(std::bitset<8>(channel->get_mode()));
+//         if ((channel->get_mode() & CHANMODE_KEY) && (chanKey != channel->get_key())) {
+//             rh.process_response(client, ERR_BADCHANNELKEY, channel->get_name());
+//             ++it;
+//             continue;
+//         }
+//         replyCode = channel->add_member(client);
+//         if (replyCode == CORRECT_FORMAT) {
+//             rh.process_response(client, TRANSFER_JOIN, channel->get_name());
+//             channel->broadcast(server, TRANSFER_JOIN, channel->get_name(), &client);
+//             LOG_CONN.info(client.get_nickname() + " joined channel: " + channel->get_name());
+//         } else {
+//             rh.process_response(client, replyCode, channel->get_name());
+//             ++it;
+//             continue;
+//         }
+//         if (channel->get_nb_members() == 1) {
+//             channel->make_operator(client);
+//             rh.process_response(client, RPL_CHANNELMODEIS, channel->get_name() + " +o ");
+//             // LOG_CMD.info(client.get_nickname() + " is operator of channel: " + channel->get_name());
+//         }
+//         if (channel->get_topic().empty()) {
+//             rh.process_response(client, RPL_NOTOPIC, channel->get_name());
+//         } else {
+//             rh.process_response(client, RPL_TOPIC, channel->get_name(), NULL, channel->get_topic());
+//         }
+//         std::vector<std::string> users = channel->get_members_list();
+//         for (size_t i = 0; i < users.size(); ++i) {
+//             rh.process_response(client, RPL_NAMREPLY, "= " + channel->get_name(), NULL, users[i]);
+//         }
+//         rh.process_response(client, RPL_ENDOFNAMES, channel->get_name());
+//         ++it;
+//     }
+// }

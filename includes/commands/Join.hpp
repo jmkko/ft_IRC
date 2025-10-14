@@ -27,11 +27,15 @@ class Join : public ICommand
 {
   public:
     Join(const std::vector<std::string>& channelsLst);
+    Join(const std::string& params);
     ~Join();
     void             execute(Server& s, Client& c);
     static ReplyCode check_args(Server& s, Client& c, std::vector<std::string>& params);
+    static ReplyCode check_args(Server& s, Client& c, std::string& params);
 
   private:
+	std::map<std::string, std::string> 	_chans;
+	std::string 			_channelkey;
     std::vector<std::string> _channelsLst;
     Join();
     Join(const Join& other);

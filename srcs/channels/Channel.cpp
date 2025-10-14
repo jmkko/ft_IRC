@@ -28,14 +28,35 @@ bool Channel::is_valid_channel_name(const std::string& name)
     return name.length() > 1 && name.length() <= ircConfig.get_chan_name_max_len();
 }
 
+/**
+ * @brief check if the key is valid -- no commas or spaces allowed
+ *
+ * @param key
+ * @return true or false
+ */
+bool Channel::is_valid_channel_key(const std::string& key) 
+{
+	if (key.empty()) {
+		return true;
+	} else if (key.find(' ') != std::string::npos || key.find(',') != std::string::npos) {
+        return false;
+	}
+	for(std::string::size_type i = 0; i < key.size(); ++i) {
+        if (!isprint(static_cast<unsigned char>(key[i])))
+            return false;
+	}
+
+    return true;
+}
+
 /************************************************************
  *		🥚 CONSTRUCTORS & DESTRUCTOR
  **
  ************************************************************/
 
 /// @throw exception if name is invalid
-Channel::Channel(const std::string& name) :
-    _topic(""), _key(""), _mode(CHANMODE_INIT), _userLimit(NO_LIMIT), _members(), _invites(), _operators()
+Channel::Channel(const std::string& name, const std::string& key) :
+    _topic(""), _key(key), _mode(CHANMODE_INIT), _userLimit(NO_LIMIT), _members(), _invites(), _operators()
 {
     set_name(name);
 }

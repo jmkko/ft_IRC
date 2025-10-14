@@ -17,7 +17,7 @@ class Channel
 {
 
   public:
-    Channel(const std::string& name);
+    Channel(const std::string& name, const std::string& key = "");
     Channel(const Channel& other);
 
     virtual ~Channel();
@@ -54,6 +54,7 @@ class Channel
 
     void        broadcast(Server& server, ReplyCode replyCode, const std::string& params, Client* sender = NULL, const std::string& trailing = "") const;
     static bool is_valid_channel_name(const std::string& name);
+    static bool is_valid_channel_key(const std::string& key);
 
   private:
     std::string       _name;
