@@ -242,10 +242,28 @@ void invalid_nickname_should_err(Server& s)
         make_op(soOp);
 
         // test
-        send_line(soOp, validPrivmsgNonExistentUser);
+        send_line(soOp, validPrivmsgWrongUser);
         std::string reply = recv_lines(soOp);
         AssertReply ar(reply);
         ar.is_formatted(ERR_NOSUCHNICK, opNick, "nonexistent");
+
+    } catch (const std::runtime_error& e) {
+        LOG_TEST.error(e.what());
+    }
+}
+
+void invalid_privmsg_channel_should_err(Server& s)
+{
+    try {
+        TEST_SETUP(test, s, 1);
+        TcpSocket& soOp = *sockets.at(0);
+        make_op(soOp);
+
+        // test
+        send_line(soOp, validPrivmsgWrongChannel);
+        std::string reply = recv_lines(soOp);
+        AssertReply ar(reply);
+        ar.is_formatted(ERR_NOSUCHCHANNEL, opNick, "#nonexistent");
 
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());
@@ -317,6 +335,7 @@ void test_privmsg(Server& s, t_results* r)
     run_test(r, [&] { not_channel_member_should_err(s); }, "PRIVMSG to #chan without being a member");
     run_test(r, [&] { no_params_should_err(s); }, "PRIVMSG with no params");
     run_test(r, [&] { invalid_nickname_should_err(s); }, "PRIVMSG to non existent nickname");
-    run_test(r, [&] { too_many_target_should_err(s); }, "PRIVMSG with too many target");
+    run_test(r, [&] { invalid_privmsg_channel_should_err(s); }, "PRIVMSG to non existent channel");
+    run_test(r, [&] { too_many_target_should_err(s); }, "PRIVMSG with too many targets");
     run_test(r, [&] { no_text_should_err(s); }, "PRIVMSG with no message");
 }

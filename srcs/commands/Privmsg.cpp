@@ -10,12 +10,16 @@
  ************************************************************/
 
  /**
- * @brief [TODO:check arguments: TARGET_LIMIT include invalid targets. targets should be separated by a coma]
- *
- * @param server [TODO:parameter]
- * @param client [TODO:parameter]
- * @param params [TODO:parameter]
- * @return [TODO:return]
+ * @brief check syntaxic validity of params
+ * - message (after `:`) should not be empty
+ * - at least one target (channel or sender)
+ * - at max MAX_TARGET (configuration defined)
+ * as well as following
+ * - targets should be existing nicks or channels
+ * @param server
+ * @param client sender
+ * @param params string following the command name
+ * @return ReplyCode corresponding to RFC ERR replies or CORRECT_FORMAT if syntax is correct 
  */
 ReplyCode Privmsg::check_args(Server& server, Client& client, std::string& params)
 {
@@ -40,14 +44,22 @@ ReplyCode Privmsg::check_args(Server& server, Client& client, std::string& param
             rh.process_response(client, ERR_TOOMANYTARGETS, target);
             break;
         }
-        std::map<std::string, Channel*>::iterator chan = server.channels.find(target);
-        if (chan != server.channels.end()) {
-            LOG_D_CMD("add channel", target);
-            targetList += target + " ";
-        } else if (server.find_client_by_nickname(target)) {
+        if (Channel::is_valid_channel_name(target))
+        {
+            std::map<std::string, Channel*>::iterator chan = server.channels.find(target);
+            if (chan != server.channels.end()) {
+                LOG_D_CMD("add channel", target);
+                targetList += target + " ";
+            }
+            else {
+                rh.process_response(client, ERR_NOSUCHCHANNEL, target);
+            }
+        } 
+        else if (server.find_client_by_nickname(target)) {
             LOG_D_CMD("add client", target);
             targetList += target + " ";
-        } else {
+        } 
+        else {
             rh.process_response(client, ERR_NOSUCHNICK, target);
         }
         targetLimit--;
@@ -62,14 +74,30 @@ ReplyCode Privmsg::check_args(Server& server, Client& client, std::string& param
  *		🥚 CONSTRUCTORS & DESTRUCTOR						*
  ************************************************************/
 
+/**
+ * @brief Construct a new Privmsg:: Privmsg object
+ * 
+ * @param params 
+ */
 Privmsg::Privmsg(const std::string& params) : _params(params), _chans(0), _dests(0) {}
 
+/**
+ * @brief Destroy the Privmsg:: Privmsg object
+ * 
+ */
 Privmsg::~Privmsg(void) {}
 
 /*************************************************************
  *		🛠️ FUNCTIONS											*
  *************************************************************/
 
+ /**
+  * @brief proceed to extra checks (presence of sender on target channel) and to message transfer
+  * - message is transferred to target client
+  * - or broadcasted to channel for other members (sender excepted)
+  * @param server 
+  * @param client sender
+  */
 void Privmsg::execute(Server& server, Client& client)
 {
     _build_args(server, _params);
@@ -89,6 +117,11 @@ void Privmsg::execute(Server& server, Client& client)
     }
 }
 
+/**
+ * @brief adds a channel to the list of valid channels
+ * 
+ * @param chan 
+ */
 void Privmsg::_add_channel(Channel* chan)
 {
     if (!chan) {
@@ -96,6 +129,12 @@ void Privmsg::_add_channel(Channel* chan)
     }
     _chans.push_back(chan);
 };
+
+/**
+ * @brief adds a client to the list of valid clients
+ * 
+ * @param client 
+ */
 void Privmsg::_add_client(Client* client)
 {
     if (!client) {
@@ -103,6 +142,13 @@ void Privmsg::_add_client(Client* client)
     }
     _dests.push_back(client);
 };
+
+/**
+ * @brief util method to parse args into target clients, channels and message before execution
+ * 
+ * @param server 
+ * @param params 
+ */
 void Privmsg::_build_args(Server& server, std::string& params)
 {
     std::istringstream                        iss(params);
@@ -131,4 +177,3 @@ void Privmsg::_build_args(Server& server, std::string& params)
         _msg = "";
     }
 }
-
