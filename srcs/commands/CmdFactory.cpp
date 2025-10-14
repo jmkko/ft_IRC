@@ -43,9 +43,10 @@ CmdFactory::~CmdFactory(void) {}
 
 bool CmdFactory::check_in(Client& client, std::string& command)
 {
-    if (!client.is_registered() && command != "NICK" && command != "USER" && command != "PASS" && command != "QUIT") {
+    if (!client.is_authenticated() && command != "PASS" && command != "QUIT")
         return false;
-    }
+    if (client.is_authenticated() && !client.is_registered() && command != "USER" && command != "NICK")
+        return false;
     return true;
 }
 

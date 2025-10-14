@@ -32,7 +32,7 @@ void User::execute(Server& server, Client& client)
     client.set_real_name(_realname.substr(1));
     LOG_DV_CMD(_realname);
     ReplyHandler& rh = ReplyHandler::get_instance(&server);
-    if (!client.get_nickname().empty() && client.get_status() == AUTHENTICATED) {
+    if (!client.get_nickname().empty()) {
         client.set_status(REGISTERED);
         rh.process_response(client, RPL_WELCOME);
     } else {

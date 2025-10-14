@@ -19,10 +19,13 @@ void Nick::execute(Server& server, Client& client)
     (void)server;
     std::string   oldNickname = client.get_nickname();
     ReplyHandler& rh          = ReplyHandler::get_instance(&server);
+    LOG_DV_CMD(_nickname);
+
     // welcome sequence complete for first time
-    if (oldNickname.empty() && client.get_user_name().empty() && client.is_authenticated()) {
-        LOG_dt_CMD("first change");
-        // rh.process_response(client, RPL_WELCOME);
+    if (oldNickname.empty() && !client.get_user_name().empty()) {
+        LOG_dt_CMD("Nick after USER");
+        client.set_status(REGISTERED);
+        rh.process_response(client, RPL_WELCOME);
         // normal success behavior
     } else if (!oldNickname.empty() && !client.get_user_name().empty() && client.is_registered()) {
         // send the message to every user in every channel that this client takes part in
