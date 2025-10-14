@@ -102,7 +102,7 @@ ICommand* CmdFactory::make_command(Server& server, Client& client, std::string& 
             return (this->*ptr[i])(server, client, params);
         }
     }
-    rh.process_response(client, ERR_UNKNOWNCOMMAND, params);
+    rh.process_response(client, ERR_UNKNOWNCOMMAND, commandLine);
 
     return NULL;
 }

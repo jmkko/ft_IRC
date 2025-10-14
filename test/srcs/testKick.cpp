@@ -30,7 +30,7 @@
 /**
  @brief integration test - normal case
 */
-void op_existing_chan_valid_user_should_notice(Server& s)
+void op_existing_chan_valid_user_should_broadcast(Server& s)
 {
     try {
         TEST_SETUP(test, s, 2);
@@ -42,12 +42,12 @@ void op_existing_chan_valid_user_should_notice(Server& s)
         // test
         send_line(soOp, validKickMsg);
         // as a member, operator receives the notice
-        std::string reply = recv_lines(soOp);
+        std::string reply = recv_lines(soOp, opNick);
         AssertReply ar(reply);
         ar.is_formatted_transfer(opNick, "KICK #chan roro");
 
         // kicked user gets a notice
-        reply = recv_lines(so);
+        reply = recv_lines(so, userNick);
         ar.handle_new_reply(reply);
         ar.is_formatted_transfer(opNick, "KICK #chan roro");
 
@@ -255,7 +255,7 @@ void op_valid_inexistent_channel_should_err(Server& s)
 void test_kick(Server& s, t_results* r)
 {
     print_test_series("command KICK");
-    run_test(r, [&] { op_existing_chan_valid_user_should_notice(s); }, "single kick");
+    run_test(r, [&] { op_existing_chan_valid_user_should_broadcast(s); }, "single kick");
     run_test(r, [&] { op_existing_chan_valid_users_should_notice(s); }, "combo double kick");
     run_test(r, [&] { no_op_should_err(s); }, "no op");
     run_test(r, [&] { op_missing_chan_should_err(s); }, "no chan");

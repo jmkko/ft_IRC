@@ -122,6 +122,7 @@ static const std::string& validModePlusKLMsg          = "MODE #chan +kl key 10\r
 static const std::string& invalidModeUnknownModeMsg   = "MODE #chan +z\r\n";
 static const std::string& invalidModeUnknownChanMsg   = "MODE #ch +i\r\n";
 static const std::string& validModeUnknownUserMsg     = "MODE #chan +o pouic\r\n";
+static const std::string& invalidModeMinusONoUserMsg  = "MODE #chan -o\r\n";
 static const std::string& invalidModeNoChanMsg        = "MODE +l 4\r\n";
 
 static const std::string& validPartMsg = "PART #chan\r\n";

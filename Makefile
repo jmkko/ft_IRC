@@ -4,9 +4,15 @@ NAME			:=	ircserv
 OS 				:= $(shell uname)
 
 CXX				:=	clang++
-CXXFLAGS		:=	-Wall -Wextra -Werror -std=c++98 -g -MMD -O0 -fsanitize=address -fno-omit-frame-pointer
-LDFLAGS			:=	-no-pie -fsanitize=address
+CXXFLAGS		:=	-Wall -Wextra -Werror -std=c++98 -g -MMD 
+LDFLAGS			:=	
 MAKEFLAGS		:=	--no-print-directory
+ASANFLAGS		:=	-fsanitize=address -O0 -g
+
+ifeq ($(MAKECMDGOALS),asan)
+CXXFLAGS += $(ASANFLAGS)
+LDFLAGS += $(ASANFLAGS)
+endif
 
 INCLUDES		:=	-Iincludes\
 					-Iincludes/channels\
@@ -102,7 +108,7 @@ $(OBJ_DIRS) :
 	@mkdir -p logs
 
 asan : all
-	ASAN_OPTIONS=detect_leaks=1:log_path=logs/asan.log:atexit_print_stats=true ./ircserv 9999 password
+@ASAN_OPTIONS=detect_leaks=1:log_path=logs/asan.log:atexit_print_stats=true ./ircserv 9999 password
 
 forminette:
 	@echo "$(YELLOW)=== Checking code format ===$(NOC)"
@@ -135,9 +141,6 @@ fclean : clean
 
 re : fclean
 	@make
-
-run sanitize : all
-	ASAN_OPTIONS=detect_leaks=1:log_path=asan.log:atexit_print_stats=true ./ircserv 9999 password
 
 .PHONY : all clean fclean re
 

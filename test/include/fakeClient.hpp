@@ -12,7 +12,7 @@
 
 std::unique_ptr<TcpSocket> make_client_socket(int port);
 void                       send_line(const TcpSocket& so, const std::string& msg);
-std::string                recv_lines(const TcpSocket& so);
+std::string                recv_lines(const TcpSocket& so, const std::string& nick="");
 void                       do_cmd(const TcpSocket& so, const std::string& msg);
 
 #endif
