@@ -8,6 +8,7 @@
 
 #include <algorithm>
 #include <sstream>
+#include <string>
 #include <vector>
 
 /************************************************************
@@ -93,9 +94,22 @@ bool AssertReply::_is_message_matching_entirely(const Message& msg, const std::s
     return true;
 }
 
-bool AssertReply::_is_message_containing(const Message& msg, const std::string& token) const
+bool AssertReply::_is_message_containing(const Message& msg, const std::string& token, std::string& actual) const
 {
-    return msg.raw.find(token) != std::string::npos;
+    if (msg.raw.empty()) {
+        actual = msg.raw;
+        return false;
+    }
+    if (msg.raw.find(token) != std::string::npos)
+    {
+        LOG_d_TEST(msg.raw);
+        actual = msg.raw;
+        return true;
+    }
+    else {
+        actual = msg.raw;
+        return false;
+    }
 }
 
 AssertReply& AssertReply::has_code(ReplyCode code)
@@ -131,7 +145,7 @@ AssertReply& AssertReply::ends_with(const std::string& trailing)
         }
     }
     if (!isMatching) {
-        throw AssertFail("trailing message", trailing, actual);
+        throw AssertFail("in trailing message", trailing, actual);
     }
     return *this;
 }
@@ -147,7 +161,7 @@ AssertReply& AssertReply::starts_with(const std::string& start)
         }
     }
     if (!isMatching) {
-        throw AssertFail("trailing message", start, actual);
+        throw AssertFail("in trailing message", start, actual);
     }
     return *this;
 }
@@ -155,29 +169,31 @@ AssertReply& AssertReply::starts_with(const std::string& start)
 AssertReply& AssertReply::contains(const std::string& token)
 {
     bool isMatching = false;
+    std::string actual = "";
     for (std::vector<Message>::iterator it = _messages.begin(); it != _messages.end(); ++it) {
-        if (_is_message_containing(*it, token)) {
+        if (_is_message_containing(*it, token, actual)) {
             isMatching = true;
             break;
         }
     }
     if (!isMatching) {
-        throw AssertFail("message", token, "no occurence");
+        throw AssertFail("in message", token, "no occurence");
     }
     return *this;
 }
 
-AssertReply& AssertReply::do_not_contains(const std::string& token)
+AssertReply& AssertReply::does_not_contain(const std::string& token)
 {
     bool isMatching = true;
+    std::string actual = "";
     for (std::vector<Message>::iterator it = _messages.begin(); it != _messages.end(); ++it) {
-        if (_is_message_containing(*it, token)) {
+        if (_is_message_containing(*it, token, actual)) {
             isMatching = false;
             break;
         }
     }
-    if (isMatching) {
-        throw AssertFail("not in message", token, token);
+    if (!isMatching) {
+        throw AssertFail("NOT in message", token, actual);
     }
     return *this;
 }
@@ -193,7 +209,7 @@ AssertReply& AssertReply::matches_entirely(const std::string& message)
         }
     }
     if (!isMatching) {
-        throw AssertFail("message", message, actual);
+        throw AssertFail("in message", message, actual);
     }
     return *this;
 }
@@ -209,7 +225,7 @@ AssertReply& AssertReply::is_empty()
         }
     }
     if (!isMatching) {
-        throw AssertFail("message", "empty", actual);
+        throw AssertFail("in message", "empty", actual);
     }
     return *this;
 }

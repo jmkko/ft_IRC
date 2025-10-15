@@ -1,4 +1,5 @@
 #include "Who.hpp"
+#include "LogManager.hpp"
 #include "utils.hpp"
 
 #include <string>
@@ -76,11 +77,14 @@ void Who::execute(Server& server, Client& client)
                 std::set<Client*>                 clients  = itChan->second->get_members();
                 std::set<Client*>::const_iterator itClient = clients.begin();
                 for (; itClient != clients.end(); itClient++) {
-                    rh.process_response(client,
-                                        RPL_WHOREPLY,
-                                        _who_msg(*itClient, itChan->second, server),
-                                        NULL,
-                                        std::string("0 ") + (*itClient)->get_real_name());
+                    if (op.empty() || (op == "o" && itChan->second->is_operator(**itClient)))
+                    {
+                        rh.process_response(client,
+                                            RPL_WHOREPLY,
+                                            _who_msg(*itClient, itChan->second, server),
+                                            NULL,
+                                            std::string("0 ") + (*itClient)->get_real_name());
+                    }
                 }
                 rh.process_response(client, RPL_ENDOFWHO, itChan->second->get_name());
             }
@@ -144,7 +148,10 @@ std::vector<Client*> Who::_find_all_clients_by_pattern(const std::set<Client*>& 
     for (std::set<Client*>::const_iterator it = members.begin(); it != members.end(); it++) {
 
         if (utils::MatchPattern(pat)(*it))
+        {
+            LOG_D_CMD("pattern " + pat + " matched", (*it)->get_nickname());
             result.push_back(*it);
+        }
     }
     return result;
 }
