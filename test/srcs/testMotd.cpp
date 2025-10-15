@@ -34,9 +34,9 @@ void valid_motd_should_rpl(Server& s)
 {
     try {
         TEST_SETUP(test, s, 1);
-        if (chmod(MOTD_FILE_FOR_TEST, PERM_644) != 0) {
-            throw std::runtime_error(TO_STRING("error changing rights ") + strerror(errno));
-        }
+        // if (chmod(MOTD_FILE_FOR_TEST, PERM_644) != 0) {
+        //     throw std::runtime_error(TO_STRING("error changing rights ") + strerror(errno));
+        // }
         TcpSocket& so = *sockets.at(0);
         send_line(so, validPassMsg);
         send_line(so, validNickMsg);

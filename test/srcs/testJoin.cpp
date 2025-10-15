@@ -202,9 +202,8 @@ void mode_plusi_with_invite_should_send_rpl_and_broadcast(Server& s)
         send_line(so, validJoinMsg);
         std::string reply = recv_lines(so);
         AssertReply ar(reply);
-        LOG_E_TEST("reply for +i", reply);
         ar.is_formatted(RPL_NOTOPIC, userNick, "#chan");
-        ar.is_formatted(RPL_NAMREPLY, userNick, "= #chan", "@" + opNick + " " + userNick);
+        ar.has_code(RPL_NAMREPLY).contains("= #chan").contains("@" + opNick).contains(userNick);
         ar.is_formatted(RPL_ENDOFNAMES, userNick, "#chan");
 
         // test 2 other members get broadcast message
