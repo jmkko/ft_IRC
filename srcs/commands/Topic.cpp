@@ -14,14 +14,14 @@
 
 /**
  * @brief check syntaxic validity of args
- * - has at least one param (channel)
+ * - has at least one param (#Channel)
  * perform other validity checks
- * - channel is existent
- * - user is existent
+ * - #Channel does exist
+ * - #Client does exist
  * @param server
  * @param client
  * @param args should match pattern `<channel> [ <topic> ]`
- * @return ReplyCode corresponding to RFC ERR or CORRECT_FORMAT if syntax is correct 
+ * @return @ref ReplyCode corresponding to RFC ERR or CORRECT_FORMAT if syntax is correct 
  */
 ReplyCode Topic::check_args(Server& s, Client& c, std::string& params)
 {
@@ -96,8 +96,8 @@ Topic::~Topic(void) {}
  * @elseif topic arg
  * tries updating channel topic
  * @endif 
- * @param s server
- * @param c sender client
+ * @param s #Server
+ * @param c sender #Client
  */
 void Topic::execute(Server& s, Client& c)
 {

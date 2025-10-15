@@ -12,7 +12,7 @@
  /**
  * @brief check syntaxic validity of params
  * - message (after `:`) should not be empty
- * - at least one target (channel or sender)
+ * - at least one target (#Channel or #Client sender)
  * - at max MAX_TARGET (configuration defined)
  * as well as following
  * - targets should be existing nicks or channels
@@ -93,8 +93,8 @@ Privmsg::~Privmsg(void) {}
 
  /**
   * @brief proceed to extra checks (presence of sender on target channel) and to message transfer
-  * - message is transferred to target client
-  * - or broadcasted to channel for other members (sender excepted)
+  * - message is transferred to target #Client
+  * - or broadcasted to #Channel for other members (sender excepted)
   * @param server 
   * @param client sender
   */
