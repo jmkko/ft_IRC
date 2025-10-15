@@ -1,6 +1,5 @@
-#include "AssertReply.hpp"
-
 #include "AssertFail.hpp"
+#include "AssertReply.hpp"
 #include "Config.hpp"
 #include "LogManager.hpp"
 #include "consts.hpp"
@@ -234,9 +233,9 @@ AssertReply::is_formatted(ReplyCode code, const std::string& clientNick, const s
 {
     std::string expectedStart = std::string(":" + ircConfigTest.get_name()) + " " + utils::code_to_str(code) + " " + clientNick + " ";
     if (params.empty() && trailing.empty())
-        return this->has_code(code).matches_entirely(expectedStart + ircCodes.trailing(code));
+        return this->has_code(code).matches_entirely(expectedStart + ":" + ircCodes.trailing(code));
     else if (!params.empty() && trailing.empty())
-        return this->has_code(code).matches_entirely(expectedStart + params + " " + ircCodes.trailing(code));
+        return this->has_code(code).matches_entirely(expectedStart + params + " :" + ircCodes.trailing(code));
     else if (params.empty() && !trailing.empty())
         return this->has_code(code).matches_entirely(expectedStart + ":" + trailing);
     else

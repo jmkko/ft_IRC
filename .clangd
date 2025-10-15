@@ -37,5 +37,6 @@ CompileFlags:
     - -Iincludes/clients
     - -Iincludes/commands
     - -Iincludes/server
+    - -Itest/include
 InlayHints:
   Enabled: true
