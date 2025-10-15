@@ -1,8 +1,7 @@
-#include "ReplyHandler.hpp"
-
 #include "Client.hpp"
 #include "Config.hpp"
 #include "LogManager.hpp"
+#include "ReplyHandler.hpp"
 #include "Server.hpp"
 #include "reply_codes.hpp"
 #include "utils.hpp"
@@ -92,11 +91,11 @@ generate_code_response(Client& client, ReplyCode code, const std::string& parame
     std::string nick          = client.get_nickname().empty() ? "*" : client.get_nickname();
     std::string numericPrefix = ":" + ircConfig.get_name() + " " + utils::code_to_str(code) + " " + nick + " ";
     if (parameters.empty() && trailing.empty())
-        return (numericPrefix + ircCodes.trailing(code));
+        return (numericPrefix + ":" + ircCodes.trailing(code));
     else if (parameters.empty() && !trailing.empty())
         return (numericPrefix + ":" + trailing);
     else if (trailing.empty())
-        return (numericPrefix + parameters + " " + ircCodes.trailing(code));
+        return (numericPrefix + parameters + " :" + ircCodes.trailing(code));
     else
         return (numericPrefix + parameters + " :" + trailing);
 }

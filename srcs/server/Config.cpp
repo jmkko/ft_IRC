@@ -1,5 +1,4 @@
 #include "Config.hpp"
-
 #include "LogManager.hpp"
 #include "consts.hpp"
 #include "reply_codes.hpp"
@@ -67,7 +66,7 @@ bool Config::_parse_code_file(const std::string& fileName)
         if (posColon != std::string::npos) {
             // Format: 001=RPL_WELCOME: Welcome message
             std::string value    = line.substr(posAssign + 1, posColon - posAssign - 1);
-            std::string trailing = line.substr(posColon);
+            std::string trailing = line.substr(posColon + 1);
             _codes[code]         = value;
             _trailings[code]     = trailing;
         } else {
