@@ -30,19 +30,23 @@
 #define DEFAULT_PORT              6667
 #define MAX_JOINED_CHANNELS       NO_LIMIT
 #define CHAN_NAME_MAX_LEN         50
-#define CLIENT_READ_BUFFER_SIZE   512
-#define WELL_KNOWN_PORT_MAX       1024
-#define DYNAMIC_PORT_MIN          49152
-#define NICKNAME_MAX_LEN          9
-#define NB_AVAILABLE_CMD          15
-#define USERS_PER_LINE            10
-#define CHANMODE_INIT             0b00000
-#define CHANMODE_OP               0b00001 // no use ?
-#define CHANMODE_TOPIC            0b00010
-#define CHANMODE_KEY              0b00100
-#define CHANMODE_INVITE           0b01000
-#define CHANMODE_LIMIT            0b10000
-#define TARGET_LIMIT              5
+#define FORBIDEN_CHAR_CHAN_NAME   "\x00\x07\x0D\x0A\x20\x2C\x3A"
+#define FORBIDEN_CHAR_CHAN_KEY    "\x00\x09\x0A\x0B\x0C\x0D\x20"
+
+#define CHAN_KEY_MAX_LEN        23
+#define CLIENT_READ_BUFFER_SIZE 512
+#define WELL_KNOWN_PORT_MAX     1024
+#define DYNAMIC_PORT_MIN        49152
+#define NICKNAME_MAX_LEN        9
+#define NB_AVAILABLE_CMD        15
+#define USERS_PER_LINE          10
+#define CHANMODE_INIT           0b00000
+#define CHANMODE_OP             0b00001 // no use ?
+#define CHANMODE_TOPIC          0b00010
+#define CHANMODE_KEY            0b00100
+#define CHANMODE_INVITE         0b01000
+#define CHANMODE_LIMIT          0b10000
+#define TARGET_LIMIT            5
 
 #include <string>
 #include <vector>

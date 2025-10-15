@@ -198,12 +198,12 @@ AssertReply& AssertReply::matches_entirely(const std::string& message)
     return *this;
 }
 void AssertReply::print_target_and_messages(const std::string& target) {
-	std::cout << "Looking for: "<< target << std::endl << "in:" << std::endl;
+	std::cout << "Looking for: "<< target << "\nin:\n";
     for (std::vector<Message>::iterator it = _messages.begin(); it != _messages.end(); ++it) {
 		for (std::vector<std::string>::iterator itstring = it->args.begin(); itstring != it->args.end(); itstring++) {
 			std::cout << *itstring;
 		}
-		std::cout << std::endl;
+		std::cout << "\n";
 	}
 }
 AssertReply& AssertReply::is_empty()

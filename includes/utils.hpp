@@ -11,6 +11,7 @@ bool is_special_abnf(char c);
 bool check_args(int ac, char** av, int* port);
 bool check_port(const std::string& s, int* port);
 bool check_password(const std::string& s);
+bool is_char_of(unsigned char c, const std::string& set);
 
 namespace utils
 {

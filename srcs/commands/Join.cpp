@@ -72,14 +72,15 @@ ReplyCode Join::check_args(Server& server, Client& client, std::string& params)
     std::istringstream issChannels(channels), issKeys(keys);
     while (std::getline(issChannels, currentChannel, ',')) {
         std::getline(issKeys, currentKey, ',');
-        if (currentChannel.empty() || !Channel::is_valid_channel_name(currentChannel)) {
-            rh.process_response(client, ERR_NOSUCHCHANNEL, currentChannel);
-        } else if (Channel::is_valid_channel_key(currentKey)) {
+		LOG_CMD.debug("Current channel: " + currentChannel + " key: " + currentKey); //NOLINT
+        if (!Channel::is_valid_channel_name(currentChannel)) {
+            rh.process_response(client, ERR_BADCHANMASK, currentChannel);
+		} else if (!Channel::is_valid_channel_key(currentKey)) {
+            rh.process_response(client, ERR_BADCHANNELKEY, client.get_nickname() + " " + currentChannel);
+		} else {
             channelsNames += currentChannel + ",";
             channelsKeys += currentKey + ",";
-        } else {
-            rh.process_response(client, ERR_BADCHANNELKEY, client.get_nickname() + " " + currentChannel);
-        }
+		}
         currentChannel.clear();
         currentKey.clear();
     }
@@ -158,15 +159,17 @@ void Join::execute(Server& server, Client& client)
 		if (replyCode == CORRECT_FORMAT) {													// if right permissions ...
 			LOG_CONN.info(client.get_nickname() + " joined channel: " + channel->get_name());
 			rh.process_response(client, TRANSFER_JOIN, channel->get_name());				// send connection success message
-			channel->broadcast(server, TRANSFER_JOIN, channel->get_name(), &client);		// + broad cast
+			channel->broadcast(server, TRANSFER_JOIN, channel->get_name(), &client);		// + broadcast
+			if (channel->remove_from_invited_list(client)) {	
+				rh.process_response(client, RPL_CHANNELMODEIS, channel->get_name() + " +i "); //display MODE +i if the client has been invited
+			}
 			if (channel->get_nb_members() == 1) {											// if first and/or only user
 				channel->make_operator(client);												// --> make the client operator
 				rh.process_response(client, RPL_CHANNELMODEIS, channel->get_name() + " +o ");
-			} else {																		// else if more than one user in the channel
+			} else 	{
 				send_list_of_names(rh, client, *channel);									// send the list of names
 			}
 			display_topic(rh, client, *channel);											// in any case, display the topic
-
 		} else {
 			rh.process_response(client, replyCode, channel->get_name());					// else if not added to chan -> send permissions error
 		}

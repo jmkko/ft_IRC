@@ -53,7 +53,7 @@ void name_no_prefix_should_err(Server& s)
         send_line(soOp, noSpecCharJoin);
         std::string reply = recv_lines(soOp);
         AssertReply ar(reply);
-        ar.is_formatted(ERR_NOSUCHCHANNEL, opNick, "chan");
+        ar.is_formatted(ERR_BADCHANMASK, opNick, "chan");
 
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());
@@ -72,7 +72,7 @@ void name_too_big_should_err(Server& s)
         send_line(soOp, toobigJoin);
         std::string reply = recv_lines(soOp);
         AssertReply ar(reply);
-        ar.is_formatted(ERR_NOSUCHCHANNEL, opNick, "#chanllllllllllllllllllllllllllllllllllllllllllllllllll");
+        ar.is_formatted(ERR_BADCHANMASK, opNick, "#chanllllllllllllllllllllllllllllllllllllllllllllllllll");
 
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());
