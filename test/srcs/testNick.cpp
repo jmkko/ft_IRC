@@ -117,7 +117,7 @@ void valid_change_should_notice(Server& s)
     try {
         TEST_SETUP(test, s, 2);
         TcpSocket& so  = *sockets.at(0);
-        TcpSocket& so2 = *sockets.at(0);
+        TcpSocket& so2 = *sockets.at(1);
         authenticate(so);
         authenticate_and_join_second_user(so2);
 
