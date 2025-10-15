@@ -242,7 +242,9 @@ void Mode::execute(Server& server, Client& client)
             if (operation == '+') {
                 channel->add_mode(CHANMODE_TOPIC);
             } else {
+                LOG_DV_CMD(*channel);
                 channel->remove_mode(CHANMODE_TOPIC);
+                LOG_DV_CMD(*channel);
             }
             validModes += 't';
         }

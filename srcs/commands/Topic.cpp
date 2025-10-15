@@ -1,6 +1,7 @@
 #include "Topic.hpp"
 
 #include "Channel.hpp"
+#include "LogManager.hpp"
 #include "ReplyHandler.hpp"
 #include "Server.hpp"
 #include "reply_codes.hpp"
@@ -22,9 +23,7 @@ Topic::Topic(Server& s, std::string& params)
     while (iss >> token) {
         topic += " " + token;
     }
-    if (!topic.empty()) {
-        topic = topic.substr(1);
-    }
+
     // 	std::string::size_type start = topic.find_first_not_of(" \t\n\r\f\v");
     // 	if (start != std::string::npos)
     // 		topic.erase(0, start);
@@ -34,7 +33,6 @@ Topic::Topic(Server& s, std::string& params)
     // if (!topic.empty() && topic[0] == ':')
     // 	topic.erase(0, 1);
     _chan = s.find_channel_by_name(channel);
-    LOG_D_CMD("topic", "|" + topic + "|");
     _topic = topic;
 }
 
@@ -65,19 +63,19 @@ void Topic::execute(Server& s, Client& c)
             if (channelTopic.empty()) {
                 rh.process_response(c, RPL_NOTOPIC, _chan->get_name());
             } else {
-                rh.process_response(c, RPL_TOPIC, _chan->get_name(), NULL, _chan->get_topic());
+                rh.process_response(c, RPL_TOPIC, _chan->get_name(), NULL, channelTopic);
             }
         } else {
             ReplyCode code = _chan->set_topic(c, _topic);
             if (code == CORRECT_FORMAT) {
-                LOG_D_CMD("channel topic", _chan->get_topic());
-                _chan->broadcast(s, RPL_TOPIC, _chan->get_name(), NULL, _chan->get_topic());
+                _chan->broadcast(s, TRANSFER_TOPIC, _chan->get_name(), &c, _topic);
+                rh.process_response(c, TRANSFER_TOPIC, _chan->get_name(), &c, _topic);
             } else {
                 rh.process_response(c, code, _chan->get_name());
             }
         }
     } else {
-        LOG_CMD.error("Topic::execute --> Channel is INVALID");
+        LOG_w_CMD("invalid channel (should not happen)");
     }
 }
 
@@ -86,26 +84,26 @@ ReplyCode Topic::check_args(Server& s, Client& c, std::string& params)
     std::istringstream iss(params);
     std::string        token;
     Channel*           chan = NULL;
+    ReplyHandler rh = ReplyHandler::get_instance(&s);
 
     if (!(iss >> token))
         return ERR_NEEDMOREPARAMS;
 
     chan = s.find_channel_by_name(token);
-    if (!chan)
-        return ERR_NOSUCHCHANNEL;
+    if (!chan) {
+        rh.process_response(c, ERR_NOSUCHCHANNEL, token);
+        return PROCESSED_ERROR;
+    }
 
     if (!chan->is_member(c))
-        return ERR_NOTONCHANNEL;
+    {
+        rh.process_response(c, ERR_NOTONCHANNEL, token);
+        return PROCESSED_ERROR;
+    }
 
     std::string next;
     if (!(iss >> next))
         return CORRECT_FORMAT;
-
-    // if (next[0] != ':') {
-    // 	std::string extra;
-    // 	if (iss >> extra)  // any more tokens = invalid
-    // 		return ERR_TOOMANYPARAMS;
-    // }
 
     return CORRECT_FORMAT;
 }

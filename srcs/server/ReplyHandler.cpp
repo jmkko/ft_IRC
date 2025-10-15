@@ -120,6 +120,8 @@ static std::string generate_non_numerical_response(Client& client, ReplyCode cod
         return (get_user_id_of(*sender) + "QUIT " + parameters);
     case TRANSFER_MODE:
         return (get_user_id_of(*sender) + "MODE " + parameters);
+    case TRANSFER_TOPIC:
+        return (get_user_id_of(*sender) + "TOPIC " + parameters + " :" + trailing);
     case MSG_PING:
         return ":" + ircConfig.get_name() + " " + "PONG :" + parameters;
     default:

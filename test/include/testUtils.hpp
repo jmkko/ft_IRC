@@ -127,7 +127,6 @@ static const std::string& invalidModeNoChanMsg        = "MODE +l 4\r\n";
 
 static const std::string& validPartMsg = "PART #chan\r\n";
 
-static const std::string& validTopicMsg  = "TOPIC #chan :New topic\r\n";
 static const std::string& validPingMsg   = "PING token\r\n";
 static const std::string& invalidPingMsg = "PING\r\n";
 
@@ -155,9 +154,13 @@ static const std::string& validPrivmsgBlank             = "PRIVMSG #chan : \r\n"
 static const std::string& invalidPrivMsgSpaceAfterComma = "PRIVMSG roro, toto :hi\r\n";
 static const std::string& invalidPrivMsgInArg           = "PRIVMSG roro, toto hi\r\n";
 
-static const std::string& noparamsTopic				= "TOPIC\r\n";
-static const std::string& invalidChannelTopic		= "TOPIC $notvalid\r\n";
-static const std::string& notAChannelMemberTopic	= "TOPIC #chan\r\n";
+static const std::string& validTopic				= "TOPIC #chan new topic\r\n";
+static const std::string& validTopic2				= "TOPIC #chan new topic2\r\n";
+static const std::string& validTopicEmpty			= "TOPIC #chan\r\n";
+static const std::string& edgeTopicTrailing			= "TOPIC #chan :trailing\r\n";
+static const std::string& invalidTopicNoParam		= "TOPIC\r\n";
+static const std::string& validTopicWrongChannel    = "TOPIC $notvalid\r\n";
+// static const std::string& notAChannelMemberTopic	= "TOPIC #chan\r\n";
 
 static const std::string& validInvite = "INVITE roro #chan\r\n";
 
