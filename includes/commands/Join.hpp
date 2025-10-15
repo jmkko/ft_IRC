@@ -30,17 +30,14 @@ class Join : public ICommand
     Join(const std::vector<std::string>& channelsLst);
     Join(const std::string& params);
     ~Join();
+
     void             execute(Server& s, Client& c);
-    static ReplyCode check_args(Server& s, Client& c, std::vector<std::string>& params);
+    void             send_list_of_names(ReplyHandler& rh, Client& client, Channel& channel);
+    void             display_topic(ReplyHandler& rh, Client& client, Channel& channel);
     static ReplyCode check_args(Server& s, Client& c, std::string& params);
 
-	void send_list_of_names(ReplyHandler& rh, Client& client, Channel& channel);
-	void display_topic(ReplyHandler& rh, Client& client, Channel& channel);
-	
   private:
-	std::map<std::string, std::string> 	_chans;
-	std::string 			_channelkey;
-    std::vector<std::string> _channelsLst;
+    std::map<std::string, std::string> _chans;
     Join();
     Join(const Join& other);
     Join& operator=(const Join& other);

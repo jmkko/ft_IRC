@@ -12,16 +12,20 @@
 
 Join::Join() {}
 Join::~Join() {}
-Join::Join(const Join& other) : ICommand(), _channelsLst(other._channelsLst) {}
+Join::Join(const Join& other) : ICommand(), _chans(other._chans) {}
 Join& Join::operator=(const Join& other)
 {
     if (this != &other) {
-        _channelsLst = other._channelsLst;
+        _chans = other._chans;
     }
     return *this;
 }
 
-Join::Join(const std::vector<std::string>& channelsLst) : _channelsLst(channelsLst) {}
+/**
+ * @brief recreate the channels list. Each name of channel are mapped with their corresponding key.
+ *
+ * @param params [TODO:parameter]
+ */
 Join::Join(const std::string& params)
 {
     std::istringstream iss(params);
@@ -45,7 +49,8 @@ Join::Join(const std::string& params)
 
 /**
  * @brief check and keep only true parameters [#chan1,#chan2,#chan3 key1,key2,key3]
- *	e key can be an empty string (means no key for the channel) like key1,,key2
+ *	the key can be an empty string (means no key for the channel) like key1,,key2
+ *	list of channels and list of keys (each value separated with a commas) are separated by a space.
  * @param server
  * @param client
  * @param params
@@ -68,7 +73,7 @@ ReplyCode Join::check_args(Server& server, Client& client, std::string& params)
     while (std::getline(issChannels, currentChannel, ',')) {
         std::getline(issKeys, currentKey, ',');
         if (currentChannel.empty() || !Channel::is_valid_channel_name(currentChannel)) {
-            rh.process_response(client, ERR_NOSUCHCHANNEL, client.get_nickname());
+            rh.process_response(client, ERR_NOSUCHCHANNEL, currentChannel);
         } else if (Channel::is_valid_channel_key(currentKey)) {
             channelsNames += currentChannel + ",";
             channelsKeys += currentKey + ",";
@@ -84,6 +89,13 @@ ReplyCode Join::check_args(Server& server, Client& client, std::string& params)
     return (CORRECT_FORMAT);
 }
 
+/**
+ * @brief send the users's list of a channel to the client
+ *
+ * @param rh [TODO:parameter]
+ * @param client [TODO:parameter]
+ * @param channel [TODO:parameter]
+ */
 void Join::send_list_of_names(ReplyHandler& rh, Client& client, Channel& channel) {
 	std::vector<std::string> users = channel.get_members_list();
 
@@ -93,6 +105,12 @@ void Join::send_list_of_names(ReplyHandler& rh, Client& client, Channel& channel
 	rh.process_response(client, RPL_ENDOFNAMES, channel.get_name());
 }
 
+/**
+ * @brief send the RPL_TOPIC or RPL_NOTOPIC of channel to the client *
+ * @param rh [TODO:parameter]
+ * @param client [TODO:parameter]
+ * @param channel [TODO:parameter]
+ */
 void Join::display_topic(ReplyHandler& rh, Client& client, Channel& channel) {
 	if (channel.get_topic().empty()) {
 		rh.process_response(client, RPL_NOTOPIC, channel.get_name());
@@ -138,6 +156,9 @@ void Join::execute(Server& server, Client& client)
 		}
 		replyCode = channel->add_member(client); 											// try to add the members to the channel
 		if (replyCode == CORRECT_FORMAT) {													// if right permissions ...
+			LOG_CONN.info(client.get_nickname() + " joined channel: " + channel->get_name());
+			rh.process_response(client, TRANSFER_JOIN, channel->get_name());				// send connection success message
+			channel->broadcast(server, TRANSFER_JOIN, channel->get_name(), &client);		// + broad cast
 			if (channel->get_nb_members() == 1) {											// if first and/or only user
 				channel->make_operator(client);												// --> make the client operator
 				rh.process_response(client, RPL_CHANNELMODEIS, channel->get_name() + " +o ");
@@ -145,11 +166,9 @@ void Join::execute(Server& server, Client& client)
 				send_list_of_names(rh, client, *channel);									// send the list of names
 			}
 			display_topic(rh, client, *channel);											// in any case, display the topic
-			LOG_CONN.info(client.get_nickname() + " joined channel: " + channel->get_name());
-			rh.process_response(client, TRANSFER_JOIN, channel->get_name());
-			channel->broadcast(server, TRANSFER_JOIN, channel->get_name(), &client);
+
 		} else {
-			rh.process_response(client, replyCode, channel->get_name());					// send permissions error
+			rh.process_response(client, replyCode, channel->get_name());					// else if not added to chan -> send permissions error
 		}
 	}
 }
