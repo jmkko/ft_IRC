@@ -46,6 +46,7 @@ int main(int ac, char** av)
             functions["PRIVMSG"] = &test_privmsg;
             functions["PING"]    = &test_ping;
             functions["TOPIC"]   = &test_topic;
+            functions["MOTD"]   = &test_motd;
 
             functions[av[1]](*s, &results);
         } else {
@@ -57,6 +58,7 @@ int main(int ac, char** av)
             test_privmsg(*s, &results);
             test_ping(*s, &results);
             test_topic(*s, &results);
+            test_motd(*s, &results);
         }
 
         LOG_TEST.info("All tests completed, stopping server...");

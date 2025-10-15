@@ -6,8 +6,10 @@
 #include "printUtils.hpp"
 #include "reply_codes.hpp"
 
+#define MAX_TRIES_MOTD         10
 #define SERVER_PROCESS_TIME_MS 10
 #define SERVER_SEND_WAIT_MS    15
+#define SERVER_MOTD_WAIT_MS    50
 #define SERVER_START_WAIT_MS   50
 #define SERVER_STOP_WAIT_MS    20
 #define TEST_PORT              4343
@@ -140,6 +142,8 @@ static const std::string& badUserWho     = "WHO resu\r\n";
 static const std::string& badPatternWho  = "WHO *x*\r\n";
 static const std::string& allUserWho     = "WHO *\r\n";
 
+static const std::string& validMotd     = "MOTD\r\n";
+
 static const std::string& validPrivmsgSingleUser        = "PRIVMSG roro :hi\r\n";
 static const std::string& validPrivmsgSingleChan        = "PRIVMSG #chan :hi\r\n";
 static const std::string& validPrivMsgTwoChans          = "PRIVMSG #chan,#chan2 :hi\r\n";
@@ -185,6 +189,7 @@ void skip_lines(const TcpSocket& so, int nb);
 void test_join(Server& s, t_results* r);
 void test_kick(Server& s, t_results* r);
 void test_mode(Server& s, t_results* r);
+void test_motd(Server& s, t_results* r);
 void test_nick(Server& s, t_results* r);
 void test_who(Server& s, t_results* r);
 void test_privmsg(Server& s, t_results* r);

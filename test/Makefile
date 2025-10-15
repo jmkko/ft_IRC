@@ -31,6 +31,7 @@ SRCS_FILES		:= 	main.cpp\
 					TestFixture.cpp\
 					testKick.cpp\
 					testMode.cpp\
+					testMotd.cpp\
 					testNick.cpp\
 					testWho.cpp\
 					testJoin.cpp\
