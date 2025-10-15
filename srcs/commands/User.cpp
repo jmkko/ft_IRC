@@ -1,9 +1,9 @@
-#include "User.hpp"
-
 #include "Client.hpp"
+#include "Config.hpp"
 #include "LogManager.hpp"
 #include "ReplyHandler.hpp"
 #include "Server.hpp"
+#include "User.hpp"
 #include "reply_codes.hpp"
 
 #include <iostream>
@@ -32,9 +32,17 @@ void User::execute(Server& server, Client& client)
     client.set_real_name(_realname.substr(1));
     LOG_DV_CMD(_realname);
     ReplyHandler& rh = ReplyHandler::get_instance(&server);
-    if (!client.get_nickname().empty() && client.get_status() == AUTHENTICATED) {
+    if (!client.get_nickname().empty()) {
         client.set_status(REGISTERED);
-        rh.process_response(client, RPL_WELCOME);
+        rh.process_response(
+            client,
+            RPL_WELCOME,
+            "",
+            NULL,
+            ircCodes.trailing(RPL_WELCOME) + " " + client.get_nickname() + "!" + client.get_user_name() + "@localhost");
+        rh.process_response(client, RPL_YOURHOST, "", NULL, ircCodes.trailing(RPL_YOURHOST) + " " + server.get_name());
+        rh.process_response(client, RPL_CREATED);
+        rh.process_response(client, RPL_MYINFO, "", NULL, server.get_name() + " 1.0  0 0");
     } else {
         LOG_CMD.info("202 RPL_USER");
     }
