@@ -21,14 +21,14 @@
  * @param server
  * @param client
  * @param args should match pattern `<channel> [ <topic> ]`
- * @return @ref ReplyCode corresponding to RFC ERR or CORRECT_FORMAT if syntax is correct 
+ * @return @ref ReplyCode corresponding to RFC ERR or CORRECT_FORMAT if syntax is correct
  */
 ReplyCode Topic::check_args(Server& s, Client& c, std::string& params)
 {
     std::istringstream iss(params);
     std::string        token;
     Channel*           chan = NULL;
-    ReplyHandler rh = ReplyHandler::get_instance(&s);
+    ReplyHandler       rh   = ReplyHandler::get_instance(&s);
 
     if (!(iss >> token))
         return ERR_NEEDMOREPARAMS;
@@ -39,8 +39,7 @@ ReplyCode Topic::check_args(Server& s, Client& c, std::string& params)
         return PROCESSED_ERROR;
     }
 
-    if (!chan->is_member(c))
-    {
+    if (!chan->is_member(c)) {
         rh.process_response(c, ERR_NOTONCHANNEL, token);
         return PROCESSED_ERROR;
     }
@@ -58,9 +57,9 @@ ReplyCode Topic::check_args(Server& s, Client& c, std::string& params)
 
 /**
  * @brief Construct a new Topic:: Topic object
- * 
+ *
  * @param s server
- * @param params 
+ * @param params
  */
 Topic::Topic(Server& s, std::string& params)
 {
@@ -74,14 +73,13 @@ Topic::Topic(Server& s, std::string& params)
     while (iss >> token) {
         topic += " " + token;
     }
-    _chan = s.find_channel_by_name(channel);
+    _chan  = s.find_channel_by_name(channel);
     _topic = topic;
 }
 
-
 /**
  * @brief Destroy the Topic:: Topic object
- * 
+ *
  */
 Topic::~Topic(void) {}
 
@@ -95,7 +93,7 @@ Topic::~Topic(void) {}
  * returns RPL_TOPIC (or RPL_NOTOPIC if empty)
  * @elseif topic arg
  * tries updating channel topic
- * @endif 
+ * @endif
  * @param s #Server
  * @param c sender #Client
  */
@@ -125,4 +123,3 @@ void Topic::execute(Server& s, Client& c)
         LOG_w_CMD("invalid channel (should not happen)");
     }
 }
-

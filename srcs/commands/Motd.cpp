@@ -40,12 +40,12 @@ void Motd::execute(Server& server, Client& client)
     std::string   line, newline;
     std::ifstream inputFile;
 
-    const char*   filename = MOTD_FILE;
-    #ifdef TEST
+    const char* filename = MOTD_FILE;
+#ifdef TEST
     filename = MOTD_FILE_FOR_TEST;
-    #endif
+#endif
 
-    ReplyHandler& rh       = ReplyHandler::get_instance(&server);
+    ReplyHandler& rh = ReplyHandler::get_instance(&server);
     inputFile.open(filename);
     if (inputFile.is_open()) {
         std::string nick = client.get_nickname();
@@ -58,8 +58,7 @@ void Motd::execute(Server& server, Client& client)
             newline.clear();
         }
         rh.process_response(client, RPL_ENDOFMOTD, "");
-    }
-    else {
+    } else {
         LOG_w_CMD(strerror(errno));
         rh.process_response(client, ERR_NOMOTD);
     }

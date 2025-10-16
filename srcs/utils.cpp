@@ -1,6 +1,7 @@
+#include "utils.hpp"
+
 #include "LogManager.hpp"
 #include "consts.hpp"
-#include "utils.hpp"
 
 #include <poll.h>
 

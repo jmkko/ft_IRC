@@ -12,19 +12,19 @@ class Client;
 class Nick : public ICommand
 {
   public:
-	explicit Nick(const std::string& nickname);
-	~Nick();
+    explicit Nick(const std::string& nickname);
+    ~Nick();
 
-	void			 execute(Server& s, Client& c);
-	static ReplyCode check_args(Server& s, Client& c, std::string& params);
+    void             execute(Server& s, Client& c);
+    static ReplyCode check_args(Server& s, Client& c, std::string& params);
 
   private:
-	std::string _nickname;
+    std::string _nickname;
 
-	Nick();
-	Nick(const Nick& other);
+    Nick();
+    Nick(const Nick& other);
 
-	Nick& operator=(const Nick& other);
+    Nick& operator=(const Nick& other);
 };
 
 #endif

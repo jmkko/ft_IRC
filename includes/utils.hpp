@@ -1,11 +1,12 @@
 #ifndef UTILS_HPP
 #define UTILS_HPP
 
+#include "Client.hpp"
+
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
 #include <string>
-#include "Client.hpp"
 
 bool is_special_abnf(char c);
 bool check_args(int ac, char** av, int* port);
@@ -24,7 +25,7 @@ template <typename T> std::string to_string(const T& value)
 
 const std::string code_to_str(ReplyCode code);
 
-long string_to_ulong(const std::string& str);
+long        string_to_ulong(const std::string& str);
 std::string event_to_str(int event);
 
 template <size_t N> char& safe_at(char (&arr)[N], size_t index)
@@ -51,7 +52,7 @@ struct MatchPattern {
 
 } // namespace utils
 
-# define TO_STRING utils::to_string
-# define EVENT_TO_STR utils::event_to_str
+#define TO_STRING    utils::to_string
+#define EVENT_TO_STR utils::event_to_str
 
 #endif

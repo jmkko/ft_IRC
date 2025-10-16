@@ -1,4 +1,5 @@
 #include "Channel.hpp"
+
 #include "Client.hpp"
 #include "Config.hpp"
 #include "ICommand.hpp"
@@ -143,11 +144,9 @@ ReplyCode Channel::set_name(const std::string& name)
 
 ReplyCode Channel::set_topic(Client& client, const std::string& topic)
 {
-    if ((_mode & CHANMODE_TOPIC && is_operator(client)) || (!(_mode & CHANMODE_TOPIC)))
-    {
+    if ((_mode & CHANMODE_TOPIC && is_operator(client)) || (!(_mode & CHANMODE_TOPIC))) {
         _topic = topic;
-    }
-    else
+    } else
         return ERR_CHANOPRIVSNEEDED;
     return CORRECT_FORMAT;
 }

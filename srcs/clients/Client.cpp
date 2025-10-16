@@ -1,5 +1,6 @@
-#include "Channel.hpp"
 #include "Client.hpp"
+
+#include "Channel.hpp"
 #include "Config.hpp"
 #include "LogManager.hpp"
 #include "consts.hpp"

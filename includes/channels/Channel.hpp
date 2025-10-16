@@ -36,7 +36,7 @@ class Channel
 
     ReplyCode set_name(const std::string& name);
     ReplyCode set_topic(Client& client, const std::string& topic);
-	ReplyCode set_key(const std::string& key);
+    ReplyCode set_key(const std::string& key);
     void      set_user_limit(int limit);
     void      invite_client(Client& client);
     ReplyCode add_member(Client& client);
@@ -52,13 +52,17 @@ class Channel
     size_t                   get_nb_members() const;
     std::set<Client*>        get_members() const;
 
-    void        broadcast(Server& server, ReplyCode replyCode, const std::string& params, Client* sender = NULL, const std::string& trailing = "") const;
+    void        broadcast(Server&            server,
+                          ReplyCode          replyCode,
+                          const std::string& params,
+                          Client*            sender   = NULL,
+                          const std::string& trailing = "") const;
     static bool is_valid_channel_name(const std::string& name);
 
   private:
     std::string       _name;
     std::string       _topic;
-	std::string		  _key;
+    std::string       _key;
     unsigned short    _mode;
     int               _userLimit; // -1 if -l not set
     std::set<Client*> _members;

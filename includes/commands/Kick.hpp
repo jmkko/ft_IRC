@@ -16,15 +16,15 @@ class Kick : public ICommand
     Kick(const std::vector<std::string>& args);
     ~Kick();
 
-    void	     		execute(Server& server, Client& client);
-    static ReplyCode	check_args(Server& server, Client& client, std::vector<std::string>& args);
+    void             execute(Server& server, Client& client);
+    static ReplyCode check_args(Server& server, Client& client, std::vector<std::string>& args);
 
   private:
-  	std::vector<std::string> _args;
-	// std::vector<std::string> _channelsNames;
-	// std::vector<std::string> _userNames;
+    std::vector<std::string> _args;
+    // std::vector<std::string> _channelsNames;
+    // std::vector<std::string> _userNames;
 
-  	Kick();
+    Kick();
     Kick(const Kick& other);
     Kick& operator=(const Kick& other);
 };
