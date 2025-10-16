@@ -25,7 +25,7 @@
 <table cellspacing="0" cellpadding="0">
  <tbody>
  <tr id="projectrow">
-  <td id="projectlogo"><img alt="Logo" src="../../hazardousirc.png"/></td>
+  <td id="projectlogo"><img alt="Logo" src="../../hazirc.jpg"/></td>
   <td id="projectalign">
    <div id="projectname">hazardous irc<span id="projectnumber">&#160;0.1.0</span>
    </div>
@@ -149,54 +149,56 @@ $(function(){initNavTree('d6/df8/Privmsg_8hpp_source.html','../../',''); });
 <div class="line"><span class="lineno">   53</span><span class="comment">     * @param client sender @ref Client</span></div>
 <div class="line"><span class="lineno">   54</span><span class="comment">     * @param params string following the command name</span></div>
 <div class="line"><span class="lineno">   55</span><span class="comment">     * @return @ref ReplyCode corresponding to RFC ERR replies or CORRECT_FORMAT if syntax is correct</span></div>
-<div class="line"><span class="lineno">   56</span><span class="comment">     */</span></div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno"><a class="line" href="../../d2/dbb/classPrivmsg.html#a2f12871bc6c2543d2ef6847e39f91600">   57</a></span>    <span class="keyword">static</span> <a class="code hl_enumeration" href="../../d8/d9c/reply__codes_8hpp.html#a686bb12efcc784d36f30d3528bdcdf08">ReplyCode</a> <a class="code hl_function" href="../../d2/dbb/classPrivmsg.html#a2f12871bc6c2543d2ef6847e39f91600">check_args</a>(<a class="code hl_class" href="../../db/d00/classServer.html">Server</a>&amp; server, <a class="code hl_class" href="../../d1/d37/classClient.html">Client</a>&amp; client, std::string&amp; params);</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span> </div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    <span class="comment">/**</span></div>
-<div class="line"><span class="lineno">   60</span><span class="comment">     * @brief proceed to extra checks (presence of sender on target channel) and to message transfer</span></div>
-<div class="line"><span class="lineno">   61</span><span class="comment">     * @details</span></div>
-<div class="line"><span class="lineno">   62</span><span class="comment">     * - message is transferred to target #Client</span></div>
-<div class="line"><span class="lineno">   63</span><span class="comment">     * - or broadcasted to #Channel for other members (sender excepted)</span></div>
-<div class="line"><span class="lineno">   64</span><span class="comment">     * @pre Privmsg::check_args should have returned CORRECT_FORMAT</span></div>
-<div class="line"><span class="lineno">   65</span><span class="comment">     * @param server @ref Server</span></div>
-<div class="line"><span class="lineno">   66</span><span class="comment">     * @param client sender @ref Client</span></div>
-<div class="line"><span class="lineno">   67</span><span class="comment">     */</span></div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno"><a class="line" href="../../d2/dbb/classPrivmsg.html#a86457d6a42b88a3d0b8e5599275c5145">   68</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="../../d2/dbb/classPrivmsg.html#a86457d6a42b88a3d0b8e5599275c5145">execute</a>(<a class="code hl_class" href="../../db/d00/classServer.html">Server</a>&amp; server, <a class="code hl_class" href="../../d1/d37/classClient.html">Client</a>&amp; client);</div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span> </div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>  <span class="keyword">private</span>:</div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>    std::string           _params;</div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>    std::string           _msg;</div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>    std::vector&lt;Channel*&gt; _chans;</div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>    std::vector&lt;Client*&gt;  _dests;</div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span> </div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>    Privmsg(<span class="keywordtype">void</span>);</div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>    Privmsg(<span class="keyword">const</span> <a class="code hl_class" href="../../d2/dbb/classPrivmsg.html">Privmsg</a>&amp; other);</div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span> </div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>    <a class="code hl_class" href="../../d2/dbb/classPrivmsg.html">Privmsg</a>&amp; operator=(<span class="keyword">const</span> <a class="code hl_class" href="../../d2/dbb/classPrivmsg.html">Privmsg</a>&amp; other);</div>
+<div class="line"><span class="lineno">   56</span><span class="comment">     * @warning can return ERR_NEEDMOREPARAMS, ERR_NORECIPIENT, ERR_NOTEXTTOSEND or process directly replies ERR_TOOMANYTARGETS,</span></div>
+<div class="line"><span class="lineno">   57</span><span class="comment">     * ERR_NOSUCHCHANNEL, ERR_NOSUCHNICK</span></div>
+<div class="line"><span class="lineno">   58</span><span class="comment">     */</span></div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno"><a class="line" href="../../d2/dbb/classPrivmsg.html#a2f12871bc6c2543d2ef6847e39f91600">   59</a></span>    <span class="keyword">static</span> <a class="code hl_enumeration" href="../../d8/d9c/reply__codes_8hpp.html#a686bb12efcc784d36f30d3528bdcdf08">ReplyCode</a> <a class="code hl_function" href="../../d2/dbb/classPrivmsg.html#a2f12871bc6c2543d2ef6847e39f91600">check_args</a>(<a class="code hl_class" href="../../db/d00/classServer.html">Server</a>&amp; server, <a class="code hl_class" href="../../d1/d37/classClient.html">Client</a>&amp; client, std::string&amp; params);</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span> </div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>    <span class="comment">/**</span></div>
+<div class="line"><span class="lineno">   62</span><span class="comment">     * @brief proceed to extra checks (presence of sender on target channel) and to message transfer</span></div>
+<div class="line"><span class="lineno">   63</span><span class="comment">     * @details</span></div>
+<div class="line"><span class="lineno">   64</span><span class="comment">     * - message is transferred to target #Client</span></div>
+<div class="line"><span class="lineno">   65</span><span class="comment">     * - or broadcasted to #Channel for other members (sender excepted)</span></div>
+<div class="line"><span class="lineno">   66</span><span class="comment">     * @param server @ref Server</span></div>
+<div class="line"><span class="lineno">   67</span><span class="comment">     * @param client sender @ref Client</span></div>
+<div class="line"><span class="lineno">   68</span><span class="comment">     * @pre Privmsg::check_args should have returned CORRECT_FORMAT</span></div>
+<div class="line"><span class="lineno">   69</span><span class="comment">     */</span></div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno"><a class="line" href="../../d2/dbb/classPrivmsg.html#a86457d6a42b88a3d0b8e5599275c5145">   70</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="../../d2/dbb/classPrivmsg.html#a86457d6a42b88a3d0b8e5599275c5145">execute</a>(<a class="code hl_class" href="../../db/d00/classServer.html">Server</a>&amp; server, <a class="code hl_class" href="../../d1/d37/classClient.html">Client</a>&amp; client);</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span> </div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>  <span class="keyword">private</span>:</div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>    std::string           _params;</div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>    std::string           _msg;</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>    std::vector&lt;Channel*&gt; _chans;</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>    std::vector&lt;Client*&gt;  _dests;</div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span> </div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>    Privmsg(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>    Privmsg(<span class="keyword">const</span> <a class="code hl_class" href="../../d2/dbb/classPrivmsg.html">Privmsg</a>&amp; other);</div>
 <div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span> </div>
-<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>    <span class="comment">/**</span></div>
-<div class="line"><span class="lineno">   82</span><span class="comment">     * @brief util method to parse args into target clients, channels and message before execution</span></div>
-<div class="line"><span class="lineno">   83</span><span class="comment">     *</span></div>
-<div class="line"><span class="lineno">   84</span><span class="comment">     * @param server</span></div>
-<div class="line"><span class="lineno">   85</span><span class="comment">     * @param params</span></div>
-<div class="line"><span class="lineno">   86</span><span class="comment">     */</span></div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>    <span class="keywordtype">void</span> _build_args(<a class="code hl_class" href="../../db/d00/classServer.html">Server</a>&amp; server, std::string&amp; params);</div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>    <span class="comment">/**</span></div>
-<div class="line"><span class="lineno">   89</span><span class="comment">     * @brief adds a client to the list of valid clients</span></div>
-<div class="line"><span class="lineno">   90</span><span class="comment">     *</span></div>
-<div class="line"><span class="lineno">   91</span><span class="comment">     * @param client</span></div>
-<div class="line"><span class="lineno">   92</span><span class="comment">     */</span></div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>    <span class="keywordtype">void</span> _add_client(<a class="code hl_class" href="../../d1/d37/classClient.html">Client</a>* client);</div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>    <span class="comment">/**</span></div>
-<div class="line"><span class="lineno">   95</span><span class="comment">     * @brief adds a channel to the list of valid channels</span></div>
-<div class="line"><span class="lineno">   96</span><span class="comment">     *</span></div>
-<div class="line"><span class="lineno">   97</span><span class="comment">     * @param chan</span></div>
-<div class="line"><span class="lineno">   98</span><span class="comment">     */</span></div>
-<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>    <span class="keywordtype">void</span> _add_channel(<a class="code hl_class" href="../../d2/d48/classChannel.html">Channel</a>* chan);</div>
-<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>};</div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>    <a class="code hl_class" href="../../d2/dbb/classPrivmsg.html">Privmsg</a>&amp; operator=(<span class="keyword">const</span> <a class="code hl_class" href="../../d2/dbb/classPrivmsg.html">Privmsg</a>&amp; other);</div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span> </div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>    <span class="comment">/**</span></div>
+<div class="line"><span class="lineno">   84</span><span class="comment">     * @brief util method to parse args into target clients, channels and message before execution</span></div>
+<div class="line"><span class="lineno">   85</span><span class="comment">     *</span></div>
+<div class="line"><span class="lineno">   86</span><span class="comment">     * @param server</span></div>
+<div class="line"><span class="lineno">   87</span><span class="comment">     * @param params</span></div>
+<div class="line"><span class="lineno">   88</span><span class="comment">     */</span></div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>    <span class="keywordtype">void</span> _build_args(<a class="code hl_class" href="../../db/d00/classServer.html">Server</a>&amp; server, std::string&amp; params);</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>    <span class="comment">/**</span></div>
+<div class="line"><span class="lineno">   91</span><span class="comment">     * @brief adds a client to the list of valid clients</span></div>
+<div class="line"><span class="lineno">   92</span><span class="comment">     *</span></div>
+<div class="line"><span class="lineno">   93</span><span class="comment">     * @param client</span></div>
+<div class="line"><span class="lineno">   94</span><span class="comment">     */</span></div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>    <span class="keywordtype">void</span> _add_client(<a class="code hl_class" href="../../d1/d37/classClient.html">Client</a>* client);</div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>    <span class="comment">/**</span></div>
+<div class="line"><span class="lineno">   97</span><span class="comment">     * @brief adds a channel to the list of valid channels</span></div>
+<div class="line"><span class="lineno">   98</span><span class="comment">     *</span></div>
+<div class="line"><span class="lineno">   99</span><span class="comment">     * @param chan</span></div>
+<div class="line"><span class="lineno">  100</span><span class="comment">     */</span></div>
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>    <span class="keywordtype">void</span> _add_channel(<a class="code hl_class" href="../../d2/d48/classChannel.html">Channel</a>* chan);</div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>};</div>
 </div>
-<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span> </div>
-<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span><span class="preprocessor">#</span><span class="preprocessor">endif</span></div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span> </div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span><span class="preprocessor">#</span><span class="preprocessor">endif</span></div>
 <div class="ttc" id="aclassChannel_html"><div class="ttname"><a href="../../d2/d48/classChannel.html">Channel</a></div><div class="ttdef"><b>Definition</b> <a href="../../d7/d42/Channel_8hpp_source.html#l00016">Channel.hpp:17</a></div></div>
 <div class="ttc" id="aclassClient_html"><div class="ttname"><a href="../../d1/d37/classClient.html">Client</a></div><div class="ttdef"><b>Definition</b> <a href="../../d3/d8e/Client_8hpp_source.html#l00025">Client.hpp:26</a></div></div>
 <div class="ttc" id="aclassICommand_html"><div class="ttname"><a href="../../db/da2/classICommand.html">ICommand</a></div><div class="ttdef"><b>Definition</b> <a href="../../de/dd6/ICommand_8hpp_source.html#l00008">ICommand.hpp:9</a></div></div>

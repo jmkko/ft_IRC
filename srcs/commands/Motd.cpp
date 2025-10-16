@@ -19,22 +19,13 @@
  *		🥚 CONSTRUCTORS & DESTRUCTOR						*
  ************************************************************/
 
-Motd::~Motd() {}
 Motd::Motd(const std::string& params) : _params(params) {}
+Motd::~Motd() {}
 
 /*************************************************************
  *		🛠️ FUNCTIONS											*
  *************************************************************/
 
-/**
- * @brief sends message of the day through RPL_MOTD / RPL_EMDMOTD
- * @details proceeds in 3 steps
- * - open and read the `motd.conf` file
- * - replace the var by her data
- * - send the message to the client
- * @param server
- * @param client
- */
 void Motd::execute(Server& server, Client& client)
 {
     std::string   line, newline;
@@ -65,13 +56,6 @@ void Motd::execute(Server& server, Client& client)
     inputFile.close();
 }
 
-/**
- * @brief find a word in a line and replace it by an other
- * @param str the raw line
- * @param find  the word to replace
- * @param replace the new word
- * @return a new string with the new word
- */
 std::string Motd::_str_replace(const std::string& str, const std::string& find, const std::string& replace)
 {
     std::string newstr, trimstr, tmpstr;
@@ -89,10 +73,6 @@ std::string Motd::_str_replace(const std::string& str, const std::string& find, 
     return newstr;
 }
 
-/**
- * @brief calculate and format the current date
- * @return date formatted as YYYY-MM-DD
- */
 std::string Motd::_get_current_time()
 {
     std::time_t        now   = std::time(0);

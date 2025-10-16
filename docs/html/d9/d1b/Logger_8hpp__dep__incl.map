@@ -4,7 +4,7 @@
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="374,49,374,81,368,81,368,49"/>
 <area shape="rect" id="Node000003" href="$d7/d42/Channel_8hpp.html" title=" " alt="" coords="219,157,321,184"/>
 <area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="342,120,289,158,286,154,339,116"/>
-<area shape="rect" id="Node000007" href="$df/d93/Who_8hpp.html" title=" " alt="" coords="345,232,424,260"/>
+<area shape="rect" id="Node000007" href="$df/d93/Who_8hpp.html" title="Implements IRC WHO command." alt="" coords="345,232,424,260"/>
 <area shape="poly" id="edge8_Node000002_Node000007" title=" " alt="" coords="376,124,386,232,381,232,371,124"/>
 <area shape="rect" id="Node000008" href="$de/d3e/Motd_8hpp.html" title=" " alt="" coords="409,157,491,184"/>
 <area shape="poly" id="edge7_Node000002_Node000008" title=" " alt="" coords="398,118,438,154,434,158,395,122"/>

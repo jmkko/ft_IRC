@@ -8,6 +8,6 @@
 <area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="195,123,167,158,163,155,191,119"/>
 <area shape="rect" id="Node000005" href="$d6/df8/Privmsg_8hpp.html" title="Implements IRC PRIVMSG command." alt="" coords="219,157,321,184"/>
 <area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="234,119,262,155,258,158,230,123"/>
-<area shape="rect" id="Node000006" href="$df/d93/Who_8hpp.html" title=" " alt="" coords="345,157,424,184"/>
+<area shape="rect" id="Node000006" href="$df/d93/Who_8hpp.html" title="Implements IRC WHO command." alt="" coords="345,157,424,184"/>
 <area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="258,113,355,154,353,159,256,118"/>
 </map>

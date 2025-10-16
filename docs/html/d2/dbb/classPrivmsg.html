@@ -25,7 +25,7 @@
 <table cellspacing="0" cellpadding="0">
  <tbody>
  <tr id="projectrow">
-  <td id="projectlogo"><img alt="Logo" src="../../hazardousirc.png"/></td>
+  <td id="projectlogo"><img alt="Logo" src="../../hazirc.jpg"/></td>
   <td id="projectalign">
    <div id="projectname">hazardous irc<span id="projectnumber">&#160;0.1.0</span>
    </div>
@@ -226,6 +226,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd><a class="el" href="../../d8/d9c/reply__codes_8hpp.html#a686bb12efcc784d36f30d3528bdcdf08">ReplyCode</a> corresponding to RFC ERR replies or CORRECT_FORMAT if syntax is correct </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>can return ERR_NEEDMOREPARAMS, ERR_NORECIPIENT, ERR_NOTEXTTOSEND or process directly replies ERR_TOOMANYTARGETS, ERR_NOSUCHCHANNEL, ERR_NOSUCHNICK </dd></dl>
 </li>
 </ul>
 
@@ -261,14 +262,14 @@ Additional Inherited Members</h2></td></tr>
 <p>proceed to extra checks (presence of sender on target channel) and to message transfer </p>
 <ul>
 <li>message is transferred to target <a class="el" href="../../d1/d37/classClient.html">Client</a></li>
-<li>or broadcasted to <a class="el" href="../../d2/d48/classChannel.html">Channel</a> for other members (sender excepted) <dl class="section pre"><dt>Precondition</dt><dd><a class="el" href="#a2f12871bc6c2543d2ef6847e39f91600" title="check syntaxic validity of params">Privmsg::check_args</a> should have returned CORRECT_FORMAT </dd></dl>
-<dl class="params"><dt>Parameters</dt><dd>
+<li>or broadcasted to <a class="el" href="../../d2/d48/classChannel.html">Channel</a> for other members (sender excepted) <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">server</td><td><a class="el" href="../../db/d00/classServer.html">Server</a> </td></tr>
     <tr><td class="paramname">client</td><td>sender <a class="el" href="../../d1/d37/classClient.html">Client</a> </td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section pre"><dt>Precondition</dt><dd><a class="el" href="#a2f12871bc6c2543d2ef6847e39f91600" title="check syntaxic validity of params">Privmsg::check_args</a> should have returned CORRECT_FORMAT </dd></dl>
 </li>
 </ul>
 

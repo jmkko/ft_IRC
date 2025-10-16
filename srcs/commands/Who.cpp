@@ -9,14 +9,6 @@
  *		📁 CLASS METHODS									*
  ************************************************************/
 
-/**
- * @brief Check syntaxic validity of params
- * @details should match [ <mask> [ "o" ] ]
- * @param server
- * @param client
- * @param params
- * @return @ref ReplyCode
- */
 ReplyCode Who::check_args(Server& server, Client& client, std::string& params)
 {
     std::string        mask;
@@ -39,37 +31,14 @@ ReplyCode Who::check_args(Server& server, Client& client, std::string& params)
  *		🥚 CONSTRUCTORS & DESTRUCTOR						*
  ************************************************************/
 
-/**
- * @brief Construct a new Who:: Who object
- *
- * @param params
- */
 Who::Who(const std::string& params) : _params(params) {}
 
-/**
- * @brief Destroy the Who:: Who object
- *
- */
 Who::~Who() {}
 
 /*************************************************************
  *		🛠️ FUNCTIONS											*
  *************************************************************/
 
-/**
- * @brief sends replies RPL_WHOREPLY / RPL_ENDOFWHO for server members matching with params
- * @if no param
- * all members
- * @elseif mask
- * channel members if mask starts with a channel prefix (filtered by operator status if op == 'o')
- * members corresponding to mask
- * @endif
- * @details
- * RPL_WHOREPLY is made for each matching user cf @ref _who_msg
- * @remark matching can be made using regex
- * @param server
- * @param client
- */
 void Who::execute(Server& server, Client& client)
 {
     std::string        mask;
@@ -110,25 +79,6 @@ void Who::execute(Server& server, Client& client)
     }
 }
 
-/**
- * @brief build RPL_WHOREPLY message
- *
- * @param client
- * @param channel
- * @param server
- * @return message
- * @details sent for each matching user
- * should folow pattern : server 352 <me> <channel> <user> <host> <server> <nick> <flags> :<hopcount> <realname>
- * example of valid reply sequence for WHO #chan1 having 2 members
- * :irc.example.com 352 user1 #chan1 bob bobhost irc.example.com bob H@ :0 Bob Realname
- * :irc.example.com 315 user1 #chan1 :End of WHO list
- * <client> <channel> <username> <host> <server> <nick> <flags> :<hopcount> <realname>
- * flags are composed of
- * - away status: the letter H ('H', 0x48) to indicate that the user is here, or the letter G ('G', 0x47) to indicate that
- * the user is gone.
- * - optionally, a literal asterisk character ('*', 0x2A) to indicate that the user is a server operator.
- * trailing hopcounts being 0 (as it is a single server network)
- */
 std::string Who::_who_msg(Client* client, Channel* channel, Server& server)
 {
     std::string op  = "";
@@ -143,18 +93,9 @@ std::string Who::_who_msg(Client* client, Channel* channel, Server& server)
     msg.append(" " + server.get_name());
     msg.append(" " + client->get_nickname());
     msg.append(" H" + op);
-    // msg.append(client->get_real_name());
-    // LOG_DV_CMD(msg);
     return (msg);
 }
 
-/**
- * @brief find the client mathcing the pattern of Who command
- *
- * @param members set of members in a @ref Channel
- * @param pat pattern to search
- * @return a vector of @ref Client corresponding to the pattern
- */
 std::vector<Client*> Who::_find_all_clients_by_pattern(const std::set<Client*>& members, const std::string& pat)
 {
     std::vector<Client*> result;

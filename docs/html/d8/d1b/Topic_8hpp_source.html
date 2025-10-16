@@ -25,7 +25,7 @@
 <table cellspacing="0" cellpadding="0">
  <tbody>
  <tr id="projectrow">
-  <td id="projectlogo"><img alt="Logo" src="../../hazardousirc.png"/></td>
+  <td id="projectlogo"><img alt="Logo" src="../../hazirc.jpg"/></td>
   <td id="projectalign">
    <div id="projectname">hazardous irc<span id="projectnumber">&#160;0.1.0</span>
    </div>
@@ -127,7 +127,7 @@ $(function(){initNavTree('d8/d1b/Topic_8hpp_source.html','../../',''); });
 <div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>    <span class="comment">/**</span></div>
 <div class="line"><span class="lineno">   32</span><span class="comment">     * @brief Construct a new Topic:: Topic object</span></div>
 <div class="line"><span class="lineno">   33</span><span class="comment">     *</span></div>
-<div class="line"><span class="lineno">   34</span><span class="comment">     * @param server #Server</span></div>
+<div class="line"><span class="lineno">   34</span><span class="comment">     * @param server</span></div>
 <div class="line"><span class="lineno">   35</span><span class="comment">     * @param params</span></div>
 <div class="line"><span class="lineno">   36</span><span class="comment">     */</span></div>
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno"><a class="line" href="../../d8/d71/classTopic.html#a4bf4d2fadb5f81caad34761e6feb9c24">   37</a></span>    <a class="code hl_function" href="../../d8/d71/classTopic.html#a4bf4d2fadb5f81caad34761e6feb9c24">Topic</a>(<a class="code hl_class" href="../../db/d00/classServer.html">Server</a>&amp; server, std::string&amp; params);</div>
@@ -143,35 +143,38 @@ $(function(){initNavTree('d8/d1b/Topic_8hpp_source.html','../../',''); });
 <div class="line"><span class="lineno">   47</span><span class="comment">     * @details</span></div>
 <div class="line"><span class="lineno">   48</span><span class="comment">     * - if no topic arg returns RPL_TOPIC (or RPL_NOTOPIC if empty)</span></div>
 <div class="line"><span class="lineno">   49</span><span class="comment">     * - if topic arg, tries updating channel topic</span></div>
-<div class="line"><span class="lineno">   50</span><span class="comment">     * @param s #Server</span></div>
-<div class="line"><span class="lineno">   51</span><span class="comment">     * @param c sender #Client</span></div>
-<div class="line"><span class="lineno">   52</span><span class="comment">     */</span></div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno"><a class="line" href="../../d8/d71/classTopic.html#acd9b77f9d1f5f34e3b71f08e6ba46093">   53</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="../../d8/d71/classTopic.html#acd9b77f9d1f5f34e3b71f08e6ba46093">execute</a>(<a class="code hl_class" href="../../db/d00/classServer.html">Server</a>&amp; s, <a class="code hl_class" href="../../d1/d37/classClient.html">Client</a>&amp; client);</div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>    <span class="comment">/**</span></div>
-<div class="line"><span class="lineno">   55</span><span class="comment">     * @brief check syntaxic validity of args</span></div>
-<div class="line"><span class="lineno">   56</span><span class="comment">     * @details should match [RFC specs](https://datatracker.ietf.org/doc/html/rfc2812#section-3.2.4)</span></div>
-<div class="line"><span class="lineno">   57</span><span class="comment">     * - has at least one param (#Channel)</span></div>
-<div class="line"><span class="lineno">   58</span><span class="comment">     * perform other validity checks</span></div>
-<div class="line"><span class="lineno">   59</span><span class="comment">     * - #Channel does exist</span></div>
-<div class="line"><span class="lineno">   60</span><span class="comment">     * - #Client does exist</span></div>
-<div class="line"><span class="lineno">   61</span><span class="comment">     * @param server</span></div>
-<div class="line"><span class="lineno">   62</span><span class="comment">     * @param client</span></div>
-<div class="line"><span class="lineno">   63</span><span class="comment">     * @param params should match pattern `&lt;channel&gt; [ &lt;topic&gt; ]`</span></div>
-<div class="line"><span class="lineno">   64</span><span class="comment">     * @return @ref ReplyCode corresponding to RFC ERR or CORRECT_FORMAT if syntax is correct</span></div>
-<div class="line"><span class="lineno">   65</span><span class="comment">     */</span></div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno"><a class="line" href="../../d8/d71/classTopic.html#aa62d14fd696eb8af317edbc2a2f46d71">   66</a></span>    <span class="keyword">static</span> <a class="code hl_enumeration" href="../../d8/d9c/reply__codes_8hpp.html#a686bb12efcc784d36f30d3528bdcdf08">ReplyCode</a> <a class="code hl_function" href="../../d8/d71/classTopic.html#aa62d14fd696eb8af317edbc2a2f46d71">check_args</a>(<a class="code hl_class" href="../../db/d00/classServer.html">Server</a>&amp; server, <a class="code hl_class" href="../../d1/d37/classClient.html">Client</a>&amp; client, std::string&amp; params);</div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span> </div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>  <span class="keyword">private</span>:</div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>    std::string _topic;</div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>    <a class="code hl_class" href="../../d2/d48/classChannel.html">Channel</a>*    _chan;</div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span> </div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>    Topic(<span class="keywordtype">void</span>);</div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>    Topic(<span class="keyword">const</span> <a class="code hl_class" href="../../d8/d71/classTopic.html">Topic</a>&amp; other);</div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>    <a class="code hl_class" href="../../d8/d71/classTopic.html">Topic</a>&amp; operator=(<span class="keyword">const</span> <a class="code hl_class" href="../../d8/d71/classTopic.html">Topic</a>&amp; other);</div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>};</div>
+<div class="line"><span class="lineno">   50</span><span class="comment">     * @param server</span></div>
+<div class="line"><span class="lineno">   51</span><span class="comment">     * @param client sender</span></div>
+<div class="line"><span class="lineno">   52</span><span class="comment">     * @pre Topic::check_args should have returned CORRECT_FORMAT</span></div>
+<div class="line"><span class="lineno">   53</span><span class="comment">     */</span></div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno"><a class="line" href="../../d8/d71/classTopic.html#acd6da485b7a6c603b2a570213d93e27a">   54</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="../../d8/d71/classTopic.html#acd6da485b7a6c603b2a570213d93e27a">execute</a>(<a class="code hl_class" href="../../db/d00/classServer.html">Server</a>&amp; server, <a class="code hl_class" href="../../d1/d37/classClient.html">Client</a>&amp; client);</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span> </div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>    <span class="comment">/**</span></div>
+<div class="line"><span class="lineno">   57</span><span class="comment">     * @brief check syntaxic validity of args</span></div>
+<div class="line"><span class="lineno">   58</span><span class="comment">     * @details should match [RFC specs](https://datatracker.ietf.org/doc/html/rfc2812#section-3.2.4)</span></div>
+<div class="line"><span class="lineno">   59</span><span class="comment">     * - has at least one param (#Channel)</span></div>
+<div class="line"><span class="lineno">   60</span><span class="comment">     * perform other validity checks</span></div>
+<div class="line"><span class="lineno">   61</span><span class="comment">     * - #Channel does exist</span></div>
+<div class="line"><span class="lineno">   62</span><span class="comment">     * - #Client does exist</span></div>
+<div class="line"><span class="lineno">   63</span><span class="comment">     * @param server</span></div>
+<div class="line"><span class="lineno">   64</span><span class="comment">     * @param client sender</span></div>
+<div class="line"><span class="lineno">   65</span><span class="comment">     * @param params should match pattern `&lt;channel&gt; [ &lt;topic&gt; ]`</span></div>
+<div class="line"><span class="lineno">   66</span><span class="comment">     * @return @ref ReplyCode corresponding to RFC ERR or CORRECT_FORMAT if syntax is correct</span></div>
+<div class="line"><span class="lineno">   67</span><span class="comment">     * @warning can return ERR_NEEDMOREPARAMS or process directly replies ERR_NOSUCHCHANNEL ERR_NOTONCHANNEL</span></div>
+<div class="line"><span class="lineno">   68</span><span class="comment">     */</span></div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno"><a class="line" href="../../d8/d71/classTopic.html#aa62d14fd696eb8af317edbc2a2f46d71">   69</a></span>    <span class="keyword">static</span> <a class="code hl_enumeration" href="../../d8/d9c/reply__codes_8hpp.html#a686bb12efcc784d36f30d3528bdcdf08">ReplyCode</a> <a class="code hl_function" href="../../d8/d71/classTopic.html#aa62d14fd696eb8af317edbc2a2f46d71">check_args</a>(<a class="code hl_class" href="../../db/d00/classServer.html">Server</a>&amp; server, <a class="code hl_class" href="../../d1/d37/classClient.html">Client</a>&amp; client, std::string&amp; params);</div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span> </div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>  <span class="keyword">private</span>:</div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>    std::string _topic;</div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>    <a class="code hl_class" href="../../d2/d48/classChannel.html">Channel</a>*    _chan;</div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span> </div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>    Topic(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>    Topic(<span class="keyword">const</span> <a class="code hl_class" href="../../d8/d71/classTopic.html">Topic</a>&amp; other);</div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>    <a class="code hl_class" href="../../d8/d71/classTopic.html">Topic</a>&amp; operator=(<span class="keyword">const</span> <a class="code hl_class" href="../../d8/d71/classTopic.html">Topic</a>&amp; other);</div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>};</div>
 </div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span> </div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span><span class="preprocessor">#</span><span class="preprocessor">endif</span></div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span> </div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span><span class="preprocessor">#</span><span class="preprocessor">endif</span></div>
 <div class="ttc" id="aclassChannel_html"><div class="ttname"><a href="../../d2/d48/classChannel.html">Channel</a></div><div class="ttdef"><b>Definition</b> <a href="../../d7/d42/Channel_8hpp_source.html#l00016">Channel.hpp:17</a></div></div>
 <div class="ttc" id="aclassClient_html"><div class="ttname"><a href="../../d1/d37/classClient.html">Client</a></div><div class="ttdef"><b>Definition</b> <a href="../../d3/d8e/Client_8hpp_source.html#l00025">Client.hpp:26</a></div></div>
 <div class="ttc" id="aclassICommand_html"><div class="ttname"><a href="../../db/da2/classICommand.html">ICommand</a></div><div class="ttdef"><b>Definition</b> <a href="../../de/dd6/ICommand_8hpp_source.html#l00008">ICommand.hpp:9</a></div></div>
@@ -180,7 +183,7 @@ $(function(){initNavTree('d8/d1b/Topic_8hpp_source.html','../../',''); });
 <div class="ttc" id="aclassTopic_html_a4bf4d2fadb5f81caad34761e6feb9c24"><div class="ttname"><a href="../../d8/d71/classTopic.html#a4bf4d2fadb5f81caad34761e6feb9c24">Topic::Topic</a></div><div class="ttdeci">Topic(Server &amp;server, std::string &amp;params)</div><div class="ttdoc">Construct a new Topic:: Topic object.</div></div>
 <div class="ttc" id="aclassTopic_html_a8387ddd8ffe87e287c71380af0f45227"><div class="ttname"><a href="../../d8/d71/classTopic.html#a8387ddd8ffe87e287c71380af0f45227">Topic::~Topic</a></div><div class="ttdeci">~Topic()</div><div class="ttdoc">Destroy the Topic:: Topic object.</div></div>
 <div class="ttc" id="aclassTopic_html_aa62d14fd696eb8af317edbc2a2f46d71"><div class="ttname"><a href="../../d8/d71/classTopic.html#aa62d14fd696eb8af317edbc2a2f46d71">Topic::check_args</a></div><div class="ttdeci">static ReplyCode check_args(Server &amp;server, Client &amp;client, std::string &amp;params)</div><div class="ttdoc">check syntaxic validity of args</div></div>
-<div class="ttc" id="aclassTopic_html_acd9b77f9d1f5f34e3b71f08e6ba46093"><div class="ttname"><a href="../../d8/d71/classTopic.html#acd9b77f9d1f5f34e3b71f08e6ba46093">Topic::execute</a></div><div class="ttdeci">void execute(Server &amp;s, Client &amp;client)</div><div class="ttdoc">proceeds to extra checks for op status (through Channel::set_topic) and to replies/transfers</div></div>
+<div class="ttc" id="aclassTopic_html_acd6da485b7a6c603b2a570213d93e27a"><div class="ttname"><a href="../../d8/d71/classTopic.html#acd6da485b7a6c603b2a570213d93e27a">Topic::execute</a></div><div class="ttdeci">void execute(Server &amp;server, Client &amp;client)</div><div class="ttdoc">proceeds to extra checks for op status (through Channel::set_topic) and to replies/transfers</div></div>
 <div class="ttc" id="areply__codes_8hpp_html_a686bb12efcc784d36f30d3528bdcdf08"><div class="ttname"><a href="../../d8/d9c/reply__codes_8hpp.html#a686bb12efcc784d36f30d3528bdcdf08">ReplyCode</a></div><div class="ttdeci">ReplyCode</div><div class="ttdoc">https://datatracker.ietf.org/doc/html/rfc2812#section-5</div><div class="ttdef"><b>Definition</b> <a href="../../d8/d9c/reply__codes_8hpp_source.html#l00005">reply_codes.hpp:5</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->

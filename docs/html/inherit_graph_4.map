@@ -8,7 +8,7 @@
 <area shape="poly" id="edge3_Node000000_Node000003" title=" " alt="" coords="60,301,92,228,116,187,144,148,157,136,161,139,148,152,120,190,97,231,65,303"/>
 <area shape="rect" id="Node000004" href="$d9/d03/classMode.html" title=" " alt="" coords="154,161,212,189"/>
 <area shape="poly" id="edge4_Node000000_Node000004" title=" " alt="" coords="67,303,100,253,144,200,158,188,162,192,148,204,104,256,71,306"/>
-<area shape="rect" id="Node000005" href="$d1/d48/classMotd.html" title=" " alt="" coords="156,213,210,241"/>
+<area shape="rect" id="Node000005" href="$d1/d48/classMotd.html" title="Handler for IRC MOTD." alt="" coords="156,213,210,241"/>
 <area shape="poly" id="edge5_Node000000_Node000005" title=" " alt="" coords="79,305,144,252,160,240,163,244,147,256,83,309"/>
 <area shape="rect" id="Node000006" href="$d1/d47/classNick.html" title=" " alt="" coords="158,265,208,293"/>
 <area shape="poly" id="edge6_Node000000_Node000006" title=" " alt="" coords="102,309,156,287,158,291,104,314"/>
@@ -24,6 +24,6 @@
 <area shape="poly" id="edge11_Node000000_Node000011" title=" " alt="" coords="65,359,97,432,120,473,148,511,161,523,157,527,144,514,116,475,92,434,60,361"/>
 <area shape="rect" id="Node000012" href="$d9/dc0/classUser.html" title=" " alt="" coords="157,577,208,605"/>
 <area shape="poly" id="edge12_Node000000_Node000012" title=" " alt="" coords="61,359,73,401,90,454,115,511,148,563,160,575,156,579,144,566,110,513,85,456,67,403,56,360"/>
-<area shape="rect" id="Node000013" href="$dc/d08/classWho.html" title=" " alt="" coords="158,629,208,657"/>
+<area shape="rect" id="Node000013" href="$dc/d08/classWho.html" title="Handler for IRC WHO query." alt="" coords="158,629,208,657"/>
 <area shape="poly" id="edge13_Node000000_Node000013" title=" " alt="" coords="59,360,68,412,85,478,111,549,128,583,148,615,160,627,156,631,144,618,123,586,106,551,80,480,63,413,54,361"/>
 </map>

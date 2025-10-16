@@ -53,6 +53,8 @@ class Privmsg : public ICommand
      * @param client sender @ref Client
      * @param params string following the command name
      * @return @ref ReplyCode corresponding to RFC ERR replies or CORRECT_FORMAT if syntax is correct
+     * @warning can return ERR_NEEDMOREPARAMS, ERR_NORECIPIENT, ERR_NOTEXTTOSEND or process directly replies ERR_TOOMANYTARGETS,
+     * ERR_NOSUCHCHANNEL, ERR_NOSUCHNICK
      */
     static ReplyCode check_args(Server& server, Client& client, std::string& params);
 
@@ -61,9 +63,9 @@ class Privmsg : public ICommand
      * @details
      * - message is transferred to target #Client
      * - or broadcasted to #Channel for other members (sender excepted)
-     * @pre Privmsg::check_args should have returned CORRECT_FORMAT
      * @param server @ref Server
      * @param client sender @ref Client
+     * @pre Privmsg::check_args should have returned CORRECT_FORMAT
      */
     void execute(Server& server, Client& client);
 

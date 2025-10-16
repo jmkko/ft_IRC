@@ -49,8 +49,10 @@ class Topic : public ICommand
      * - if topic arg, tries updating channel topic
      * @param server
      * @param client sender
+     * @pre Topic::check_args should have returned CORRECT_FORMAT
      */
     void execute(Server& server, Client& client);
+
     /**
      * @brief check syntaxic validity of args
      * @details should match [RFC specs](https://datatracker.ietf.org/doc/html/rfc2812#section-3.2.4)

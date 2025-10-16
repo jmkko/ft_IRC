@@ -8,7 +8,7 @@
 <area shape="poly" id="edge26_Node000001_Node000004" title=" " alt="" coords="876,48,852,103,843,136,840,169,840,248,836,274,826,297,810,318,790,336,745,366,702,386,700,381,743,361,787,332,806,315,821,294,831,272,835,247,835,169,838,135,847,101,871,46"/>
 <area shape="rect" id="Node000005" href="$d6/df8/Privmsg_8hpp.html" title="Implements IRC PRIVMSG command." alt="" coords="800,384,902,411"/>
 <area shape="poly" id="edge28_Node000001_Node000005" title=" " alt="" coords="891,49,891,169,891,248,887,287,879,326,859,384,854,382,873,325,882,287,885,247,885,169,885,49"/>
-<area shape="rect" id="Node000006" href="$df/d93/Who_8hpp.html" title=" " alt="" coords="372,384,450,411"/>
+<area shape="rect" id="Node000006" href="$df/d93/Who_8hpp.html" title="Implements IRC WHO command." alt="" coords="372,384,450,411"/>
 <area shape="poly" id="edge34_Node000001_Node000006" title=" " alt="" coords="809,24,703,28,571,38,425,56,280,84,241,90,201,93,129,97,100,103,78,116,64,137,59,169,59,247,61,271,68,292,79,310,94,326,133,352,180,371,231,383,283,390,371,394,371,400,282,395,230,388,178,376,130,357,90,330,75,313,63,294,56,272,53,248,53,169,59,135,75,112,99,98,129,92,201,88,240,85,280,78,424,51,570,33,703,23,809,19"/>
 <area shape="rect" id="Node000007" href="$d3/d8e/Client_8hpp.html" title=" " alt="" coords="350,81,437,109"/>
 <area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="809,35,438,90,437,84,809,30"/>

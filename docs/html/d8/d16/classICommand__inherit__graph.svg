@@ -92,7 +92,7 @@
 <!-- Node6 -->
 <g id="Node000006" class="node">
 <title>Node6</title>
-<g id="a_Node000006"><a xlink:href="../../d1/d48/classMotd.html" target="_top" xlink:title=" ">
+<g id="a_Node000006"><a xlink:href="../../d1/d48/classMotd.html" target="_top" xlink:title="Handler for IRC MOTD.">
 <polygon fill="white" stroke="#666666" points="271.25,-20.75 230.5,-20.75 230.5,0 271.25,0 271.25,-20.75"/>
 <text xml:space="preserve" text-anchor="middle" x="250.88" y="-7.25" font-family="Helvetica,sans-Serif" font-size="10.00">Motd</text>
 </a>
@@ -236,7 +236,7 @@
 <!-- Node14 -->
 <g id="Node000014" class="node">
 <title>Node14</title>
-<g id="a_Node000014"><a xlink:href="../../dc/d08/classWho.html" target="_top" xlink:title=" ">
+<g id="a_Node000014"><a xlink:href="../../dc/d08/classWho.html" target="_top" xlink:title="Handler for IRC WHO query.">
 <polygon fill="white" stroke="#666666" points="736.75,-20.75 699,-20.75 699,0 736.75,0 736.75,-20.75"/>
 <text xml:space="preserve" text-anchor="middle" x="717.88" y="-7.25" font-family="Helvetica,sans-Serif" font-size="10.00">Who</text>
 </a>

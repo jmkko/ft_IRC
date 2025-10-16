@@ -1,5 +1,5 @@
 <map id="Who.hpp" name="Who.hpp">
-<area shape="rect" id="Node000001" title=" " alt="" coords="767,5,845,33"/>
+<area shape="rect" id="Node000001" title="Implements IRC WHO command." alt="" coords="767,5,845,33"/>
 <area shape="rect" id="Node000002" href="$d7/d42/Channel_8hpp.html" title=" " alt="" coords="822,81,924,109"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="820,32,853,68,849,71,816,35"/>
 <area shape="rect" id="Node000003" href="$de/d1c/LogManager_8hpp.html" title=" " alt="" coords="590,157,718,184"/>

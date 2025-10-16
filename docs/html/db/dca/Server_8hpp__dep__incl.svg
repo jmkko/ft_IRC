@@ -56,7 +56,7 @@
 <!-- Node4 -->
 <g id="Node000004" class="node">
 <title>Node4</title>
-<g id="a_Node000004"><a xlink:href="../../df/d93/Who_8hpp.html" target="_top" xlink:title=" ">
+<g id="a_Node000004"><a xlink:href="../../df/d93/Who_8hpp.html" target="_top" xlink:title="Implements IRC WHO command.">
 <polygon fill="white" stroke="#666666" points="220.75,-20.75 162,-20.75 162,0 220.75,0 220.75,-20.75"/>
 <text xml:space="preserve" text-anchor="middle" x="191.38" y="-7.25" font-family="Helvetica,sans-Serif" font-size="10.00">Who.hpp</text>
 </a>
