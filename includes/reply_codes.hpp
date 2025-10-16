@@ -17,6 +17,7 @@ enum ReplyCode {
     TRANSFER_MODE    = 207,
     TRANSFER_QUIT    = 208,
     MSG_PING         = 209,
+    TRANSFER_TOPIC   = 210,
     PROCESSED_ERROR  = 806,
 
     // SERVER_ERR          = 801,

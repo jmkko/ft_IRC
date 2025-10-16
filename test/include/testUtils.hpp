@@ -6,8 +6,10 @@
 #include "printUtils.hpp"
 #include "reply_codes.hpp"
 
+#define MAX_TRIES_MOTD         10
 #define SERVER_PROCESS_TIME_MS 10
 #define SERVER_SEND_WAIT_MS    15
+#define SERVER_MOTD_WAIT_MS    50
 #define SERVER_START_WAIT_MS   50
 #define SERVER_STOP_WAIT_MS    20
 #define TEST_PORT              4343
@@ -127,7 +129,6 @@ static const std::string& invalidModeNoChanMsg        = "MODE +l 4\r\n";
 
 static const std::string& validPartMsg = "PART #chan\r\n";
 
-static const std::string& validTopicMsg  = "TOPIC #chan :New topic\r\n";
 static const std::string& validPingMsg   = "PING token\r\n";
 static const std::string& invalidPingMsg = "PING\r\n";
 
@@ -141,14 +142,29 @@ static const std::string& badUserWho     = "WHO resu\r\n";
 static const std::string& badPatternWho  = "WHO *x*\r\n";
 static const std::string& allUserWho     = "WHO *\r\n";
 
-static const std::string& noparamsPrivmsg        = "PRIVMSG\r\n";
-static const std::string& invalidnicknamePrivmsg = "PRIVMSG nonexistent :message\r\n";
-static const std::string& toomanytargetPrivmsg   = "PRIVMSG roro,toto,riri,titi,rara,tata :message\r\n";
-static const std::string& notextPrivmsg          = "PRIVMSG #chan\r\n";
+static const std::string& validMotd     = "MOTD\r\n";
 
-static const std::string& noparamsTopic				= "TOPIC\r\n";
-static const std::string& invalidChannelTopic		= "TOPIC $notvalid\r\n";
-static const std::string& notAChannelMemberTopic	= "TOPIC #chan\r\n";
+static const std::string& validPrivmsgSingleUser        = "PRIVMSG roro :hi\r\n";
+static const std::string& validPrivmsgSingleChan        = "PRIVMSG #chan :hi\r\n";
+static const std::string& validPrivMsgTwoChans          = "PRIVMSG #chan,#chan2 :hi\r\n";
+static const std::string& validPrivmsgChanUser          = "PRIVMSG roro,#chan :hi\r\n";
+static const std::string& validPrivmsgWrongUser         = "PRIVMSG nonexistent :message\r\n";
+static const std::string& validPrivmsgWrongChannel      = "PRIVMSG #nonexistent :message\r\n";
+static const std::string& validPrivMsgToomanytarget     = "PRIVMSG roro,toto,riri,titi,rara,tata :message\r\n";
+static const std::string& invalidPrivmsgNoParams        = "PRIVMSG\r\n";
+static const std::string& invalidPrivmsgNoText          = "PRIVMSG #chan\r\n";
+static const std::string& invalidPrivmsgEmptyTrailing   = "PRIVMSG #chan :\r\n";
+static const std::string& validPrivmsgBlank             = "PRIVMSG #chan : \r\n";
+static const std::string& invalidPrivMsgSpaceAfterComma = "PRIVMSG roro, toto :hi\r\n";
+static const std::string& invalidPrivMsgInArg           = "PRIVMSG roro, toto hi\r\n";
+
+static const std::string& validTopic				= "TOPIC #chan new topic\r\n";
+static const std::string& validTopic2				= "TOPIC #chan new topic2\r\n";
+static const std::string& validTopicEmpty			= "TOPIC #chan\r\n";
+static const std::string& edgeTopicTrailing			= "TOPIC #chan :trailing\r\n";
+static const std::string& invalidTopicNoParam		= "TOPIC\r\n";
+static const std::string& validTopicWrongChannel    = "TOPIC $notvalid\r\n";
+// static const std::string& notAChannelMemberTopic	= "TOPIC #chan\r\n";
 
 static const std::string& validInvite = "INVITE roro #chan\r\n";
 
@@ -173,6 +189,7 @@ void skip_lines(const TcpSocket& so, int nb);
 void test_join(Server& s, t_results* r);
 void test_kick(Server& s, t_results* r);
 void test_mode(Server& s, t_results* r);
+void test_motd(Server& s, t_results* r);
 void test_nick(Server& s, t_results* r);
 void test_who(Server& s, t_results* r);
 void test_privmsg(Server& s, t_results* r);

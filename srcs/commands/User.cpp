@@ -1,6 +1,7 @@
 #include "Client.hpp"
 #include "Config.hpp"
 #include "LogManager.hpp"
+#include "Motd.hpp"
 #include "ReplyHandler.hpp"
 #include "Server.hpp"
 #include "User.hpp"
@@ -64,6 +65,10 @@ void User::execute(Server& server, Client& client)
         rh.process_response(client, RPL_YOURHOST, "", NULL, ircCodes.trailing(RPL_YOURHOST) + " " + server.get_name());
         rh.process_response(client, RPL_CREATED);
         rh.process_response(client, RPL_MYINFO, "", NULL, server.get_name() + " 1.0  0 0");
+        #ifndef TEST
+        Motd motd("");
+        motd.execute(server, client);
+        #endif
     } else {
         LOG_CMD.info("202 RPL_USER");
     }
