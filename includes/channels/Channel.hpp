@@ -41,7 +41,7 @@ class Channel
     void      invite_client(Client& client);
     bool      remove_from_invited_list(Client& client);
     ReplyCode add_member(Client& client);
-    void      remove_member(Client& client);
+    bool      remove_member(Client& client);
     ReplyCode ban_member(Client& client);
     ReplyCode make_operator(Client& client);
     void      remove_operator(Client& client);

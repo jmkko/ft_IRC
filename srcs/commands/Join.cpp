@@ -24,7 +24,7 @@ Join& Join::operator=(const Join& other)
 /**
  * @brief recreate the channels list. Each name of channel are mapped with their corresponding key.
  *
- * @param params [TODO:parameter]
+ * @param params
  */
 Join::Join(const std::string& params)
 {
@@ -72,15 +72,15 @@ ReplyCode Join::check_args(Server& server, Client& client, std::string& params)
     std::istringstream issChannels(channels), issKeys(keys);
     while (std::getline(issChannels, currentChannel, ',')) {
         std::getline(issKeys, currentKey, ',');
-		LOG_CMD.debug("Current channel: " + currentChannel + " key: " + currentKey); //NOLINT
+        LOG_CMD.debug("Current channel: " + currentChannel + " key: " + currentKey); // NOLINT
         if (!Channel::is_valid_channel_name(currentChannel)) {
             rh.process_response(client, ERR_BADCHANMASK, currentChannel);
-		} else if (!Channel::is_valid_channel_key(currentKey)) {
+        } else if (!Channel::is_valid_channel_key(currentKey)) {
             rh.process_response(client, ERR_BADCHANNELKEY, client.get_nickname() + " " + currentChannel);
-		} else {
+        } else {
             channelsNames += currentChannel + ",";
             channelsKeys += currentKey + ",";
-		}
+        }
         currentChannel.clear();
         currentKey.clear();
     }
@@ -97,13 +97,14 @@ ReplyCode Join::check_args(Server& server, Client& client, std::string& params)
  * @param client [TODO:parameter]
  * @param channel [TODO:parameter]
  */
-void Join::send_list_of_names(ReplyHandler& rh, Client& client, Channel& channel) {
-	std::vector<std::string> users = channel.get_members_list();
+void Join::send_list_of_names(ReplyHandler& rh, Client& client, Channel& channel)
+{
+    std::vector<std::string> users = channel.get_members_list();
 
-	for (size_t i = 0; i < users.size(); ++i) {
-		rh.process_response(client, RPL_NAMREPLY, "= " + channel.get_name(), NULL, users[i]);
-	}
-	rh.process_response(client, RPL_ENDOFNAMES, channel.get_name());
+    for (size_t i = 0; i < users.size(); ++i) {
+        rh.process_response(client, RPL_NAMREPLY, "= " + channel.get_name(), NULL, users[i]);
+    }
+    rh.process_response(client, RPL_ENDOFNAMES, channel.get_name());
 }
 
 /**
@@ -112,12 +113,13 @@ void Join::send_list_of_names(ReplyHandler& rh, Client& client, Channel& channel
  * @param client [TODO:parameter]
  * @param channel [TODO:parameter]
  */
-void Join::display_topic(ReplyHandler& rh, Client& client, Channel& channel) {
-	if (channel.get_topic().empty()) {
-		rh.process_response(client, RPL_NOTOPIC, channel.get_name());
-	} else {
-		rh.process_response(client, RPL_TOPIC, channel.get_name(), NULL, channel.get_topic());
-	}
+void Join::display_topic(ReplyHandler& rh, Client& client, Channel& channel)
+{
+    if (channel.get_topic().empty()) {
+        rh.process_response(client, RPL_NOTOPIC, channel.get_name());
+    } else {
+        rh.process_response(client, RPL_TOPIC, channel.get_name(), NULL, channel.get_topic());
+    }
 }
 
 /**
@@ -147,31 +149,29 @@ void Join::execute(Server& server, Client& client)
         std::string chanName = it->first;
         std::string chanKey  = it->second;
         Channel*    channel  = server.find_channel_by_name(chanName);
-        if (!channel) { 								// if the channel doesnt exist
-            channel = new Channel(chanName, chanKey);	// make a new one
-            server.channels[chanName] = channel;		// add it to the server
+        if (!channel) {                                                 // if the channel doesnt exist
+            channel                   = new Channel(chanName, chanKey); // make a new one
+            server.channels[chanName] = channel;                        // add it to the server
             LOG_I_CMD("#️⃣ New channel", channel->get_name());
-		} else if ((channel->get_mode() & CHANMODE_KEY) && (chanKey != channel->get_key())) { 	// if the channel exist but wrong key has been given
-            rh.process_response(client, ERR_BADCHANNELKEY, channel->get_name());				// send error - no connexions
-			continue ;																			// continue iteration
-		}
-		replyCode = channel->add_member(client); 											// try to add the members to the channel
-		if (replyCode == CORRECT_FORMAT) {													// if right permissions ...
-			LOG_CONN.info(client.get_nickname() + " joined channel: " + channel->get_name());
-			rh.process_response(client, TRANSFER_JOIN, channel->get_name());				// send connection success message
-			channel->broadcast(server, TRANSFER_JOIN, channel->get_name(), &client);		// + broadcast
-			if (channel->remove_from_invited_list(client)) {	
-				rh.process_response(client, RPL_CHANNELMODEIS, channel->get_name() + " +i "); //display MODE +i if the client has been invited
-			}
-			if (channel->get_nb_members() == 1) {											// if first and/or only user
-				channel->make_operator(client);												// --> make the client operator
-				rh.process_response(client, RPL_CHANNELMODEIS, channel->get_name() + " +o ");
-			} else 	{
-				send_list_of_names(rh, client, *channel);									// send the list of names
-			}
-			display_topic(rh, client, *channel);											// in any case, display the topic
-		} else {
-			rh.process_response(client, replyCode, channel->get_name());					// else if not added to chan -> send permissions error
-		}
-	}
+        } else if ((channel->get_mode() & CHANMODE_KEY)
+                   && (chanKey != channel->get_key())) { 				// if the channel exist but wrong key has been given
+            rh.process_response(client, ERR_BADCHANNELKEY, chanName);	// send error - no connexions
+            continue;                                                   // continue iteration
+        }
+        replyCode = channel->add_member(client); 									// try to add the members to the channel
+        if (replyCode == CORRECT_FORMAT) {       									// if right permissions ...
+            LOG_CONN.info(client.get_nickname() + " joined channel: " + chanName);
+            rh.process_response(client, TRANSFER_JOIN, chanName);        			// send connection success message
+            channel->broadcast(server, TRANSFER_JOIN, chanName, &client); 			// + broadcast
+            channel->remove_from_invited_list(client);
+            if (channel->get_nb_members() == 1) { 									// if first and/or only user
+                channel->make_operator(client);   									// --> make the client operator
+                rh.process_response(client, RPL_CHANNELMODEIS, chanName + " +o ");
+            }
+            send_list_of_names(rh, client, *channel); 								// send the list of names
+            display_topic(rh, client, *channel); 									// display the topic
+        } else {
+            rh.process_response(client, replyCode, chanName); 			// else if not added to chan -> send permissions error
+        }
+    }
 }

@@ -225,7 +225,12 @@ bool Channel::remove_from_invited_list(Client& client)
     return (invited);
 }
 
-void Channel::remove_member(Client& client) { _members.erase(&client); }
+bool Channel::remove_member(Client& client)
+{
+    bool member = is_member(client);
+    _members.erase(&client);
+    return (member);
+}
 
 void Channel::remove_operator(Client& client) { _operators.erase(&client); }
 
