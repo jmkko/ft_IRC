@@ -10,6 +10,10 @@
 
 #include <bitset>
 
+/******************************************************************************
+ *                  CONSTRUCTOR AND DESTRUCTOR                                *
+ ******************************************************************************/
+
 Join::Join() {}
 Join::~Join() {}
 Join::Join(const Join& other) : ICommand(), _chans(other._chans) {}
@@ -30,7 +34,7 @@ Join::Join(const std::string& params)
 {
     std::istringstream iss(params);
     std::string        channels;
-    std::string        keys;
+std::string        keys;
 
     iss >> channels;
     iss >> keys;
@@ -46,6 +50,10 @@ Join::Join(const std::string& params)
         currentKey.clear();
     }
 }
+
+/******************************************************************************
+ *                                 METHODS                                    *
+ ******************************************************************************/
 
 /**
  * @brief check and keep only true parameters [#chan1,#chan2,#chan3 key1,key2,key3]
@@ -121,6 +129,7 @@ void Join::display_topic(ReplyHandler& rh, Client& client, Channel& channel)
         rh.process_response(client, RPL_TOPIC, channel.get_name(), NULL, channel.get_topic());
     }
 }
+
 
 /**
  * @brief Allows a client to join a channel or create it if it does not exist

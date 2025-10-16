@@ -8,13 +8,14 @@
  *                  CONSTRUCTOR AND DESTRUCTOR                                *
  ******************************************************************************/
 
-Invite::Invite() : _params() {}
-Invite::Invite(const Invite& other) : _params(other._params) {}
+Invite::Invite() : _nickname(), _channelName() {}
+Invite::Invite(const Invite& other) : _nickname(other._nickname), _channelName(other._channelName) {}
 Invite::~Invite() {}
 Invite& Invite::operator=(const Invite& other)
 {
     if (this != &other) {
-        _params = other._params;
+        _nickname = other._nickname;
+		_channelName = other._channelName;
     }
     return (*this);
 }

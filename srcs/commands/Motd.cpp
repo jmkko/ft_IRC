@@ -10,7 +10,7 @@
 #include <ctime>
 #include <fstream>
 #include <iomanip>
-#include <linux/limits.h>
+#include <limits.h>
 #include <ostream>
 #include <sstream>
 #include <unistd.h>
