@@ -129,7 +129,7 @@ Additional Inherited Members</h2></td></tr>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Handler for IRC PRIVMSG. </p>
 <p>This command is used to send</p><ul>
-<li>direct messages to <a class="el" href="../../d1/d37/classClient.html">Client</a></li>
+<li>direct messages to <a class="el" href="../../d1/d37/classClient.html" title="represents a Client interacting with the server">Client</a></li>
 <li>messages to channels the sender belongs to </li>
 </ul>
 
@@ -215,7 +215,7 @@ Additional Inherited Members</h2></td></tr>
 <p>check syntaxic validity of params </p>
 <p>should match <a href="https://datatracker.ietf.org/doc/html/rfc2812#section-3.3.1">RFC specs</a> syntax rules:</p><ul>
 <li>trailing message (after <span class="tt">:</span>) should not be empty</li>
-<li>at least one target (<a class="el" href="../../d2/d48/classChannel.html" title="representing an IRC channel">Channel</a> or <a class="el" href="../../d1/d37/classClient.html">Client</a> sender)</li>
+<li>at least one target (<a class="el" href="../../d2/d48/classChannel.html" title="representing an IRC channel">Channel</a> or <a class="el" href="../../d1/d37/classClient.html" title="represents a Client interacting with the server">Client</a> sender)</li>
 <li>at max MAX_TARGET (defined in irc.conf) other rules:</li>
 <li>targets should be existing nicks or channels <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -261,7 +261,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>proceed to extra checks (presence of sender on target channel) and to message transfer </p>
 <ul>
-<li>message is transferred to target <a class="el" href="../../d1/d37/classClient.html">Client</a></li>
+<li>message is transferred to target <a class="el" href="../../d1/d37/classClient.html" title="represents a Client interacting with the server">Client</a></li>
 <li>or broadcasted to <a class="el" href="../../d2/d48/classChannel.html" title="representing an IRC channel">Channel</a> for other members (sender excepted) <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">server</td><td><a class="el" href="../../db/d00/classServer.html">Server</a> </td></tr>

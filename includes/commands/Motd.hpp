@@ -57,7 +57,7 @@ class Motd : public ICommand
      * @param client
      * @warning can process reply ERR_NOMOTD if the file cannot be opened
      */
-    void execute(Server& s, Client& c);
+    void execute(Server& server, Client& client);
 
   private:
     /**

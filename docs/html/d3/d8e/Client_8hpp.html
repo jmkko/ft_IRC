@@ -115,12 +115,16 @@ $(function(){initNavTree('d3/d8e/Client_8hpp.html','../../',''); });
 <tr class="heading"><td colspan="2"><h2 id="header-nested-classes" class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:Client" id="r_Client"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d1/d37/classClient.html">Client</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">represents a <a class="el" href="../../d1/d37/classClient.html" title="represents a Client interacting with the server">Client</a> interacting with the server  <a href="../../d1/d37/classClient.html#details">More...</a><br /></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-define-members" class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
 <tr class="memitem:adc21e77f8bf615af61f6ce7f8edaf02c" id="r_adc21e77f8bf615af61f6ce7f8edaf02c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adc21e77f8bf615af61f6ce7f8edaf02c">UNAUTHENTICATED</a>&#160;&#160;&#160;0b00000</td></tr>
+<tr class="memdesc:adc21e77f8bf615af61f6ce7f8edaf02c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represents the unauthenticated state of a client.  <br /></td></tr>
 <tr class="memitem:a1f04810299c7d2ac8c188f67c8f0a16a" id="r_a1f04810299c7d2ac8c188f67c8f0a16a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1f04810299c7d2ac8c188f67c8f0a16a">AUTHENTICATED</a>&#160;&#160;&#160;0b00001</td></tr>
+<tr class="memdesc:a1f04810299c7d2ac8c188f67c8f0a16a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represents the authenticated state of a client.  <br /></td></tr>
 <tr class="memitem:a7b988cd042236329a1064f1d896998f7" id="r_a7b988cd042236329a1064f1d896998f7"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7b988cd042236329a1064f1d896998f7">REGISTERED</a>&#160;&#160;&#160;0b00010</td></tr>
+<tr class="memdesc:a7b988cd042236329a1064f1d896998f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represents the registered state of a client.  <br /></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-typedef-members" class="groupheader"><a id="typedef-members" name="typedef-members"></a>
 Typedefs</h2></td></tr>
@@ -130,7 +134,13 @@ Typedefs</h2></td></tr>
 Functions</h2></td></tr>
 <tr class="memitem:a3703f0c13e77a9f6d762b818d82187f1" id="r_a3703f0c13e77a9f6d762b818d82187f1"><td class="memItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3703f0c13e77a9f6d762b818d82187f1">operator&lt;&lt;</a> (std::ostream &amp;os, const <a class="el" href="../../d1/d37/classClient.html">Client</a> &amp;c)</td></tr>
 </table>
-<a name="doc-define-members" id="doc-define-members"></a><h2 id="header-doc-define-members" class="groupheader">Macro Definition Documentation</h2>
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
+<div class="textblock"><dl class="section version"><dt>Version</dt><dd>0.1 </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>2025-10-16</dd></dl>
+<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (c) 2025 </dd></dl>
+
+<p class="definition">Definition in file <a class="el" href="../../d3/d8e/Client_8hpp_source.html">Client.hpp</a>.</p>
+</div><a name="doc-define-members" id="doc-define-members"></a><h2 id="header-doc-define-members" class="groupheader">Macro Definition Documentation</h2>
 <a id="a1f04810299c7d2ac8c188f67c8f0a16a" name="a1f04810299c7d2ac8c188f67c8f0a16a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a1f04810299c7d2ac8c188f67c8f0a16a">&#9670;&#160;</a></span>AUTHENTICATED</h2>
 
@@ -143,7 +153,13 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d3/d8e/Client_8hpp_source.html#l00022">22</a> of file <a class="el" href="../../d3/d8e/Client_8hpp_source.html">Client.hpp</a>.</p>
+<p>Represents the authenticated state of a client. </p>
+<p>This macro is used as a bitmask flag to indicate that a client has been authenticated on the server after sending a successful PASS. </p><dl class="section see"><dt>See also</dt><dd><a class="el" href="../../d5/d01/classPass.html">Pass</a><ul>
+<li>Value: <span class="tt">0b00000</span> (binary 00001, decimal 1) </li>
+</ul>
+</dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="../../d3/d8e/Client_8hpp_source.html#l00042">42</a> of file <a class="el" href="../../d3/d8e/Client_8hpp_source.html">Client.hpp</a>.</p>
 
 </div>
 </div>
@@ -159,7 +175,13 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d3/d8e/Client_8hpp_source.html#l00023">23</a> of file <a class="el" href="../../d3/d8e/Client_8hpp_source.html">Client.hpp</a>.</p>
+<p>Represents the registered state of a client. </p>
+<p>This macro is used as a bitmask flag to indicate that a client has been authenticated on the server after sending successfull PASS, NICK, USER. </p><dl class="section see"><dt>See also</dt><dd><a class="el" href="../../d9/dc0/classUser.html">User</a> <a class="el" href="../../d1/d47/classNick.html">Nick</a><ul>
+<li>Value: <span class="tt">0b00000</span> (binary 00010, decimal 3) </li>
+</ul>
+</dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="../../d3/d8e/Client_8hpp_source.html#l00052">52</a> of file <a class="el" href="../../d3/d8e/Client_8hpp_source.html">Client.hpp</a>.</p>
 
 </div>
 </div>
@@ -175,7 +197,12 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d3/d8e/Client_8hpp_source.html#l00021">21</a> of file <a class="el" href="../../d3/d8e/Client_8hpp_source.html">Client.hpp</a>.</p>
+<p>Represents the unauthenticated state of a client. </p>
+<p>This macro is used as a bitmask flag to indicate that a client has not yet been authenticated on the server.</p><ul>
+<li>Value: <span class="tt">0b00000</span> (binary 00000, decimal 0) </li>
+</ul>
+
+<p class="definition">Definition at line <a class="el" href="../../d3/d8e/Client_8hpp_source.html#l00032">32</a> of file <a class="el" href="../../d3/d8e/Client_8hpp_source.html">Client.hpp</a>.</p>
 
 </div>
 </div>
@@ -192,7 +219,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d3/d8e/Client_8hpp_source.html#l00019">19</a> of file <a class="el" href="../../d3/d8e/Client_8hpp_source.html">Client.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d3/d8e/Client_8hpp_source.html#l00022">22</a> of file <a class="el" href="../../d3/d8e/Client_8hpp_source.html">Client.hpp</a>.</p>
 
 </div>
 </div>
