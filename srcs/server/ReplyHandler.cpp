@@ -1,7 +1,8 @@
+#include "ReplyHandler.hpp"
+
 #include "Client.hpp"
 #include "Config.hpp"
 #include "LogManager.hpp"
-#include "ReplyHandler.hpp"
 #include "Server.hpp"
 #include "reply_codes.hpp"
 #include "utils.hpp"
@@ -112,7 +113,7 @@ static std::string generate_non_numerical_response(
     case TRANSFER_JOIN:
         return (get_user_id_of(*sender) + "JOIN " + parameters);
     case TRANSFER_PRIVMSG:
-        return (get_user_id_of(*sender) + "PRIVMSG " + parameters);
+        return (get_user_id_of(*sender) + "PRIVMSG " + parameters + " :" + trailing);
     case TRANSFER_KICK:
         return (get_user_id_of(*sender) + "KICK " + parameters + trailing);
     case TRANSFER_INVITE:
@@ -121,6 +122,8 @@ static std::string generate_non_numerical_response(
         return (get_user_id_of(*sender) + "QUIT " + parameters);
     case TRANSFER_MODE:
         return (get_user_id_of(*sender) + "MODE " + parameters);
+    case TRANSFER_TOPIC:
+        return (get_user_id_of(*sender) + "TOPIC " + parameters + " :" + trailing);
     case MSG_PING:
         return ":" + ircConfig.get_name() + " " + "PONG :" + parameters;
     default:

@@ -27,7 +27,7 @@ class AssertReply
     AssertReply& ends_with(const std::string& trailing);
     AssertReply& starts_with(const std::string& start);
     AssertReply& contains(const std::string& token);
-    AssertReply& do_not_contains(const std::string& token);
+    AssertReply& does_not_contain(const std::string& token);
     AssertReply& matches_entirely(const std::string& message);
     AssertReply& is_formatted(ReplyCode code, const std::string& clientNick, const std::string& params = "", const std::string& trailing = "");
     AssertReply& is_formatted_transfer(const std::string& clientNick, const std::string& params, const std::string& trailing = "");
@@ -45,5 +45,5 @@ class AssertReply
     bool _is_message_starting_with(const Message& msg, const std::string& start, std::string* actual) const;
     bool _is_message_empty(const Message& msg, std::string* actual) const;
     bool _is_message_matching_entirely(const Message& msg, const std::string& message, std::string* actual) const;
-    bool _is_message_containing(const Message& msg, const std::string& token) const;
+    bool _is_message_containing(const Message& msg, const std::string& token, std::string& actual) const;
 };

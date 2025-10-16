@@ -9,21 +9,21 @@
 class Server;
 class Client;
 
-class Ping : public ICommand {
-    public:
-        Ping();
-        Ping(const std::string& token);
-        virtual ~Ping();
+class Ping : public ICommand
+{
+  public:
+    Ping();
+    Ping(const std::string& token);
+    virtual ~Ping();
 
-        void			 execute(Server& s, Client& c);
-        static ReplyCode check_args(Server& s, Client& c, std::string& params);
-        
-    private:
-        std::string _token;
+    void             execute(Server& s, Client& c);
+    static ReplyCode check_args(Server& s, Client& c, std::string& params);
 
-        Ping(const Ping& other);
-        Ping& operator=(const Ping& other);
+  private:
+    std::string _token;
 
+    Ping(const Ping& other);
+    Ping& operator=(const Ping& other);
 };
 
 #endif

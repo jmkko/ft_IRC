@@ -10,28 +10,27 @@
 class TcpSocket
 {
   public:
-	TcpSocket();
-	TcpSocket(Socket socketFd);
+    TcpSocket();
+    TcpSocket(Socket socketFd);
 
-	~TcpSocket();
+    ~TcpSocket();
 
+    static std::string get_address(const sockaddr_in& addr);
+    Socket             get_socket() const;
 
-	static std::string get_address(const sockaddr_in& addr);
-	Socket			   get_socket() const;
+    int set_non_blocking_socket();
 
-	int set_non_blocking_socket();
-
-	bool is_valid() const;
-	bool tcp_connect(const std::string& ipaddress, unsigned short port);
-	void tcp_bind(unsigned short port);
-	void tcp_listen();
-	int	 do_send(const unsigned char* data, unsigned short len);
-	int	 do_receive(std::vector<unsigned char>& buffer);
+    bool is_valid() const;
+    bool tcp_connect(const std::string& ipaddress, unsigned short port);
+    void tcp_bind(unsigned short port);
+    void tcp_listen();
+    int  do_send(const unsigned char* data, unsigned short len);
+    int  do_receive(std::vector<unsigned char>& buffer);
 
   private:
-	Socket _sckt;
-	TcpSocket& operator=(const TcpSocket& inst);
-	TcpSocket(const TcpSocket& inst);
+    Socket     _sckt;
+    TcpSocket& operator=(const TcpSocket& inst);
+    TcpSocket(const TcpSocket& inst);
 };
 
 #endif

@@ -17,6 +17,7 @@ enum ReplyCode {
     TRANSFER_MODE    = 207,
     TRANSFER_QUIT    = 208,
     MSG_PING         = 209,
+    TRANSFER_TOPIC   = 210,
     PROCESSED_ERROR  = 806,
 
     // SERVER_ERR          = 801,
@@ -25,9 +26,9 @@ enum ReplyCode {
 
     //////////////////////  numerical errors
     CUSTOMERR_WRONG_FORMAT = 705,
-    
+
     ////////////////////// RFC REPLIES (with code defined by RFC)
-    RPL_NONE            = 300, // no answer
+    RPL_NONE     = 300, // no answer
     RPL_WELCOME  = 001, // after registering (PASS NICK USER)
     RPL_YOURHOST = 002,
     RPL_CREATED  = 003,

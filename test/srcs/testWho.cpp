@@ -88,13 +88,16 @@ void chan1op_should_send_rpl_with_flag(Server& s)
         TcpSocket& so   = *sockets.at(1);
         make_op(soOp);
         authenticate_and_join(so);
+        recv_lines(soOp);
+
         // test
         send_line(soOp, chan1OpWho);
         std::string reply = recv_lines(soOp);
         AssertReply ar(reply);
         ar.is_formatted(RPL_WHOREPLY, opNick, build_who_params(opNick, "#chan", "H@"), "0 realop");
         ar.is_formatted(RPL_ENDOFWHO, opNick, "#chan");
-        // ar.contains(opNick).has_code(RPL_WHOREPLY).has_code(RPL_ENDOFWHO).contains(channelName).do_not_contains(userNick);
+        ar.does_not_contain(userNick);
+
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());
     }
@@ -104,19 +107,22 @@ void good_pattern_should_send_rpl(Server& s)
 {
     try {
         // init test
-        TEST_SETUP(test, s, 2);
+        TEST_SETUP(test, s, 3);
         TcpSocket& soOp = *sockets.at(0);
         TcpSocket& so   = *sockets.at(1);
-        make_op(soOp);
+        TcpSocket& soOp2   = *sockets.at(2);
+        make_two_ops(soOp, soOp2);
         authenticate_and_join(so);
+        recv_lines(soOp, "op");
+
         // test
         send_line(soOp, goodPatternWho);
-        std::string reply = recv_lines(soOp);
+        std::string reply = recv_lines(soOp, opNick);
         AssertReply ar(reply);
         ar.is_formatted(RPL_WHOREPLY, opNick, build_who_params(userNick, "*", "H"), "0 realroro");
         ar.is_formatted(RPL_ENDOFWHO, opNick, "ro*");
+        ar.does_not_contain(op2Nick);
 
-        // ar.contains(userNick).has_code(RPL_WHOREPLY).has_code(RPL_ENDOFWHO).contains(channelName).do_not_contains(opNick);
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());
     }
@@ -152,20 +158,21 @@ void bad_pattern_should_send_only_rplend(Server& s)
         TcpSocket& so   = *sockets.at(1);
         make_op(soOp);
         authenticate_and_join(so);
+        recv_lines(soOp);
 
         // test
         send_line(soOp, badPatternWho);
         std::string reply = recv_lines(soOp);
         AssertReply ar(reply);
         ar.is_formatted(RPL_ENDOFWHO, opNick, "*x*");
-        // ar.do_not_contains(userNick).has_code(RPL_ENDOFWHO).contains(channelName).do_not_contains(opNick);
+        ar.does_not_contain(userNick);
 
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());
     }
 }
 
-void pattern_wildcard_should_send_rpl(Server& s)
+void pattern_wildcard_should_send_all_users_in_rpl(Server& s)
 {
     try {
         // init test
@@ -181,7 +188,6 @@ void pattern_wildcard_should_send_rpl(Server& s)
         AssertReply ar(reply);
         ar.is_formatted(RPL_WHOREPLY, opNick, build_who_params(userNick, "*", "H"), "0 realroro");
         ar.is_formatted(RPL_ENDOFWHO, opNick, "*");
-        // ar.contains(userNick).has_code(RPL_WHOREPLY).has_code(RPL_ENDOFWHO).contains(channelName).contains(opNick);
 
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());
@@ -191,12 +197,12 @@ void pattern_wildcard_should_send_rpl(Server& s)
 void test_who(Server& s, t_results* r)
 {
     print_test_series("command WHO");
-
-    run_test(r, [&] { noparams_should_send_rpl(s); }, "No params WHO");
+    print_test_series_part("common cases");
+    run_test(r, [&] { noparams_should_send_rpl(s); }, "WHO no params");
     run_test(r, [&] { chan1_should_send_rpl(s); }, "WHO #chan1");
     run_test(r, [&] { chan1op_should_send_rpl_with_flag(s); }, "WHO #chan1 o");
-    run_test(r, [&] { good_pattern_should_send_rpl(s); }, "WHO ro*");
     run_test(r, [&] { bad_user_should_send_only_rplend(s); }, "WHO resu");
+    run_test(r, [&] { good_pattern_should_send_rpl(s); }, "WHO ro*");
     run_test(r, [&] { bad_pattern_should_send_only_rplend(s); }, "WHO *x*");
-    run_test(r, [&] { pattern_wildcard_should_send_rpl(s); }, "WHO *");
+    run_test(r, [&] { pattern_wildcard_should_send_all_users_in_rpl(s); }, "WHO *");
 }

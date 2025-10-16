@@ -1,5 +1,6 @@
-#include "Client.hpp"
 #include "CmdFactory.hpp"
+
+#include "Client.hpp"
 #include "ICommand.hpp"
 #include "Invite.hpp"
 #include "Join.hpp"
@@ -17,6 +18,7 @@
 #include "Topic.hpp"
 #include "User.hpp"
 #include "Who.hpp"
+#include "colors.hpp"
 #include "consts.hpp"
 #include "reply_codes.hpp"
 #include "utils.hpp"
@@ -88,7 +90,7 @@ ICommand* CmdFactory::make_command(Server& server, Client& client, std::string& 
     iss >> commandLine;
     for (size_t i = 0; i < NB_AVAILABLE_CMD; i++) {
         if (commandLine == available[i]) {
-            LOG_d_CMD(commandLine);
+            LOG_d_CMD(GREEN + commandLine + NC);
             if (!check_in(client, commandLine)) {
                 rh.process_response(client, ERR_NOTREGISTERED, commandLine);
                 return NULL;
@@ -262,11 +264,10 @@ ICommand* CmdFactory::who_cmd(Server& server, Client& client, std::string& param
 
 ICommand* CmdFactory::privmsg_cmd(Server& server, Client& client, std::string& params)
 {
-    LOG_CMD.debug("PIVMSG params: " + params);
     ReplyHandler rh   = ReplyHandler::get_instance(&server);
     ReplyCode    code = Privmsg::check_args(server, client, params);
     if (code == ERR_NOTEXTTOSEND) {
-        rh.process_response(client, code, "");
+        rh.process_response(client, code);
         return (NULL);
     } else if (code == ERR_NEEDMOREPARAMS) {
         rh.process_response(client, code, "PRIVMSG");
@@ -275,31 +276,7 @@ ICommand* CmdFactory::privmsg_cmd(Server& server, Client& client, std::string& p
         rh.process_response(client, code, params, NULL);
         return (NULL);
     }
-
-    std::string            msg;
-    std::string::size_type pos = params.find(" :");
-    if (pos != std::string::npos) {
-        msg = params.substr(pos);
-    }
-
-    Privmsg* privmsg = new Privmsg(msg);
-
-    // std::string                               word;
-    // std::istringstream                        iss(params);
-    // Client*                                   dest = NULL;
-    // std::map<std::string, Channel*>::iterator chan;
-    privmsg->build_args(server, params);
-    // while (iss >> word) {
-    //     chan = server.channels.find(word);
-    //     if (chan != server.channels.end()) {
-    //         privmsg->add_channel(chan->second);
-    //     }
-    //     dest = server.find_client_by_nickname(word);
-    //     if (dest) {
-    //         privmsg->add_client(dest);
-    //     }
-    // }
-
+    Privmsg* privmsg = new Privmsg(params);
     return privmsg;
 };
 
@@ -330,7 +307,9 @@ ICommand* CmdFactory::topic_cmd(Server& server, Client& client, std::string& par
     (void)client;
     ReplyHandler rh   = ReplyHandler::get_instance(&server);
     ReplyCode    code = Topic::check_args(server, client, params);
-    if (code == ERR_NEEDMOREPARAMS) {
+    if (code == PROCESSED_ERROR) {
+        return NULL;
+    } else if (code == ERR_NEEDMOREPARAMS) {
         rh.process_response(client, code, "TOPIC");
         return NULL;
     } else if (code != CORRECT_FORMAT) {

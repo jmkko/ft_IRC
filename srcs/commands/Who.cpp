@@ -1,28 +1,14 @@
 #include "Who.hpp"
+
+#include "LogManager.hpp"
 #include "utils.hpp"
 
 #include <string>
 
-Who::Who() {}
-Who::Who(const std::string& params) : _params(params) {}
-Who::~Who() {}
+/************************************************************
+ *		📁 CLASS METHODS									*
+ ************************************************************/
 
-Who::Who(const Who& mother) : ICommand() { (void)mother; }
-
-Who& Who::operator=(const Who& other)
-{
-    (void)other;
-    return *this;
-}
-
-/**
- * @brief Check if there is to much params for the command Who
- *
- * @param serve
- * @param client
- * @param params
- * @return replyCode
- */
 ReplyCode Who::check_args(Server& server, Client& client, std::string& params)
 {
     std::string        mask;
@@ -41,23 +27,18 @@ ReplyCode Who::check_args(Server& server, Client& client, std::string& params)
     return (CORRECT_FORMAT);
 }
 
-//: server 352 <me> <channel> <user> <host> <server> <nick> <flags> :<hopcount> <realname>
-// :irc.example.com 352 user1 #chan1 bob bobhost irc.example.com bob H@ :0 Bob Realname
-// :irc.example.com 352 user1 #chan1 alice alicehost irc.example.com alice H+ :0 Alice Realname
-// :irc.example.com 315 user1 #chan1 :End of WHO list
-// bob → ident
-//
-// bobhost → hostname (dérivé de l’IP de bob)
-//
-// irc.example.com → serveur local
-//
-// bob → nickname
-//
-// H@ → présent + opérateur de channel ou H* si operateur du SErver
-//
-// :0 → hopcount Dans un réseau mono-serveur (comme ton ft_irc), ça sera toujours 0
-//
-// Bob Realname → realname
+/************************************************************
+ *		🥚 CONSTRUCTORS & DESTRUCTOR						*
+ ************************************************************/
+
+Who::Who(const std::string& params) : _params(params) {}
+
+Who::~Who() {}
+
+/*************************************************************
+ *		🛠️ FUNCTIONS											*
+ *************************************************************/
+
 void Who::execute(Server& server, Client& client)
 {
     std::string        mask;
@@ -76,11 +57,13 @@ void Who::execute(Server& server, Client& client)
                 std::set<Client*>                 clients  = itChan->second->get_members();
                 std::set<Client*>::const_iterator itClient = clients.begin();
                 for (; itClient != clients.end(); itClient++) {
-                    rh.process_response(client,
-                                        RPL_WHOREPLY,
-                                        _who_msg(*itClient, itChan->second, server),
-                                        NULL,
-                                        std::string("0 ") + (*itClient)->get_real_name());
+                    if (op.empty() || (op == "o" && itChan->second->is_operator(**itClient))) {
+                        rh.process_response(client,
+                                            RPL_WHOREPLY,
+                                            _who_msg(*itClient, itChan->second, server),
+                                            NULL,
+                                            std::string("0 ") + (*itClient)->get_real_name());
+                    }
                 }
                 rh.process_response(client, RPL_ENDOFWHO, itChan->second->get_name());
             }
@@ -96,22 +79,6 @@ void Who::execute(Server& server, Client& client)
     }
 }
 
-/**
- * @brief build RPL_WHOREPLY message
- *
- * @param client
- * @param channel
- * @param server
- * @return message
- * : server 352 <me> <channel> <user> <host> <server> <nick> <flags> :<hopcount> <realname>
- * :irc.example.com 352 user1 #chan1 bob bobhost irc.example.com bob H@ :0 Bob Realname
- * :irc.example.com 315 user1 #chan1 :End of WHO list
- * <client> <channel> <username> <host> <server> <nick> <flags> :<hopcount> <realname>
- * Flags : Away status: the letter H ('H', 0x48) to indicate that the user is here, or the letter G ('G', 0x47) to indicate that
- * the user is gone. Optionally, a literal asterisk character ('*', 0x2A) to indicate that the user is a server operator.
- * Optionally, the highest channel membership prefix that the client has in <channel>, if the client has one.
- * Optionally, one or more user mode characters and other arbitrary server-specific flags.
- */
 std::string Who::_who_msg(Client* client, Channel* channel, Server& server)
 {
     std::string op  = "";
@@ -126,25 +93,18 @@ std::string Who::_who_msg(Client* client, Channel* channel, Server& server)
     msg.append(" " + server.get_name());
     msg.append(" " + client->get_nickname());
     msg.append(" H" + op);
-    // msg.append(client->get_real_name());
-    // LOG_DV_CMD(msg);
     return (msg);
 }
 
-/**
- * @brief find the client mathcing the pattern of Who command
- *
- * @param members set of members in a channel
- * @param pat pattern to search
- * @return a vector of client corresponding to the pattern
- */
 std::vector<Client*> Who::_find_all_clients_by_pattern(const std::set<Client*>& members, const std::string& pat)
 {
     std::vector<Client*> result;
     for (std::set<Client*>::const_iterator it = members.begin(); it != members.end(); it++) {
 
-        if (utils::MatchPattern(pat)(*it))
+        if (utils::MatchPattern(pat)(*it)) {
+            LOG_D_CMD("pattern " + pat + " matched", (*it)->get_nickname());
             result.push_back(*it);
+        }
     }
     return result;
 }

@@ -18,7 +18,6 @@
  **
  ************************************************************/
 
-/// @brief checks validity according to RFC
 bool Channel::is_valid_channel_name(const std::string& name)
 {
     if (name.empty()) {
@@ -62,9 +61,10 @@ bool Channel::is_valid_channel_key(const std::string& key)
  **
  ************************************************************/
 
-/// @throw exception if name is invalid
+
 Channel::Channel(const std::string& name, const std::string& key) :
     _topic(""), _key(key), _mode(CHANMODE_INIT), _userLimit(NO_LIMIT), _members(), _invites(), _operators()
+
 {
     if (!key.empty()) {
         this->add_mode(CHANMODE_KEY);
@@ -136,7 +136,7 @@ void Channel::broadcast(
         Client* recipient = *it;
         if (sender && recipient == sender)
             continue;
-        LOG_DT_SERVER(recipient->get_nickname() + " received a broadcast from " + get_name(), "");
+        LOG_D_SERVER(recipient->get_nickname() + " received a broadcast from " + get_name(), ircCodes.str(replyCode));
         rh.process_response(*recipient, replyCode, params, sender, trailing);
     }
 }
@@ -174,10 +174,9 @@ ReplyCode Channel::set_name(const std::string& name)
 
 ReplyCode Channel::set_topic(Client& client, const std::string& topic)
 {
-    LOG_DV_CMD(topic);
-    if ((_mode & CHANMODE_TOPIC && is_operator(client)) || (!(_mode & CHANMODE_TOPIC)))
+    if ((_mode & CHANMODE_TOPIC && is_operator(client)) || (!(_mode & CHANMODE_TOPIC))) {
         _topic = topic;
-    else
+    } else
         return ERR_CHANOPRIVSNEEDED;
     return CORRECT_FORMAT;
 }
@@ -197,8 +196,6 @@ void Channel::set_user_limit(int limit)
 }
 
 void Channel::invite_client(Client& client) { _invites.insert(&client); }
-// Can we invite a banned client ?
-// Or when we invite a banned client it's remove it from banned list ?
 
 ReplyCode Channel::add_member(Client& client)
 {

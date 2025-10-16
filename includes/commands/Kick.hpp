@@ -25,7 +25,8 @@ class Kick : public ICommand
 	std::vector<std::string> _usersNames;
 	std::string				_msg;
 
-  	Kick();
+
+    Kick();
     Kick(const Kick& other);
     Kick& operator=(const Kick& other);
 };
