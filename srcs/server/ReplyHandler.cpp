@@ -1,7 +1,8 @@
+#include "ReplyHandler.hpp"
+
 #include "Client.hpp"
 #include "Config.hpp"
 #include "LogManager.hpp"
-#include "ReplyHandler.hpp"
 #include "Server.hpp"
 #include "reply_codes.hpp"
 #include "utils.hpp"
@@ -89,7 +90,7 @@ static std::string
 generate_code_response(Client& client, ReplyCode code, const std::string& parameters, const std::string& trailing)
 {
     std::string nick          = client.get_nickname().empty() ? "*" : client.get_nickname();
-    std::string numericPrefix = ":" + ircConfig.get_name() + " " + utils::code_to_str(code) + " " + nick + " ";
+    std::string numericPrefix = ":" + ircConfig.get_name() + " " + Utils::code_to_str(code) + " " + nick + " ";
     if (parameters.empty() && trailing.empty())
         return (numericPrefix + ":" + ircCodes.trailing(code));
     else if (parameters.empty() && !trailing.empty())
@@ -100,7 +101,8 @@ generate_code_response(Client& client, ReplyCode code, const std::string& parame
         return (numericPrefix + parameters + " :" + trailing);
 }
 
-static std::string generate_non_numerical_response(Client& client, ReplyCode code, const std::string& parameters, Client* sender, const std::string& trailing)
+static std::string generate_non_numerical_response(
+    Client& client, ReplyCode code, const std::string& parameters, Client* sender, const std::string& trailing)
 {
     if (!sender)
         sender = &client;

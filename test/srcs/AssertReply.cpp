@@ -1,5 +1,6 @@
-#include "AssertFail.hpp"
 #include "AssertReply.hpp"
+
+#include "AssertFail.hpp"
 #include "Config.hpp"
 #include "LogManager.hpp"
 #include "consts.hpp"
@@ -100,13 +101,11 @@ bool AssertReply::_is_message_containing(const Message& msg, const std::string& 
         actual = msg.raw;
         return false;
     }
-    if (msg.raw.find(token) != std::string::npos)
-    {
+    if (msg.raw.find(token) != std::string::npos) {
         LOG_d_TEST(msg.raw);
         actual = msg.raw;
         return true;
-    }
-    else {
+    } else {
         actual = msg.raw;
         return false;
     }
@@ -168,8 +167,8 @@ AssertReply& AssertReply::starts_with(const std::string& start)
 
 AssertReply& AssertReply::contains(const std::string& token)
 {
-    bool isMatching = false;
-    std::string actual = "";
+    bool        isMatching = false;
+    std::string actual     = "";
     for (std::vector<Message>::iterator it = _messages.begin(); it != _messages.end(); ++it) {
         if (_is_message_containing(*it, token, actual)) {
             isMatching = true;
@@ -184,8 +183,8 @@ AssertReply& AssertReply::contains(const std::string& token)
 
 AssertReply& AssertReply::does_not_contain(const std::string& token)
 {
-    bool isMatching = true;
-    std::string actual = "";
+    bool        isMatching = true;
+    std::string actual     = "";
     for (std::vector<Message>::iterator it = _messages.begin(); it != _messages.end(); ++it) {
         if (_is_message_containing(*it, token, actual)) {
             isMatching = false;
@@ -239,7 +238,8 @@ AssertReply& AssertReply::is_empty()
 AssertReply&
 AssertReply::is_formatted(ReplyCode code, const std::string& clientNick, const std::string& params, const std::string& trailing)
 {
-    std::string expectedStart = std::string(":" + ircConfigTest.get_name()) + " " + utils::code_to_str(code) + " " + clientNick + " ";
+    std::string expectedStart
+        = std::string(":" + ircConfigTest.get_name()) + " " + Utils::code_to_str(code) + " " + clientNick + " ";
     if (params.empty() && trailing.empty())
         return this->has_code(code).matches_entirely(expectedStart + ":" + ircCodes.trailing(code));
     else if (!params.empty() && trailing.empty())

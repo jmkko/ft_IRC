@@ -1,4 +1,5 @@
 #include "Config.hpp"
+
 #include "LogManager.hpp"
 #include "consts.hpp"
 #include "reply_codes.hpp"
@@ -8,7 +9,9 @@
 
 const Config ircConfig(SERVER_CONF_FILE);
 const Config ircCodes(CODES_CONF_FILE);
+#ifdef TEST
 const Config ircConfigTest(SERVER_CONF_FILE_FOR_TEST);
+#endif
 
 Config::Config() :
     _name(SERVER_NAME),

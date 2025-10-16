@@ -1,4 +1,5 @@
 #include "Who.hpp"
+
 #include "LogManager.hpp"
 #include "utils.hpp"
 
@@ -38,16 +39,16 @@ ReplyCode Who::check_args(Server& server, Client& client, std::string& params)
  *		🥚 CONSTRUCTORS & DESTRUCTOR						*
  ************************************************************/
 
- /**
-  * @brief Construct a new Who:: Who object
-  * 
-  * @param params 
-  */
+/**
+ * @brief Construct a new Who:: Who object
+ *
+ * @param params
+ */
 Who::Who(const std::string& params) : _params(params) {}
 
 /**
  * @brief Destroy the Who:: Who object
- * 
+ *
  */
 Who::~Who() {}
 
@@ -63,11 +64,11 @@ Who::~Who() {}
  * channel members if mask starts with a channel prefix (filtered by operator status if op == 'o')
  * members corresponding to mask
  * @endif
- * @details 
+ * @details
  * RPL_WHOREPLY is made for each matching user cf @ref _who_msg
  * @remark matching can be made using regex
- * @param server 
- * @param client 
+ * @param server
+ * @param client
  */
 void Who::execute(Server& server, Client& client)
 {
@@ -83,12 +84,11 @@ void Who::execute(Server& server, Client& client)
     if (Channel::is_valid_channel_name(mask)) {
         std::map<std::string, Channel*>::iterator itChan = server.channels.begin();
         for (; itChan != server.channels.end(); itChan++) {
-            if (utils::is_matching_pattern(mask, itChan->second->get_name())) {
+            if (Utils::is_matching_pattern(mask, itChan->second->get_name())) {
                 std::set<Client*>                 clients  = itChan->second->get_members();
                 std::set<Client*>::const_iterator itClient = clients.begin();
                 for (; itClient != clients.end(); itClient++) {
-                    if (op.empty() || (op == "o" && itChan->second->is_operator(**itClient)))
-                    {
+                    if (op.empty() || (op == "o" && itChan->second->is_operator(**itClient))) {
                         rh.process_response(client,
                                             RPL_WHOREPLY,
                                             _who_msg(*itClient, itChan->second, server),
@@ -125,7 +125,7 @@ void Who::execute(Server& server, Client& client)
  * <client> <channel> <username> <host> <server> <nick> <flags> :<hopcount> <realname>
  * flags are composed of
  * - away status: the letter H ('H', 0x48) to indicate that the user is here, or the letter G ('G', 0x47) to indicate that
- * the user is gone. 
+ * the user is gone.
  * - optionally, a literal asterisk character ('*', 0x2A) to indicate that the user is a server operator.
  * trailing hopcounts being 0 (as it is a single server network)
  */
@@ -160,8 +160,7 @@ std::vector<Client*> Who::_find_all_clients_by_pattern(const std::set<Client*>& 
     std::vector<Client*> result;
     for (std::set<Client*>::const_iterator it = members.begin(); it != members.end(); it++) {
 
-        if (utils::MatchPattern(pat)(*it))
-        {
+        if (Utils::MatchPattern(pat)(*it)) {
             LOG_D_CMD("pattern " + pat + " matched", (*it)->get_nickname());
             result.push_back(*it);
         }
