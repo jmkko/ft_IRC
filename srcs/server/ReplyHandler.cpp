@@ -114,30 +114,33 @@ static std::string generate_non_numerical_response(
     	sender = &client;
     }
 
-    std::string trailingMessage;
+    std::string trailingMessage, separatedParams;
     if (!trailing.empty()) {
         trailingMessage = " :" + trailing;
     }
+	if (!parameters.empty()) {
+		separatedParams = " " + parameters;
+	}
 
     switch (code) {
     case TRANSFER_NICK:
-        return (get_user_id_of(*sender) + "NICK " + parameters);
+        return (get_user_id_of(*sender) + "NICK" + trailingMessage);
     case TRANSFER_JOIN:
-        return (get_user_id_of(*sender) + "JOIN " + parameters);
+        return (get_user_id_of(*sender) + "JOIN" + separatedParams);
     case TRANSFER_PRIVMSG:
-        return (get_user_id_of(*sender) + "PRIVMSG " + parameters + trailingMessage);
+        return (get_user_id_of(*sender) + "PRIVMSG" + separatedParams + trailingMessage);
     case TRANSFER_KICK:
-        return (get_user_id_of(*sender) + "KICK " + parameters + trailingMessage);
+        return (get_user_id_of(*sender) + "KICK" + separatedParams + trailingMessage);
     case TRANSFER_INVITE:
-        return (get_user_id_of(*sender) + "INVITE " + parameters);
+        return (get_user_id_of(*sender) + "INVITE" + separatedParams);
     case TRANSFER_QUIT:
-        return (get_user_id_of(*sender) + "QUIT " + parameters);
+        return (get_user_id_of(*sender) + "QUIT" + separatedParams);
     case TRANSFER_MODE:
-        return (get_user_id_of(*sender) + "MODE " + parameters);
+        return (get_user_id_of(*sender) + "MODE" + separatedParams);
     case TRANSFER_TOPIC:
-        return (get_user_id_of(*sender) + "TOPIC " + parameters + trailingMessage);
+        return (get_user_id_of(*sender) + "TOPIC" + separatedParams + trailingMessage);
     case MSG_PING:
-        return ":" + ircConfig.get_name() + " " + "PONG :" + parameters;
+        return ":" + ircConfig.get_name() + " " + "PONG :" + separatedParams;
     default:
         return "";
     }
