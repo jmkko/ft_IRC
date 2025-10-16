@@ -1,7 +1,8 @@
+#include "ReplyHandler.hpp"
+
 #include "Client.hpp"
 #include "Config.hpp"
 #include "LogManager.hpp"
-#include "ReplyHandler.hpp"
 #include "Server.hpp"
 #include "reply_codes.hpp"
 #include "utils.hpp"
@@ -100,7 +101,8 @@ generate_code_response(Client& client, ReplyCode code, const std::string& parame
         return (numericPrefix + parameters + " :" + trailing);
 }
 
-static std::string generate_non_numerical_response(Client& client, ReplyCode code, const std::string& parameters, Client* sender, const std::string& trailing)
+static std::string generate_non_numerical_response(
+    Client& client, ReplyCode code, const std::string& parameters, Client* sender, const std::string& trailing)
 {
     if (!sender)
         sender = &client;

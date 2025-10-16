@@ -1,5 +1,8 @@
 logs/*
 
+# doxygen
+doxygen-warnings.log
+
 # analysis
 .cache
 compile_commands.json

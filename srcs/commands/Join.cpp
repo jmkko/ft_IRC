@@ -1,5 +1,6 @@
-#include "Channel.hpp"
 #include "Join.hpp"
+
+#include "Channel.hpp"
 #include "LogManager.hpp"
 #include "ReplyHandler.hpp"
 #include "Server.hpp"

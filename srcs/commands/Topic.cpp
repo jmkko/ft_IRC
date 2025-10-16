@@ -12,36 +12,24 @@
  *		📁 CLASS METHODS									*
  ************************************************************/
 
-/**
- * @brief check syntaxic validity of args
- * - has at least one param (#Channel)
- * perform other validity checks
- * - #Channel does exist
- * - #Client does exist
- * @param server
- * @param client
- * @param args should match pattern `<channel> [ <topic> ]`
- * @return @ref ReplyCode corresponding to RFC ERR or CORRECT_FORMAT if syntax is correct 
- */
-ReplyCode Topic::check_args(Server& s, Client& c, std::string& params)
+ReplyCode Topic::check_args(Server& server, Client& client, std::string& params)
 {
     std::istringstream iss(params);
     std::string        token;
     Channel*           chan = NULL;
-    ReplyHandler rh = ReplyHandler::get_instance(&s);
+    ReplyHandler       rh   = ReplyHandler::get_instance(&server);
 
     if (!(iss >> token))
         return ERR_NEEDMOREPARAMS;
 
-    chan = s.find_channel_by_name(token);
+    chan = server.find_channel_by_name(token);
     if (!chan) {
-        rh.process_response(c, ERR_NOSUCHCHANNEL, token);
+        rh.process_response(client, ERR_NOSUCHCHANNEL, token);
         return PROCESSED_ERROR;
     }
 
-    if (!chan->is_member(c))
-    {
-        rh.process_response(c, ERR_NOTONCHANNEL, token);
+    if (!chan->is_member(client)) {
+        rh.process_response(client, ERR_NOTONCHANNEL, token);
         return PROCESSED_ERROR;
     }
 
@@ -56,13 +44,7 @@ ReplyCode Topic::check_args(Server& s, Client& c, std::string& params)
  *		🥚 CONSTRUCTORS & DESTRUCTOR						*
  ************************************************************/
 
-/**
- * @brief Construct a new Topic:: Topic object
- * 
- * @param s server
- * @param params 
- */
-Topic::Topic(Server& s, std::string& params)
+Topic::Topic(Server& server, std::string& params)
 {
     std::istringstream iss(params);
     std::string        channel;
@@ -74,55 +56,39 @@ Topic::Topic(Server& s, std::string& params)
     while (iss >> token) {
         topic += " " + token;
     }
-    _chan = s.find_channel_by_name(channel);
+    _chan  = server.find_channel_by_name(channel);
     _topic = topic;
 }
 
-
-/**
- * @brief Destroy the Topic:: Topic object
- * 
- */
 Topic::~Topic(void) {}
 
 /*************************************************************
  *		🛠️ FUNCTIONS											*
  *************************************************************/
 
-/**
- * @brief proceeds to extra checks for op status (through Channel::set_topic) and to replies/transfers
- * @if no topic arg
- * returns RPL_TOPIC (or RPL_NOTOPIC if empty)
- * @elseif topic arg
- * tries updating channel topic
- * @endif 
- * @param s #Server
- * @param c sender #Client
- */
-void Topic::execute(Server& s, Client& c)
+void Topic::execute(Server& server, Client& client)
 {
 
-    ReplyHandler rh = ReplyHandler::get_instance(&s);
+    ReplyHandler rh = ReplyHandler::get_instance(&server);
 
     if (_chan) {
         if (_topic.empty()) {
             std::string channelTopic = _chan->get_topic();
             if (channelTopic.empty()) {
-                rh.process_response(c, RPL_NOTOPIC, _chan->get_name());
+                rh.process_response(client, RPL_NOTOPIC, _chan->get_name());
             } else {
-                rh.process_response(c, RPL_TOPIC, _chan->get_name(), NULL, channelTopic);
+                rh.process_response(client, RPL_TOPIC, _chan->get_name(), NULL, channelTopic);
             }
         } else {
-            ReplyCode code = _chan->set_topic(c, _topic);
+            ReplyCode code = _chan->set_topic(client, _topic);
             if (code == CORRECT_FORMAT) {
-                _chan->broadcast(s, TRANSFER_TOPIC, _chan->get_name(), &c, _topic);
-                rh.process_response(c, TRANSFER_TOPIC, _chan->get_name(), &c, _topic);
+                _chan->broadcast(server, TRANSFER_TOPIC, _chan->get_name(), &client, _topic);
+                rh.process_response(client, TRANSFER_TOPIC, _chan->get_name(), &client, _topic);
             } else {
-                rh.process_response(c, code, _chan->get_name());
+                rh.process_response(client, code, _chan->get_name());
             }
         }
     } else {
         LOG_w_CMD("invalid channel (should not happen)");
     }
 }
-

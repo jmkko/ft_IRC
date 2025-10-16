@@ -1,5 +1,6 @@
-#include "Client.hpp"
 #include "CmdFactory.hpp"
+
+#include "Client.hpp"
 #include "ICommand.hpp"
 #include "Invite.hpp"
 #include "Join.hpp"
@@ -17,10 +18,10 @@
 #include "Topic.hpp"
 #include "User.hpp"
 #include "Who.hpp"
+#include "colors.hpp"
 #include "consts.hpp"
 #include "reply_codes.hpp"
 #include "utils.hpp"
-#include "colors.hpp"
 
 #include <iostream>
 #include <sstream>
@@ -314,7 +315,7 @@ ICommand* CmdFactory::topic_cmd(Server& server, Client& client, std::string& par
     (void)client;
     ReplyHandler rh   = ReplyHandler::get_instance(&server);
     ReplyCode    code = Topic::check_args(server, client, params);
-    if (code == PROCESSED_ERROR){
+    if (code == PROCESSED_ERROR) {
         return NULL;
     } else if (code == ERR_NEEDMOREPARAMS) {
         rh.process_response(client, code, "TOPIC");

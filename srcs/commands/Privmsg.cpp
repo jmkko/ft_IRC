@@ -9,26 +9,14 @@
  *		📁 CLASS METHODS									*
  ************************************************************/
 
- /**
- * @brief check syntaxic validity of params
- * - message (after `:`) should not be empty
- * - at least one target (#Channel or #Client sender)
- * - at max MAX_TARGET (configuration defined)
- * as well as following
- * - targets should be existing nicks or channels
- * @param server
- * @param client sender
- * @param params string following the command name
- * @return ReplyCode corresponding to RFC ERR replies or CORRECT_FORMAT if syntax is correct 
- */
 ReplyCode Privmsg::check_args(Server& server, Client& client, std::string& params)
 {
 
     std::string::size_type pos = params.find(" :");
-	if (params.empty())
-		return (ERR_NEEDMOREPARAMS);
-	if (pos == std::string::npos || pos + 2 >= params.size())
-		return ERR_NOTEXTTOSEND;
+    if (params.empty())
+        return (ERR_NEEDMOREPARAMS);
+    if (pos == std::string::npos || pos + 2 >= params.size())
+        return ERR_NOTEXTTOSEND;
 
     ReplyHandler rh          = ReplyHandler::get_instance(&server);
     std::string  msg         = params.substr(pos);
@@ -44,22 +32,18 @@ ReplyCode Privmsg::check_args(Server& server, Client& client, std::string& param
             rh.process_response(client, ERR_TOOMANYTARGETS, target);
             break;
         }
-        if (Channel::is_valid_channel_name(target))
-        {
+        if (Channel::is_valid_channel_name(target)) {
             std::map<std::string, Channel*>::iterator chan = server.channels.find(target);
             if (chan != server.channels.end()) {
                 LOG_D_CMD("add channel", target);
                 targetList += target + " ";
-            }
-            else {
+            } else {
                 rh.process_response(client, ERR_NOSUCHCHANNEL, target);
             }
-        } 
-        else if (server.find_client_by_nickname(target)) {
+        } else if (server.find_client_by_nickname(target)) {
             LOG_D_CMD("add client", target);
             targetList += target + " ";
-        } 
-        else {
+        } else {
             rh.process_response(client, ERR_NOSUCHNICK, target);
         }
         targetLimit--;
@@ -74,30 +58,14 @@ ReplyCode Privmsg::check_args(Server& server, Client& client, std::string& param
  *		🥚 CONSTRUCTORS & DESTRUCTOR						*
  ************************************************************/
 
-/**
- * @brief Construct a new Privmsg:: Privmsg object
- * 
- * @param params 
- */
 Privmsg::Privmsg(const std::string& params) : _params(params), _chans(0), _dests(0) {}
 
-/**
- * @brief Destroy the Privmsg:: Privmsg object
- * 
- */
 Privmsg::~Privmsg(void) {}
 
 /*************************************************************
  *		🛠️ FUNCTIONS											*
  *************************************************************/
 
- /**
-  * @brief proceed to extra checks (presence of sender on target channel) and to message transfer
-  * - message is transferred to target #Client
-  * - or broadcasted to #Channel for other members (sender excepted)
-  * @param server 
-  * @param client sender
-  */
 void Privmsg::execute(Server& server, Client& client)
 {
     _build_args(server, _params);
@@ -107,21 +75,16 @@ void Privmsg::execute(Server& server, Client& client)
     LOG_DV_CMD(_msg);
     for (std::vector<Channel*>::iterator it = _chans.begin(); it != _chans.end(); it++) {
         if ((*it)->is_member(client)) {
-			(*it)->broadcast(server, TRANSFER_PRIVMSG, (*it)->get_name(), &client, _msg);
-		} else {
-			rh.process_response(client, ERR_NOTONCHANNEL, (*it)->get_name());
-		}
+            (*it)->broadcast(server, TRANSFER_PRIVMSG, (*it)->get_name(), &client, _msg);
+        } else {
+            rh.process_response(client, ERR_NOTONCHANNEL, (*it)->get_name());
+        }
     }
     for (std::vector<Client*>::iterator it = _dests.begin(); it != _dests.end(); it++) {
         rh.process_response(*(*it), TRANSFER_PRIVMSG, (*it)->get_nickname(), &client, _msg);
     }
 }
 
-/**
- * @brief adds a channel to the list of valid channels
- * 
- * @param chan 
- */
 void Privmsg::_add_channel(Channel* chan)
 {
     if (!chan) {
@@ -130,11 +93,6 @@ void Privmsg::_add_channel(Channel* chan)
     _chans.push_back(chan);
 };
 
-/**
- * @brief adds a client to the list of valid clients
- * 
- * @param client 
- */
 void Privmsg::_add_client(Client* client)
 {
     if (!client) {
@@ -143,12 +101,6 @@ void Privmsg::_add_client(Client* client)
     _dests.push_back(client);
 };
 
-/**
- * @brief util method to parse args into target clients, channels and message before execution
- * 
- * @param server 
- * @param params 
- */
 void Privmsg::_build_args(Server& server, std::string& params)
 {
     std::istringstream                        iss(params);
@@ -172,8 +124,7 @@ void Privmsg::_build_args(Server& server, std::string& params)
     std::string::size_type pos = params.find(" :");
     if (pos != std::string::npos) {
         _msg = params.substr(pos + 2);
-    }
-    else {
+    } else {
         _msg = "";
     }
 }
