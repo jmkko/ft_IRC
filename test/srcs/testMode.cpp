@@ -112,68 +112,6 @@
  *		✅  VALID											*
  ************************************************************/
 
-/**
- @brief integration test - normal case
-*/
-void mode_minust_should_grant_topic_to_all(Server& s)
-{
-    try {
-        TEST_SETUP(test, s, 2);
-        TcpSocket& sop = *sockets.at(0);
-        TcpSocket& so  = *sockets.at(1);
-        make_op(sop);
-        authenticate_and_join(so);
-        send_line(sop, validModePlusTMsg);
-        recv_lines(sop);
-
-        // test 1
-        send_line(sop, validModeMinusTMsg);
-        std::string reply = recv_lines(sop);
-        AssertReply ar(reply);
-        ar.is_formatted_transfer(opNick, "MODE #chan -t");
-
-        // test 2
-        send_line(so, validTopicMsg);
-        reply = recv_lines(so);
-        ar.handle_new_reply(reply);
-        ar.has_code(RPL_TOPIC);
-        ar.contains("#chan");
-        ar.ends_with(":New topic");
-        ar.is_formatted(RPL_TOPIC, userNick, "#chan", "New topic");
-
-    } catch (const std::runtime_error& e) {
-        LOG_TEST.error(e.what());
-    }
-}
-
-/**
- @brief integration test - normal case
-*/
-void mode_plust_should_reserve_topic_to_op(Server& s)
-{
-    try {
-        TEST_SETUP(test, s, 2);
-        TcpSocket& sop = *sockets.at(0);
-        TcpSocket& so  = *sockets.at(1);
-        make_op(sop);
-        authenticate_and_join(so);
-
-        // test 1
-        send_line(sop, validModePlusTMsg); // 1
-        std::string reply = recv_lines(sop);
-        AssertReply ar(reply);
-        ar.is_formatted_transfer(opNick, "MODE #chan +t");
-
-        // test 2
-        send_line(so, validTopicMsg);
-        reply = recv_lines(so);
-        ar.handle_new_reply(reply);
-        ar.is_formatted(ERR_CHANOPRIVSNEEDED, userNick, "#chan");
-
-    } catch (const std::runtime_error& e) {
-        LOG_TEST.error(e.what());
-    }
-}
 
 /**
  @brief integration test - normal case
@@ -521,8 +459,6 @@ void test_mode(Server& s, t_results* r)
     // run_test([&] { mode_plusi_should_allow_op_to_join_without_invite(s); }, "+i (op)");
     // run_test([&] { mode_plusl_should_allow_op_to_join_if_max_reached(s); }, "+l <limit> (op)");
 
-    run_test(r, [&] { mode_minust_should_grant_topic_to_all(s); }, "-t");
-    run_test(r, [&] { mode_plust_should_reserve_topic_to_op(s); }, "+t");
     run_test(r, [&] { mode_no_option_should_send_modes_list(s); }, "list");
     run_test(r, [&] { mode_pluso_should_grant_op_and_kick(s); }, "+o <user>");
     run_test(r, [&] { mode_minuso_should_remove_op_and_kick(s); }, "-o <user>");

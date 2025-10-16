@@ -6,6 +6,7 @@
 #include "colors.hpp"
 #include "consts.hpp"
 #include "reply_codes.hpp"
+#include "utils.hpp"
 
 #include <algorithm>
 #include <bitset>
@@ -104,7 +105,7 @@ void Channel::broadcast(
         Client* recipient = *it;
         if (sender && recipient == sender)
             continue;
-        LOG_DT_SERVER(recipient->get_nickname() + " received a broadcast from " + get_name(), "");
+        LOG_D_SERVER(recipient->get_nickname() + " received a broadcast from " + get_name(), ircCodes.str(replyCode));
         rh.process_response(*recipient, replyCode, params, sender, trailing);
     }
 }
@@ -142,9 +143,10 @@ ReplyCode Channel::set_name(const std::string& name)
 
 ReplyCode Channel::set_topic(Client& client, const std::string& topic)
 {
-    LOG_DV_CMD(topic);
     if ((_mode & CHANMODE_TOPIC && is_operator(client)) || (!(_mode & CHANMODE_TOPIC)))
+    {
         _topic = topic;
+    }
     else
         return ERR_CHANOPRIVSNEEDED;
     return CORRECT_FORMAT;

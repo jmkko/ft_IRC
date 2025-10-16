@@ -427,7 +427,10 @@ std::vector<Client*> Server::find_clients_by_pattern(const std::string& pattern)
     std::vector<Client*> result;
     for (std::map<Socket, Client*>::const_iterator it = _clients.begin(); it != _clients.end(); it++) {
         if (utils::MatchPattern(pattern)(it->second))
+        {
+            LOG_D_CMD("pattern " + pattern + " matched", it->second->get_nickname());
             result.push_back(it->second);
+        }
     }
     return result;
 }
