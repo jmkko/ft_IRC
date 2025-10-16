@@ -194,11 +194,9 @@ ICommand* CmdFactory::quit_cmd(Server& server, Client& client, std::string& para
 ICommand* CmdFactory::join_cmd(Server& server, Client& client, std::string& params)
 {
     ReplyHandler&            rh = ReplyHandler::get_instance(&server);
-    std::vector<std::string> vectorParams;
-    vectorParams.push_back(params);
-    ReplyCode replyCode = Join::check_args(server, client, vectorParams);
+    ReplyCode replyCode = Join::check_args(server, client, params);
     if (replyCode == CORRECT_FORMAT) {
-        return new Join(vectorParams);
+        return new Join(params);
     } else if (replyCode == ERR_NEEDMOREPARAMS) {
         rh.process_response(client, replyCode, "JOIN");
     } else {

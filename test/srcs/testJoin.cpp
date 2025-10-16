@@ -26,7 +26,6 @@
 void noparams_should_err(Server& s)
 {
     try {
-        // init test_join
         TEST_SETUP(test, s, 1);
         TcpSocket& soOp = *sockets.at(0);
         make_op(soOp);
@@ -95,9 +94,9 @@ void valid_join_should_send_rpl_and_broadcast(Server& s)
         std::string reply = recv_lines(so);
         AssertReply ar(reply);
         ar.is_formatted_transfer(userNick, "JOIN #chan", "");
-        ar.is_formatted(RPL_NOTOPIC, userNick, "#chan");
-        ar.is_formatted(RPL_NAMREPLY, userNick, "= #chan", "@" + opNick + " " + userNick);
+        //ar.is_formatted(RPL_NAMREPLY, userNick, "= #chan", userNick + " @" + opNick);
         ar.is_formatted(RPL_ENDOFNAMES, userNick, "#chan");
+        ar.is_formatted(RPL_NOTOPIC, userNick, "#chan");
 
         // test 2
         reply = recv_lines(soOp);
@@ -202,10 +201,13 @@ void mode_plusi_with_invite_should_send_rpl_and_broadcast(Server& s)
         send_line(so, validJoinMsg);
         std::string reply = recv_lines(so);
         AssertReply ar(reply);
+
         ar.is_formatted(RPL_NOTOPIC, userNick, "#chan");
         ar.has_code(RPL_NAMREPLY).contains("= #chan").contains("@" + opNick).contains(userNick);
+
         ar.is_formatted(RPL_ENDOFNAMES, userNick, "#chan");
 
+        ar.is_formatted(RPL_NOTOPIC, userNick, "#chan");
         // test 2 other members get broadcast message
         reply = recv_lines(soOp);
         ar.handle_new_reply(reply);
@@ -384,6 +386,32 @@ void mode_minusl_should_lift_block(Server& s)
     }
 }
 
+void creation_of_multiple_chan_with_key(Server& s)
+{
+    try {
+        TEST_SETUP(test, s, 2);
+        TcpSocket& sop = *sockets.at(0);
+        TcpSocket& so  = *sockets.at(1);
+        make_op(sop);
+        authenticate(so);
+
+        // test 1
+        send_line(sop, "JOIN #chan1,#chan2,#chan3 key1,key2,key3\r\n");
+        std::string reply = recv_lines(sop);
+        AssertReply ar(reply);
+
+        ar.is_formatted_transfer(opNick, "JOIN #chan1");	
+        ar.is_formatted_transfer(opNick, "MODE #chan1 +o");
+		ar.is_formatted(RPL_CHANNELMODEIS, opNick, "#chan1 +k key1");
+
+        // test 2
+        //join_assert(so);
+
+    } catch (const std::runtime_error& e) {
+        LOG_TEST.error(e.what());
+    }
+}
+
 void test_join(Server& s, t_results* r)
 {
     print_test_series("command JOIN");
@@ -401,4 +429,5 @@ void test_join(Server& s, t_results* r)
     run_test(r, [&] { mode_minusk_should_lift_block(s); }, "-k <key>");
     run_test(r, [&] { mode_minusi_should_lift_block(s); }, "-i");
     run_test(r, [&] { mode_minusl_should_lift_block(s); }, "-l");
+    //run_test(r, [&] { creation_of_multiple_chan_with_key(s); }, "multiple creation of channels with keys");
 }

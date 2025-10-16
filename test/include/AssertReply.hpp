@@ -32,6 +32,7 @@ class AssertReply
     AssertReply& is_formatted(ReplyCode code, const std::string& clientNick, const std::string& params = "", const std::string& trailing = "");
     AssertReply& is_formatted_transfer(const std::string& clientNick, const std::string& params, const std::string& trailing = "");
 
+	void print_target_and_messages(const std::string& target);
     AssertReply& handle_new_reply(const std::string& reply);
 
   private:

@@ -40,12 +40,13 @@ class Channel
 {
 
   public:
+
     /**
      * @brief Construct a new Channel object
      *
      * @param name
      */
-    Channel(const std::string& name);
+    Channel(const std::string& name, const std::string& key = "");
     /**
      * @brief Construct a new Channel object
      *
@@ -149,6 +150,9 @@ class Channel
      * @warning returns ERR_CHANOPRIVSNEEDED if mode +t and client is not operator
      */
     ReplyCode set_topic(Client& client, const std::string& topic);
+
+    bool      remove_from_invited_list(Client& client);
+
     /**
      * @brief Set the key object
      *
@@ -177,6 +181,7 @@ class Channel
      * @return ReplyCode
      * @warning returns ERR_CHANNELISFULL, ERR_INVITEONLYCHAN
      */
+
     ReplyCode add_member(Client& client);
     /**
      * @brief removes a client from the member list
@@ -239,6 +244,7 @@ class Channel
      */
     std::set<Client*> get_members() const;
 
+
     /**
      * @brief transfer a message to channel members
      * @see ReplyHandler::process_response
@@ -261,7 +267,9 @@ class Channel
      * @return true is name is valid according to RFC grammar
      * @return false
      */
+
     static bool is_valid_channel_name(const std::string& name);
+    static bool is_valid_channel_key(const std::string& key);
 
   private:
     std::string       _name;
