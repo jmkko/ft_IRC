@@ -25,6 +25,7 @@
 var NAVTREE =
 [
   [ "hazardous irc", "index.html", [
+    [ "Todo List", "dd/da0/todo.html", null ],
     [ "Namespaces", "namespaces.html", [
       [ "Namespace List", "namespaces.html", "namespaces_dup" ],
       [ "Namespace Members", "namespacemembers.html", [
@@ -61,7 +62,7 @@ var NAVTREEINDEX =
 [
 "annotated.html",
 "d8/d9c/reply__codes_8hpp.html#a686bb12efcc784d36f30d3528bdcdf08ae71ad41c3cff46d1d05536515f91e1ae",
-"df/dd7/consts_8hpp.html#a940ac8d5926d302139e8552647a97ece"
+"df/dd7/consts_8hpp.html#a931134aea8a2d442cd668b239fa517d6"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronization';

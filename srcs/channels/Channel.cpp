@@ -18,7 +18,6 @@
  **
  ************************************************************/
 
-/// @brief checks validity according to RFC
 bool Channel::is_valid_channel_name(const std::string& name)
 {
     size_t posColon = name.find(':');
@@ -35,7 +34,6 @@ bool Channel::is_valid_channel_name(const std::string& name)
  **
  ************************************************************/
 
-/// @throw exception if name is invalid
 Channel::Channel(const std::string& name) :
     _topic(""), _key(""), _mode(CHANMODE_INIT), _userLimit(NO_LIMIT), _members(), _invites(), _operators()
 {
@@ -166,8 +164,6 @@ void Channel::set_user_limit(int limit)
 }
 
 void Channel::invite_client(Client& client) { _invites.insert(&client); }
-// Can we invite a banned client ?
-// Or when we invite a banned client it's remove it from banned list ?
 
 ReplyCode Channel::add_member(Client& client)
 {
