@@ -200,7 +200,7 @@
 <!-- Node11 -->
 <g id="Node000011" class="node">
 <title>Node11</title>
-<g id="a_Node000011"><a xlink:href="d8/d71/classTopic.html" target="_top" xlink:title=" ">
+<g id="a_Node000011"><a xlink:href="d8/d71/classTopic.html" target="_top" xlink:title="Handler for IRC TOPIC.">
 <polygon fill="white" stroke="#666666" points="153.5,-98.75 112.75,-98.75 112.75,-78 153.5,-78 153.5,-98.75"/>
 <text xml:space="preserve" text-anchor="middle" x="133.12" y="-85.25" font-family="Helvetica,sans-Serif" font-size="10.00">Topic</text>
 </a>

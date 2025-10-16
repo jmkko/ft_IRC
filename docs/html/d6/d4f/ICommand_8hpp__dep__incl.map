@@ -20,7 +20,7 @@
 <area shape="poly" id="edge9_Node000001_Node000010" title=" " alt="" coords="726,36,850,78,848,83,725,41"/>
 <area shape="rect" id="Node000011" href="$df/d79/Quit_8hpp.html" title=" " alt="" coords="962,81,1039,109"/>
 <area shape="poly" id="edge10_Node000001_Node000011" title=" " alt="" coords="749,34,950,78,962,81,961,86,949,84,747,39"/>
-<area shape="rect" id="Node000012" href="$d8/d1b/Topic_8hpp.html" title=" " alt="" coords="1063,81,1146,109"/>
+<area shape="rect" id="Node000012" href="$d8/d1b/Topic_8hpp.html" title="Implements IRC TOPIC command." alt="" coords="1063,81,1146,109"/>
 <area shape="poly" id="edge11_Node000001_Node000012" title=" " alt="" coords="749,28,890,50,1052,78,1064,81,1063,86,1051,84,889,55,748,34"/>
 <area shape="rect" id="Node000013" href="$de/dfd/User_8hpp.html" title=" " alt="" coords="1169,81,1248,109"/>
 <area shape="poly" id="edge12_Node000001_Node000013" title=" " alt="" coords="748,24,935,45,1158,78,1169,81,1168,86,1157,84,934,50,747,30"/>

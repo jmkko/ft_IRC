@@ -290,7 +290,7 @@
 <!-- Node20 -->
 <g id="Node000020" class="node">
 <title>Node20</title>
-<g id="a_Node000020"><a xlink:href="../../d8/d1b/Topic_8hpp.html" target="_top" xlink:title=" ">
+<g id="a_Node000020"><a xlink:href="../../d8/d1b/Topic_8hpp.html" target="_top" xlink:title="Implements IRC TOPIC command.">
 <polygon fill="white" stroke="#666666" points="1223.88,-247.75 1162.12,-247.75 1162.12,-227 1223.88,-227 1223.88,-247.75"/>
 <text xml:space="preserve" text-anchor="middle" x="1193" y="-234.25" font-family="Helvetica,sans-Serif" font-size="10.00">Topic.hpp</text>
 </a>
