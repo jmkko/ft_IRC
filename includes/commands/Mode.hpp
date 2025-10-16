@@ -4,17 +4,17 @@
 #include "ICommand.hpp"
 #include "reply_codes.hpp"
 
+#include <set>
 #include <string>
 #include <vector>
-#include <set>
 
 class Client;
 class Server;
 
-static const std::string& authorizedModes = "kilot";
+static const std::string& authorizedModes   = "kilot";
 static const std::string& modesRequiringArg = "klo";
-static const std::string& authorizedOps = "+-";
-static const std::string& digits = "0123456789";
+static const std::string& authorizedOps     = "+-";
+static const std::string& digits            = "0123456789";
 
 class Mode : public ICommand
 {
@@ -22,13 +22,13 @@ class Mode : public ICommand
     Mode(const std::vector<std::string>& args);
     ~Mode();
 
-    void	     		execute(Server& server, Client& client);
-    static ReplyCode	check_args(Server& server, Client& client, std::vector<std::string>& args);
+    void             execute(Server& server, Client& client);
+    static ReplyCode check_args(Server& server, Client& client, std::vector<std::string>& args);
 
   private:
-  	std::vector<std::string> _args;
+    std::vector<std::string> _args;
 
-  	Mode();
+    Mode();
     Mode(const Mode& other);
     Mode& operator=(const Mode& other);
 };
