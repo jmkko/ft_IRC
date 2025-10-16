@@ -18,6 +18,7 @@ class Utils
     static bool check_args(int ac, char** av, int* port);
     static bool check_port(const std::string& s, int* port);
     static bool check_password(const std::string& s);
+    static bool is_char_of(unsigned char c, const std::string& set);
 
     template <typename T> static std::string to_string(const T& value)
     {

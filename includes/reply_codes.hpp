@@ -26,9 +26,9 @@ enum ReplyCode {
 
     //////////////////////  numerical errors
     CUSTOMERR_WRONG_FORMAT = 705,
-    
+
     ////////////////////// RFC REPLIES (with code defined by RFC)
-    RPL_NONE            = 300, // no answer
+    RPL_NONE     = 300, // no answer
     RPL_WELCOME  = 001, // after registering (PASS NICK USER)
     RPL_YOURHOST = 002,
     RPL_CREATED  = 003,

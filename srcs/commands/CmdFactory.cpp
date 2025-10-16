@@ -1,5 +1,6 @@
-#include "Client.hpp"
 #include "CmdFactory.hpp"
+
+#include "Client.hpp"
 #include "ICommand.hpp"
 #include "Invite.hpp"
 #include "Join.hpp"
@@ -17,10 +18,10 @@
 #include "Topic.hpp"
 #include "User.hpp"
 #include "Who.hpp"
+#include "colors.hpp"
 #include "consts.hpp"
 #include "reply_codes.hpp"
 #include "utils.hpp"
-#include "colors.hpp"
 
 #include <iostream>
 #include <sstream>
@@ -193,11 +194,9 @@ ICommand* CmdFactory::quit_cmd(Server& server, Client& client, std::string& para
 ICommand* CmdFactory::join_cmd(Server& server, Client& client, std::string& params)
 {
     ReplyHandler&            rh = ReplyHandler::get_instance(&server);
-    std::vector<std::string> vectorParams;
-    vectorParams.push_back(params);
-    ReplyCode replyCode = Join::check_args(server, client, vectorParams);
+    ReplyCode replyCode = Join::check_args(server, client, params);
     if (replyCode == CORRECT_FORMAT) {
-        return new Join(vectorParams);
+        return new Join(params);
     } else if (replyCode == ERR_NEEDMOREPARAMS) {
         rh.process_response(client, replyCode, "JOIN");
     } else {
@@ -314,7 +313,7 @@ ICommand* CmdFactory::topic_cmd(Server& server, Client& client, std::string& par
     (void)client;
     ReplyHandler rh   = ReplyHandler::get_instance(&server);
     ReplyCode    code = Topic::check_args(server, client, params);
-    if (code == PROCESSED_ERROR){
+    if (code == PROCESSED_ERROR) {
         return NULL;
     } else if (code == ERR_NEEDMOREPARAMS) {
         rh.process_response(client, code, "TOPIC");

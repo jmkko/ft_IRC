@@ -1,4 +1,5 @@
 #include "Channel.hpp"
+
 #include "Client.hpp"
 #include "Config.hpp"
 #include "ICommand.hpp"
@@ -17,16 +18,42 @@
  **
  ************************************************************/
 
-/// @brief checks validity according to RFC
 bool Channel::is_valid_channel_name(const std::string& name)
 {
-    size_t posColon = name.find(':');
-    size_t posBell  = name.find('\a');
-    if (posColon != std::string::npos && posBell != std::string::npos)
+    if (name.empty()) {
+        return (false);
+    }
+    for (std::string::const_iterator it = name.begin(); it != name.end(); ++it) {
+        unsigned char c = *it;
+        if (c > 0xFF || is_char_of(c, std::string(FORBIDEN_CHAR_CHAN_NAME, 7))) { // NOLINT
+            return false;
+        }
+    }
+    if (!is_char_of(static_cast<unsigned char>(name[0]), "#&+!"))
         return false;
-    if (name[0] != '#' && name[0] != '&' && name[0] != '+' && name[0] != '!')
+    return (name.length() > 1 && name.length() <= ircConfig.get_chan_name_max_len());
+}
+
+/**
+ * @brief check if the key is valid -- no commas or spaces allowed
+ *
+ * @param key
+ * @return true or false
+ */
+bool Channel::is_valid_channel_key(const std::string& key)
+{
+    if (key.empty()) {
+        return true;
+    } else if (key.size() > CHAN_KEY_MAX_LEN) {
         return false;
-    return name.length() > 1 && name.length() <= ircConfig.get_chan_name_max_len();
+    }
+    for (std::string::const_iterator it = key.begin(); it != key.end(); ++it) {
+        unsigned char c = *it;
+        if (c > 0x07F || is_char_of(c, std::string(FORBIDEN_CHAR_CHAN_KEY, 7))) { // NOLINT
+            return false;
+        }
+    }
+    return true;
 }
 
 /************************************************************
@@ -34,10 +61,14 @@ bool Channel::is_valid_channel_name(const std::string& name)
  **
  ************************************************************/
 
-/// @throw exception if name is invalid
-Channel::Channel(const std::string& name) :
-    _topic(""), _key(""), _mode(CHANMODE_INIT), _userLimit(NO_LIMIT), _members(), _invites(), _operators()
+
+Channel::Channel(const std::string& name, const std::string& key) :
+    _topic(""), _key(key), _mode(CHANMODE_INIT), _userLimit(NO_LIMIT), _members(), _invites(), _operators()
+
 {
+    if (!key.empty()) {
+        this->add_mode(CHANMODE_KEY);
+    }
     set_name(name);
 }
 
@@ -143,11 +174,9 @@ ReplyCode Channel::set_name(const std::string& name)
 
 ReplyCode Channel::set_topic(Client& client, const std::string& topic)
 {
-    if ((_mode & CHANMODE_TOPIC && is_operator(client)) || (!(_mode & CHANMODE_TOPIC)))
-    {
+    if ((_mode & CHANMODE_TOPIC && is_operator(client)) || (!(_mode & CHANMODE_TOPIC))) {
         _topic = topic;
-    }
-    else
+    } else
         return ERR_CHANOPRIVSNEEDED;
     return CORRECT_FORMAT;
 }
@@ -167,8 +196,6 @@ void Channel::set_user_limit(int limit)
 }
 
 void Channel::invite_client(Client& client) { _invites.insert(&client); }
-// Can we invite a banned client ?
-// Or when we invite a banned client it's remove it from banned list ?
 
 ReplyCode Channel::add_member(Client& client)
 {
@@ -179,7 +206,6 @@ ReplyCode Channel::add_member(Client& client)
     if (is_invite_only() && !is_invited(client)) {
         return ERR_INVITEONLYCHAN;
     }
-    _invites.erase(&client);
     if (ircConfig.get_max_joined_channels() != NO_LIMIT && client.get_nb_joined_channels() >= ircConfig.get_max_joined_channels())
         return ERR_CHANNELISFULL;
     if (is_banned(client))
@@ -187,6 +213,13 @@ ReplyCode Channel::add_member(Client& client)
     _members.insert(&client);
     client.add_joined_channel(*this);
     return CORRECT_FORMAT;
+}
+
+bool Channel::remove_from_invited_list(Client& client)
+{
+    bool invited = is_invited(client);
+    _invites.erase(&client);
+    return (invited);
 }
 
 void Channel::remove_member(Client& client) { _members.erase(&client); }
