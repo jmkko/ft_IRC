@@ -23,7 +23,7 @@
 #include <thread>
 
 /************************************************************
- *		✅  VALID											*
+ *                      ✅  VALID                           *
  ************************************************************/
 
 /**
@@ -204,10 +204,11 @@ void taken_should_err(Server& s)
 void test_nick(Server& s, t_results* r)
 {
     print_test_series("command NICK");
-    run_test(r, [&] { valid_nick_should_void(s); }, "roro");
-    run_test(r, [&] { valid_nick_should_void(s); }, "roro->roro the boss should void himself but notice others");
+    run_test(r, [&] { valid_nick_should_void(s); }, "roro should void himself");
     run_test(r, [&] { valid_nick_special_should_void(s); }, "[roro] should void himself");
     run_test(r, [&] { valid_nick_rename_special_should_void(s); }, "roro->[roro] should void himself");
+    run_test(r, [&] { valid_change_should_void(s); }, "roro->\"roro the boss should\" void himself");
+    run_test(r, [&] { valid_change_should_notice(s); }, "roro->roro the boss should tell is new nick to other");
     run_test(r, [&] { no_arg_should_err(s); }, "no arg");
     run_test(r, [&] { starting_with_number_should_err(s); }, "3oro");
     run_test(r, [&] { taken_should_err(s); }, "taken");

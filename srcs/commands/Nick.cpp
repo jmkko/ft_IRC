@@ -13,6 +13,27 @@ Nick::Nick(const std::string& nickname) : _nickname(nickname) {}
 
 Nick::~Nick(void) {}
 
+/**
+ * @brief set nickname or change nickname
+ *
+ * @if this command is done after USER and it is the first use
+ * - send welcome message sequence to client
+ * 001    RPL_WELCOME
+ *          "Welcome to the Internet Relay Network
+ *          <nick>!<user>@<host>"
+ * 002    RPL_YOURHOST
+ *          "Your host is <servername>, running version <ver>"
+ * 003    RPL_CREATED
+ *          "This server was created <date>"
+ * 004    RPL_MYINFO
+ *          "<servername> <version> <available user modes>
+ *          <available channel modes>"
+ *        - The server sends Replies 001 to 004 to a user upon
+ *          successful registration.
+ *
+ * @param server not used
+ * @param client
+ */
 void Nick::execute(Server& server, Client& client)
 {
     (void)server;
@@ -35,13 +56,23 @@ void Nick::execute(Server& server, Client& client)
         // normal success behavior
     } else if (!oldNickname.empty() && !client.get_user_name().empty() && client.is_registered()) {
         // send the message to every user in every channel that this client takes part in
-        // NOT WORKING (client._joinedChannel is empty)
         client.broadcast_to_all_channels(server, TRANSFER_NICK, _nickname); // ! \\ ;
-        // rh.process_response(client, TRANSFER_NICK, _nickname);
     }
     client.set_nickname(_nickname);
 }
 
+/**
+ * @brief check the args of command NICK
+ *
+ * @param server
+ * @param client not used
+ * @param params should match `<nickname>`
+ * @remark grammar rule
+ * - nickname   =  ( letter / special ) *8( letter / digit / special / "-" )
+ *
+ *
+ * @return @ref ReplyCode
+ */
 ReplyCode Nick::check_args(Server& server, Client& client, std::string& params)
 {
     (void)client;
@@ -64,8 +95,5 @@ ReplyCode Nick::check_args(Server& server, Client& client, std::string& params)
         return (ERR_NICKNAMEINUSE);
     }
     params = nickname;
-    // if (client.get_nickname().empty() && !client.get_user_name().empty() && client.is_registered()) {
-    //     return (RPL_WELCOME);
-    // }
     return (CORRECT_FORMAT);
 }
