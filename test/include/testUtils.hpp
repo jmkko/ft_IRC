@@ -15,12 +15,11 @@
 #define TEST_PORT              4343
 
 class Server;
-typedef struct Sresults
-{
+typedef struct Sresults {
     int launchedTests;
     int passedTests;
     int failedTests;
-}   t_results;
+} t_results;
 
 /**
  * @brief uses std::forward to preserve category of argument
@@ -66,8 +65,8 @@ static const std::string& user3Nick    = "riri";
 static const std::string& user4Nick    = "titi";
 static const std::string& user5Nick    = "rara";
 static const std::string& user6Nick    = "tata";
-static const std::string& opNick   = "op";
-static const std::string& op2Nick  = "op2";
+static const std::string& opNick       = "op";
+static const std::string& op2Nick      = "op2";
 static const std::string& channelName  = "#chan";
 static const std::string& channel2Name = "#chan2";
 
@@ -87,6 +86,7 @@ static const std::string& validNickSpecialMsg      = "NICK [roro]\r\n";
 static const std::string& validNickChangeMsg       = "NICK rorotheboss\r\n";
 static const std::string& invalidNickMissingArgMsg = "NICK \r\n";
 static const std::string& invalidNick3oroMsg       = "NICK 3oro\r\n";
+static const std::string& invalidNickroroMsg       = "NICK ro*ro\r\n";
 
 static const std::string& validJoinMsg           = "JOIN #chan\r\n";
 static const std::string& validJoinWithKeyMsg    = "JOIN #chan key\r\n";
@@ -142,7 +142,7 @@ static const std::string& badUserWho     = "WHO resu\r\n";
 static const std::string& badPatternWho  = "WHO *x*\r\n";
 static const std::string& allUserWho     = "WHO *\r\n";
 
-static const std::string& validMotd     = "MOTD\r\n";
+static const std::string& validMotd = "MOTD\r\n";
 
 static const std::string& validPrivmsgSingleUser        = "PRIVMSG roro :hi\r\n";
 static const std::string& validPrivmsgSingleChan        = "PRIVMSG #chan :hi\r\n";
@@ -158,12 +158,12 @@ static const std::string& validPrivmsgBlank             = "PRIVMSG #chan : \r\n"
 static const std::string& invalidPrivMsgSpaceAfterComma = "PRIVMSG roro, toto :hi\r\n";
 static const std::string& invalidPrivMsgInArg           = "PRIVMSG roro, toto hi\r\n";
 
-static const std::string& validTopic				= "TOPIC #chan new topic\r\n";
-static const std::string& validTopic2				= "TOPIC #chan new topic2\r\n";
-static const std::string& validTopicEmpty			= "TOPIC #chan\r\n";
-static const std::string& edgeTopicTrailing			= "TOPIC #chan :trailing\r\n";
-static const std::string& invalidTopicNoParam		= "TOPIC\r\n";
-static const std::string& validTopicWrongChannel    = "TOPIC $notvalid\r\n";
+static const std::string& validTopic             = "TOPIC #chan new topic\r\n";
+static const std::string& validTopic2            = "TOPIC #chan new topic2\r\n";
+static const std::string& validTopicEmpty        = "TOPIC #chan\r\n";
+static const std::string& edgeTopicTrailing      = "TOPIC #chan :trailing\r\n";
+static const std::string& invalidTopicNoParam    = "TOPIC\r\n";
+static const std::string& validTopicWrongChannel = "TOPIC $notvalid\r\n";
 // static const std::string& notAChannelMemberTopic	= "TOPIC #chan\r\n";
 
 static const std::string& validInvite = "INVITE roro #chan\r\n";

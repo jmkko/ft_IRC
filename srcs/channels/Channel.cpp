@@ -25,11 +25,11 @@ bool Channel::is_valid_channel_name(const std::string& name)
     }
     for (std::string::const_iterator it = name.begin(); it != name.end(); ++it) {
         unsigned char c = *it;
-        if (c > 0xFF || is_char_of(c, std::string(FORBIDEN_CHAR_CHAN_NAME, 7))) { // NOLINT
+        if (c > 0xFF || Utils::is_char_of(c, std::string(FORBIDEN_CHAR_CHAN_NAME, 7))) { // NOLINT
             return false;
         }
     }
-    if (!is_char_of(static_cast<unsigned char>(name[0]), "#&+!"))
+    if (!Utils::is_char_of(static_cast<unsigned char>(name[0]), "#&+!"))
         return false;
     return (name.length() > 1 && name.length() <= ircConfig.get_chan_name_max_len());
 }
@@ -49,7 +49,7 @@ bool Channel::is_valid_channel_key(const std::string& key)
     }
     for (std::string::const_iterator it = key.begin(); it != key.end(); ++it) {
         unsigned char c = *it;
-        if (c > 0x07F || is_char_of(c, std::string(FORBIDEN_CHAR_CHAN_KEY, 7))) { // NOLINT
+        if (c > 0x07F || Utils::is_char_of(c, std::string(FORBIDEN_CHAR_CHAN_KEY, 7))) { // NOLINT
             return false;
         }
     }
@@ -60,7 +60,6 @@ bool Channel::is_valid_channel_key(const std::string& key)
  *		🥚 CONSTRUCTORS & DESTRUCTOR
  **
  ************************************************************/
-
 
 Channel::Channel(const std::string& name, const std::string& key) :
     _topic(""), _key(key), _mode(CHANMODE_INIT), _userLimit(NO_LIMIT), _members(), _invites(), _operators()

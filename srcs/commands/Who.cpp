@@ -53,7 +53,7 @@ void Who::execute(Server& server, Client& client)
     if (Channel::is_valid_channel_name(mask)) {
         std::map<std::string, Channel*>::iterator itChan = server.channels.begin();
         for (; itChan != server.channels.end(); itChan++) {
-            if (utils::is_matching_pattern(mask, itChan->second->get_name())) {
+            if (Utils::is_matching_pattern(mask, itChan->second->get_name())) {
                 std::set<Client*>                 clients  = itChan->second->get_members();
                 std::set<Client*>::const_iterator itClient = clients.begin();
                 for (; itClient != clients.end(); itClient++) {
@@ -101,7 +101,7 @@ std::vector<Client*> Who::_find_all_clients_by_pattern(const std::set<Client*>& 
     std::vector<Client*> result;
     for (std::set<Client*>::const_iterator it = members.begin(); it != members.end(); it++) {
 
-        if (utils::MatchPattern(pat)(*it)) {
+        if (Utils::MatchPattern(pat)(*it)) {
             LOG_D_CMD("pattern " + pat + " matched", (*it)->get_nickname());
             result.push_back(*it);
         }
