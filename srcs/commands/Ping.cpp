@@ -33,18 +33,10 @@ Ping& Ping::operator=(const Ping& other)
  *		🛠️ FUNCTIONS											*
  *************************************************************/
 
-/**
- * @brief checks that there is an origin token
- *
- * @param s
- * @param c
- * @param params
- * @return ReplyCode
- */
-ReplyCode Ping::check_args(Server& s, Client& c, std::string& params)
+ReplyCode Ping::check_args(Server& server, Client& client, std::string& params)
 {
-    (void)s;
-    (void)c;
+    (void)server;
+    (void)client;
     std::string token;
 
     std::istringstream iss(params);
@@ -56,14 +48,8 @@ ReplyCode Ping::check_args(Server& s, Client& c, std::string& params)
     return CORRECT_FORMAT;
 }
 
-/**
- * @brief sends a PONG message with token provided by PING sender
- *
- * @param s server
- * @param c client
- */
-void Ping::execute(Server& s, Client& c)
+void Ping::execute(Server& server, Client& client)
 {
-    ReplyHandler& rh = ReplyHandler::get_instance(&s);
-    rh.process_response(c, MSG_PING, _token);
+    ReplyHandler& rh = ReplyHandler::get_instance(&server);
+    rh.process_response(client, MSG_PING, _token);
 }

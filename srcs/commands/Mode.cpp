@@ -44,14 +44,6 @@ static void parse_args(std::vector<std::string>& args,
  *		📁 CLASS METHODS									*
  ************************************************************/
 
-/**
- * @brief check syntaxic validity of args
- *
- * @param server not used
- * @param client not used
- * @param args should match pattern `<channel> *( ( "-" / "+" ) *<modes> *<modeparams>`
- * @return ReplyCode
- */
 ReplyCode Mode::check_args(Server& server, Client& client, std::vector<std::string>& args)
 {
     (void)server;
@@ -127,13 +119,6 @@ Mode::~Mode() {}
  *		🛠️ FUNCTIONS											*
  *************************************************************/
 
-/**
- * @brief check business validity of args before adjusting modes
- * namely channel modes k/i/l/t and user mode o
- * if duplicate modes are present (as in +kk key1 key2) the last one prevails
- * @param server
- * @param client
- */
 void Mode::execute(Server& server, Client& client)
 {
     ReplyHandler&            rh = ReplyHandler::get_instance(&server);
@@ -143,7 +128,6 @@ void Mode::execute(Server& server, Client& client)
     std::vector<std::string> modeParams;
     parse_args(_args, &channelName, &operation, &modes, &modeParams);
 
-    // checking channel
     Channel*                                  channel = NULL;
     std::map<std::string, Channel*>::iterator it      = server.channels.find(channelName);
     if (it == server.channels.end()) {
@@ -153,7 +137,6 @@ void Mode::execute(Server& server, Client& client)
         channel = it->second;
     unsigned short currentModes = channel->get_mode();
 
-    // case MOD #chan
     if (_args.size() == 1) {
         LOG_d_CMD("args == 1");
         std::string modeIsReply = channel->get_name();
@@ -180,13 +163,11 @@ void Mode::execute(Server& server, Client& client)
         return;
     }
 
-    // checking client privileges
     if (!channel->is_operator(client)) {
         rh.process_response(client, ERR_CHANOPRIVSNEEDED, channel->get_name());
         return;
     }
 
-    // checking and (un)setting modes
     std::string validModes      = operation == '+' ? "+" : "-";
     std::string validModeParams = "";
     LOG_CMD.log(DEBUG, __FILE_NAME__, __FUNCTION__, "modes", modes);

@@ -48,14 +48,6 @@ static ReplyCode parse_args(std::vector<std::string>& args,
  *		📁 CLASS METHODS									*
  ************************************************************/
 
-/**
- * @brief
- * first check for missing arg -> ERR_NEEDMOREPARAMS
- * @param server
- * @param client
- * @param args
- * @return ReplyCode to be used in CommandFactory and potentially generate an error
- */
 ReplyCode Kick::check_args(Server& server, Client& client, std::vector<std::string>& args)
 {
     (void)server;
@@ -99,18 +91,6 @@ Kick& Kick::operator=(const Kick& other)
  *		🛠️ FUNCTIONS											*
  *************************************************************/
 
-/**
- * @brief Force part a channel
- * loop over channels :
- * check for invalid channel name -> ERR_BADCHANMASK
- * then check for existing channel -> ERR_NOSUCHCHANNEL
- * then check for op privilege -> ERR_CHANOPRIVSNEEDED
- * inner loop over channel members :
- * - then check for user presence -> ERR_USERNOTINCHANNEL
- * - then execute : remove - broadcast + direct notice
- * @param server
- * @param client
- */
 void Kick::execute(Server& server, Client& client)
 {
     ReplyHandler& rh = ReplyHandler::get_instance(&server);

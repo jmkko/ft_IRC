@@ -5,12 +5,13 @@
 
 #include <poll.h>
 
-bool is_char_of(unsigned char c, const std::string& set) {
-	for (std::string::const_iterator it = set.begin(); it != set.end(); ++it) {
-		if (c == static_cast<unsigned char>(*it))
-			return true;
-	}
-	return false;
+bool is_char_of(unsigned char c, const std::string& set)
+{
+    for (std::string::const_iterator it = set.begin(); it != set.end(); ++it) {
+        if (c == static_cast<unsigned char>(*it))
+            return true;
+    }
+    return false;
 }
 
 bool is_special_abnf(char c)

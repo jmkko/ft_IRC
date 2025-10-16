@@ -1,6 +1,6 @@
 /**
  * @file Motd.hpp
- * @brief
+ * @brief Implements IRC MOTD command
  * @version 0.1
  * @date 2025-10-16
  *

@@ -40,7 +40,6 @@ class Channel
 {
 
   public:
-
     /**
      * @brief Construct a new Channel object
      *
@@ -151,7 +150,7 @@ class Channel
      */
     ReplyCode set_topic(Client& client, const std::string& topic);
 
-    bool      remove_from_invited_list(Client& client);
+    bool remove_from_invited_list(Client& client);
 
     /**
      * @brief Set the key object
@@ -243,7 +242,6 @@ class Channel
      * @return std::set<Client*>
      */
     std::set<Client*> get_members() const;
-
 
     /**
      * @brief transfer a message to channel members

@@ -26,21 +26,19 @@
 #include <iostream>
 #include <sstream>
 
-// Default constructor
+/************************************************************
+ *		🥚 CONSTRUCTORS & DESTRUCTOR						*
+ ************************************************************/
+
 CmdFactory::CmdFactory(void) {}
 
-// Copy constructor
 CmdFactory::CmdFactory(const CmdFactory& other) { (void)other; }
 
-// Assignment operator overload
-CmdFactory& CmdFactory::operator=(const CmdFactory& other)
-{
-    (void)other;
-    return (*this);
-}
-
-// Destructor
 CmdFactory::~CmdFactory(void) {}
+
+/*************************************************************
+ *		🛠️ FUNCTIONS											*
+ *************************************************************/
 
 bool CmdFactory::check_in(Client& client, std::string& command)
 {
@@ -193,8 +191,8 @@ ICommand* CmdFactory::quit_cmd(Server& server, Client& client, std::string& para
 
 ICommand* CmdFactory::join_cmd(Server& server, Client& client, std::string& params)
 {
-    ReplyHandler&            rh = ReplyHandler::get_instance(&server);
-    ReplyCode replyCode = Join::check_args(server, client, params);
+    ReplyHandler& rh        = ReplyHandler::get_instance(&server);
+    ReplyCode     replyCode = Join::check_args(server, client, params);
     if (replyCode == CORRECT_FORMAT) {
         return new Join(params);
     } else if (replyCode == ERR_NEEDMOREPARAMS) {
