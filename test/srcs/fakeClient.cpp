@@ -149,3 +149,10 @@ void do_cmd(const TcpSocket& so, const std::string& msg)
     send_line(so, msg);
     recv_lines(so);
 }
+
+std::string get_rpl_for(const TcpSocket& so, const std::string& msg)
+{
+    send_line(so, msg);
+    std::string rpl = recv_lines(so);
+    return (rpl);
+}
