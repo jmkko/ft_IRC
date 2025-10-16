@@ -11,7 +11,7 @@
 <!-- Node1 -->
 <g id="Node000001" class="node">
 <title>Node1</title>
-<g id="a_Node000001"><a xlink:title=" ">
+<g id="a_Node000001"><a xlink:title="Implements IRC INVITE command.">
 <polygon fill="#999999" stroke="#666666" points="411.5,-418 346.75,-418 346.75,-397.25 411.5,-397.25 411.5,-418"/>
 <text xml:space="preserve" text-anchor="middle" x="379.12" y="-404.5" font-family="Helvetica,sans-Serif" font-size="10.00">Invite.hpp</text>
 </a>
@@ -74,7 +74,7 @@
 <!-- Node18 -->
 <g id="Node000018" class="node">
 <title>Node18</title>
-<g id="a_Node000018"><a xlink:href="../../de/dd6/ICommand_8hpp.html" target="_top" xlink:title=" ">
+<g id="a_Node000018"><a xlink:href="../../de/dd6/ICommand_8hpp.html" target="_top" xlink:title="command interface">
 <polygon fill="white" stroke="#666666" points="90.25,-247.75 0,-247.75 0,-227 90.25,-227 90.25,-247.75"/>
 <text xml:space="preserve" text-anchor="middle" x="45.12" y="-234.25" font-family="Helvetica,sans-Serif" font-size="10.00">ICommand.hpp</text>
 </a>
@@ -92,7 +92,7 @@
 <!-- Node19 -->
 <g id="Node000019" class="node">
 <title>Node19</title>
-<g id="a_Node000019"><a xlink:href="../../de/d3d/Server_8hpp.html" target="_top" xlink:title=" ">
+<g id="a_Node000019"><a xlink:href="../../de/d3d/Server_8hpp.html" target="_top" xlink:title="Server class.">
 <polygon fill="white" stroke="#666666" points="260,-191 192.25,-191 192.25,-170.25 260,-170.25 260,-191"/>
 <text xml:space="preserve" text-anchor="middle" x="226.12" y="-177.5" font-family="Helvetica,sans-Serif" font-size="10.00">Server.hpp</text>
 </a>

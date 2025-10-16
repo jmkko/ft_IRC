@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['iwhite_0',['IWHITE',['../df/d95/colors_8hpp.html#ad15aaa3fda5d4419a0c68d5ea11513bb',1,'colors.hpp']]]
+  ['green_0',['GREEN',['../df/d95/colors_8hpp.html#acfbc006ea433ad708fdee3e82996e721',1,'colors.hpp']]],
+  ['grey_1',['GREY',['../df/d95/colors_8hpp.html#adce122f566c88a1eceeb79a635afa964',1,'colors.hpp']]]
 ];

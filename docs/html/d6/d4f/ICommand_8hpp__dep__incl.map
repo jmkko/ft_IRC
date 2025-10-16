@@ -1,20 +1,20 @@
 <map id="ICommand.hpp" name="ICommand.hpp">
-<area shape="rect" id="Node000001" title=" " alt="" coords="612,5,733,33"/>
-<area shape="rect" id="Node000002" href="$d0/d9f/Invite_8hpp.html" title=" " alt="" coords="5,81,92,109"/>
+<area shape="rect" id="Node000001" title="command interface" alt="" coords="612,5,733,33"/>
+<area shape="rect" id="Node000002" href="$d0/d9f/Invite_8hpp.html" title="Implements IRC INVITE command." alt="" coords="5,81,92,109"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="597,28,375,48,239,64,104,84,92,86,91,80,103,78,239,58,375,43,597,23"/>
 <area shape="rect" id="Node000003" href="$da/dac/Join_8hpp.html" title=" " alt="" coords="116,81,189,109"/>
 <area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="597,30,417,50,202,84,190,86,189,81,201,78,416,45,597,25"/>
-<area shape="rect" id="Node000004" href="$dd/d85/Kick_8hpp.html" title=" " alt="" coords="214,81,291,109"/>
+<area shape="rect" id="Node000004" href="$dd/d85/Kick_8hpp.html" title="Implements IRC KICK command." alt="" coords="214,81,291,109"/>
 <area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="598,34,461,55,304,84,292,86,291,81,303,78,460,50,597,28"/>
-<area shape="rect" id="Node000005" href="$d5/d67/Mode_8hpp.html" title=" " alt="" coords="315,81,400,109"/>
+<area shape="rect" id="Node000005" href="$d5/d67/Mode_8hpp.html" title="Implements IRC MODE command." alt="" coords="315,81,400,109"/>
 <area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="602,40,401,86,400,81,601,34"/>
-<area shape="rect" id="Node000006" href="$de/d3e/Motd_8hpp.html" title=" " alt="" coords="425,81,507,109"/>
+<area shape="rect" id="Node000006" href="$de/d3e/Motd_8hpp.html" title="Implements IRC MOTD command." alt="" coords="425,81,507,109"/>
 <area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="622,41,504,83,502,78,620,36"/>
 <area shape="rect" id="Node000007" href="$d2/dad/Nick_8hpp.html" title=" " alt="" coords="531,81,609,109"/>
 <area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="643,45,590,83,586,78,640,40"/>
 <area shape="rect" id="Node000008" href="$df/d5f/Pass_8hpp.html" title=" " alt="" coords="633,81,712,109"/>
 <area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="675,49,675,81,670,81,670,49"/>
-<area shape="rect" id="Node000009" href="$d5/d58/Ping_8hpp.html" title=" " alt="" coords="735,81,812,109"/>
+<area shape="rect" id="Node000009" href="$d5/d58/Ping_8hpp.html" title="Implements IRC PING command." alt="" coords="735,81,812,109"/>
 <area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="704,40,757,78,754,83,701,45"/>
 <area shape="rect" id="Node000010" href="$d6/df8/Privmsg_8hpp.html" title="Implements IRC PRIVMSG command." alt="" coords="836,81,938,109"/>
 <area shape="poly" id="edge9_Node000001_Node000010" title=" " alt="" coords="726,36,850,78,848,83,725,41"/>

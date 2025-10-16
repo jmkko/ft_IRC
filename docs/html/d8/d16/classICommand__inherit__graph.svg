@@ -11,7 +11,7 @@
 <!-- Node1 -->
 <g id="Node000001" class="node">
 <title>Node1</title>
-<g id="a_Node000001"><a xlink:title=" ">
+<g id="a_Node000001"><a xlink:title="Interface providing an execute behavior for all commands.">
 <polygon fill="#999999" stroke="#666666" points="398.5,-77.5 329.25,-77.5 329.25,-56.75 398.5,-56.75 398.5,-77.5"/>
 <text xml:space="preserve" text-anchor="middle" x="363.88" y="-64" font-family="Helvetica,sans-Serif" font-size="10.00">ICommand</text>
 </a>
@@ -20,7 +20,7 @@
 <!-- Node2 -->
 <g id="Node000002" class="node">
 <title>Node2</title>
-<g id="a_Node000002"><a xlink:href="../../dc/db9/classInvite.html" target="_top" xlink:title=" ">
+<g id="a_Node000002"><a xlink:href="../../dc/db9/classInvite.html" target="_top" xlink:title="Handler for IRC INVITE.">
 <polygon fill="white" stroke="#666666" points="43.75,-20.75 0,-20.75 0,0 43.75,0 43.75,-20.75"/>
 <text xml:space="preserve" text-anchor="middle" x="21.88" y="-7.25" font-family="Helvetica,sans-Serif" font-size="10.00">Invite</text>
 </a>
@@ -74,7 +74,7 @@
 <!-- Node5 -->
 <g id="Node000005" class="node">
 <title>Node5</title>
-<g id="a_Node000005"><a xlink:href="../../d9/d03/classMode.html" target="_top" xlink:title=" ">
+<g id="a_Node000005"><a xlink:href="../../d9/d03/classMode.html" target="_top" xlink:title="Mode Handler for IRC MODE.">
 <polygon fill="white" stroke="#666666" points="212.38,-20.75 169.38,-20.75 169.38,0 212.38,0 212.38,-20.75"/>
 <text xml:space="preserve" text-anchor="middle" x="190.88" y="-7.25" font-family="Helvetica,sans-Serif" font-size="10.00">Mode</text>
 </a>
@@ -146,7 +146,7 @@
 <!-- Node9 -->
 <g id="Node000009" class="node">
 <title>Node9</title>
-<g id="a_Node000009"><a xlink:href="../../d1/d7c/classPing.html" target="_top" xlink:title=" ">
+<g id="a_Node000009"><a xlink:href="../../d1/d7c/classPing.html" target="_top" xlink:title="Handler for PING.">
 <polygon fill="white" stroke="#666666" points="437.38,-20.75 400.38,-20.75 400.38,0 437.38,0 437.38,-20.75"/>
 <text xml:space="preserve" text-anchor="middle" x="418.88" y="-7.25" font-family="Helvetica,sans-Serif" font-size="10.00">Ping</text>
 </a>
@@ -182,7 +182,7 @@
 <!-- Node11 -->
 <g id="Node000011" class="node">
 <title>Node11</title>
-<g id="a_Node000011"><a xlink:href="../../db/dd5/classQuit.html" target="_top" xlink:title=" ">
+<g id="a_Node000011"><a xlink:href="../../db/dd5/classQuit.html" target="_top" xlink:title="Handler for IRC QUIT.">
 <polygon fill="white" stroke="#666666" points="565,-20.75 528.75,-20.75 528.75,0 565,0 565,-20.75"/>
 <text xml:space="preserve" text-anchor="middle" x="546.88" y="-7.25" font-family="Helvetica,sans-Serif" font-size="10.00">Quit</text>
 </a>

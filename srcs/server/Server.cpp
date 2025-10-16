@@ -30,14 +30,6 @@
  *		🥚 CONSTRUCTORS & DESTRUCTOR*
  ************************************************************/
 
-/**
- * @brief initialize server, assign a socket binding a port with an address, and adds it to the
- * monitored pollfd
- * @pre the `psswd` argument should have been checked with `utils::check_password()`
- * @pre the `port`argument should have been checked with `utils::check_port()`
- * @param port valid port number
- * @param psswd valid password
- */
 Server::Server(const unsigned short port, const std::string& password) : _psswd(password), _name(ircConfig.get_name())
 {
     try {
@@ -45,20 +37,15 @@ Server::Server(const unsigned short port, const std::string& password) : _psswd(
         _serverSocket.tcp_listen();
     } catch (std::exception& e) {
         std::cout << e.what();
-        exit(1); // need improve for exit program
+        exit(1);
     }
     LOG_SERVER.info("Server " + _name + " start at port :" + utils::to_string(port));
     std::cout << "\n";
 
-    // Socket serveur : surveiller nouvelles connexions
     _listen_to_socket(_serverSocket.get_socket(), POLLIN);
 }
 
-Server::~Server()
-{
-    _clean();
-    // server socket should auto close
-}
+Server::~Server() { _clean(); }
 
 /*************************************************************
  *		👁️‍ GETTERS and SETTERS	                     *
@@ -71,9 +58,6 @@ std::string Server::get_name() const { return _name; }
  *		🛠️ FUNCTIONS                                 *
  *************************************************************/
 
-/**
- * @brief runs the server loop, regularly checking activity through `poll()`
- */
 void Server::start()
 {
     while (globalSignal != SIGINT && globalSignal != SIGABRT) {
@@ -86,25 +70,19 @@ void Server::start()
             continue;
         }
 
-        // review each client socket
         LOG_DT_SERVER("event detected", pollResult);
         for (int i = 0; i < static_cast<int>(_pfds.size()); i++) {
             if (globalSignal == SIGINT && globalSignal == SIGABRT)
                 break;
 
-            // Check if index is still valid (in case vector was modified)
             if (i >= static_cast<int>(_pfds.size()))
                 break;
 
-            // new connection
             if (i == 0 && (_pfds[i].revents & POLLIN)) {
                 _pfds[i].revents = 0; // Reset events
                 _handle_new_connection(i);
-            }
-            // Client socket : data or disconnection
-            else if (i > 0) {
+            } else if (i > 0) {
                 std::map<Socket, Client*>::iterator clientIt = _clients.find(_pfds[i].fd);
-                // orphelan socket
                 if (clientIt == _clients.end()) {
                     cleanup_socket_and_client(i--);
                     continue;
@@ -120,7 +98,6 @@ void Server::start()
                     Socket originalSocket = _pfds[i].fd;
                     size_t originalSize   = _pfds.size();
                     _handle_client_input(i);
-                    // Check if client was disconnected during input handling
                     if (_pfds.size() < originalSize || i >= static_cast<int>(_pfds.size()) || _pfds[i].fd != originalSocket) {
                         i--; // Client was removed, adjust index
                     }
@@ -133,10 +110,6 @@ void Server::start()
     _clean();
 }
 
-/**
- @brief store new client socket, set it non blocking, and subscribe to new POLLIN events
- @param i index of the monitored fds
- */
 void Server::_handle_new_connection(int pfdIndex)
 {
     std::string pollEvent;
@@ -171,10 +144,6 @@ void Server::_handle_new_connection(int pfdIndex)
     }
 }
 
-/**
- @brief removes client
- @param pfdIndex
-*/
 void Server::_handle_client_disconnection(int pfdIndex)
 {
     Socket  socket = _pfds[pfdIndex].fd;
@@ -199,12 +168,6 @@ void Server::_handle_client_disconnection(int pfdIndex)
     cleanup_socket_and_client(pfdIndex);
 }
 
-/**
- * @brief attempt receiving bytes from client, parse into a command and execute it
- enable write notification on client socket if a response has to be sent
- in case of partial reception (message not ending with \r\n), add to receive buffer
- * @param pfdIndex index of monitored fd
- */
 void Server::_handle_client_input(int pfdIndex)
 {
     LOG_dt_SERVER("");
@@ -234,19 +197,11 @@ void Server::_handle_client_input(int pfdIndex)
         client->append_to_read_buffer(std::string(static_cast<char*>(buffer)));
         bool clientDisconnected = this->_handle_commands(pfdIndex);
         if (clientDisconnected) {
-            // Client was disconnected by QUIT command, pfdIndex is no longer valid
             return;
         }
     }
 }
 
-/**
- *@brief attempt sending the queued messages
- if a message is partially sent, updates send buffer accordingly
- if a message is completely sent, disable write notification for the client fd
- in case of send error, either retry or disconnect the client
- @param pfdIndex monitored fd for client
-*/
 void Server::_handle_client_output(int pfdIndex)
 {
     Socket  socket = _pfds[pfdIndex].fd;
@@ -289,14 +244,10 @@ bool Server::_handle_commands(int pfdIndex)
     Client*     client = _clients[socket];
     size_t      pos    = std::string::npos;
     std::string cmdName;
-    // tant qu'il y a un \r\n dans le readbuffer du client, executer les commandes
 
     while ((pos = client->get_read_buffer().find("\r\n")) != std::string::npos) {
-        // extract the first command from the readBuffer
         std::string line = client->get_read_buffer().substr(0, pos);
-        // delete the command that has been extracted from the client readbuffer
         client->get_read_buffer().erase(0, pos + 2);
-        // parse and create the appropriate command, NULL is returned if a faillure has happen
         ICommand* cmd = _parse_command(*client, line);
         if (cmd) {
             cmd->execute(*this, *client);
@@ -304,14 +255,12 @@ bool Server::_handle_commands(int pfdIndex)
             std::istringstream iss(line);
             iss >> cmdName;
             if (cmdName == "QUIT")
-                return true; // Client has been disconnected
+                return true;
         }
     }
-    return false; // Client is still connected
+    return false;
 }
 
-// Make and return a command object from the command line if valid command;
-// return NULL if command has failed amd print
 ICommand* Server::_parse_command(Client& client, std::string line)
 {
     LOG_CMD.receiving(__FILE_NAME__, __FUNCTION__, line, &client);
@@ -330,12 +279,6 @@ Client* Server::find_client_by_nickname(const std::string& nickname)
     return NULL;
 }
 
-/**
- * @brief [TODO:return index of client in _pfds[]]
- *
- * @param client [TODO:parameter]
- * @return [TODO:-1 if not found or bad socket]
- */
 int Server::index_of(Client& client)
 {
     Socket socket = client.get_socket();
@@ -364,22 +307,16 @@ void Server::_listen_to_socket(Socket toListen, uint32_t flags)
     _pfds.push_back(newPollFd);
 }
 
-/**
- * @brief [TODO:description]
- */
 void Server::_clean()
 {
     LOG_SERVER.debug(std::string("cleaning ") + TO_STRING(_clients.size()) + " clients");
 
-    // need to clean in reverse order (cf _pfds.erase in _cleanup_socket_and_client)
     for (int i = static_cast<int>(_pfds.size()) - 1; i >= 1; --i) {
         cleanup_socket_and_client(i);
     }
 
-    // Clean up channels
     cleanup_channels();
 
-    // Reset signal
     globalSignal = 0;
     LOG_SERVER.debug("Server cleaned and ready for reuse");
 }
@@ -390,15 +327,6 @@ void Server::stop()
     globalSignal = SIGINT;
 }
 
-/**
- @brief cleanup everything associated to a specific client
- close the socket fd
- remove entry from _clients
- remove entry from _clientsByNick
- delete client instance
- remove entry from _fds (the pollfd list)
- @param i index of monitored fd
-*/
 void Server::cleanup_socket_and_client(int pfdIndex)
 {
     Client* c = _clients[_pfds[pfdIndex].fd];

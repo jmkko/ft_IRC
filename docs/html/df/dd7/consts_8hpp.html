@@ -132,6 +132,9 @@ Macros</h2></td></tr>
 <tr class="memitem:a16b710f592bf8f7900666392adc444dc" id="r_a16b710f592bf8f7900666392adc444dc"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a16b710f592bf8f7900666392adc444dc">DEFAULT_PORT</a>&#160;&#160;&#160;6667</td></tr>
 <tr class="memitem:a931134aea8a2d442cd668b239fa517d6" id="r_a931134aea8a2d442cd668b239fa517d6"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a931134aea8a2d442cd668b239fa517d6">MAX_JOINED_CHANNELS</a>&#160;&#160;&#160;<a class="el" href="#aeea96e973faea617be8031c57e779909">NO_LIMIT</a></td></tr>
 <tr class="memitem:a66ac4b5e00dcb3444693a16f3a3647ab" id="r_a66ac4b5e00dcb3444693a16f3a3647ab"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a66ac4b5e00dcb3444693a16f3a3647ab">CHAN_NAME_MAX_LEN</a>&#160;&#160;&#160;50</td></tr>
+<tr class="memitem:aa8c67e305c6513d473ad169518ee2e4b" id="r_aa8c67e305c6513d473ad169518ee2e4b"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa8c67e305c6513d473ad169518ee2e4b">FORBIDEN_CHAR_CHAN_NAME</a>&#160;&#160;&#160;&quot;\x00\x07\x0D\x0A\x20\x2C\x3A&quot;</td></tr>
+<tr class="memitem:a1a6f8c089a5bca66fef54c52306ef07d" id="r_a1a6f8c089a5bca66fef54c52306ef07d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1a6f8c089a5bca66fef54c52306ef07d">FORBIDEN_CHAR_CHAN_KEY</a>&#160;&#160;&#160;&quot;\x00\x09\x0A\x0B\x0C\x0D\x20&quot;</td></tr>
+<tr class="memitem:ac9659b6dadb3273edce63a442cd6fed3" id="r_ac9659b6dadb3273edce63a442cd6fed3"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac9659b6dadb3273edce63a442cd6fed3">CHAN_KEY_MAX_LEN</a>&#160;&#160;&#160;23</td></tr>
 <tr class="memitem:aa224e59776b01debcff1590374fedaf5" id="r_aa224e59776b01debcff1590374fedaf5"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa224e59776b01debcff1590374fedaf5">CLIENT_READ_BUFFER_SIZE</a>&#160;&#160;&#160;512</td></tr>
 <tr class="memitem:a864afe5a3b4db04b2ee625e6c219a409" id="r_a864afe5a3b4db04b2ee625e6c219a409"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a864afe5a3b4db04b2ee625e6c219a409">WELL_KNOWN_PORT_MAX</a>&#160;&#160;&#160;1024</td></tr>
 <tr class="memitem:a42f8d93517733e3622cbcfbbc363b717" id="r_a42f8d93517733e3622cbcfbbc363b717"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a42f8d93517733e3622cbcfbbc363b717">DYNAMIC_PORT_MIN</a>&#160;&#160;&#160;49152</td></tr>
@@ -152,6 +155,22 @@ Typedefs</h2></td></tr>
 <tr class="memitem:a37271e5ee75accab247daef789574da0" id="r_a37271e5ee75accab247daef789574da0"><td class="memItemLeft" align="right" valign="top">typedef std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a37271e5ee75accab247daef789574da0">t_params</a></td></tr>
 </table>
 <a name="doc-define-members" id="doc-define-members"></a><h2 id="header-doc-define-members" class="groupheader">Macro Definition Documentation</h2>
+<a id="ac9659b6dadb3273edce63a442cd6fed3" name="ac9659b6dadb3273edce63a442cd6fed3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac9659b6dadb3273edce63a442cd6fed3">&#9670;&#160;</a></span>CHAN_KEY_MAX_LEN</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define CHAN_KEY_MAX_LEN&#160;&#160;&#160;23</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../df/dd7/consts_8hpp_source.html#l00039">39</a> of file <a class="el" href="../../df/dd7/consts_8hpp_source.html">consts.hpp</a>.</p>
+
+</div>
+</div>
 <a id="a66ac4b5e00dcb3444693a16f3a3647ab" name="a66ac4b5e00dcb3444693a16f3a3647ab"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a66ac4b5e00dcb3444693a16f3a3647ab">&#9670;&#160;</a></span>CHAN_NAME_MAX_LEN</h2>
 
@@ -180,7 +199,7 @@ Typedefs</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../df/dd7/consts_8hpp_source.html#l00042">42</a> of file <a class="el" href="../../df/dd7/consts_8hpp_source.html">consts.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/dd7/consts_8hpp_source.html#l00046">46</a> of file <a class="el" href="../../df/dd7/consts_8hpp_source.html">consts.hpp</a>.</p>
 
 </div>
 </div>
@@ -196,7 +215,7 @@ Typedefs</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../df/dd7/consts_8hpp_source.html#l00046">46</a> of file <a class="el" href="../../df/dd7/consts_8hpp_source.html">consts.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/dd7/consts_8hpp_source.html#l00050">50</a> of file <a class="el" href="../../df/dd7/consts_8hpp_source.html">consts.hpp</a>.</p>
 
 </div>
 </div>
@@ -212,7 +231,7 @@ Typedefs</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../df/dd7/consts_8hpp_source.html#l00045">45</a> of file <a class="el" href="../../df/dd7/consts_8hpp_source.html">consts.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/dd7/consts_8hpp_source.html#l00049">49</a> of file <a class="el" href="../../df/dd7/consts_8hpp_source.html">consts.hpp</a>.</p>
 
 </div>
 </div>
@@ -228,7 +247,7 @@ Typedefs</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../df/dd7/consts_8hpp_source.html#l00047">47</a> of file <a class="el" href="../../df/dd7/consts_8hpp_source.html">consts.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/dd7/consts_8hpp_source.html#l00051">51</a> of file <a class="el" href="../../df/dd7/consts_8hpp_source.html">consts.hpp</a>.</p>
 
 </div>
 </div>
@@ -244,7 +263,7 @@ Typedefs</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../df/dd7/consts_8hpp_source.html#l00043">43</a> of file <a class="el" href="../../df/dd7/consts_8hpp_source.html">consts.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/dd7/consts_8hpp_source.html#l00047">47</a> of file <a class="el" href="../../df/dd7/consts_8hpp_source.html">consts.hpp</a>.</p>
 
 </div>
 </div>
@@ -260,7 +279,7 @@ Typedefs</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../df/dd7/consts_8hpp_source.html#l00044">44</a> of file <a class="el" href="../../df/dd7/consts_8hpp_source.html">consts.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/dd7/consts_8hpp_source.html#l00048">48</a> of file <a class="el" href="../../df/dd7/consts_8hpp_source.html">consts.hpp</a>.</p>
 
 </div>
 </div>
@@ -276,7 +295,7 @@ Typedefs</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../df/dd7/consts_8hpp_source.html#l00036">36</a> of file <a class="el" href="../../df/dd7/consts_8hpp_source.html">consts.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/dd7/consts_8hpp_source.html#l00040">40</a> of file <a class="el" href="../../df/dd7/consts_8hpp_source.html">consts.hpp</a>.</p>
 
 </div>
 </div>
@@ -372,7 +391,7 @@ Typedefs</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../df/dd7/consts_8hpp_source.html#l00038">38</a> of file <a class="el" href="../../df/dd7/consts_8hpp_source.html">consts.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/dd7/consts_8hpp_source.html#l00042">42</a> of file <a class="el" href="../../df/dd7/consts_8hpp_source.html">consts.hpp</a>.</p>
 
 </div>
 </div>
@@ -405,6 +424,38 @@ Typedefs</h2></td></tr>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="../../df/dd7/consts_8hpp_source.html#l00017">17</a> of file <a class="el" href="../../df/dd7/consts_8hpp_source.html">consts.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a1a6f8c089a5bca66fef54c52306ef07d" name="a1a6f8c089a5bca66fef54c52306ef07d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1a6f8c089a5bca66fef54c52306ef07d">&#9670;&#160;</a></span>FORBIDEN_CHAR_CHAN_KEY</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define FORBIDEN_CHAR_CHAN_KEY&#160;&#160;&#160;&quot;\x00\x09\x0A\x0B\x0C\x0D\x20&quot;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../df/dd7/consts_8hpp_source.html#l00037">37</a> of file <a class="el" href="../../df/dd7/consts_8hpp_source.html">consts.hpp</a>.</p>
+
+</div>
+</div>
+<a id="aa8c67e305c6513d473ad169518ee2e4b" name="aa8c67e305c6513d473ad169518ee2e4b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa8c67e305c6513d473ad169518ee2e4b">&#9670;&#160;</a></span>FORBIDEN_CHAR_CHAN_NAME</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define FORBIDEN_CHAR_CHAN_NAME&#160;&#160;&#160;&quot;\x00\x07\x0D\x0A\x20\x2C\x3A&quot;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../df/dd7/consts_8hpp_source.html#l00036">36</a> of file <a class="el" href="../../df/dd7/consts_8hpp_source.html">consts.hpp</a>.</p>
 
 </div>
 </div>
@@ -484,7 +535,7 @@ Typedefs</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../df/dd7/consts_8hpp_source.html#l00040">40</a> of file <a class="el" href="../../df/dd7/consts_8hpp_source.html">consts.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/dd7/consts_8hpp_source.html#l00044">44</a> of file <a class="el" href="../../df/dd7/consts_8hpp_source.html">consts.hpp</a>.</p>
 
 </div>
 </div>
@@ -500,7 +551,7 @@ Typedefs</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../df/dd7/consts_8hpp_source.html#l00039">39</a> of file <a class="el" href="../../df/dd7/consts_8hpp_source.html">consts.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/dd7/consts_8hpp_source.html#l00043">43</a> of file <a class="el" href="../../df/dd7/consts_8hpp_source.html">consts.hpp</a>.</p>
 
 </div>
 </div>
@@ -644,7 +695,7 @@ Typedefs</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../df/dd7/consts_8hpp_source.html#l00048">48</a> of file <a class="el" href="../../df/dd7/consts_8hpp_source.html">consts.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/dd7/consts_8hpp_source.html#l00052">52</a> of file <a class="el" href="../../df/dd7/consts_8hpp_source.html">consts.hpp</a>.</p>
 
 </div>
 </div>
@@ -660,7 +711,7 @@ Typedefs</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../df/dd7/consts_8hpp_source.html#l00041">41</a> of file <a class="el" href="../../df/dd7/consts_8hpp_source.html">consts.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/dd7/consts_8hpp_source.html#l00045">45</a> of file <a class="el" href="../../df/dd7/consts_8hpp_source.html">consts.hpp</a>.</p>
 
 </div>
 </div>
@@ -676,7 +727,7 @@ Typedefs</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../df/dd7/consts_8hpp_source.html#l00037">37</a> of file <a class="el" href="../../df/dd7/consts_8hpp_source.html">consts.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/dd7/consts_8hpp_source.html#l00041">41</a> of file <a class="el" href="../../df/dd7/consts_8hpp_source.html">consts.hpp</a>.</p>
 
 </div>
 </div>
@@ -693,7 +744,7 @@ Typedefs</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../df/dd7/consts_8hpp_source.html#l00053">53</a> of file <a class="el" href="../../df/dd7/consts_8hpp_source.html">consts.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/dd7/consts_8hpp_source.html#l00057">57</a> of file <a class="el" href="../../df/dd7/consts_8hpp_source.html">consts.hpp</a>.</p>
 
 </div>
 </div>
@@ -709,7 +760,7 @@ Typedefs</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../df/dd7/consts_8hpp_source.html#l00054">54</a> of file <a class="el" href="../../df/dd7/consts_8hpp_source.html">consts.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/dd7/consts_8hpp_source.html#l00058">58</a> of file <a class="el" href="../../df/dd7/consts_8hpp_source.html">consts.hpp</a>.</p>
 
 </div>
 </div>

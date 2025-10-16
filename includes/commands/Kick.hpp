@@ -20,7 +20,7 @@ class Client;
 class Server;
 
 /**
- * @class KICK
+ * @class Kick
  * @brief Handler for IRC KICK
  * @details This command is used to force a member to leave channel
  */

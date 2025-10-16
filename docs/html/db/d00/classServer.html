@@ -94,49 +94,55 @@ $(function(){initNavTree('db/d00/classServer.html','../../','d2/d2d/classServer-
 </div><!--header-->
 <div class="contents">
 
+<p>Ser.  
+ <a href="#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="../../de/d3d/Server_8hpp_source.html">Server.hpp</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-methods" class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a4b3aa2579cb1c8cd1d069582c14d0fa6" id="r_a4b3aa2579cb1c8cd1d069582c14d0fa6"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4b3aa2579cb1c8cd1d069582c14d0fa6">~Server</a> ()</td></tr>
 <tr class="memitem:a8fe7ceffdf69c2f5c3372192d868e764" id="r_a8fe7ceffdf69c2f5c3372192d868e764"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8fe7ceffdf69c2f5c3372192d868e764">Server</a> (const unsigned short port, const std::string &amp;password)</td></tr>
+<tr class="memdesc:a8fe7ceffdf69c2f5c3372192d868e764"><td class="mdescLeft">&#160;</td><td class="mdescRight">initialize server  <br /></td></tr>
+<tr class="memitem:a4b3aa2579cb1c8cd1d069582c14d0fa6" id="r_a4b3aa2579cb1c8cd1d069582c14d0fa6"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4b3aa2579cb1c8cd1d069582c14d0fa6">~Server</a> ()</td></tr>
+<tr class="memdesc:a4b3aa2579cb1c8cd1d069582c14d0fa6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy the <a class="el" href="../../db/d00/classServer.html" title="Ser.">Server</a> object.  <br /></td></tr>
 <tr class="memitem:ade35dca963ca979a18e8e1e9712d464d" id="r_ade35dca963ca979a18e8e1e9712d464d"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ade35dca963ca979a18e8e1e9712d464d">get_password</a> () const</td></tr>
+<tr class="memdesc:ade35dca963ca979a18e8e1e9712d464d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the password object.  <br /></td></tr>
 <tr class="memitem:a471b80e0192a2ac3bb96479f3b10d253" id="r_a471b80e0192a2ac3bb96479f3b10d253"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a471b80e0192a2ac3bb96479f3b10d253">get_name</a> () const</td></tr>
+<tr class="memdesc:a471b80e0192a2ac3bb96479f3b10d253"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the name object.  <br /></td></tr>
 <tr class="memitem:a7eac07d2582fa01c2671362efa955b31" id="r_a7eac07d2582fa01c2671362efa955b31"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7eac07d2582fa01c2671362efa955b31">start</a> ()</td></tr>
+<tr class="memdesc:a7eac07d2582fa01c2671362efa955b31"><td class="mdescLeft">&#160;</td><td class="mdescRight">runs the server loop, regularly checking activity through <span class="tt">poll()</span>  <br /></td></tr>
 <tr class="memitem:a07c45a7e101a3926d8f9685c3c5d14e4" id="r_a07c45a7e101a3926d8f9685c3c5d14e4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a07c45a7e101a3926d8f9685c3c5d14e4">stop</a> ()</td></tr>
 <tr class="memitem:a60c12ff68d4b73c19a7cfb92345d831e" id="r_a60c12ff68d4b73c19a7cfb92345d831e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d1/d37/classClient.html">Client</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a60c12ff68d4b73c19a7cfb92345d831e">find_client_by_nickname</a> (const std::string &amp;nick)</td></tr>
 <tr class="memitem:a8974817575e4fe6a2deb5b115d53ee44" id="r_a8974817575e4fe6a2deb5b115d53ee44"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d2/d48/classChannel.html">Channel</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8974817575e4fe6a2deb5b115d53ee44">find_channel_by_name</a> (const std::string &amp;name)</td></tr>
 <tr class="memitem:a8de99ba42c394e5496ec458e451598fb" id="r_a8de99ba42c394e5496ec458e451598fb"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8de99ba42c394e5496ec458e451598fb">index_of</a> (<a class="el" href="../../d1/d37/classClient.html">Client</a> &amp;client)</td></tr>
+<tr class="memdesc:a8de99ba42c394e5496ec458e451598fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">util function to get index of client in pfd array  <br /></td></tr>
 <tr class="memitem:a1bc25c4f2b864325b8bd3aafbc641923" id="r_a1bc25c4f2b864325b8bd3aafbc641923"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1bc25c4f2b864325b8bd3aafbc641923">add_events_of</a> (<a class="el" href="../../d1/d37/classClient.html">Client</a> &amp;client, int event)</td></tr>
+<tr class="memdesc:a1bc25c4f2b864325b8bd3aafbc641923"><td class="mdescLeft">&#160;</td><td class="mdescRight">update events on socket the server is subscribed to  <br /></td></tr>
 <tr class="memitem:a00e57969def6e4f8c5be1036cb2d7391" id="r_a00e57969def6e4f8c5be1036cb2d7391"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="../../d1/d37/classClient.html">Client</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a00e57969def6e4f8c5be1036cb2d7391">find_clients_by_pattern</a> (const std::string &amp;pattern) const</td></tr>
 <tr class="memitem:ae61fc19222adb206e26f33eae4a9a4fd" id="r_ae61fc19222adb206e26f33eae4a9a4fd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae61fc19222adb206e26f33eae4a9a4fd">cleanup_socket_and_client</a> (int pfdIndex)</td></tr>
+<tr class="memdesc:ae61fc19222adb206e26f33eae4a9a4fd"><td class="mdescLeft">&#160;</td><td class="mdescRight">remove <a class="el" href="../../dc/d5f/classTcpSocket.html">TcpSocket</a> and <a class="el" href="../../d1/d37/classClient.html" title="represents a Client interacting with the server">Client</a> a pfd is associated with  <br /></td></tr>
 <tr class="memitem:ad4d764c3c32a690e621a4baa8cace0ed" id="r_ad4d764c3c32a690e621a4baa8cace0ed"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad4d764c3c32a690e621a4baa8cace0ed">cleanup_channels</a> ()</td></tr>
+<tr class="memdesc:ad4d764c3c32a690e621a4baa8cace0ed"><td class="mdescLeft">&#160;</td><td class="mdescRight">remove registered channels  <br /></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-attribs" class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:a457e6916946be3114370a385da243e0a" id="r_a457e6916946be3114370a385da243e0a"><td class="memItemLeft" align="right" valign="top">std::map&lt; std::string, <a class="el" href="../../d2/d48/classChannel.html">Channel</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a457e6916946be3114370a385da243e0a">channels</a></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
-<div class="textblock">
-<p class="definition">Definition at line <a class="el" href="../../de/d3d/Server_8hpp_source.html#l00027">27</a> of file <a class="el" href="../../de/d3d/Server_8hpp_source.html">Server.hpp</a>.</p>
+<div class="textblock"><p>Ser. </p>
+<p>responsabilities are</p><ul>
+<li>initializing the server with provided arguments (port, password) + config file</li>
+<li>running the server loop, using <span class="tt">poll</span> to detect events on sockets, ie<ul>
+<li>registering a new <a class="el" href="../../d1/d37/classClient.html" title="represents a Client interacting with the server">Client</a> connection</li>
+<li>reading <a class="el" href="../../d1/d37/classClient.html" title="represents a Client interacting with the server">Client</a> messages and processing them (through <a class="el" href="../../d5/dba/classCmdFactory.html" title="Generates a new Command among those implemented by the server.">CmdFactory</a> and <a class="el" href="../../db/da2/classICommand.html" title="Interface providing an execute behavior for all commands.">ICommand</a> implementations)</li>
+<li>sending messages back</li>
+</ul>
+</li>
+<li>gracefully handling client disconnection and server termination (through signals) </li>
+</ul>
+
+<p class="definition">Definition at line <a class="el" href="../../de/d3d/Server_8hpp_source.html#l00036">36</a> of file <a class="el" href="../../de/d3d/Server_8hpp_source.html">Server.hpp</a>.</p>
 </div><a name="doc-constructors" id="doc-constructors"></a><h2 id="header-doc-constructors" class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a4b3aa2579cb1c8cd1d069582c14d0fa6" name="a4b3aa2579cb1c8cd1d069582c14d0fa6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4b3aa2579cb1c8cd1d069582c14d0fa6">&#9670;&#160;</a></span>~Server()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">Server::~Server </td>
-          <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a id="a8fe7ceffdf69c2f5c3372192d868e764" name="a8fe7ceffdf69c2f5c3372192d868e764"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a8fe7ceffdf69c2f5c3372192d868e764">&#9670;&#160;</a></span>Server()</h2>
 
@@ -155,6 +161,43 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>initialize server </p>
+<ul>
+<li>assign a socket binding a port with an address</li>
+<li>put socket in listening state <dl class="section see"><dt>See also</dt><dd>Server::_listen_to_socket </dd></dl>
+<dl class="section pre"><dt>Precondition</dt><dd>the <span class="tt">psswd</span> argument should have been checked with Utils::check_password() </dd>
+<dd>
+the <span class="tt">port</span>argument should have been checked with Utils::check_port() </dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">port</td><td>valid port number </td></tr>
+    <tr><td class="paramname">psswd</td><td>valid password </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="todo"><dt><b><a class="el" href="../../dd/da0/todo.html#_todo000003">Todo</a></b></dt><dd>delegate initialization to helper function, as <span class="tt">exit</span> is not authorized </dd></dl>
+</li>
+</ul>
+
+</div>
+</div>
+<a id="a4b3aa2579cb1c8cd1d069582c14d0fa6" name="a4b3aa2579cb1c8cd1d069582c14d0fa6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4b3aa2579cb1c8cd1d069582c14d0fa6">&#9670;&#160;</a></span>~Server()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Server::~Server </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Destroy the <a class="el" href="../../db/d00/classServer.html" title="Ser.">Server</a> object. </p>
 
 </div>
 </div>
@@ -178,6 +221,15 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>update events on socket the server is subscribed to </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">client</td><td></td></tr>
+    <tr><td class="paramname">event</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
 <a id="ad4d764c3c32a690e621a4baa8cace0ed" name="ad4d764c3c32a690e621a4baa8cace0ed"></a>
@@ -195,6 +247,8 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>remove registered channels </p>
+
 </div>
 </div>
 <a id="ae61fc19222adb206e26f33eae4a9a4fd" name="ae61fc19222adb206e26f33eae4a9a4fd"></a>
@@ -211,6 +265,21 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>remove <a class="el" href="../../dc/d5f/classTcpSocket.html">TcpSocket</a> and <a class="el" href="../../d1/d37/classClient.html" title="represents a Client interacting with the server">Client</a> a pfd is associated with </p>
+<ul>
+<li>close the socket fd</li>
+<li>remove entry from _clients</li>
+<li>remove entry from _clientsByNick</li>
+<li>delete client instance</li>
+<li>remove entry from _fds (the pollfd list) <dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pfdIndex</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+</li>
+</ul>
 
 </div>
 </div>
@@ -280,6 +349,9 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Get the name object. </p>
+<p>also accessible through <a class="el" href="../../d9/df9/classConfig.html">Config</a> </p><dl class="section return"><dt>Returns</dt><dd>std::string </dd></dl>
+
 </div>
 </div>
 <a id="ade35dca963ca979a18e8e1e9712d464d" name="ade35dca963ca979a18e8e1e9712d464d"></a>
@@ -296,6 +368,10 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Get the password object. </p>
+<dl class="section return"><dt>Returns</dt><dd>std::string </dd></dl>
+<dl class="section remark"><dt>Remarks</dt><dd>required by <a class="el" href="../../d5/d01/classPass.html">Pass</a> - not very secure yet we couldn't implement a proper hash function </dd></dl>
 
 </div>
 </div>
@@ -314,6 +390,15 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>util function to get index of client in pfd array </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">client</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>int </dd></dl>
+
 </div>
 </div>
 <a id="a7eac07d2582fa01c2671362efa955b31" name="a7eac07d2582fa01c2671362efa955b31"></a>
@@ -330,6 +415,23 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>runs the server loop, regularly checking activity through <span class="tt">poll()</span> </p>
+<ul>
+<li>update list of sockets (in struct pfd) having events the server subscribed at</li>
+<li>loop through them and<ul>
+<li>if read event on server client socket -&gt; <dl class="section see"><dt>See also</dt><dd>Server::_handle_new_connection</dd></dl>
+</li>
+<li>if read event on client socket -&gt; <dl class="section see"><dt>See also</dt><dd>Server::_handle_client_input</dd></dl>
+</li>
+<li>if send event on client socket -&gt; <dl class="section see"><dt>See also</dt><dd>Server::_handle_client_output</dd></dl>
+</li>
+<li>if error events on client socket -&gt; <dl class="section see"><dt>See also</dt><dd>Server::_handle_client_disconnection</dd></dl>
+</li>
+</ul>
+</li>
+</ul>
+<p>clean data (clients, channels, sockets) once loop is ended </p><dl class="section remark"><dt>Remarks</dt><dd>throughout the loop, orphan sockets are cleaned and signal are checked through a global variable </dd></dl>
 
 </div>
 </div>
@@ -363,7 +465,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../de/d3d/Server_8hpp_source.html#l00046">46</a> of file <a class="el" href="../../de/d3d/Server_8hpp_source.html">Server.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../de/d3d/Server_8hpp_source.html#l00121">121</a> of file <a class="el" href="../../de/d3d/Server_8hpp_source.html">Server.hpp</a>.</p>
 
 </div>
 </div>

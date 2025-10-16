@@ -38,7 +38,7 @@
 <!-- Node3 -->
 <g id="Node000003" class="node">
 <title>Node3</title>
-<g id="a_Node000003"><a xlink:href="../../d0/d9f/Invite_8hpp.html" target="_top" xlink:title=" ">
+<g id="a_Node000003"><a xlink:href="../../d0/d9f/Invite_8hpp.html" target="_top" xlink:title="Implements IRC INVITE command.">
 <polygon fill="white" stroke="#666666" points="108.38,-20.75 43.62,-20.75 43.62,0 108.38,0 108.38,-20.75"/>
 <text xml:space="preserve" text-anchor="middle" x="76" y="-7.25" font-family="Helvetica,sans-Serif" font-size="10.00">Invite.hpp</text>
 </a>
@@ -146,7 +146,7 @@
 <!-- Node11 -->
 <g id="Node000011" class="node">
 <title>Node11</title>
-<g id="a_Node000011"><a xlink:href="../../de/d3e/Motd_8hpp.html" target="_top" xlink:title=" ">
+<g id="a_Node000011"><a xlink:href="../../de/d3e/Motd_8hpp.html" target="_top" xlink:title="Implements IRC MOTD command.">
 <polygon fill="white" stroke="#666666" points="259.88,-77.5 198.12,-77.5 198.12,-56.75 259.88,-56.75 259.88,-77.5"/>
 <text xml:space="preserve" text-anchor="middle" x="229" y="-64" font-family="Helvetica,sans-Serif" font-size="10.00">Motd.hpp</text>
 </a>
@@ -182,7 +182,7 @@
 <!-- Node14 -->
 <g id="Node000014" class="node">
 <title>Node14</title>
-<g id="a_Node000014"><a xlink:href="../../dd/d85/Kick_8hpp.html" target="_top" xlink:title=" ">
+<g id="a_Node000014"><a xlink:href="../../dd/d85/Kick_8hpp.html" target="_top" xlink:title="Implements IRC KICK command.">
 <polygon fill="white" stroke="#666666" points="834,-247.75 776,-247.75 776,-227 834,-227 834,-247.75"/>
 <text xml:space="preserve" text-anchor="middle" x="805" y="-234.25" font-family="Helvetica,sans-Serif" font-size="10.00">Kick.hpp</text>
 </a>
@@ -200,7 +200,7 @@
 <!-- Node15 -->
 <g id="Node000015" class="node">
 <title>Node15</title>
-<g id="a_Node000015"><a xlink:href="../../d5/d67/Mode_8hpp.html" target="_top" xlink:title=" ">
+<g id="a_Node000015"><a xlink:href="../../d5/d67/Mode_8hpp.html" target="_top" xlink:title="Implements IRC MODE command.">
 <polygon fill="white" stroke="#666666" points="916,-247.75 852,-247.75 852,-227 916,-227 916,-247.75"/>
 <text xml:space="preserve" text-anchor="middle" x="884" y="-234.25" font-family="Helvetica,sans-Serif" font-size="10.00">Mode.hpp</text>
 </a>
@@ -236,7 +236,7 @@
 <!-- Node17 -->
 <g id="Node000017" class="node">
 <title>Node17</title>
-<g id="a_Node000017"><a xlink:href="../../d5/d58/Ping_8hpp.html" target="_top" xlink:title=" ">
+<g id="a_Node000017"><a xlink:href="../../d5/d58/Ping_8hpp.html" target="_top" xlink:title="Implements IRC PING command.">
 <polygon fill="white" stroke="#666666" points="1068,-247.75 1010,-247.75 1010,-227 1068,-227 1068,-247.75"/>
 <text xml:space="preserve" text-anchor="middle" x="1039" y="-234.25" font-family="Helvetica,sans-Serif" font-size="10.00">Ping.hpp</text>
 </a>

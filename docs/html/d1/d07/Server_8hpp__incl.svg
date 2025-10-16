@@ -11,7 +11,7 @@
 <!-- Node1 -->
 <g id="Node000001" class="node">
 <title>Node1</title>
-<g id="a_Node000001"><a xlink:title=" ">
+<g id="a_Node000001"><a xlink:title="Server class.">
 <polygon fill="#999999" stroke="#666666" points="307.75,-191 240,-191 240,-170.25 307.75,-170.25 307.75,-191"/>
 <text xml:space="preserve" text-anchor="middle" x="273.88" y="-177.5" font-family="Helvetica,sans-Serif" font-size="10.00">Server.hpp</text>
 </a>

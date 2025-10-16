@@ -1,6 +1,6 @@
 var classChannel =
 [
-    [ "Channel", "d2/d48/classChannel.html#a6d2d650baccf6debd2b9d4d8814b81c1", null ],
+    [ "Channel", "d2/d48/classChannel.html#a5eee004ea51592ecc69d476ffdf9d6ac", null ],
     [ "Channel", "d2/d48/classChannel.html#adde1f556fad9b1a222a5875df8566a6a", null ],
     [ "~Channel", "d2/d48/classChannel.html#af649ff0e4381291b608813b35f998047", null ],
     [ "add_member", "d2/d48/classChannel.html#ad2410fbbab55e798478a651754b585d6", null ],
@@ -22,9 +22,11 @@ var classChannel =
     [ "is_member", "d2/d48/classChannel.html#a2b539f94c4450b6b8832570db83d523a", null ],
     [ "is_operator", "d2/d48/classChannel.html#a3548f4beca40441407a26064c362d9a1", null ],
     [ "is_topic_change_restricted", "d2/d48/classChannel.html#aee0d9f7bd0995aa35688cf139052eee2", null ],
+    [ "is_valid_channel_key", "d2/d48/classChannel.html#a2409a008b61fb4ec4b444d288e35c5ad", null ],
     [ "is_valid_channel_name", "d2/d48/classChannel.html#a1a4245a509b60612367be9f66dbeb9ff", null ],
     [ "make_operator", "d2/d48/classChannel.html#a5949faf470eb240eaa1151fed72830be", null ],
     [ "operator=", "d2/d48/classChannel.html#a63c7d54df9aa1c87585c54e6b097b860", null ],
+    [ "remove_from_invited_list", "d2/d48/classChannel.html#af0cbced6265719e3e92156ce828d0962", null ],
     [ "remove_member", "d2/d48/classChannel.html#ab6714fa9e435cc5f541d6232cb6424c8", null ],
     [ "remove_mode", "d2/d48/classChannel.html#ab08f4794b546d8bed4833ca38f4c74f5", null ],
     [ "remove_operator", "d2/d48/classChannel.html#a7847341cbdc97859931581ff304a00c3", null ],

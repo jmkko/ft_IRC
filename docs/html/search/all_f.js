@@ -9,7 +9,7 @@ var searchData=
   ['perm_5f644_6',['PERM_644',['../df/dd7/consts_8hpp.html#af5e091dccdda9e8fb08febaf807f4bed',1,'consts.hpp']]],
   ['perm_5f755_7',['PERM_755',['../df/dd7/consts_8hpp.html#a10e2323f762920d9c7e709a3fe1b7f3d',1,'consts.hpp']]],
   ['perm_5f777_8',['PERM_777',['../df/dd7/consts_8hpp.html#a6be2af86c453827c4e347bd584d00542',1,'consts.hpp']]],
-  ['ping_9',['Ping',['../d1/d7c/classPing.html',1,'Ping'],['../d1/d7c/classPing.html#af5927f79e7c2503e999e7a5b936ebc0e',1,'Ping::Ping()'],['../d1/d7c/classPing.html#a51bfd66f18083e3bcbd31ee9e5100d8f',1,'Ping::Ping(const std::string &amp;token)']]],
+  ['ping_9',['Ping',['../d1/d7c/classPing.html',1,'Ping'],['../d1/d7c/classPing.html#a51bfd66f18083e3bcbd31ee9e5100d8f',1,'Ping::Ping()']]],
   ['ping_2ehpp_10',['Ping.hpp',['../d5/d58/Ping_8hpp.html',1,'']]],
   ['ping_5fcmd_11',['ping_cmd',['../d5/dba/classCmdFactory.html#a6407744de9ad386176a865921e3c258f',1,'CmdFactory']]],
   ['poll_5ftimeout_12',['POLL_TIMEOUT',['../df/dd7/consts_8hpp.html#a9301f41bfe2a17a4add6f0dc7f239487',1,'consts.hpp']]],

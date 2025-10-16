@@ -1,7 +1,7 @@
 var classServer =
 [
-    [ "~Server", "db/d00/classServer.html#a4b3aa2579cb1c8cd1d069582c14d0fa6", null ],
     [ "Server", "db/d00/classServer.html#a8fe7ceffdf69c2f5c3372192d868e764", null ],
+    [ "~Server", "db/d00/classServer.html#a4b3aa2579cb1c8cd1d069582c14d0fa6", null ],
     [ "add_events_of", "db/d00/classServer.html#a1bc25c4f2b864325b8bd3aafbc641923", null ],
     [ "cleanup_channels", "db/d00/classServer.html#ad4d764c3c32a690e621a4baa8cace0ed", null ],
     [ "cleanup_socket_and_client", "db/d00/classServer.html#ae61fc19222adb206e26f33eae4a9a4fd", null ],

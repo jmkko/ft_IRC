@@ -93,46 +93,78 @@ $(function(){initNavTree('d5/d58/Ping_8hpp_source.html','../../',''); });
   <div class="headertitle"><div class="title">Ping.hpp</div></div>
 </div><!--header-->
 <div class="contents">
-<a href="../../d5/d58/Ping_8hpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="preprocessor">#</span><span class="preprocessor">ifndef</span> <span class="preprocessor">PING_H</span></div>
-<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="preprocessor">#</span><span class="preprocessor">define</span> <span class="preprocessor">PING_H</span></div>
-<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span> </div>
-<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#</span><span class="preprocessor">include</span> <a class="code" href="../../de/dd6/ICommand_8hpp.html">&quot;ICommand.hpp&quot;</a></div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#</span><span class="preprocessor">include</span> <a class="code" href="../../d8/d9c/reply__codes_8hpp.html">&quot;reply_codes.hpp&quot;</a></div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span> </div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#</span><span class="preprocessor">include</span> <span class="preprocessor">&lt;</span><span class="preprocessor">string</span><span class="preprocessor">&gt;</span></div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span> </div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="keyword">class</span> <a class="code hl_class" href="../../db/d00/classServer.html">Server</a>;</div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="keyword">class</span> <a class="code hl_class" href="../../d1/d37/classClient.html">Client</a>;</div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span> </div>
-<div class="foldopen" id="foldopen00012" data-start="{" data-end="};">
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno"><a class="line" href="../../d1/d7c/classPing.html">   12</a></span><span class="keyword">class</span> <a class="code hl_class" href="../../d1/d7c/classPing.html">Ping</a> : <span class="keyword">public</span> <a class="code hl_class" href="../../db/da2/classICommand.html">ICommand</a></div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>{</div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>  <span class="keyword">public</span>:</div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno"><a class="line" href="../../d1/d7c/classPing.html#af5927f79e7c2503e999e7a5b936ebc0e">   15</a></span>    <a class="code hl_function" href="../../d1/d7c/classPing.html#af5927f79e7c2503e999e7a5b936ebc0e">Ping</a>();</div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno"><a class="line" href="../../d1/d7c/classPing.html#a51bfd66f18083e3bcbd31ee9e5100d8f">   16</a></span>    <a class="code hl_function" href="../../d1/d7c/classPing.html#a51bfd66f18083e3bcbd31ee9e5100d8f">Ping</a>(<span class="keyword">const</span> std::string&amp; token);</div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno"><a class="line" href="../../d1/d7c/classPing.html#afdfdea19f6fee9ecee06a93f735070ab">   17</a></span>    <span class="keyword">virtual</span> ~<a class="code hl_function" href="../../d1/d7c/classPing.html#afdfdea19f6fee9ecee06a93f735070ab">Ping</a>();</div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span> </div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno"><a class="line" href="../../d1/d7c/classPing.html#a88e3d34eae315619e0861f50b52293e3">   19</a></span>    <span class="keywordtype">void</span>             <a class="code hl_function" href="../../d1/d7c/classPing.html#a88e3d34eae315619e0861f50b52293e3">execute</a>(<a class="code hl_class" href="../../db/d00/classServer.html">Server</a>&amp; s, <a class="code hl_class" href="../../d1/d37/classClient.html">Client</a>&amp; c);</div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno"><a class="line" href="../../d1/d7c/classPing.html#a801f503a477fd18c0113a345b1ba6b1c">   20</a></span>    <span class="keyword">static</span> <a class="code hl_enumeration" href="../../d8/d9c/reply__codes_8hpp.html#a686bb12efcc784d36f30d3528bdcdf08">ReplyCode</a> <a class="code hl_function" href="../../d1/d7c/classPing.html#a801f503a477fd18c0113a345b1ba6b1c">check_args</a>(<a class="code hl_class" href="../../db/d00/classServer.html">Server</a>&amp; s, <a class="code hl_class" href="../../d1/d37/classClient.html">Client</a>&amp; c, std::string&amp; params);</div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span> </div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>  <span class="keyword">private</span>:</div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>    std::string _token;</div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span> </div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    Ping(<span class="keyword">const</span> <a class="code hl_class" href="../../d1/d7c/classPing.html">Ping</a>&amp; other);</div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>    <a class="code hl_class" href="../../d1/d7c/classPing.html">Ping</a>&amp; operator=(<span class="keyword">const</span> <a class="code hl_class" href="../../d1/d7c/classPing.html">Ping</a>&amp; other);</div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>};</div>
+<a href="../../d5/d58/Ping_8hpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">/**</span></div>
+<div class="line"><span class="lineno">    2</span><span class="comment"> * @file Ping.hpp</span></div>
+<div class="line"><span class="lineno">    3</span><span class="comment"> * @brief Implements IRC PING command</span></div>
+<div class="line"><span class="lineno">    4</span><span class="comment"> * @version 0.1</span></div>
+<div class="line"><span class="lineno">    5</span><span class="comment"> * @date 2025-10-16</span></div>
+<div class="line"><span class="lineno">    6</span><span class="comment"> *</span></div>
+<div class="line"><span class="lineno">    7</span><span class="comment"> * @copyright Copyright (c) 2025</span></div>
+<div class="line"><span class="lineno">    8</span><span class="comment"> *</span></div>
+<div class="line"><span class="lineno">    9</span><span class="comment"> */</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#</span><span class="preprocessor">ifndef</span> <span class="preprocessor">PING_H</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#</span><span class="preprocessor">define</span> <span class="preprocessor">PING_H</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="preprocessor">#</span><span class="preprocessor">include</span> <a class="code" href="../../de/dd6/ICommand_8hpp.html" title="command interface">&quot;ICommand.hpp&quot;</a></div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="preprocessor">#</span><span class="preprocessor">include</span> <a class="code" href="../../d8/d9c/reply__codes_8hpp.html">&quot;reply_codes.hpp&quot;</a></div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="preprocessor">#</span><span class="preprocessor">include</span> <span class="preprocessor">&lt;</span><span class="preprocessor">string</span><span class="preprocessor">&gt;</span></div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span> </div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="keyword">class</span> <a class="code hl_class" href="../../db/d00/classServer.html">Server</a>;</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="keyword">class</span> <a class="code hl_class" href="../../d1/d37/classClient.html">Client</a>;</div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span> </div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="comment">/**</span></div>
+<div class="line"><span class="lineno">   22</span><span class="comment"> * @class Ping</span></div>
+<div class="line"><span class="lineno">   23</span><span class="comment"> * @brief Handler for PING</span></div>
+<div class="line"><span class="lineno">   24</span><span class="comment"> */</span></div>
+<div class="foldopen" id="foldopen00025" data-start="{" data-end="};">
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno"><a class="line" href="../../d1/d7c/classPing.html">   25</a></span><span class="keyword">class</span> <a class="code hl_class" href="../../d1/d7c/classPing.html">Ping</a> : <span class="keyword">public</span> <a class="code hl_class" href="../../db/da2/classICommand.html">ICommand</a></div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>{</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>  <span class="keyword">public</span>:</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    <span class="comment">/**</span></div>
+<div class="line"><span class="lineno">   29</span><span class="comment">     * @brief Construct a new Ping object</span></div>
+<div class="line"><span class="lineno">   30</span><span class="comment">     *</span></div>
+<div class="line"><span class="lineno">   31</span><span class="comment">     * @param token</span></div>
+<div class="line"><span class="lineno">   32</span><span class="comment">     */</span></div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno"><a class="line" href="../../d1/d7c/classPing.html#a51bfd66f18083e3bcbd31ee9e5100d8f">   33</a></span>    <a class="code hl_function" href="../../d1/d7c/classPing.html#a51bfd66f18083e3bcbd31ee9e5100d8f">Ping</a>(<span class="keyword">const</span> std::string&amp; token);</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno"><a class="line" href="../../d1/d7c/classPing.html#afdfdea19f6fee9ecee06a93f735070ab">   34</a></span>    <span class="keyword">virtual</span> ~<a class="code hl_function" href="../../d1/d7c/classPing.html#afdfdea19f6fee9ecee06a93f735070ab">Ping</a>();</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    <span class="comment">/**</span></div>
+<div class="line"><span class="lineno">   36</span><span class="comment">     * @brief sends a PONG message with token provided by PING sender</span></div>
+<div class="line"><span class="lineno">   37</span><span class="comment">     *</span></div>
+<div class="line"><span class="lineno">   38</span><span class="comment">     * @param s server</span></div>
+<div class="line"><span class="lineno">   39</span><span class="comment">     * @param c client</span></div>
+<div class="line"><span class="lineno">   40</span><span class="comment">     */</span></div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno"><a class="line" href="../../d1/d7c/classPing.html#ac11ef4a621b062c48878dfd6eb7671ad">   41</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="../../d1/d7c/classPing.html#ac11ef4a621b062c48878dfd6eb7671ad">execute</a>(<a class="code hl_class" href="../../db/d00/classServer.html">Server</a>&amp; server, <a class="code hl_class" href="../../d1/d37/classClient.html">Client</a>&amp; client);</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    <span class="comment">/**</span></div>
+<div class="line"><span class="lineno">   43</span><span class="comment">     * @brief checks that there is an origin token</span></div>
+<div class="line"><span class="lineno">   44</span><span class="comment">     *</span></div>
+<div class="line"><span class="lineno">   45</span><span class="comment">     * @details cf. [RFC specs](https://datatracker.ietf.org/doc/html/rfc2812#section-3.7.2)</span></div>
+<div class="line"><span class="lineno">   46</span><span class="comment">     * @param server</span></div>
+<div class="line"><span class="lineno">   47</span><span class="comment">     * @param client</span></div>
+<div class="line"><span class="lineno">   48</span><span class="comment">     * @param params</span></div>
+<div class="line"><span class="lineno">   49</span><span class="comment">     * @return ReplyCode</span></div>
+<div class="line"><span class="lineno">   50</span><span class="comment">     * @warning return ERR_NOORIGIN if no token provided</span></div>
+<div class="line"><span class="lineno">   51</span><span class="comment">     */</span></div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno"><a class="line" href="../../d1/d7c/classPing.html#acd26aa06e7c3dc8cc107c04f3309e30f">   52</a></span>    <span class="keyword">static</span> <a class="code hl_enumeration" href="../../d8/d9c/reply__codes_8hpp.html#a686bb12efcc784d36f30d3528bdcdf08">ReplyCode</a> <a class="code hl_function" href="../../d1/d7c/classPing.html#acd26aa06e7c3dc8cc107c04f3309e30f">check_args</a>(<a class="code hl_class" href="../../db/d00/classServer.html">Server</a>&amp; server, <a class="code hl_class" href="../../d1/d37/classClient.html">Client</a>&amp; client, std::string&amp; params);</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span> </div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>  <span class="keyword">private</span>:</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>    Ping();</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>    std::string _token;</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span> </div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    Ping(<span class="keyword">const</span> <a class="code hl_class" href="../../d1/d7c/classPing.html">Ping</a>&amp; other);</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    <a class="code hl_class" href="../../d1/d7c/classPing.html">Ping</a>&amp; operator=(<span class="keyword">const</span> <a class="code hl_class" href="../../d1/d7c/classPing.html">Ping</a>&amp; other);</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>};</div>
 </div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span> </div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="preprocessor">#</span><span class="preprocessor">endif</span></div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span> </div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span><span class="preprocessor">#</span><span class="preprocessor">endif</span></div>
 <div class="ttc" id="aclassClient_html"><div class="ttname"><a href="../../d1/d37/classClient.html">Client</a></div><div class="ttdoc">represents a Client interacting with the server</div><div class="ttdef"><b>Definition</b> <a href="../../d3/d8e/Client_8hpp_source.html#l00061">Client.hpp:62</a></div></div>
-<div class="ttc" id="aclassICommand_html"><div class="ttname"><a href="../../db/da2/classICommand.html">ICommand</a></div><div class="ttdef"><b>Definition</b> <a href="../../de/dd6/ICommand_8hpp_source.html#l00008">ICommand.hpp:9</a></div></div>
-<div class="ttc" id="aclassPing_html"><div class="ttname"><a href="../../d1/d7c/classPing.html">Ping</a></div><div class="ttdef"><b>Definition</b> <a href="#l00012">Ping.hpp:13</a></div></div>
-<div class="ttc" id="aclassPing_html_a51bfd66f18083e3bcbd31ee9e5100d8f"><div class="ttname"><a href="../../d1/d7c/classPing.html#a51bfd66f18083e3bcbd31ee9e5100d8f">Ping::Ping</a></div><div class="ttdeci">Ping(const std::string &amp;token)</div></div>
-<div class="ttc" id="aclassPing_html_a801f503a477fd18c0113a345b1ba6b1c"><div class="ttname"><a href="../../d1/d7c/classPing.html#a801f503a477fd18c0113a345b1ba6b1c">Ping::check_args</a></div><div class="ttdeci">static ReplyCode check_args(Server &amp;s, Client &amp;c, std::string &amp;params)</div></div>
-<div class="ttc" id="aclassPing_html_a88e3d34eae315619e0861f50b52293e3"><div class="ttname"><a href="../../d1/d7c/classPing.html#a88e3d34eae315619e0861f50b52293e3">Ping::execute</a></div><div class="ttdeci">void execute(Server &amp;s, Client &amp;c)</div></div>
-<div class="ttc" id="aclassPing_html_af5927f79e7c2503e999e7a5b936ebc0e"><div class="ttname"><a href="../../d1/d7c/classPing.html#af5927f79e7c2503e999e7a5b936ebc0e">Ping::Ping</a></div><div class="ttdeci">Ping()</div></div>
+<div class="ttc" id="aclassICommand_html"><div class="ttname"><a href="../../db/da2/classICommand.html">ICommand</a></div><div class="ttdoc">Interface providing an execute behavior for all commands.</div><div class="ttdef"><b>Definition</b> <a href="../../de/dd6/ICommand_8hpp_source.html#l00022">ICommand.hpp:23</a></div></div>
+<div class="ttc" id="aclassPing_html"><div class="ttname"><a href="../../d1/d7c/classPing.html">Ping</a></div><div class="ttdoc">Handler for PING.</div><div class="ttdef"><b>Definition</b> <a href="#l00025">Ping.hpp:26</a></div></div>
+<div class="ttc" id="aclassPing_html_a51bfd66f18083e3bcbd31ee9e5100d8f"><div class="ttname"><a href="../../d1/d7c/classPing.html#a51bfd66f18083e3bcbd31ee9e5100d8f">Ping::Ping</a></div><div class="ttdeci">Ping(const std::string &amp;token)</div><div class="ttdoc">Construct a new Ping object.</div></div>
+<div class="ttc" id="aclassPing_html_ac11ef4a621b062c48878dfd6eb7671ad"><div class="ttname"><a href="../../d1/d7c/classPing.html#ac11ef4a621b062c48878dfd6eb7671ad">Ping::execute</a></div><div class="ttdeci">void execute(Server &amp;server, Client &amp;client)</div><div class="ttdoc">sends a PONG message with token provided by PING sender</div></div>
+<div class="ttc" id="aclassPing_html_acd26aa06e7c3dc8cc107c04f3309e30f"><div class="ttname"><a href="../../d1/d7c/classPing.html#acd26aa06e7c3dc8cc107c04f3309e30f">Ping::check_args</a></div><div class="ttdeci">static ReplyCode check_args(Server &amp;server, Client &amp;client, std::string &amp;params)</div><div class="ttdoc">checks that there is an origin token</div></div>
 <div class="ttc" id="aclassPing_html_afdfdea19f6fee9ecee06a93f735070ab"><div class="ttname"><a href="../../d1/d7c/classPing.html#afdfdea19f6fee9ecee06a93f735070ab">Ping::~Ping</a></div><div class="ttdeci">virtual ~Ping()</div></div>
-<div class="ttc" id="aclassServer_html"><div class="ttname"><a href="../../db/d00/classServer.html">Server</a></div><div class="ttdef"><b>Definition</b> <a href="../../de/d3d/Server_8hpp_source.html#l00027">Server.hpp:28</a></div></div>
+<div class="ttc" id="aclassServer_html"><div class="ttname"><a href="../../db/d00/classServer.html">Server</a></div><div class="ttdoc">Ser.</div><div class="ttdef"><b>Definition</b> <a href="../../de/d3d/Server_8hpp_source.html#l00036">Server.hpp:37</a></div></div>
 <div class="ttc" id="areply__codes_8hpp_html_a686bb12efcc784d36f30d3528bdcdf08"><div class="ttname"><a href="../../d8/d9c/reply__codes_8hpp.html#a686bb12efcc784d36f30d3528bdcdf08">ReplyCode</a></div><div class="ttdeci">ReplyCode</div><div class="ttdoc">https://datatracker.ietf.org/doc/html/rfc2812#section-5</div><div class="ttdef"><b>Definition</b> <a href="../../d8/d9c/reply__codes_8hpp_source.html#l00005">reply_codes.hpp:5</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->

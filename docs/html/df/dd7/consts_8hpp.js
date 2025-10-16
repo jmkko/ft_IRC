@@ -1,5 +1,6 @@
 var consts_8hpp =
 [
+    [ "CHAN_KEY_MAX_LEN", "df/dd7/consts_8hpp.html#ac9659b6dadb3273edce63a442cd6fed3", null ],
     [ "CHAN_NAME_MAX_LEN", "df/dd7/consts_8hpp.html#a66ac4b5e00dcb3444693a16f3a3647ab", null ],
     [ "CHANMODE_INIT", "df/dd7/consts_8hpp.html#a3c98e37beea60d87d47ccb516025b6f2", null ],
     [ "CHANMODE_INVITE", "df/dd7/consts_8hpp.html#abe859431919080d4c58647c4ca97f7a4", null ],
@@ -16,6 +17,8 @@ var consts_8hpp =
     [ "DYNAMIC_PORT_MIN", "df/dd7/consts_8hpp.html#a42f8d93517733e3622cbcfbbc363b717", null ],
     [ "EPOCH_TIME_START", "df/dd7/consts_8hpp.html#a0c4c74ad22ff088f0d867219748bd7ba", null ],
     [ "EXPECTED_ARGS_NB", "df/dd7/consts_8hpp.html#a18a79f40106c66d16f7b847761bd67bd", null ],
+    [ "FORBIDEN_CHAR_CHAN_KEY", "df/dd7/consts_8hpp.html#a1a6f8c089a5bca66fef54c52306ef07d", null ],
+    [ "FORBIDEN_CHAR_CHAN_NAME", "df/dd7/consts_8hpp.html#aa8c67e305c6513d473ad169518ee2e4b", null ],
     [ "MAX_JOINED_CHANNELS", "df/dd7/consts_8hpp.html#a931134aea8a2d442cd668b239fa517d6", null ],
     [ "MIN_PASSWORD_LEN", "df/dd7/consts_8hpp.html#a3772f5acfb00d53f0f62f5dda31b8eac", null ],
     [ "MOTD_FILE", "df/dd7/consts_8hpp.html#aa6769dc03017d673522629e6496e73e4", null ],

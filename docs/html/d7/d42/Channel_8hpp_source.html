@@ -141,7 +141,7 @@ $(function(){initNavTree('d7/d42/Channel_8hpp_source.html','../../',''); });
 <div class="line"><span class="lineno">   45</span><span class="comment">     *</span></div>
 <div class="line"><span class="lineno">   46</span><span class="comment">     * @param name</span></div>
 <div class="line"><span class="lineno">   47</span><span class="comment">     */</span></div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno"><a class="line" href="../../d2/d48/classChannel.html#a6d2d650baccf6debd2b9d4d8814b81c1">   48</a></span>    <a class="code hl_function" href="../../d2/d48/classChannel.html#a6d2d650baccf6debd2b9d4d8814b81c1">Channel</a>(<span class="keyword">const</span> std::string&amp; name);</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno"><a class="line" href="../../d2/d48/classChannel.html#a5eee004ea51592ecc69d476ffdf9d6ac">   48</a></span>    <a class="code hl_function" href="../../d2/d48/classChannel.html#a5eee004ea51592ecc69d476ffdf9d6ac">Channel</a>(<span class="keyword">const</span> std::string&amp; name, <span class="keyword">const</span> std::string&amp; key = <span class="stringliteral">&quot;&quot;</span>);</div>
 <div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    <span class="comment">/**</span></div>
 <div class="line"><span class="lineno">   50</span><span class="comment">     * @brief Construct a new Channel object</span></div>
 <div class="line"><span class="lineno">   51</span><span class="comment">     *</span></div>
@@ -245,158 +245,165 @@ $(function(){initNavTree('d7/d42/Channel_8hpp_source.html','../../',''); });
 <div class="line"><span class="lineno">  149</span><span class="comment">     * @warning returns ERR_CHANOPRIVSNEEDED if mode +t and client is not operator</span></div>
 <div class="line"><span class="lineno">  150</span><span class="comment">     */</span></div>
 <div class="line"><a id="l00151" name="l00151"></a><span class="lineno"><a class="line" href="../../d2/d48/classChannel.html#a9dcaac12c8e89e34ee20063c9ebc97ec">  151</a></span>    <a class="code hl_enumeration" href="../../d8/d9c/reply__codes_8hpp.html#a686bb12efcc784d36f30d3528bdcdf08">ReplyCode</a> <a class="code hl_function" href="../../d2/d48/classChannel.html#a9dcaac12c8e89e34ee20063c9ebc97ec">set_topic</a>(<a class="code hl_class" href="../../d1/d37/classClient.html">Client</a>&amp; client, <span class="keyword">const</span> std::string&amp; topic);</div>
-<div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span>    <span class="comment">/**</span></div>
-<div class="line"><span class="lineno">  153</span><span class="comment">     * @brief Set the key object</span></div>
-<div class="line"><span class="lineno">  154</span><span class="comment">     *</span></div>
-<div class="line"><span class="lineno">  155</span><span class="comment">     * @param key</span></div>
-<div class="line"><span class="lineno">  156</span><span class="comment">     * @return ReplyCode</span></div>
-<div class="line"><span class="lineno">  157</span><span class="comment">     * @todo custom error for invalid key format</span></div>
-<div class="line"><span class="lineno">  158</span><span class="comment">     */</span></div>
-<div class="line"><a id="l00159" name="l00159"></a><span class="lineno"><a class="line" href="../../d2/d48/classChannel.html#a06f2ba6a668173610bf6b65bf92e7e99">  159</a></span>    <a class="code hl_enumeration" href="../../d8/d9c/reply__codes_8hpp.html#a686bb12efcc784d36f30d3528bdcdf08">ReplyCode</a> <a class="code hl_function" href="../../d2/d48/classChannel.html#a06f2ba6a668173610bf6b65bf92e7e99">set_key</a>(<span class="keyword">const</span> std::string&amp; key);</div>
-<div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span>    <span class="comment">/**</span></div>
-<div class="line"><span class="lineno">  161</span><span class="comment">     * @brief Set the user limit object</span></div>
-<div class="line"><span class="lineno">  162</span><span class="comment">     *</span></div>
-<div class="line"><span class="lineno">  163</span><span class="comment">     * @param limit</span></div>
-<div class="line"><span class="lineno">  164</span><span class="comment">     */</span></div>
-<div class="line"><a id="l00165" name="l00165"></a><span class="lineno"><a class="line" href="../../d2/d48/classChannel.html#a80d4a0446cb43202b02b79198e34e6a7">  165</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="../../d2/d48/classChannel.html#a80d4a0446cb43202b02b79198e34e6a7">set_user_limit</a>(<span class="keywordtype">int</span> limit);</div>
-<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>    <span class="comment">/**</span></div>
-<div class="line"><span class="lineno">  167</span><span class="comment">     * @brief add a client to the invite list</span></div>
-<div class="line"><span class="lineno">  168</span><span class="comment">     *</span></div>
-<div class="line"><span class="lineno">  169</span><span class="comment">     * @param client</span></div>
-<div class="line"><span class="lineno">  170</span><span class="comment">     * @pre caller function should have checked that client is not already a member</span></div>
-<div class="line"><span class="lineno">  171</span><span class="comment">     */</span></div>
-<div class="line"><a id="l00172" name="l00172"></a><span class="lineno"><a class="line" href="../../d2/d48/classChannel.html#adaf15070f4dde1fe73e79c02abb782c2">  172</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="../../d2/d48/classChannel.html#adaf15070f4dde1fe73e79c02abb782c2">invite_client</a>(<a class="code hl_class" href="../../d1/d37/classClient.html">Client</a>&amp; client);</div>
-<div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span>    <span class="comment">/**</span></div>
-<div class="line"><span class="lineno">  174</span><span class="comment">     * @brief add a client to the member list</span></div>
-<div class="line"><span class="lineno">  175</span><span class="comment">     *</span></div>
-<div class="line"><span class="lineno">  176</span><span class="comment">     * @param client</span></div>
-<div class="line"><span class="lineno">  177</span><span class="comment">     * @return ReplyCode</span></div>
-<div class="line"><span class="lineno">  178</span><span class="comment">     * @warning returns ERR_CHANNELISFULL, ERR_INVITEONLYCHAN</span></div>
-<div class="line"><span class="lineno">  179</span><span class="comment">     */</span></div>
-<div class="line"><a id="l00180" name="l00180"></a><span class="lineno"><a class="line" href="../../d2/d48/classChannel.html#ad2410fbbab55e798478a651754b585d6">  180</a></span>    <a class="code hl_enumeration" href="../../d8/d9c/reply__codes_8hpp.html#a686bb12efcc784d36f30d3528bdcdf08">ReplyCode</a> <a class="code hl_function" href="../../d2/d48/classChannel.html#ad2410fbbab55e798478a651754b585d6">add_member</a>(<a class="code hl_class" href="../../d1/d37/classClient.html">Client</a>&amp; client);</div>
-<div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span>    <span class="comment">/**</span></div>
-<div class="line"><span class="lineno">  182</span><span class="comment">     * @brief removes a client from the member list</span></div>
-<div class="line"><span class="lineno">  183</span><span class="comment">     *</span></div>
-<div class="line"><span class="lineno">  184</span><span class="comment">     * @param client</span></div>
-<div class="line"><span class="lineno">  185</span><span class="comment">     */</span></div>
-<div class="line"><a id="l00186" name="l00186"></a><span class="lineno"><a class="line" href="../../d2/d48/classChannel.html#ab6714fa9e435cc5f541d6232cb6424c8">  186</a></span>    <span class="keywordtype">void</span>      <a class="code hl_function" href="../../d2/d48/classChannel.html#ab6714fa9e435cc5f541d6232cb6424c8">remove_member</a>(<a class="code hl_class" href="../../d1/d37/classClient.html">Client</a>&amp; client);</div>
-<div class="line"><a id="l00187" name="l00187"></a><span class="lineno"><a class="line" href="../../d2/d48/classChannel.html#a6cf536376bc50422b2b090f1c03f5513">  187</a></span>    <a class="code hl_enumeration" href="../../d8/d9c/reply__codes_8hpp.html#a686bb12efcc784d36f30d3528bdcdf08">ReplyCode</a> <a class="code hl_function" href="../../d2/d48/classChannel.html#a6cf536376bc50422b2b090f1c03f5513">ban_member</a>(<a class="code hl_class" href="../../d1/d37/classClient.html">Client</a>&amp; client);</div>
-<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span>    <span class="comment">/**</span></div>
-<div class="line"><span class="lineno">  189</span><span class="comment">     * @brief grants op status to the client</span></div>
-<div class="line"><span class="lineno">  190</span><span class="comment">     *</span></div>
-<div class="line"><span class="lineno">  191</span><span class="comment">     * @param client</span></div>
-<div class="line"><span class="lineno">  192</span><span class="comment">     * @pre caller function should have checked that client is member</span></div>
-<div class="line"><span class="lineno">  193</span><span class="comment">     * @return ReplyCode</span></div>
-<div class="line"><span class="lineno">  194</span><span class="comment">     */</span></div>
-<div class="line"><a id="l00195" name="l00195"></a><span class="lineno"><a class="line" href="../../d2/d48/classChannel.html#a5949faf470eb240eaa1151fed72830be">  195</a></span>    <a class="code hl_enumeration" href="../../d8/d9c/reply__codes_8hpp.html#a686bb12efcc784d36f30d3528bdcdf08">ReplyCode</a> <a class="code hl_function" href="../../d2/d48/classChannel.html#a5949faf470eb240eaa1151fed72830be">make_operator</a>(<a class="code hl_class" href="../../d1/d37/classClient.html">Client</a>&amp; client);</div>
-<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>    <span class="comment">/**</span></div>
-<div class="line"><span class="lineno">  197</span><span class="comment">     * @brief removes op status from client</span></div>
-<div class="line"><span class="lineno">  198</span><span class="comment">     *</span></div>
-<div class="line"><span class="lineno">  199</span><span class="comment">     * @param client</span></div>
-<div class="line"><span class="lineno">  200</span><span class="comment">     * @pre caller function should have checked that client is operator</span></div>
-<div class="line"><span class="lineno">  201</span><span class="comment">     */</span></div>
-<div class="line"><a id="l00202" name="l00202"></a><span class="lineno"><a class="line" href="../../d2/d48/classChannel.html#a7847341cbdc97859931581ff304a00c3">  202</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="../../d2/d48/classChannel.html#a7847341cbdc97859931581ff304a00c3">remove_operator</a>(<a class="code hl_class" href="../../d1/d37/classClient.html">Client</a>&amp; client);</div>
-<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span> </div>
-<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>    <span class="comment">/**</span></div>
-<div class="line"><span class="lineno">  205</span><span class="comment">     * @brief activate a mode (among `k`, `i`, `l`, `t`)</span></div>
-<div class="line"><span class="lineno">  206</span><span class="comment">     * @details use bitmasking</span></div>
-<div class="line"><span class="lineno">  207</span><span class="comment">     * @remark some modes require other args</span></div>
-<div class="line"><span class="lineno">  208</span><span class="comment">     * @param mode</span></div>
-<div class="line"><span class="lineno">  209</span><span class="comment">     */</span></div>
-<div class="line"><a id="l00210" name="l00210"></a><span class="lineno"><a class="line" href="../../d2/d48/classChannel.html#ae2ef9c719855c202f8209d1321a099b8">  210</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="../../d2/d48/classChannel.html#ae2ef9c719855c202f8209d1321a099b8">add_mode</a>(<span class="keywordtype">unsigned</span> <span class="keywordtype">short</span> mode);</div>
-<div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span>    <span class="comment">/**</span></div>
-<div class="line"><span class="lineno">  212</span><span class="comment">     * @brief deactivate a mode</span></div>
-<div class="line"><span class="lineno">  213</span><span class="comment">     *</span></div>
-<div class="line"><span class="lineno">  214</span><span class="comment">     * @param mode</span></div>
-<div class="line"><span class="lineno">  215</span><span class="comment">     */</span></div>
-<div class="line"><a id="l00216" name="l00216"></a><span class="lineno"><a class="line" href="../../d2/d48/classChannel.html#ab08f4794b546d8bed4833ca38f4c74f5">  216</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="../../d2/d48/classChannel.html#ab08f4794b546d8bed4833ca38f4c74f5">remove_mode</a>(<span class="keywordtype">unsigned</span> <span class="keywordtype">short</span> mode);</div>
-<div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span>    <span class="comment">/**</span></div>
-<div class="line"><span class="lineno">  218</span><span class="comment">     * @brief Get the mode as a short value</span></div>
-<div class="line"><span class="lineno">  219</span><span class="comment">     *</span></div>
-<div class="line"><span class="lineno">  220</span><span class="comment">     * @return unsigned short</span></div>
-<div class="line"><span class="lineno">  221</span><span class="comment">     */</span></div>
-<div class="line"><a id="l00222" name="l00222"></a><span class="lineno"><a class="line" href="../../d2/d48/classChannel.html#aed7e6684fe7fe2edbde91a7ce6206a83">  222</a></span>    <span class="keywordtype">unsigned</span> <span class="keywordtype">short</span> <a class="code hl_function" href="../../d2/d48/classChannel.html#aed7e6684fe7fe2edbde91a7ce6206a83">get_mode</a>() <span class="keyword">const</span>;</div>
-<div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span>    <span class="comment">/**</span></div>
-<div class="line"><span class="lineno">  224</span><span class="comment">     * @brief Get channel members nicknames</span></div>
-<div class="line"><span class="lineno">  225</span><span class="comment">     *</span></div>
-<div class="line"><span class="lineno">  226</span><span class="comment">     * @return std::vector&lt;std::string&gt;</span></div>
-<div class="line"><span class="lineno">  227</span><span class="comment">     */</span></div>
-<div class="line"><a id="l00228" name="l00228"></a><span class="lineno"><a class="line" href="../../d2/d48/classChannel.html#a9df76166f633d933d33ec1db627e82dc">  228</a></span>    <a class="code hl_function" href="../../d2/d48/classChannel.html#a9df76166f633d933d33ec1db627e82dc">std</a>::<a class="code hl_function" href="../../d2/d48/classChannel.html#a9df76166f633d933d33ec1db627e82dc">vector</a>&lt;<a class="code hl_function" href="../../d2/d48/classChannel.html#a9df76166f633d933d33ec1db627e82dc">std</a>::<a class="code hl_function" href="../../d2/d48/classChannel.html#a9df76166f633d933d33ec1db627e82dc">string</a>&gt; <a class="code hl_function" href="../../d2/d48/classChannel.html#a9df76166f633d933d33ec1db627e82dc">get_members_list</a>() <span class="keyword">const</span>;</div>
-<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span>    <span class="comment">/**</span></div>
-<div class="line"><span class="lineno">  230</span><span class="comment">     * @brief Get members numbers</span></div>
-<div class="line"><span class="lineno">  231</span><span class="comment">     *</span></div>
-<div class="line"><span class="lineno">  232</span><span class="comment">     * @return size_t</span></div>
-<div class="line"><span class="lineno">  233</span><span class="comment">     */</span></div>
-<div class="line"><a id="l00234" name="l00234"></a><span class="lineno"><a class="line" href="../../d2/d48/classChannel.html#a5bded75956811710f520d80579462569">  234</a></span>    <a class="code hl_function" href="../../d2/d48/classChannel.html#a5bded75956811710f520d80579462569">size_t</a> <a class="code hl_function" href="../../d2/d48/classChannel.html#a5bded75956811710f520d80579462569">get_nb_members</a>() <span class="keyword">const</span>;</div>
-<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span>    <span class="comment">/**</span></div>
-<div class="line"><span class="lineno">  236</span><span class="comment">     * @brief Get a list of #Client members</span></div>
-<div class="line"><span class="lineno">  237</span><span class="comment">     *</span></div>
-<div class="line"><span class="lineno">  238</span><span class="comment">     * @return std::set&lt;Client*&gt;</span></div>
-<div class="line"><span class="lineno">  239</span><span class="comment">     */</span></div>
-<div class="line"><a id="l00240" name="l00240"></a><span class="lineno"><a class="line" href="../../d2/d48/classChannel.html#aa147ba80e34e663961778ad940cec44a">  240</a></span>    <a class="code hl_function" href="../../d2/d48/classChannel.html#aa147ba80e34e663961778ad940cec44a">std</a>::<a class="code hl_function" href="../../d2/d48/classChannel.html#aa147ba80e34e663961778ad940cec44a">set</a>&lt;<a class="code hl_function" href="../../d2/d48/classChannel.html#aa147ba80e34e663961778ad940cec44a">Client</a>*&gt; <a class="code hl_function" href="../../d2/d48/classChannel.html#aa147ba80e34e663961778ad940cec44a">get_members</a>() <span class="keyword">const</span>;</div>
-<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span> </div>
-<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>    <span class="comment">/**</span></div>
-<div class="line"><span class="lineno">  243</span><span class="comment">     * @brief transfer a message to channel members</span></div>
-<div class="line"><span class="lineno">  244</span><span class="comment">     * @see ReplyHandler::process_response</span></div>
-<div class="line"><span class="lineno">  245</span><span class="comment">     * @param server</span></div>
-<div class="line"><span class="lineno">  246</span><span class="comment">     * @param replyCode</span></div>
-<div class="line"><span class="lineno">  247</span><span class="comment">     * @param params</span></div>
-<div class="line"><span class="lineno">  248</span><span class="comment">     * @param sender</span></div>
-<div class="line"><span class="lineno">  249</span><span class="comment">     * @param trailing</span></div>
-<div class="line"><span class="lineno">  250</span><span class="comment">     */</span></div>
-<div class="line"><a id="l00251" name="l00251"></a><span class="lineno"><a class="line" href="../../d2/d48/classChannel.html#a5611cde636a8715de991e255b632365d">  251</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="../../d2/d48/classChannel.html#a5611cde636a8715de991e255b632365d">broadcast</a>(<a class="code hl_class" href="../../db/d00/classServer.html">Server</a>&amp;            server,</div>
-<div class="line"><a id="l00252" name="l00252"></a><span class="lineno">  252</span>                   <a class="code hl_enumeration" href="../../d8/d9c/reply__codes_8hpp.html#a686bb12efcc784d36f30d3528bdcdf08">ReplyCode</a>          replyCode,</div>
-<div class="line"><a id="l00253" name="l00253"></a><span class="lineno">  253</span>                   <span class="keyword">const</span> std::string&amp; params,</div>
-<div class="line"><a id="l00254" name="l00254"></a><span class="lineno">  254</span>                   <a class="code hl_class" href="../../d1/d37/classClient.html">Client</a>*            sender   = <a class="code hl_function" href="../../d2/d48/classChannel.html#a5611cde636a8715de991e255b632365d">NULL</a>,</div>
-<div class="line"><a id="l00255" name="l00255"></a><span class="lineno">  255</span>                   <span class="keyword">const</span> std::string&amp; trailing = <span class="stringliteral">&quot;&quot;</span>) <span class="keyword">const</span>;</div>
-<div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span>    <span class="comment">/**</span></div>
-<div class="line"><span class="lineno">  257</span><span class="comment">     * @brief</span></div>
-<div class="line"><span class="lineno">  258</span><span class="comment">     * @details cf [grammar](https://datatracker.ietf.org/doc/html/rfc2812#section-2.3.1)</span></div>
-<div class="line"><span class="lineno">  259</span><span class="comment">     * ` channel    =  ( &quot;#&quot; / &quot;+&quot; / ( &quot;!&quot; channelid ) / &quot;&amp;&quot; ) chanstring [ &quot;:&quot; chanstring ]`</span></div>
-<div class="line"><span class="lineno">  260</span><span class="comment">     * @param name</span></div>
-<div class="line"><span class="lineno">  261</span><span class="comment">     * @return true is name is valid according to RFC grammar</span></div>
-<div class="line"><span class="lineno">  262</span><span class="comment">     * @return false</span></div>
-<div class="line"><span class="lineno">  263</span><span class="comment">     */</span></div>
-<div class="line"><a id="l00264" name="l00264"></a><span class="lineno"><a class="line" href="../../d2/d48/classChannel.html#a1a4245a509b60612367be9f66dbeb9ff">  264</a></span>    <span class="keyword">static</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="../../d2/d48/classChannel.html#a1a4245a509b60612367be9f66dbeb9ff">is_valid_channel_name</a>(<span class="keyword">const</span> std::string&amp; name);</div>
-<div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span> </div>
-<div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span>  <span class="keyword">private</span>:</div>
-<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span>    std::string       _name;</div>
-<div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span>    std::string       _topic;</div>
-<div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span>    std::string       _key;</div>
-<div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span>    <span class="keywordtype">unsigned</span> <span class="keywordtype">short</span>    _mode;</div>
-<div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span>    <span class="keywordtype">int</span>               _userLimit; <span class="comment">// -1 if -l not set</span></div>
-<div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span>    std::set&lt;Client*&gt; _members;</div>
-<div class="line"><a id="l00273" name="l00273"></a><span class="lineno">  273</span>    std::set&lt;Client*&gt; _invites;</div>
-<div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span>    std::set&lt;Client*&gt; _operators;</div>
-<div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span>    std::set&lt;Client*&gt; _banList;</div>
-<div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span> </div>
-<div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span>    Channel();</div>
-<div class="line"><a id="l00278" name="l00278"></a><span class="lineno">  278</span>};</div>
+<div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span> </div>
+<div class="line"><a id="l00153" name="l00153"></a><span class="lineno"><a class="line" href="../../d2/d48/classChannel.html#af0cbced6265719e3e92156ce828d0962">  153</a></span>    <span class="keywordtype">bool</span> <a class="code hl_function" href="../../d2/d48/classChannel.html#af0cbced6265719e3e92156ce828d0962">remove_from_invited_list</a>(<a class="code hl_class" href="../../d1/d37/classClient.html">Client</a>&amp; client);</div>
+<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span> </div>
+<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span>    <span class="comment">/**</span></div>
+<div class="line"><span class="lineno">  156</span><span class="comment">     * @brief Set the key object</span></div>
+<div class="line"><span class="lineno">  157</span><span class="comment">     *</span></div>
+<div class="line"><span class="lineno">  158</span><span class="comment">     * @param key</span></div>
+<div class="line"><span class="lineno">  159</span><span class="comment">     * @return ReplyCode</span></div>
+<div class="line"><span class="lineno">  160</span><span class="comment">     * @todo custom error for invalid key format</span></div>
+<div class="line"><span class="lineno">  161</span><span class="comment">     */</span></div>
+<div class="line"><a id="l00162" name="l00162"></a><span class="lineno"><a class="line" href="../../d2/d48/classChannel.html#a06f2ba6a668173610bf6b65bf92e7e99">  162</a></span>    <a class="code hl_enumeration" href="../../d8/d9c/reply__codes_8hpp.html#a686bb12efcc784d36f30d3528bdcdf08">ReplyCode</a> <a class="code hl_function" href="../../d2/d48/classChannel.html#a06f2ba6a668173610bf6b65bf92e7e99">set_key</a>(<span class="keyword">const</span> std::string&amp; key);</div>
+<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>    <span class="comment">/**</span></div>
+<div class="line"><span class="lineno">  164</span><span class="comment">     * @brief Set the user limit object</span></div>
+<div class="line"><span class="lineno">  165</span><span class="comment">     *</span></div>
+<div class="line"><span class="lineno">  166</span><span class="comment">     * @param limit</span></div>
+<div class="line"><span class="lineno">  167</span><span class="comment">     */</span></div>
+<div class="line"><a id="l00168" name="l00168"></a><span class="lineno"><a class="line" href="../../d2/d48/classChannel.html#a80d4a0446cb43202b02b79198e34e6a7">  168</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="../../d2/d48/classChannel.html#a80d4a0446cb43202b02b79198e34e6a7">set_user_limit</a>(<span class="keywordtype">int</span> limit);</div>
+<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>    <span class="comment">/**</span></div>
+<div class="line"><span class="lineno">  170</span><span class="comment">     * @brief add a client to the invite list</span></div>
+<div class="line"><span class="lineno">  171</span><span class="comment">     *</span></div>
+<div class="line"><span class="lineno">  172</span><span class="comment">     * @param client</span></div>
+<div class="line"><span class="lineno">  173</span><span class="comment">     * @pre caller function should have checked that client is not already a member</span></div>
+<div class="line"><span class="lineno">  174</span><span class="comment">     */</span></div>
+<div class="line"><a id="l00175" name="l00175"></a><span class="lineno"><a class="line" href="../../d2/d48/classChannel.html#adaf15070f4dde1fe73e79c02abb782c2">  175</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="../../d2/d48/classChannel.html#adaf15070f4dde1fe73e79c02abb782c2">invite_client</a>(<a class="code hl_class" href="../../d1/d37/classClient.html">Client</a>&amp; client);</div>
+<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span>    <span class="comment">/**</span></div>
+<div class="line"><span class="lineno">  177</span><span class="comment">     * @brief add a client to the member list</span></div>
+<div class="line"><span class="lineno">  178</span><span class="comment">     *</span></div>
+<div class="line"><span class="lineno">  179</span><span class="comment">     * @param client</span></div>
+<div class="line"><span class="lineno">  180</span><span class="comment">     * @return ReplyCode</span></div>
+<div class="line"><span class="lineno">  181</span><span class="comment">     * @warning returns ERR_CHANNELISFULL, ERR_INVITEONLYCHAN</span></div>
+<div class="line"><span class="lineno">  182</span><span class="comment">     */</span></div>
+<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span> </div>
+<div class="line"><a id="l00184" name="l00184"></a><span class="lineno"><a class="line" href="../../d2/d48/classChannel.html#ad2410fbbab55e798478a651754b585d6">  184</a></span>    <a class="code hl_enumeration" href="../../d8/d9c/reply__codes_8hpp.html#a686bb12efcc784d36f30d3528bdcdf08">ReplyCode</a> <a class="code hl_function" href="../../d2/d48/classChannel.html#ad2410fbbab55e798478a651754b585d6">add_member</a>(<a class="code hl_class" href="../../d1/d37/classClient.html">Client</a>&amp; client);</div>
+<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span>    <span class="comment">/**</span></div>
+<div class="line"><span class="lineno">  186</span><span class="comment">     * @brief removes a client from the member list</span></div>
+<div class="line"><span class="lineno">  187</span><span class="comment">     *</span></div>
+<div class="line"><span class="lineno">  188</span><span class="comment">     * @param client</span></div>
+<div class="line"><span class="lineno">  189</span><span class="comment">     */</span></div>
+<div class="line"><a id="l00190" name="l00190"></a><span class="lineno"><a class="line" href="../../d2/d48/classChannel.html#ab6714fa9e435cc5f541d6232cb6424c8">  190</a></span>    <span class="keywordtype">void</span>      <a class="code hl_function" href="../../d2/d48/classChannel.html#ab6714fa9e435cc5f541d6232cb6424c8">remove_member</a>(<a class="code hl_class" href="../../d1/d37/classClient.html">Client</a>&amp; client);</div>
+<div class="line"><a id="l00191" name="l00191"></a><span class="lineno"><a class="line" href="../../d2/d48/classChannel.html#a6cf536376bc50422b2b090f1c03f5513">  191</a></span>    <a class="code hl_enumeration" href="../../d8/d9c/reply__codes_8hpp.html#a686bb12efcc784d36f30d3528bdcdf08">ReplyCode</a> <a class="code hl_function" href="../../d2/d48/classChannel.html#a6cf536376bc50422b2b090f1c03f5513">ban_member</a>(<a class="code hl_class" href="../../d1/d37/classClient.html">Client</a>&amp; client);</div>
+<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span>    <span class="comment">/**</span></div>
+<div class="line"><span class="lineno">  193</span><span class="comment">     * @brief grants op status to the client</span></div>
+<div class="line"><span class="lineno">  194</span><span class="comment">     *</span></div>
+<div class="line"><span class="lineno">  195</span><span class="comment">     * @param client</span></div>
+<div class="line"><span class="lineno">  196</span><span class="comment">     * @pre caller function should have checked that client is member</span></div>
+<div class="line"><span class="lineno">  197</span><span class="comment">     * @return ReplyCode</span></div>
+<div class="line"><span class="lineno">  198</span><span class="comment">     */</span></div>
+<div class="line"><a id="l00199" name="l00199"></a><span class="lineno"><a class="line" href="../../d2/d48/classChannel.html#a5949faf470eb240eaa1151fed72830be">  199</a></span>    <a class="code hl_enumeration" href="../../d8/d9c/reply__codes_8hpp.html#a686bb12efcc784d36f30d3528bdcdf08">ReplyCode</a> <a class="code hl_function" href="../../d2/d48/classChannel.html#a5949faf470eb240eaa1151fed72830be">make_operator</a>(<a class="code hl_class" href="../../d1/d37/classClient.html">Client</a>&amp; client);</div>
+<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span>    <span class="comment">/**</span></div>
+<div class="line"><span class="lineno">  201</span><span class="comment">     * @brief removes op status from client</span></div>
+<div class="line"><span class="lineno">  202</span><span class="comment">     *</span></div>
+<div class="line"><span class="lineno">  203</span><span class="comment">     * @param client</span></div>
+<div class="line"><span class="lineno">  204</span><span class="comment">     * @pre caller function should have checked that client is operator</span></div>
+<div class="line"><span class="lineno">  205</span><span class="comment">     */</span></div>
+<div class="line"><a id="l00206" name="l00206"></a><span class="lineno"><a class="line" href="../../d2/d48/classChannel.html#a7847341cbdc97859931581ff304a00c3">  206</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="../../d2/d48/classChannel.html#a7847341cbdc97859931581ff304a00c3">remove_operator</a>(<a class="code hl_class" href="../../d1/d37/classClient.html">Client</a>&amp; client);</div>
+<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span> </div>
+<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>    <span class="comment">/**</span></div>
+<div class="line"><span class="lineno">  209</span><span class="comment">     * @brief activate a mode (among `k`, `i`, `l`, `t`)</span></div>
+<div class="line"><span class="lineno">  210</span><span class="comment">     * @details use bitmasking</span></div>
+<div class="line"><span class="lineno">  211</span><span class="comment">     * @remark some modes require other args</span></div>
+<div class="line"><span class="lineno">  212</span><span class="comment">     * @param mode</span></div>
+<div class="line"><span class="lineno">  213</span><span class="comment">     */</span></div>
+<div class="line"><a id="l00214" name="l00214"></a><span class="lineno"><a class="line" href="../../d2/d48/classChannel.html#ae2ef9c719855c202f8209d1321a099b8">  214</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="../../d2/d48/classChannel.html#ae2ef9c719855c202f8209d1321a099b8">add_mode</a>(<span class="keywordtype">unsigned</span> <span class="keywordtype">short</span> mode);</div>
+<div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span>    <span class="comment">/**</span></div>
+<div class="line"><span class="lineno">  216</span><span class="comment">     * @brief deactivate a mode</span></div>
+<div class="line"><span class="lineno">  217</span><span class="comment">     *</span></div>
+<div class="line"><span class="lineno">  218</span><span class="comment">     * @param mode</span></div>
+<div class="line"><span class="lineno">  219</span><span class="comment">     */</span></div>
+<div class="line"><a id="l00220" name="l00220"></a><span class="lineno"><a class="line" href="../../d2/d48/classChannel.html#ab08f4794b546d8bed4833ca38f4c74f5">  220</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="../../d2/d48/classChannel.html#ab08f4794b546d8bed4833ca38f4c74f5">remove_mode</a>(<span class="keywordtype">unsigned</span> <span class="keywordtype">short</span> mode);</div>
+<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span>    <span class="comment">/**</span></div>
+<div class="line"><span class="lineno">  222</span><span class="comment">     * @brief Get the mode as a short value</span></div>
+<div class="line"><span class="lineno">  223</span><span class="comment">     *</span></div>
+<div class="line"><span class="lineno">  224</span><span class="comment">     * @return unsigned short</span></div>
+<div class="line"><span class="lineno">  225</span><span class="comment">     */</span></div>
+<div class="line"><a id="l00226" name="l00226"></a><span class="lineno"><a class="line" href="../../d2/d48/classChannel.html#aed7e6684fe7fe2edbde91a7ce6206a83">  226</a></span>    <span class="keywordtype">unsigned</span> <span class="keywordtype">short</span> <a class="code hl_function" href="../../d2/d48/classChannel.html#aed7e6684fe7fe2edbde91a7ce6206a83">get_mode</a>() <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span>    <span class="comment">/**</span></div>
+<div class="line"><span class="lineno">  228</span><span class="comment">     * @brief Get channel members nicknames</span></div>
+<div class="line"><span class="lineno">  229</span><span class="comment">     *</span></div>
+<div class="line"><span class="lineno">  230</span><span class="comment">     * @return std::vector&lt;std::string&gt;</span></div>
+<div class="line"><span class="lineno">  231</span><span class="comment">     */</span></div>
+<div class="line"><a id="l00232" name="l00232"></a><span class="lineno"><a class="line" href="../../d2/d48/classChannel.html#a9df76166f633d933d33ec1db627e82dc">  232</a></span>    <a class="code hl_function" href="../../d2/d48/classChannel.html#a9df76166f633d933d33ec1db627e82dc">std</a>::<a class="code hl_function" href="../../d2/d48/classChannel.html#a9df76166f633d933d33ec1db627e82dc">vector</a>&lt;<a class="code hl_function" href="../../d2/d48/classChannel.html#a9df76166f633d933d33ec1db627e82dc">std</a>::<a class="code hl_function" href="../../d2/d48/classChannel.html#a9df76166f633d933d33ec1db627e82dc">string</a>&gt; <a class="code hl_function" href="../../d2/d48/classChannel.html#a9df76166f633d933d33ec1db627e82dc">get_members_list</a>() <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span>    <span class="comment">/**</span></div>
+<div class="line"><span class="lineno">  234</span><span class="comment">     * @brief Get members numbers</span></div>
+<div class="line"><span class="lineno">  235</span><span class="comment">     *</span></div>
+<div class="line"><span class="lineno">  236</span><span class="comment">     * @return size_t</span></div>
+<div class="line"><span class="lineno">  237</span><span class="comment">     */</span></div>
+<div class="line"><a id="l00238" name="l00238"></a><span class="lineno"><a class="line" href="../../d2/d48/classChannel.html#a5bded75956811710f520d80579462569">  238</a></span>    <a class="code hl_function" href="../../d2/d48/classChannel.html#a5bded75956811710f520d80579462569">size_t</a> <a class="code hl_function" href="../../d2/d48/classChannel.html#a5bded75956811710f520d80579462569">get_nb_members</a>() <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span>    <span class="comment">/**</span></div>
+<div class="line"><span class="lineno">  240</span><span class="comment">     * @brief Get a list of #Client members</span></div>
+<div class="line"><span class="lineno">  241</span><span class="comment">     *</span></div>
+<div class="line"><span class="lineno">  242</span><span class="comment">     * @return std::set&lt;Client*&gt;</span></div>
+<div class="line"><span class="lineno">  243</span><span class="comment">     */</span></div>
+<div class="line"><a id="l00244" name="l00244"></a><span class="lineno"><a class="line" href="../../d2/d48/classChannel.html#aa147ba80e34e663961778ad940cec44a">  244</a></span>    <a class="code hl_function" href="../../d2/d48/classChannel.html#aa147ba80e34e663961778ad940cec44a">std</a>::<a class="code hl_function" href="../../d2/d48/classChannel.html#aa147ba80e34e663961778ad940cec44a">set</a>&lt;<a class="code hl_function" href="../../d2/d48/classChannel.html#aa147ba80e34e663961778ad940cec44a">Client</a>*&gt; <a class="code hl_function" href="../../d2/d48/classChannel.html#aa147ba80e34e663961778ad940cec44a">get_members</a>() <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00245" name="l00245"></a><span class="lineno">  245</span> </div>
+<div class="line"><a id="l00246" name="l00246"></a><span class="lineno">  246</span>    <span class="comment">/**</span></div>
+<div class="line"><span class="lineno">  247</span><span class="comment">     * @brief transfer a message to channel members</span></div>
+<div class="line"><span class="lineno">  248</span><span class="comment">     * @see ReplyHandler::process_response</span></div>
+<div class="line"><span class="lineno">  249</span><span class="comment">     * @param server</span></div>
+<div class="line"><span class="lineno">  250</span><span class="comment">     * @param replyCode</span></div>
+<div class="line"><span class="lineno">  251</span><span class="comment">     * @param params</span></div>
+<div class="line"><span class="lineno">  252</span><span class="comment">     * @param sender</span></div>
+<div class="line"><span class="lineno">  253</span><span class="comment">     * @param trailing</span></div>
+<div class="line"><span class="lineno">  254</span><span class="comment">     */</span></div>
+<div class="line"><a id="l00255" name="l00255"></a><span class="lineno"><a class="line" href="../../d2/d48/classChannel.html#a5611cde636a8715de991e255b632365d">  255</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="../../d2/d48/classChannel.html#a5611cde636a8715de991e255b632365d">broadcast</a>(<a class="code hl_class" href="../../db/d00/classServer.html">Server</a>&amp;            server,</div>
+<div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span>                   <a class="code hl_enumeration" href="../../d8/d9c/reply__codes_8hpp.html#a686bb12efcc784d36f30d3528bdcdf08">ReplyCode</a>          replyCode,</div>
+<div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span>                   <span class="keyword">const</span> std::string&amp; params,</div>
+<div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span>                   <a class="code hl_class" href="../../d1/d37/classClient.html">Client</a>*            sender   = <a class="code hl_function" href="../../d2/d48/classChannel.html#a5611cde636a8715de991e255b632365d">NULL</a>,</div>
+<div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span>                   <span class="keyword">const</span> std::string&amp; trailing = <span class="stringliteral">&quot;&quot;</span>) <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span>    <span class="comment">/**</span></div>
+<div class="line"><span class="lineno">  261</span><span class="comment">     * @brief</span></div>
+<div class="line"><span class="lineno">  262</span><span class="comment">     * @details cf [grammar](https://datatracker.ietf.org/doc/html/rfc2812#section-2.3.1)</span></div>
+<div class="line"><span class="lineno">  263</span><span class="comment">     * ` channel    =  ( &quot;#&quot; / &quot;+&quot; / ( &quot;!&quot; channelid ) / &quot;&amp;&quot; ) chanstring [ &quot;:&quot; chanstring ]`</span></div>
+<div class="line"><span class="lineno">  264</span><span class="comment">     * @param name</span></div>
+<div class="line"><span class="lineno">  265</span><span class="comment">     * @return true is name is valid according to RFC grammar</span></div>
+<div class="line"><span class="lineno">  266</span><span class="comment">     * @return false</span></div>
+<div class="line"><span class="lineno">  267</span><span class="comment">     */</span></div>
+<div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span> </div>
+<div class="line"><a id="l00269" name="l00269"></a><span class="lineno"><a class="line" href="../../d2/d48/classChannel.html#a1a4245a509b60612367be9f66dbeb9ff">  269</a></span>    <span class="keyword">static</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="../../d2/d48/classChannel.html#a1a4245a509b60612367be9f66dbeb9ff">is_valid_channel_name</a>(<span class="keyword">const</span> std::string&amp; name);</div>
+<div class="line"><a id="l00270" name="l00270"></a><span class="lineno"><a class="line" href="../../d2/d48/classChannel.html#a2409a008b61fb4ec4b444d288e35c5ad">  270</a></span>    <span class="keyword">static</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="../../d2/d48/classChannel.html#a2409a008b61fb4ec4b444d288e35c5ad">is_valid_channel_key</a>(<span class="keyword">const</span> std::string&amp; key);</div>
+<div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span> </div>
+<div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span>  <span class="keyword">private</span>:</div>
+<div class="line"><a id="l00273" name="l00273"></a><span class="lineno">  273</span>    std::string       _name;</div>
+<div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span>    std::string       _topic;</div>
+<div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span>    std::string       _key;</div>
+<div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span>    <span class="keywordtype">unsigned</span> <span class="keywordtype">short</span>    _mode;</div>
+<div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span>    <span class="keywordtype">int</span>               _userLimit; <span class="comment">// -1 if -l not set</span></div>
+<div class="line"><a id="l00278" name="l00278"></a><span class="lineno">  278</span>    std::set&lt;Client*&gt; _members;</div>
+<div class="line"><a id="l00279" name="l00279"></a><span class="lineno">  279</span>    std::set&lt;Client*&gt; _invites;</div>
+<div class="line"><a id="l00280" name="l00280"></a><span class="lineno">  280</span>    std::set&lt;Client*&gt; _operators;</div>
+<div class="line"><a id="l00281" name="l00281"></a><span class="lineno">  281</span>    std::set&lt;Client*&gt; _banList;</div>
+<div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span> </div>
+<div class="line"><a id="l00283" name="l00283"></a><span class="lineno">  283</span>    Channel();</div>
+<div class="line"><a id="l00284" name="l00284"></a><span class="lineno">  284</span>};</div>
 </div>
-<div class="line"><a id="l00279" name="l00279"></a><span class="lineno">  279</span> </div>
-<div class="line"><a id="l00280" name="l00280"></a><span class="lineno">  280</span><span class="comment">/**</span></div>
-<div class="line"><span class="lineno">  281</span><span class="comment"> * @brief overload of output operator displaying Channel details</span></div>
-<div class="line"><span class="lineno">  282</span><span class="comment"> *</span></div>
-<div class="line"><span class="lineno">  283</span><span class="comment"> * @param os</span></div>
-<div class="line"><span class="lineno">  284</span><span class="comment"> * @param c</span></div>
-<div class="line"><span class="lineno">  285</span><span class="comment"> * @return std::ostream&amp;</span></div>
-<div class="line"><span class="lineno">  286</span><span class="comment"> */</span></div>
-<div class="line"><a id="l00287" name="l00287"></a><span class="lineno"><a class="line" href="../../d7/d42/Channel_8hpp.html#a3f919e5391532d8b9af566a0275de8be">  287</a></span>std::ostream&amp; operator&lt;&lt;(std::ostream&amp; os, <span class="keyword">const</span> <a class="code hl_class" href="../../d2/d48/classChannel.html">Channel</a>&amp; c);</div>
-<div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span> </div>
-<div class="line"><a id="l00289" name="l00289"></a><span class="lineno">  289</span><span class="preprocessor">#</span><span class="preprocessor">endif</span></div>
+<div class="line"><a id="l00285" name="l00285"></a><span class="lineno">  285</span> </div>
+<div class="line"><a id="l00286" name="l00286"></a><span class="lineno">  286</span><span class="comment">/**</span></div>
+<div class="line"><span class="lineno">  287</span><span class="comment"> * @brief overload of output operator displaying Channel details</span></div>
+<div class="line"><span class="lineno">  288</span><span class="comment"> *</span></div>
+<div class="line"><span class="lineno">  289</span><span class="comment"> * @param os</span></div>
+<div class="line"><span class="lineno">  290</span><span class="comment"> * @param c</span></div>
+<div class="line"><span class="lineno">  291</span><span class="comment"> * @return std::ostream&amp;</span></div>
+<div class="line"><span class="lineno">  292</span><span class="comment"> */</span></div>
+<div class="line"><a id="l00293" name="l00293"></a><span class="lineno"><a class="line" href="../../d7/d42/Channel_8hpp.html#a3f919e5391532d8b9af566a0275de8be">  293</a></span>std::ostream&amp; operator&lt;&lt;(std::ostream&amp; os, <span class="keyword">const</span> <a class="code hl_class" href="../../d2/d48/classChannel.html">Channel</a>&amp; c);</div>
+<div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span> </div>
+<div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span><span class="preprocessor">#</span><span class="preprocessor">endif</span></div>
 <div class="ttc" id="aclassChannel_html"><div class="ttname"><a href="../../d2/d48/classChannel.html">Channel</a></div><div class="ttdoc">representing an IRC channel</div><div class="ttdef"><b>Definition</b> <a href="#l00039">Channel.hpp:40</a></div></div>
 <div class="ttc" id="aclassChannel_html_a06f2ba6a668173610bf6b65bf92e7e99"><div class="ttname"><a href="../../d2/d48/classChannel.html#a06f2ba6a668173610bf6b65bf92e7e99">Channel::set_key</a></div><div class="ttdeci">ReplyCode set_key(const std::string &amp;key)</div><div class="ttdoc">Set the key object.</div></div>
 <div class="ttc" id="aclassChannel_html_a0f880a3f109be783ca023af2d0ecbc08"><div class="ttname"><a href="../../d2/d48/classChannel.html#a0f880a3f109be783ca023af2d0ecbc08">Channel::get_key</a></div><div class="ttdeci">const std::string &amp; get_key() const</div><div class="ttdoc">Get the key object.</div></div>
 <div class="ttc" id="aclassChannel_html_a1a4245a509b60612367be9f66dbeb9ff"><div class="ttname"><a href="../../d2/d48/classChannel.html#a1a4245a509b60612367be9f66dbeb9ff">Channel::is_valid_channel_name</a></div><div class="ttdeci">static bool is_valid_channel_name(const std::string &amp;name)</div></div>
+<div class="ttc" id="aclassChannel_html_a2409a008b61fb4ec4b444d288e35c5ad"><div class="ttname"><a href="../../d2/d48/classChannel.html#a2409a008b61fb4ec4b444d288e35c5ad">Channel::is_valid_channel_key</a></div><div class="ttdeci">static bool is_valid_channel_key(const std::string &amp;key)</div></div>
 <div class="ttc" id="aclassChannel_html_a2b539f94c4450b6b8832570db83d523a"><div class="ttname"><a href="../../d2/d48/classChannel.html#a2b539f94c4450b6b8832570db83d523a">Channel::is_member</a></div><div class="ttdeci">bool is_member(Client &amp;client) const</div></div>
 <div class="ttc" id="aclassChannel_html_a3548f4beca40441407a26064c362d9a1"><div class="ttname"><a href="../../d2/d48/classChannel.html#a3548f4beca40441407a26064c362d9a1">Channel::is_operator</a></div><div class="ttdeci">bool is_operator(Client &amp;client) const</div></div>
 <div class="ttc" id="aclassChannel_html_a46a135e1f73f207f52d60eeca40c8bee"><div class="ttname"><a href="../../d2/d48/classChannel.html#a46a135e1f73f207f52d60eeca40c8bee">Channel::is_banned</a></div><div class="ttdeci">bool is_banned(Client &amp;client) const</div></div>
 <div class="ttc" id="aclassChannel_html_a5611cde636a8715de991e255b632365d"><div class="ttname"><a href="../../d2/d48/classChannel.html#a5611cde636a8715de991e255b632365d">Channel::broadcast</a></div><div class="ttdeci">void broadcast(Server &amp;server, ReplyCode replyCode, const std::string &amp;params, Client *sender=NULL, const std::string &amp;trailing=&quot;&quot;) const</div><div class="ttdoc">transfer a message to channel members</div></div>
 <div class="ttc" id="aclassChannel_html_a5949faf470eb240eaa1151fed72830be"><div class="ttname"><a href="../../d2/d48/classChannel.html#a5949faf470eb240eaa1151fed72830be">Channel::make_operator</a></div><div class="ttdeci">ReplyCode make_operator(Client &amp;client)</div><div class="ttdoc">grants op status to the client</div></div>
 <div class="ttc" id="aclassChannel_html_a5bded75956811710f520d80579462569"><div class="ttname"><a href="../../d2/d48/classChannel.html#a5bded75956811710f520d80579462569">Channel::get_nb_members</a></div><div class="ttdeci">size_t get_nb_members() const</div><div class="ttdoc">Get members numbers.</div></div>
+<div class="ttc" id="aclassChannel_html_a5eee004ea51592ecc69d476ffdf9d6ac"><div class="ttname"><a href="../../d2/d48/classChannel.html#a5eee004ea51592ecc69d476ffdf9d6ac">Channel::Channel</a></div><div class="ttdeci">Channel(const std::string &amp;name, const std::string &amp;key=&quot;&quot;)</div><div class="ttdoc">Construct a new Channel object.</div></div>
 <div class="ttc" id="aclassChannel_html_a63c7d54df9aa1c87585c54e6b097b860"><div class="ttname"><a href="../../d2/d48/classChannel.html#a63c7d54df9aa1c87585c54e6b097b860">Channel::operator=</a></div><div class="ttdeci">Channel &amp; operator=(const Channel &amp;other)</div><div class="ttdoc">overload of assign operator</div></div>
 <div class="ttc" id="aclassChannel_html_a6cf536376bc50422b2b090f1c03f5513"><div class="ttname"><a href="../../d2/d48/classChannel.html#a6cf536376bc50422b2b090f1c03f5513">Channel::ban_member</a></div><div class="ttdeci">ReplyCode ban_member(Client &amp;client)</div></div>
-<div class="ttc" id="aclassChannel_html_a6d2d650baccf6debd2b9d4d8814b81c1"><div class="ttname"><a href="../../d2/d48/classChannel.html#a6d2d650baccf6debd2b9d4d8814b81c1">Channel::Channel</a></div><div class="ttdeci">Channel(const std::string &amp;name)</div><div class="ttdoc">Construct a new Channel object.</div></div>
 <div class="ttc" id="aclassChannel_html_a6df9c310ef903283f0ba8d9a6d373d84"><div class="ttname"><a href="../../d2/d48/classChannel.html#a6df9c310ef903283f0ba8d9a6d373d84">Channel::get_name</a></div><div class="ttdeci">const std::string &amp; get_name() const</div><div class="ttdoc">Get the name object.</div></div>
 <div class="ttc" id="aclassChannel_html_a7847341cbdc97859931581ff304a00c3"><div class="ttname"><a href="../../d2/d48/classChannel.html#a7847341cbdc97859931581ff304a00c3">Channel::remove_operator</a></div><div class="ttdeci">void remove_operator(Client &amp;client)</div><div class="ttdoc">removes op status from client</div></div>
 <div class="ttc" id="aclassChannel_html_a80d4a0446cb43202b02b79198e34e6a7"><div class="ttname"><a href="../../d2/d48/classChannel.html#a80d4a0446cb43202b02b79198e34e6a7">Channel::set_user_limit</a></div><div class="ttdeci">void set_user_limit(int limit)</div><div class="ttdoc">Set the user limit object.</div></div>
@@ -416,9 +423,10 @@ $(function(){initNavTree('d7/d42/Channel_8hpp_source.html','../../',''); });
 <div class="ttc" id="aclassChannel_html_ae2ef9c719855c202f8209d1321a099b8"><div class="ttname"><a href="../../d2/d48/classChannel.html#ae2ef9c719855c202f8209d1321a099b8">Channel::add_mode</a></div><div class="ttdeci">void add_mode(unsigned short mode)</div><div class="ttdoc">activate a mode (among k, i, l, t)</div></div>
 <div class="ttc" id="aclassChannel_html_aed7e6684fe7fe2edbde91a7ce6206a83"><div class="ttname"><a href="../../d2/d48/classChannel.html#aed7e6684fe7fe2edbde91a7ce6206a83">Channel::get_mode</a></div><div class="ttdeci">unsigned short get_mode() const</div><div class="ttdoc">Get the mode as a short value.</div></div>
 <div class="ttc" id="aclassChannel_html_aee0d9f7bd0995aa35688cf139052eee2"><div class="ttname"><a href="../../d2/d48/classChannel.html#aee0d9f7bd0995aa35688cf139052eee2">Channel::is_topic_change_restricted</a></div><div class="ttdeci">bool is_topic_change_restricted() const</div></div>
+<div class="ttc" id="aclassChannel_html_af0cbced6265719e3e92156ce828d0962"><div class="ttname"><a href="../../d2/d48/classChannel.html#af0cbced6265719e3e92156ce828d0962">Channel::remove_from_invited_list</a></div><div class="ttdeci">bool remove_from_invited_list(Client &amp;client)</div></div>
 <div class="ttc" id="aclassChannel_html_af649ff0e4381291b608813b35f998047"><div class="ttname"><a href="../../d2/d48/classChannel.html#af649ff0e4381291b608813b35f998047">Channel::~Channel</a></div><div class="ttdeci">virtual ~Channel()</div><div class="ttdoc">Destroy the Channel object.</div></div>
 <div class="ttc" id="aclassClient_html"><div class="ttname"><a href="../../d1/d37/classClient.html">Client</a></div><div class="ttdoc">represents a Client interacting with the server</div><div class="ttdef"><b>Definition</b> <a href="../../d3/d8e/Client_8hpp_source.html#l00061">Client.hpp:62</a></div></div>
-<div class="ttc" id="aclassServer_html"><div class="ttname"><a href="../../db/d00/classServer.html">Server</a></div><div class="ttdef"><b>Definition</b> <a href="../../de/d3d/Server_8hpp_source.html#l00027">Server.hpp:28</a></div></div>
+<div class="ttc" id="aclassServer_html"><div class="ttname"><a href="../../db/d00/classServer.html">Server</a></div><div class="ttdoc">Ser.</div><div class="ttdef"><b>Definition</b> <a href="../../de/d3d/Server_8hpp_source.html#l00036">Server.hpp:37</a></div></div>
 <div class="ttc" id="areply__codes_8hpp_html_a686bb12efcc784d36f30d3528bdcdf08"><div class="ttname"><a href="../../d8/d9c/reply__codes_8hpp.html#a686bb12efcc784d36f30d3528bdcdf08">ReplyCode</a></div><div class="ttdeci">ReplyCode</div><div class="ttdoc">https://datatracker.ietf.org/doc/html/rfc2812#section-5</div><div class="ttdef"><b>Definition</b> <a href="../../d8/d9c/reply__codes_8hpp_source.html#l00005">reply_codes.hpp:5</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->

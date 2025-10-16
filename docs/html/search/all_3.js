@@ -7,7 +7,8 @@ var searchData=
   ['detail_4',['DETAIL',['../d9/d11/Logger_8hpp.html#aca1fd1d8935433e6ba2e3918214e07f9a60f90faa67c21da265a836d140fed257',1,'Logger.hpp']]],
   ['detail_5',['detail',['../db/d67/classLogger.html#a370c08818fa1ade4503c40ce5d0456a8',1,'Logger']]],
   ['digits_6',['digits',['../d5/d67/Mode_8hpp.html#a3372ec597be7dacfe2bce5b63b4587c6',1,'Mode.hpp']]],
-  ['do_5freceive_7',['do_receive',['../dc/d5f/classTcpSocket.html#ad225a5a02b55abaa0eaa1f5cde355c14',1,'TcpSocket']]],
-  ['do_5fsend_8',['do_send',['../dc/d5f/classTcpSocket.html#a08c36577b30172967fd5f7ca00efc83a',1,'TcpSocket']]],
-  ['dynamic_5fport_5fmin_9',['DYNAMIC_PORT_MIN',['../df/dd7/consts_8hpp.html#a42f8d93517733e3622cbcfbbc363b717',1,'consts.hpp']]]
+  ['display_5ftopic_7',['display_topic',['../d4/dd2/classJoin.html#a0fd68e71ae94087db936a7068d480bfe',1,'Join']]],
+  ['do_5freceive_8',['do_receive',['../dc/d5f/classTcpSocket.html#ad225a5a02b55abaa0eaa1f5cde355c14',1,'TcpSocket']]],
+  ['do_5fsend_9',['do_send',['../dc/d5f/classTcpSocket.html#a08c36577b30172967fd5f7ca00efc83a',1,'TcpSocket']]],
+  ['dynamic_5fport_5fmin_10',['DYNAMIC_PORT_MIN',['../df/dd7/consts_8hpp.html#a42f8d93517733e3622cbcfbbc363b717',1,'consts.hpp']]]
 ];

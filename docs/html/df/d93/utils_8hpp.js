@@ -8,6 +8,7 @@ var utils_8hpp =
     [ "check_port", "df/d93/utils_8hpp.html#a0bd908cfc8cc730a93b9336b04c5fc2e", null ],
     [ "utils::code_to_str", "d6/d84/namespaceutils.html#ab789ca06d079bad361848f87e22790df", null ],
     [ "utils::event_to_str", "d6/d84/namespaceutils.html#a3206ef24404f9b4d150a8fd4f25ad235", null ],
+    [ "is_char_of", "df/d93/utils_8hpp.html#a5200ab2292d936f2abe6e80b521b4847", null ],
     [ "utils::is_matching_pattern", "d6/d84/namespaceutils.html#ab4e2fd5946db97b1b23265c75664ffaf", null ],
     [ "is_special_abnf", "df/d93/utils_8hpp.html#a788dcc69ee0a44a68f175f087ee4c471", null ],
     [ "utils::safe_at", "d6/d84/namespaceutils.html#a3779643ab6a5de011288e71a42c90f7e", null ],

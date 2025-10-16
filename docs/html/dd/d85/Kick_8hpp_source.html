@@ -93,48 +93,93 @@ $(function(){initNavTree('dd/d85/Kick_8hpp_source.html','../../',''); });
   <div class="headertitle"><div class="title">Kick.hpp</div></div>
 </div><!--header-->
 <div class="contents">
-<a href="../../dd/d85/Kick_8hpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="preprocessor">#</span><span class="preprocessor">ifndef</span> <span class="preprocessor">KICK_HPP</span></div>
-<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="preprocessor">#</span><span class="preprocessor">define</span> <span class="preprocessor">KICK_HPP</span></div>
-<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span> </div>
-<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#</span><span class="preprocessor">include</span> <a class="code" href="../../de/dd6/ICommand_8hpp.html">&quot;ICommand.hpp&quot;</a></div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#</span><span class="preprocessor">include</span> <a class="code" href="../../d8/d9c/reply__codes_8hpp.html">&quot;reply_codes.hpp&quot;</a></div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span> </div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#</span><span class="preprocessor">include</span> <span class="preprocessor">&lt;</span><span class="preprocessor">string</span><span class="preprocessor">&gt;</span></div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#</span><span class="preprocessor">include</span> <span class="preprocessor">&lt;</span><span class="preprocessor">vector</span><span class="preprocessor">&gt;</span></div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span> </div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="keyword">class</span> <a class="code hl_class" href="../../d1/d37/classClient.html">Client</a>;</div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="keyword">class</span> <a class="code hl_class" href="../../db/d00/classServer.html">Server</a>;</div>
+<a href="../../dd/d85/Kick_8hpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">/**</span></div>
+<div class="line"><span class="lineno">    2</span><span class="comment"> * @file Kick.hpp</span></div>
+<div class="line"><span class="lineno">    3</span><span class="comment"> * @brief Implements IRC KICK command</span></div>
+<div class="line"><span class="lineno">    4</span><span class="comment"> * @version 0.1</span></div>
+<div class="line"><span class="lineno">    5</span><span class="comment"> * @date 2025-10-16</span></div>
+<div class="line"><span class="lineno">    6</span><span class="comment"> *</span></div>
+<div class="line"><span class="lineno">    7</span><span class="comment"> * @copyright Copyright (c) 2025</span></div>
+<div class="line"><span class="lineno">    8</span><span class="comment"> *</span></div>
+<div class="line"><span class="lineno">    9</span><span class="comment"> */</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#</span><span class="preprocessor">ifndef</span> <span class="preprocessor">KICK_HPP</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#</span><span class="preprocessor">define</span> <span class="preprocessor">KICK_HPP</span></div>
 <div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
-<div class="foldopen" id="foldopen00013" data-start="{" data-end="};">
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno"><a class="line" href="../../de/dcb/classKick.html">   13</a></span><span class="keyword">class</span> <a class="code hl_class" href="../../de/dcb/classKick.html">Kick</a> : <span class="keyword">public</span> <a class="code hl_class" href="../../db/da2/classICommand.html">ICommand</a></div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>{</div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>  <span class="keyword">public</span>:</div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno"><a class="line" href="../../de/dcb/classKick.html#ad8efabee884b2de42601700425347a7e">   16</a></span>    <a class="code hl_function" href="../../de/dcb/classKick.html#ad8efabee884b2de42601700425347a7e">Kick</a>(<span class="keyword">const</span> std::vector&lt;std::string&gt;&amp; args);</div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno"><a class="line" href="../../de/dcb/classKick.html#ac025dff6aa47ddf96845faa1899c00b1">   17</a></span>    ~<a class="code hl_function" href="../../de/dcb/classKick.html#ac025dff6aa47ddf96845faa1899c00b1">Kick</a>();</div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="preprocessor">#</span><span class="preprocessor">include</span> <a class="code" href="../../de/dd6/ICommand_8hpp.html" title="command interface">&quot;ICommand.hpp&quot;</a></div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="preprocessor">#</span><span class="preprocessor">include</span> <a class="code" href="../../d8/d9c/reply__codes_8hpp.html">&quot;reply_codes.hpp&quot;</a></div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="preprocessor">#</span><span class="preprocessor">include</span> <span class="preprocessor">&lt;</span><span class="preprocessor">string</span><span class="preprocessor">&gt;</span></div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="preprocessor">#</span><span class="preprocessor">include</span> <span class="preprocessor">&lt;</span><span class="preprocessor">vector</span><span class="preprocessor">&gt;</span></div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span> </div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno"><a class="line" href="../../de/dcb/classKick.html#af56167bc38383cd421b6b56ba4a23c3e">   19</a></span>    <span class="keywordtype">void</span>             <a class="code hl_function" href="../../de/dcb/classKick.html#af56167bc38383cd421b6b56ba4a23c3e">execute</a>(<a class="code hl_class" href="../../db/d00/classServer.html">Server</a>&amp; server, <a class="code hl_class" href="../../d1/d37/classClient.html">Client</a>&amp; client);</div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno"><a class="line" href="../../de/dcb/classKick.html#acf2a1b9befbfa03a414ff8c6cd0b1501">   20</a></span>    <span class="keyword">static</span> <a class="code hl_enumeration" href="../../d8/d9c/reply__codes_8hpp.html#a686bb12efcc784d36f30d3528bdcdf08">ReplyCode</a> <a class="code hl_function" href="../../de/dcb/classKick.html#acf2a1b9befbfa03a414ff8c6cd0b1501">check_args</a>(<a class="code hl_class" href="../../db/d00/classServer.html">Server</a>&amp; server, <a class="code hl_class" href="../../d1/d37/classClient.html">Client</a>&amp; client, std::vector&lt;std::string&gt;&amp; args);</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="keyword">class</span> <a class="code hl_class" href="../../d1/d37/classClient.html">Client</a>;</div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="keyword">class</span> <a class="code hl_class" href="../../db/d00/classServer.html">Server</a>;</div>
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span> </div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>  <span class="keyword">private</span>:</div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>    std::vector&lt;std::string&gt; _args;</div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    <span class="comment">// std::vector&lt;std::string&gt; _channelsNames;</span></div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    <span class="comment">// std::vector&lt;std::string&gt; _userNames;</span></div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span> </div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>    Kick();</div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    Kick(<span class="keyword">const</span> <a class="code hl_class" href="../../de/dcb/classKick.html">Kick</a>&amp; other);</div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>    <a class="code hl_class" href="../../de/dcb/classKick.html">Kick</a>&amp; operator=(<span class="keyword">const</span> <a class="code hl_class" href="../../de/dcb/classKick.html">Kick</a>&amp; other);</div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>};</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="comment">/**</span></div>
+<div class="line"><span class="lineno"><a class="line" href="../../dc/d61/classKICK.html">   23</a></span><span class="comment"> * @class KICK</span></div>
+<div class="line"><span class="lineno">   24</span><span class="comment"> * @brief Handler for IRC KICK</span></div>
+<div class="line"><span class="lineno">   25</span><span class="comment"> * @details This command is used to force a member to leave channel</span></div>
+<div class="line"><span class="lineno">   26</span><span class="comment"> */</span></div>
+<div class="foldopen" id="foldopen00027" data-start="{" data-end="};">
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno"><a class="line" href="../../de/dcb/classKick.html">   27</a></span><span class="keyword">class</span> <a class="code hl_class" href="../../de/dcb/classKick.html">Kick</a> : <span class="keyword">public</span> <a class="code hl_class" href="../../db/da2/classICommand.html">ICommand</a></div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>{</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>  <span class="keyword">public</span>:</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>    <span class="comment">/**</span></div>
+<div class="line"><span class="lineno">   31</span><span class="comment">     * @brief Construct a new Kick object</span></div>
+<div class="line"><span class="lineno">   32</span><span class="comment">     *</span></div>
+<div class="line"><span class="lineno">   33</span><span class="comment">     * @param args</span></div>
+<div class="line"><span class="lineno">   34</span><span class="comment">     */</span></div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno"><a class="line" href="../../de/dcb/classKick.html#ad8efabee884b2de42601700425347a7e">   35</a></span>    <a class="code hl_function" href="../../de/dcb/classKick.html#ad8efabee884b2de42601700425347a7e">Kick</a>(<span class="keyword">const</span> std::vector&lt;std::string&gt;&amp; args);</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>    <span class="comment">/**</span></div>
+<div class="line"><span class="lineno">   37</span><span class="comment">     * @brief Destroy the Kick object</span></div>
+<div class="line"><span class="lineno">   38</span><span class="comment">     *</span></div>
+<div class="line"><span class="lineno">   39</span><span class="comment">     */</span></div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno"><a class="line" href="../../de/dcb/classKick.html#ac025dff6aa47ddf96845faa1899c00b1">   40</a></span>    ~<a class="code hl_function" href="../../de/dcb/classKick.html#ac025dff6aa47ddf96845faa1899c00b1">Kick</a>();</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span> </div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    <span class="comment">/**</span></div>
+<div class="line"><span class="lineno">   43</span><span class="comment">     * @brief Force part a channel</span></div>
+<div class="line"><span class="lineno">   44</span><span class="comment">     * @details</span></div>
+<div class="line"><span class="lineno">   45</span><span class="comment">     * - loop over channels :</span></div>
+<div class="line"><span class="lineno">   46</span><span class="comment">     *   - check for invalid channel name -&gt; ERR_BADCHANMASK</span></div>
+<div class="line"><span class="lineno">   47</span><span class="comment">     *   - check for existing channel -&gt; ERR_NOSUCHCHANNEL</span></div>
+<div class="line"><span class="lineno">   48</span><span class="comment">     *   - check for op privilege -&gt; ERR_CHANOPRIVSNEEDED</span></div>
+<div class="line"><span class="lineno">   49</span><span class="comment">     *   - inner loop over channel members :</span></div>
+<div class="line"><span class="lineno">   50</span><span class="comment">     *      - check for user presence -&gt; ERR_USERNOTINCHANNEL</span></div>
+<div class="line"><span class="lineno">   51</span><span class="comment">     *      - execute : remove - broadcast + direct notice</span></div>
+<div class="line"><span class="lineno">   52</span><span class="comment">     * @param server</span></div>
+<div class="line"><span class="lineno">   53</span><span class="comment">     * @param client</span></div>
+<div class="line"><span class="lineno">   54</span><span class="comment">     * @warning can send ERR_BADCHANMASK, ERR_NOSUCHCHANNEL, ERR_CHANOPRIVSNEEDED, ERR_USERNOTINCHANNEL</span></div>
+<div class="line"><span class="lineno">   55</span><span class="comment">     */</span></div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno"><a class="line" href="../../de/dcb/classKick.html#af56167bc38383cd421b6b56ba4a23c3e">   56</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="../../de/dcb/classKick.html#af56167bc38383cd421b6b56ba4a23c3e">execute</a>(<a class="code hl_class" href="../../db/d00/classServer.html">Server</a>&amp; server, <a class="code hl_class" href="../../d1/d37/classClient.html">Client</a>&amp; client);</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    <span class="comment">/**</span></div>
+<div class="line"><span class="lineno">   58</span><span class="comment">     * @brief checks syntaxic validity of args</span></div>
+<div class="line"><span class="lineno">   59</span><span class="comment">     * @details cf. [RFC specs](https://datatracker.ietf.org/doc/html/rfc2812#section-3.2.8)</span></div>
+<div class="line"><span class="lineno">   60</span><span class="comment">     * - one or many channels, comma separated</span></div>
+<div class="line"><span class="lineno">   61</span><span class="comment">     * - one or many users, comma separated</span></div>
+<div class="line"><span class="lineno">   62</span><span class="comment">     * @param server</span></div>
+<div class="line"><span class="lineno">   63</span><span class="comment">     * @param client</span></div>
+<div class="line"><span class="lineno">   64</span><span class="comment">     * @param args should match `&lt;channel&gt; *( &quot;,&quot; &lt;channel&gt; ) &lt;user&gt; *( &quot;,&quot; &lt;user&gt; ) [&lt;comment&gt;]`</span></div>
+<div class="line"><span class="lineno">   65</span><span class="comment">     * @return #ReplyCode to be used in #CommandFactory</span></div>
+<div class="line"><span class="lineno">   66</span><span class="comment">     */</span></div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno"><a class="line" href="../../de/dcb/classKick.html#acf2a1b9befbfa03a414ff8c6cd0b1501">   67</a></span>    <span class="keyword">static</span> <a class="code hl_enumeration" href="../../d8/d9c/reply__codes_8hpp.html#a686bb12efcc784d36f30d3528bdcdf08">ReplyCode</a> <a class="code hl_function" href="../../de/dcb/classKick.html#acf2a1b9befbfa03a414ff8c6cd0b1501">check_args</a>(<a class="code hl_class" href="../../db/d00/classServer.html">Server</a>&amp; server, <a class="code hl_class" href="../../d1/d37/classClient.html">Client</a>&amp; client, std::vector&lt;std::string&gt;&amp; args);</div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span> </div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>  <span class="keyword">private</span>:</div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>    std::vector&lt;std::string&gt; _args;</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span> </div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>    Kick();</div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>    Kick(<span class="keyword">const</span> <a class="code hl_class" href="../../de/dcb/classKick.html">Kick</a>&amp; other);</div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>    <a class="code hl_class" href="../../de/dcb/classKick.html">Kick</a>&amp; operator=(<span class="keyword">const</span> <a class="code hl_class" href="../../de/dcb/classKick.html">Kick</a>&amp; other);</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>};</div>
 </div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span> </div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span><span class="preprocessor">#</span><span class="preprocessor">endif</span></div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span> </div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span><span class="preprocessor">#</span><span class="preprocessor">endif</span></div>
 <div class="ttc" id="aclassClient_html"><div class="ttname"><a href="../../d1/d37/classClient.html">Client</a></div><div class="ttdoc">represents a Client interacting with the server</div><div class="ttdef"><b>Definition</b> <a href="../../d3/d8e/Client_8hpp_source.html#l00061">Client.hpp:62</a></div></div>
-<div class="ttc" id="aclassICommand_html"><div class="ttname"><a href="../../db/da2/classICommand.html">ICommand</a></div><div class="ttdef"><b>Definition</b> <a href="../../de/dd6/ICommand_8hpp_source.html#l00008">ICommand.hpp:9</a></div></div>
-<div class="ttc" id="aclassKick_html"><div class="ttname"><a href="../../de/dcb/classKick.html">Kick</a></div><div class="ttdef"><b>Definition</b> <a href="#l00013">Kick.hpp:14</a></div></div>
-<div class="ttc" id="aclassKick_html_ac025dff6aa47ddf96845faa1899c00b1"><div class="ttname"><a href="../../de/dcb/classKick.html#ac025dff6aa47ddf96845faa1899c00b1">Kick::~Kick</a></div><div class="ttdeci">~Kick()</div></div>
-<div class="ttc" id="aclassKick_html_acf2a1b9befbfa03a414ff8c6cd0b1501"><div class="ttname"><a href="../../de/dcb/classKick.html#acf2a1b9befbfa03a414ff8c6cd0b1501">Kick::check_args</a></div><div class="ttdeci">static ReplyCode check_args(Server &amp;server, Client &amp;client, std::vector&lt; std::string &gt; &amp;args)</div></div>
-<div class="ttc" id="aclassKick_html_ad8efabee884b2de42601700425347a7e"><div class="ttname"><a href="../../de/dcb/classKick.html#ad8efabee884b2de42601700425347a7e">Kick::Kick</a></div><div class="ttdeci">Kick(const std::vector&lt; std::string &gt; &amp;args)</div></div>
-<div class="ttc" id="aclassKick_html_af56167bc38383cd421b6b56ba4a23c3e"><div class="ttname"><a href="../../de/dcb/classKick.html#af56167bc38383cd421b6b56ba4a23c3e">Kick::execute</a></div><div class="ttdeci">void execute(Server &amp;server, Client &amp;client)</div></div>
-<div class="ttc" id="aclassServer_html"><div class="ttname"><a href="../../db/d00/classServer.html">Server</a></div><div class="ttdef"><b>Definition</b> <a href="../../de/d3d/Server_8hpp_source.html#l00027">Server.hpp:28</a></div></div>
+<div class="ttc" id="aclassICommand_html"><div class="ttname"><a href="../../db/da2/classICommand.html">ICommand</a></div><div class="ttdoc">Interface providing an execute behavior for all commands.</div><div class="ttdef"><b>Definition</b> <a href="../../de/dd6/ICommand_8hpp_source.html#l00022">ICommand.hpp:23</a></div></div>
+<div class="ttc" id="aclassKick_html"><div class="ttname"><a href="../../de/dcb/classKick.html">Kick</a></div><div class="ttdef"><b>Definition</b> <a href="#l00027">Kick.hpp:28</a></div></div>
+<div class="ttc" id="aclassKick_html_ac025dff6aa47ddf96845faa1899c00b1"><div class="ttname"><a href="../../de/dcb/classKick.html#ac025dff6aa47ddf96845faa1899c00b1">Kick::~Kick</a></div><div class="ttdeci">~Kick()</div><div class="ttdoc">Destroy the Kick object.</div></div>
+<div class="ttc" id="aclassKick_html_acf2a1b9befbfa03a414ff8c6cd0b1501"><div class="ttname"><a href="../../de/dcb/classKick.html#acf2a1b9befbfa03a414ff8c6cd0b1501">Kick::check_args</a></div><div class="ttdeci">static ReplyCode check_args(Server &amp;server, Client &amp;client, std::vector&lt; std::string &gt; &amp;args)</div><div class="ttdoc">checks syntaxic validity of args</div></div>
+<div class="ttc" id="aclassKick_html_ad8efabee884b2de42601700425347a7e"><div class="ttname"><a href="../../de/dcb/classKick.html#ad8efabee884b2de42601700425347a7e">Kick::Kick</a></div><div class="ttdeci">Kick(const std::vector&lt; std::string &gt; &amp;args)</div><div class="ttdoc">Construct a new Kick object.</div></div>
+<div class="ttc" id="aclassKick_html_af56167bc38383cd421b6b56ba4a23c3e"><div class="ttname"><a href="../../de/dcb/classKick.html#af56167bc38383cd421b6b56ba4a23c3e">Kick::execute</a></div><div class="ttdeci">void execute(Server &amp;server, Client &amp;client)</div><div class="ttdoc">Force part a channel.</div></div>
+<div class="ttc" id="aclassServer_html"><div class="ttname"><a href="../../db/d00/classServer.html">Server</a></div><div class="ttdoc">Ser.</div><div class="ttdef"><b>Definition</b> <a href="../../de/d3d/Server_8hpp_source.html#l00036">Server.hpp:37</a></div></div>
 <div class="ttc" id="areply__codes_8hpp_html_a686bb12efcc784d36f30d3528bdcdf08"><div class="ttname"><a href="../../d8/d9c/reply__codes_8hpp.html#a686bb12efcc784d36f30d3528bdcdf08">ReplyCode</a></div><div class="ttdeci">ReplyCode</div><div class="ttdoc">https://datatracker.ietf.org/doc/html/rfc2812#section-5</div><div class="ttdef"><b>Definition</b> <a href="../../d8/d9c/reply__codes_8hpp_source.html#l00005">reply_codes.hpp:5</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->

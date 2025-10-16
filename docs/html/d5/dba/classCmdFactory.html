@@ -94,17 +94,21 @@ $(function(){initNavTree('d5/dba/classCmdFactory.html','../../','d9/ddc/classCmd
 </div><!--header-->
 <div class="contents">
 
+<p>Generates a new Command among those implemented by the server.  
+ <a href="#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="../../d2/da4/CmdFactory_8hpp_source.html">CmdFactory.hpp</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-methods" class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a9a2157e7942980562d796714c825c080" id="r_a9a2157e7942980562d796714c825c080"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9a2157e7942980562d796714c825c080">CmdFactory</a> (void)</td></tr>
-<tr class="memitem:ab7ee8677d328576c49e7406bf57eaa9c" id="r_ab7ee8677d328576c49e7406bf57eaa9c"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab7ee8677d328576c49e7406bf57eaa9c">CmdFactory</a> (<a class="el" href="../../db/d00/classServer.html">Server</a> &amp;server, <a class="el" href="../../d1/d37/classClient.html">Client</a> &amp;client)</td></tr>
-<tr class="memitem:a69ebaa6cbc693b48bb0f8e7328ea7138" id="r_a69ebaa6cbc693b48bb0f8e7328ea7138"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a69ebaa6cbc693b48bb0f8e7328ea7138">CmdFactory</a> (const <a class="el" href="../../d5/dba/classCmdFactory.html">CmdFactory</a> &amp;other)</td></tr>
-<tr class="memitem:aa7ac12ff9d3845bdcb05fd56fba76f11" id="r_aa7ac12ff9d3845bdcb05fd56fba76f11"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d5/dba/classCmdFactory.html">CmdFactory</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa7ac12ff9d3845bdcb05fd56fba76f11">operator=</a> (const <a class="el" href="../../d5/dba/classCmdFactory.html">CmdFactory</a> &amp;other)</td></tr>
+<tr class="memdesc:a9a2157e7942980562d796714c825c080"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a new Cmd Factory object.  <br /></td></tr>
 <tr class="memitem:a92b4797d41b9a0ee500045f583b65cfc" id="r_a92b4797d41b9a0ee500045f583b65cfc"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a92b4797d41b9a0ee500045f583b65cfc">~CmdFactory</a> ()</td></tr>
+<tr class="memdesc:a92b4797d41b9a0ee500045f583b65cfc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy the Cmd Factory object.  <br /></td></tr>
 <tr class="memitem:a13eb454aeaa1676104a00e2a42da4b6f" id="r_a13eb454aeaa1676104a00e2a42da4b6f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a13eb454aeaa1676104a00e2a42da4b6f">check_in</a> (<a class="el" href="../../d1/d37/classClient.html">Client</a> &amp;client, std::string &amp;command)</td></tr>
+<tr class="memdesc:a13eb454aeaa1676104a00e2a42da4b6f"><td class="mdescLeft">&#160;</td><td class="mdescRight">checks client status against detected command  <br /></td></tr>
 <tr class="memitem:abafcce7b9f0b5a0d107390007d046e33" id="r_abafcce7b9f0b5a0d107390007d046e33"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../db/da2/classICommand.html">ICommand</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abafcce7b9f0b5a0d107390007d046e33">make_command</a> (<a class="el" href="../../db/d00/classServer.html">Server</a> &amp;server, <a class="el" href="../../d1/d37/classClient.html">Client</a> &amp;client, std::string &amp;params)</td></tr>
+<tr class="memdesc:abafcce7b9f0b5a0d107390007d046e33"><td class="mdescLeft">&#160;</td><td class="mdescRight">main command in charge of  <br /></td></tr>
 <tr class="memitem:a4d520e89fc6314e8b294082a87c90b86" id="r_a4d520e89fc6314e8b294082a87c90b86"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../db/da2/classICommand.html">ICommand</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4d520e89fc6314e8b294082a87c90b86">user_cmd</a> (<a class="el" href="../../db/d00/classServer.html">Server</a> &amp;server, <a class="el" href="../../d1/d37/classClient.html">Client</a> &amp;client, std::string &amp;params)</td></tr>
 <tr class="memitem:a5361a99b769a2a067129968cebb19d2b" id="r_a5361a99b769a2a067129968cebb19d2b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../db/da2/classICommand.html">ICommand</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5361a99b769a2a067129968cebb19d2b">pass_cmd</a> (<a class="el" href="../../db/d00/classServer.html">Server</a> &amp;server, <a class="el" href="../../d1/d37/classClient.html">Client</a> &amp;client, std::string &amp;params)</td></tr>
 <tr class="memitem:a66b40bc38b9a16badf6a7c001b9f1048" id="r_a66b40bc38b9a16badf6a7c001b9f1048"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../db/da2/classICommand.html">ICommand</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a66b40bc38b9a16badf6a7c001b9f1048">nick_cmd</a> (<a class="el" href="../../db/d00/classServer.html">Server</a> &amp;server, <a class="el" href="../../d1/d37/classClient.html">Client</a> &amp;client, std::string &amp;params)</td></tr>
@@ -122,11 +126,16 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a6407744de9ad386176a865921e3c258f" id="r_a6407744de9ad386176a865921e3c258f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../db/da2/classICommand.html">ICommand</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6407744de9ad386176a865921e3c258f">ping_cmd</a> (<a class="el" href="../../db/d00/classServer.html">Server</a> &amp;server, <a class="el" href="../../d1/d37/classClient.html">Client</a> &amp;client, std::string &amp;params)</td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
-<div class="textblock">
-<p class="definition">Definition at line <a class="el" href="../../d2/da4/CmdFactory_8hpp_source.html#l00010">10</a> of file <a class="el" href="../../d2/da4/CmdFactory_8hpp_source.html">CmdFactory.hpp</a>.</p>
+<div class="textblock"><p>Generates a new Command among those implemented by the server. </p>
+<ul>
+<li>perform checks on <a class="el" href="../../d1/d37/classClient.html" title="represents a Client interacting with the server">Client</a> status</li>
+<li>delegate to a series of helper functions arguments checking and instanciation </li>
+</ul>
+
+<p class="definition">Definition at line <a class="el" href="../../d2/da4/CmdFactory_8hpp_source.html#l00025">25</a> of file <a class="el" href="../../d2/da4/CmdFactory_8hpp_source.html">CmdFactory.hpp</a>.</p>
 </div><a name="doc-constructors" id="doc-constructors"></a><h2 id="header-doc-constructors" class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a9a2157e7942980562d796714c825c080" name="a9a2157e7942980562d796714c825c080"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9a2157e7942980562d796714c825c080">&#9670;&#160;</a></span>CmdFactory() <span class="overload">[1/3]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a9a2157e7942980562d796714c825c080">&#9670;&#160;</a></span>CmdFactory()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -140,43 +149,8 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-</div>
-</div>
-<a id="ab7ee8677d328576c49e7406bf57eaa9c" name="ab7ee8677d328576c49e7406bf57eaa9c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab7ee8677d328576c49e7406bf57eaa9c">&#9670;&#160;</a></span>CmdFactory() <span class="overload">[2/3]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">CmdFactory::CmdFactory </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="../../db/d00/classServer.html">Server</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>server</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="../../d1/d37/classClient.html">Client</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>client</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a69ebaa6cbc693b48bb0f8e7328ea7138" name="a69ebaa6cbc693b48bb0f8e7328ea7138"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a69ebaa6cbc693b48bb0f8e7328ea7138">&#9670;&#160;</a></span>CmdFactory() <span class="overload">[3/3]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">CmdFactory::CmdFactory </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="../../d5/dba/classCmdFactory.html">CmdFactory</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>other</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
+<p>Construct a new Cmd Factory object. </p>
+<p>is instanciated in <a class="el" href="../../db/d00/classServer.html" title="Ser.">Server</a> </p>
 
 </div>
 </div>
@@ -194,6 +168,8 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Destroy the Cmd Factory object. </p>
 
 </div>
 </div>
@@ -216,6 +192,23 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>checks client status against detected command </p>
+<p>when client is ..</p><ul>
+<li><a class="el" href="../../d3/d8e/Client_8hpp.html#adc21e77f8bf615af61f6ce7f8edaf02c" title="Represents the unauthenticated state of a client.">UNAUTHENTICATED</a> only <a class="el" href="../../d5/d01/classPass.html">Pass</a> and #Quitcan be handled</li>
+<li><a class="el" href="../../d3/d8e/Client_8hpp.html#a1f04810299c7d2ac8c188f67c8f0a16a" title="Represents the authenticated state of a client.">AUTHENTICATED</a> only <a class="el" href="../../d5/d01/classPass.html">Pass</a>, <a class="el" href="../../db/dd5/classQuit.html" title="Handler for IRC QUIT.">Quit</a>, <a class="el" href="../../d1/d47/classNick.html">Nick</a> and <a class="el" href="../../d9/dc0/classUser.html">User</a> can be handled</li>
+<li><a class="el" href="../../d3/d8e/Client_8hpp.html#a7b988cd042236329a1064f1d896998f7" title="Represents the registered state of a client.">REGISTERED</a> all commands can be handled <dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">client</td><td></td></tr>
+    <tr><td class="paramname">command</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if command is usable in client state </dd>
+<dd>
+false otherwise </dd></dl>
+</li>
+</ul>
 
 </div>
 </div>
@@ -321,6 +314,22 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>main command in charge of </p>
+<ul>
+<li>checking command availability</li>
+<li>calling adequate helper command <dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">server</td><td></td></tr>
+    <tr><td class="paramname">client</td><td></td></tr>
+    <tr><td class="paramname">params</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>ICommand* </dd></dl>
+<dl class="section warning"><dt>Warning</dt><dd>can send ERR_NOTREGISTERED, ERR_UNKNOWNCOMMAND </dd></dl>
+</li>
+</ul>
+
 </div>
 </div>
 <a id="acf135ae9460b8dba9b701e2a08d4814e" name="acf135ae9460b8dba9b701e2a08d4814e"></a>
@@ -421,23 +430,6 @@ Public Member Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>params</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="aa7ac12ff9d3845bdcb05fd56fba76f11" name="aa7ac12ff9d3845bdcb05fd56fba76f11"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa7ac12ff9d3845bdcb05fd56fba76f11">&#9670;&#160;</a></span>operator=()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="../../d5/dba/classCmdFactory.html">CmdFactory</a> &amp; CmdFactory::operator= </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="../../d5/dba/classCmdFactory.html">CmdFactory</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>other</em></span></td><td>)</td>
-          <td></td>
         </tr>
       </table>
 </div><div class="memdoc">

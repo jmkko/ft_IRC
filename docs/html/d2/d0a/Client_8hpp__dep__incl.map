@@ -1,6 +1,6 @@
 <map id="Client.hpp" name="Client.hpp">
 <area shape="rect" id="Node000001" title=" " alt="" coords="321,5,408,33"/>
-<area shape="rect" id="Node000002" href="$d0/d9f/Invite_8hpp.html" title=" " alt="" coords="5,308,92,336"/>
+<area shape="rect" id="Node000002" href="$d0/d9f/Invite_8hpp.html" title="Implements IRC INVITE command." alt="" coords="5,308,92,336"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="307,32,246,50,216,65,189,83,161,109,137,140,97,205,70,265,55,308,50,307,65,263,93,202,132,136,157,106,185,79,213,60,244,45,305,27"/>
 <area shape="rect" id="Node000003" href="$da/dac/Join_8hpp.html" title=" " alt="" coords="478,81,552,109"/>
 <area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="406,38,490,78,487,83,404,42"/>
@@ -8,7 +8,7 @@
 <area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="332,44,268,83,265,78,329,39"/>
 <area shape="rect" id="Node000009" href="$df/d93/Who_8hpp.html" title="Implements IRC WHO command." alt="" coords="345,308,424,336"/>
 <area shape="poly" id="edge13_Node000001_Node000009" title=" " alt="" coords="364,49,360,143,361,201,367,259,381,307,376,308,362,261,356,201,354,143,359,48"/>
-<area shape="rect" id="Node000010" href="$de/d3e/Motd_8hpp.html" title=" " alt="" coords="377,232,459,260"/>
+<area shape="rect" id="Node000010" href="$de/d3e/Motd_8hpp.html" title="Implements IRC MOTD command." alt="" coords="377,232,459,260"/>
 <area shape="poly" id="edge12_Node000001_Node000010" title=" " alt="" coords="374,48,417,231,412,232,368,49"/>
 <area shape="rect" id="Node000011" href="$df/d93/utils_8hpp.html" title=" " alt="" coords="427,157,504,184"/>
 <area shape="poly" id="edge14_Node000001_Node000011" title=" " alt="" coords="385,44,411,79,460,155,456,158,406,83,381,47"/>

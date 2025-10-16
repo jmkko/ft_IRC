@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['well_5fknown_5fport_5fmax_0',['WELL_KNOWN_PORT_MAX',['../df/dd7/consts_8hpp.html#a864afe5a3b4db04b2ee625e6c219a409',1,'consts.hpp']]],
-  ['white_1',['WHITE',['../df/d95/colors_8hpp.html#a87b537f5fa5c109d3c05c13d6b18f382',1,'colors.hpp']]]
+  ['unauthenticated_0',['UNAUTHENTICATED',['../d3/d8e/Client_8hpp.html#adc21e77f8bf615af61f6ce7f8edaf02c',1,'Client.hpp']]],
+  ['upper_5fcustom_5fcode_1',['UPPER_CUSTOM_CODE',['../da/dcb/ReplyHandler_8hpp.html#a6b4cb79649930e3bdff28d076a6e5eec',1,'ReplyHandler.hpp']]],
+  ['users_5fper_5fline_2',['USERS_PER_LINE',['../df/dd7/consts_8hpp.html#a2e70a2729800b507aa7f637ee8a34b78',1,'consts.hpp']]]
 ];

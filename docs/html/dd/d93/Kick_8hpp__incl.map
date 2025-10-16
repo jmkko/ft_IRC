@@ -1,6 +1,6 @@
 <map id="Kick.hpp" name="Kick.hpp">
-<area shape="rect" id="Node000001" title=" " alt="" coords="175,5,252,33"/>
-<area shape="rect" id="Node000002" href="$de/dd6/ICommand_8hpp.html" title=" " alt="" coords="5,81,126,109"/>
+<area shape="rect" id="Node000001" title="Implements IRC KICK command." alt="" coords="175,5,252,33"/>
+<area shape="rect" id="Node000002" href="$de/dd6/ICommand_8hpp.html" title="command interface" alt="" coords="5,81,126,109"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="188,36,106,76,104,71,186,31"/>
 <area shape="rect" id="Node000003" title=" " alt="" coords="82,157,145,184"/>
 <area shape="poly" id="edge5_Node000001_Node000003" title=" " alt="" coords="207,35,133,145,129,142,203,32"/>

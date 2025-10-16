@@ -10,6 +10,7 @@ var annotated_dup =
     [ "ICommand", "db/da2/classICommand.html", "db/da2/classICommand" ],
     [ "Invite", "dc/db9/classInvite.html", "dc/db9/classInvite" ],
     [ "Join", "d4/dd2/classJoin.html", "d4/dd2/classJoin" ],
+    [ "KICK", "dc/d61/classKICK.html", null ],
     [ "Kick", "de/dcb/classKick.html", "de/dcb/classKick" ],
     [ "Logger", "db/d67/classLogger.html", "db/d67/classLogger" ],
     [ "LogManager", "dd/d5d/classLogManager.html", "dd/d5d/classLogManager" ],

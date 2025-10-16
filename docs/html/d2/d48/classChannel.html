@@ -101,8 +101,8 @@ $(function(){initNavTree('d2/d48/classChannel.html','../../','d5/d7f/classChanne
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-methods" class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a6d2d650baccf6debd2b9d4d8814b81c1" id="r_a6d2d650baccf6debd2b9d4d8814b81c1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6d2d650baccf6debd2b9d4d8814b81c1">Channel</a> (const std::string &amp;name)</td></tr>
-<tr class="memdesc:a6d2d650baccf6debd2b9d4d8814b81c1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a new <a class="el" href="../../d2/d48/classChannel.html" title="representing an IRC channel">Channel</a> object.  <br /></td></tr>
+<tr class="memitem:a5eee004ea51592ecc69d476ffdf9d6ac" id="r_a5eee004ea51592ecc69d476ffdf9d6ac"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5eee004ea51592ecc69d476ffdf9d6ac">Channel</a> (const std::string &amp;name, const std::string &amp;key=&quot;&quot;)</td></tr>
+<tr class="memdesc:a5eee004ea51592ecc69d476ffdf9d6ac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a new <a class="el" href="../../d2/d48/classChannel.html" title="representing an IRC channel">Channel</a> object.  <br /></td></tr>
 <tr class="memitem:adde1f556fad9b1a222a5875df8566a6a" id="r_adde1f556fad9b1a222a5875df8566a6a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adde1f556fad9b1a222a5875df8566a6a">Channel</a> (const <a class="el" href="../../d2/d48/classChannel.html">Channel</a> &amp;other)</td></tr>
 <tr class="memdesc:adde1f556fad9b1a222a5875df8566a6a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a new <a class="el" href="../../d2/d48/classChannel.html" title="representing an IRC channel">Channel</a> object.  <br /></td></tr>
 <tr class="memitem:af649ff0e4381291b608813b35f998047" id="r_af649ff0e4381291b608813b35f998047"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af649ff0e4381291b608813b35f998047">~Channel</a> ()</td></tr>
@@ -127,6 +127,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:ae291174a4cc2fc4fa3322c5c0a6a25d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the channel name.  <br /></td></tr>
 <tr class="memitem:a9dcaac12c8e89e34ee20063c9ebc97ec" id="r_a9dcaac12c8e89e34ee20063c9ebc97ec"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d8/d9c/reply__codes_8hpp.html#a686bb12efcc784d36f30d3528bdcdf08">ReplyCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9dcaac12c8e89e34ee20063c9ebc97ec">set_topic</a> (<a class="el" href="../../d1/d37/classClient.html">Client</a> &amp;client, const std::string &amp;topic)</td></tr>
 <tr class="memdesc:a9dcaac12c8e89e34ee20063c9ebc97ec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the topic object.  <br /></td></tr>
+<tr class="memitem:af0cbced6265719e3e92156ce828d0962" id="r_af0cbced6265719e3e92156ce828d0962"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af0cbced6265719e3e92156ce828d0962">remove_from_invited_list</a> (<a class="el" href="../../d1/d37/classClient.html">Client</a> &amp;client)</td></tr>
 <tr class="memitem:a06f2ba6a668173610bf6b65bf92e7e99" id="r_a06f2ba6a668173610bf6b65bf92e7e99"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d8/d9c/reply__codes_8hpp.html#a686bb12efcc784d36f30d3528bdcdf08">ReplyCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a06f2ba6a668173610bf6b65bf92e7e99">set_key</a> (const std::string &amp;key)</td></tr>
 <tr class="memdesc:a06f2ba6a668173610bf6b65bf92e7e99"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the key object.  <br /></td></tr>
 <tr class="memitem:a80d4a0446cb43202b02b79198e34e6a7" id="r_a80d4a0446cb43202b02b79198e34e6a7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a80d4a0446cb43202b02b79198e34e6a7">set_user_limit</a> (int limit)</td></tr>
@@ -160,6 +161,7 @@ Public Member Functions</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 id="header-pub-static-methods" class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
 <tr class="memitem:a1a4245a509b60612367be9f66dbeb9ff" id="r_a1a4245a509b60612367be9f66dbeb9ff"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1a4245a509b60612367be9f66dbeb9ff">is_valid_channel_name</a> (const std::string &amp;name)</td></tr>
+<tr class="memitem:a2409a008b61fb4ec4b444d288e35c5ad" id="r_a2409a008b61fb4ec4b444d288e35c5ad"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2409a008b61fb4ec4b444d288e35c5ad">is_valid_channel_key</a> (const std::string &amp;key)</td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>representing an IRC channel </p>
@@ -177,8 +179,8 @@ Static Public Member Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="../../d7/d42/Channel_8hpp_source.html#l00039">39</a> of file <a class="el" href="../../d7/d42/Channel_8hpp_source.html">Channel.hpp</a>.</p>
 </div><a name="doc-constructors" id="doc-constructors"></a><h2 id="header-doc-constructors" class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a6d2d650baccf6debd2b9d4d8814b81c1" name="a6d2d650baccf6debd2b9d4d8814b81c1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6d2d650baccf6debd2b9d4d8814b81c1">&#9670;&#160;</a></span>Channel() <span class="overload">[1/2]</span></h2>
+<a id="a5eee004ea51592ecc69d476ffdf9d6ac" name="a5eee004ea51592ecc69d476ffdf9d6ac"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5eee004ea51592ecc69d476ffdf9d6ac">&#9670;&#160;</a></span>Channel() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -186,8 +188,12 @@ Static Public Member Functions</h2></td></tr>
         <tr>
           <td class="memname">Channel::Channel </td>
           <td>(</td>
-          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>name</em></span></td><td>)</td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>name</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>key</em></span><span class="paramdefsep"> = </span><span class="paramdefval">&quot;&quot;</span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -696,6 +702,31 @@ false otherwise </dd></dl>
 
 </div>
 </div>
+<a id="a2409a008b61fb4ec4b444d288e35c5ad" name="a2409a008b61fb4ec4b444d288e35c5ad"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2409a008b61fb4ec4b444d288e35c5ad">&#9670;&#160;</a></span>is_valid_channel_key()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Channel::is_valid_channel_key </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>key</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a1a4245a509b60612367be9f66dbeb9ff" name="a1a4245a509b60612367be9f66dbeb9ff"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a1a4245a509b60612367be9f66dbeb9ff">&#9670;&#160;</a></span>is_valid_channel_name()</h2>
 
@@ -780,6 +811,23 @@ false </dd></dl>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd><a class="el" href="../../d2/d48/classChannel.html" title="representing an IRC channel">Channel</a>&amp; </dd></dl>
+
+</div>
+</div>
+<a id="af0cbced6265719e3e92156ce828d0962" name="af0cbced6265719e3e92156ce828d0962"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af0cbced6265719e3e92156ce828d0962">&#9670;&#160;</a></span>remove_from_invited_list()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Channel::remove_from_invited_list </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="../../d1/d37/classClient.html">Client</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>client</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
 
 </div>
 </div>

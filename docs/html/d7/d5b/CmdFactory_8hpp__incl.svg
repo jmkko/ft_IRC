@@ -11,7 +11,7 @@
 <!-- Node1 -->
 <g id="Node000001" class="node">
 <title>Node1</title>
-<g id="a_Node000001"><a xlink:title=" ">
+<g id="a_Node000001"><a xlink:title="Factory for classes implementing ICommand.">
 <polygon fill="#999999" stroke="#666666" points="93.25,-77.5 0,-77.5 0,-56.75 93.25,-56.75 93.25,-77.5"/>
 <text xml:space="preserve" text-anchor="middle" x="46.62" y="-64" font-family="Helvetica,sans-Serif" font-size="10.00">CmdFactory.hpp</text>
 </a>

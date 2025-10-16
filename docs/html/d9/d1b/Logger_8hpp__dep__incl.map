@@ -6,9 +6,9 @@
 <area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="342,120,289,158,286,154,339,116"/>
 <area shape="rect" id="Node000007" href="$df/d93/Who_8hpp.html" title="Implements IRC WHO command." alt="" coords="345,232,424,260"/>
 <area shape="poly" id="edge8_Node000002_Node000007" title=" " alt="" coords="376,124,386,232,381,232,371,124"/>
-<area shape="rect" id="Node000008" href="$de/d3e/Motd_8hpp.html" title=" " alt="" coords="409,157,491,184"/>
+<area shape="rect" id="Node000008" href="$de/d3e/Motd_8hpp.html" title="Implements IRC MOTD command." alt="" coords="409,157,491,184"/>
 <area shape="poly" id="edge7_Node000002_Node000008" title=" " alt="" coords="398,118,438,154,434,158,395,122"/>
-<area shape="rect" id="Node000004" href="$d0/d9f/Invite_8hpp.html" title=" " alt="" coords="5,232,92,260"/>
+<area shape="rect" id="Node000004" href="$d0/d9f/Invite_8hpp.html" title="Implements IRC INVITE command." alt="" coords="5,232,92,260"/>
 <area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="217,192,89,234,87,229,215,187"/>
 <area shape="rect" id="Node000005" href="$df/d5f/Pass_8hpp.html" title=" " alt="" coords="116,232,194,260"/>
 <area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="238,195,177,234,174,230,235,191"/>

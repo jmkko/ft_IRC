@@ -11,7 +11,7 @@
 <!-- Node1 -->
 <g id="Node000001" class="node">
 <title>Node1</title>
-<g id="a_Node000001"><a xlink:title=" ">
+<g id="a_Node000001"><a xlink:title="Implements IRC PING command.">
 <polygon fill="#999999" stroke="#666666" points="185.12,-134.25 127.12,-134.25 127.12,-113.5 185.12,-113.5 185.12,-134.25"/>
 <text xml:space="preserve" text-anchor="middle" x="156.12" y="-120.75" font-family="Helvetica,sans-Serif" font-size="10.00">Ping.hpp</text>
 </a>
@@ -20,7 +20,7 @@
 <!-- Node2 -->
 <g id="Node000002" class="node">
 <title>Node2</title>
-<g id="a_Node000002"><a xlink:href="../../de/dd6/ICommand_8hpp.html" target="_top" xlink:title=" ">
+<g id="a_Node000002"><a xlink:href="../../de/dd6/ICommand_8hpp.html" target="_top" xlink:title="command interface">
 <polygon fill="white" stroke="#666666" points="90.25,-77.5 0,-77.5 0,-56.75 90.25,-56.75 90.25,-77.5"/>
 <text xml:space="preserve" text-anchor="middle" x="45.12" y="-64" font-family="Helvetica,sans-Serif" font-size="10.00">ICommand.hpp</text>
 </a>

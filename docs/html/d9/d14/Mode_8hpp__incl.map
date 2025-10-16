@@ -1,6 +1,6 @@
 <map id="Mode.hpp" name="Mode.hpp">
-<area shape="rect" id="Node000001" title=" " alt="" coords="222,5,307,33"/>
-<area shape="rect" id="Node000002" href="$de/dd6/ICommand_8hpp.html" title=" " alt="" coords="5,81,126,109"/>
+<area shape="rect" id="Node000001" title="Implements IRC MODE command." alt="" coords="222,5,307,33"/>
+<area shape="rect" id="Node000002" href="$de/dd6/ICommand_8hpp.html" title="command interface" alt="" coords="5,81,126,109"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="230,36,116,78,114,73,228,31"/>
 <area shape="rect" id="Node000003" title=" " alt="" coords="82,157,145,184"/>
 <area shape="poly" id="edge6_Node000001_Node000003" title=" " alt="" coords="248,36,190,83,134,146,130,143,186,79,244,31"/>

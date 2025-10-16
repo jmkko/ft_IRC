@@ -19,6 +19,7 @@ var hierarchy =
       [ "User", "d9/dc0/classUser.html", null ],
       [ "Who", "dc/d08/classWho.html", null ]
     ] ],
+    [ "KICK", "dc/d61/classKICK.html", null ],
     [ "Logger", "db/d67/classLogger.html", null ],
     [ "LogManager", "dd/d5d/classLogManager.html", null ],
     [ "utils::MatchPattern", "d0/d0a/structutils_1_1MatchPattern.html", null ],
