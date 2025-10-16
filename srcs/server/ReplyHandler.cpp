@@ -90,22 +90,34 @@ static std::string
 generate_code_response(Client& client, ReplyCode code, const std::string& parameters, const std::string& trailing)
 {
     std::string nick          = client.get_nickname().empty() ? "*" : client.get_nickname();
-    std::string numericPrefix = ":" + ircConfig.get_name() + " " + Utils::code_to_str(code) + " " + nick + " ";
-    if (parameters.empty() && trailing.empty())
-        return (numericPrefix + ":" + ircCodes.trailing(code));
-    else if (parameters.empty() && !trailing.empty())
-        return (numericPrefix + ":" + trailing);
-    else if (trailing.empty())
-        return (numericPrefix + parameters + " :" + ircCodes.trailing(code));
-    else
-        return (numericPrefix + parameters + " :" + trailing);
+    std::string numericPrefix = ":" + ircConfig.get_name() + " " + Utils::code_to_str(code) + " " + nick;
+
+    std::string        trailingMessage, params;
+    const std::string& defaultTrailing = ircCodes.trailing(code);
+
+    if (!trailing.empty()) {
+        trailingMessage = " :" + trailing;
+    } else if (!defaultTrailing.empty()) {
+        trailingMessage = " :" + defaultTrailing;
+    }
+    if (!parameters.empty()) {
+        params = " " + parameters;
+    }
+
+    return (numericPrefix + params + trailingMessage);
 }
 
 static std::string generate_non_numerical_response(
-	Client& client, ReplyCode code, const std::string& parameters, Client* sender, const std::string& trailing = "")
+    Client& client, ReplyCode code, const std::string& parameters, Client* sender, const std::string& trailing = "")
 {
-    if (!sender)
-        sender = &client;
+    if (!sender) {
+    	sender = &client;
+    }
+
+    std::string trailingMessage;
+    if (!trailing.empty()) {
+        trailingMessage = " :" + trailing;
+    }
 
     switch (code) {
     case TRANSFER_NICK:
@@ -113,9 +125,9 @@ static std::string generate_non_numerical_response(
     case TRANSFER_JOIN:
         return (get_user_id_of(*sender) + "JOIN " + parameters);
     case TRANSFER_PRIVMSG:
-        return (get_user_id_of(*sender) + "PRIVMSG " + parameters + " :" + trailing);
+        return (get_user_id_of(*sender) + "PRIVMSG " + parameters + trailingMessage);
     case TRANSFER_KICK:
-        return (get_user_id_of(*sender) + "KICK " + parameters + trailing);
+        return (get_user_id_of(*sender) + "KICK " + parameters + trailingMessage);
     case TRANSFER_INVITE:
         return (get_user_id_of(*sender) + "INVITE " + parameters);
     case TRANSFER_QUIT:
@@ -123,7 +135,7 @@ static std::string generate_non_numerical_response(
     case TRANSFER_MODE:
         return (get_user_id_of(*sender) + "MODE " + parameters);
     case TRANSFER_TOPIC:
-        return (get_user_id_of(*sender) + "TOPIC " + parameters + " :" + trailing);
+        return (get_user_id_of(*sender) + "TOPIC " + parameters + trailingMessage);
     case MSG_PING:
         return ":" + ircConfig.get_name() + " " + "PONG :" + parameters;
     default:
