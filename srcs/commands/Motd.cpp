@@ -3,29 +3,35 @@
 #include "LogManager.hpp"
 #include "ReplyHandler.hpp"
 #include "consts.hpp"
+#include "reply_codes.hpp"
 
+#include <cstdlib>
+#include <cstring>
 #include <ctime>
 #include <fstream>
 #include <iomanip>
+#include <linux/limits.h>
 #include <ostream>
 #include <sstream>
+#include <unistd.h>
 
-Motd::Motd() {}
+/************************************************************
+ *		🥚 CONSTRUCTORS & DESTRUCTOR						*
+ ************************************************************/
+
 Motd::~Motd() {}
 Motd::Motd(const std::string& params) : _params(params) {}
-Motd::Motd(const Motd& other) : _params(other._params) {}
-Motd& Motd::operator=(const Motd& other)
-{
-    if (this != &other)
-        _params = other._params;
-    return (*this);
-}
+
+/*************************************************************
+ *		🛠️ FUNCTIONS											*
+ *************************************************************/
 
 /**
- * @brief open and read the motd.conf file
- *        replace the var by her data
- *        send the message to the client
- *
+ * @brief sends message of the day through RPL_MOTD / RPL_EMDMOTD
+ * @details proceeds in 3 steps
+ * - open and read the `motd.conf` file
+ * - replace the var by her data
+ * - send the message to the client
  * @param server
  * @param client
  */
@@ -34,29 +40,34 @@ void Motd::execute(Server& server, Client& client)
     std::string   line, newline;
     std::ifstream inputFile;
 
-    const char*   filename = "motd.conf";
-    ReplyHandler& rh       = ReplyHandler::get_instance(&server);
+    const char*   filename = MOTD_FILE;
+    #ifdef TEST
+    filename = MOTD_FILE_FOR_TEST;
+    #endif
 
+    ReplyHandler& rh       = ReplyHandler::get_instance(&server);
     inputFile.open(filename);
     if (inputFile.is_open()) {
         std::string nick = client.get_nickname();
-        rh.process_response(client, RPL_MOTDSTART, nick);
+        rh.process_response(client, RPL_MOTDSTART, "", NULL, "- " + server.get_name() + " message of the day -");
         while (getline(inputFile, line)) {
             newline = _str_replace(line, "$(servername)", server.get_name());
             newline = _str_replace(newline, "$(nick)", nick);
             newline = _str_replace(newline, "$(date)", _get_current_time());
-            newline.append("\r\n");
-            rh.process_response(client, RPL_MOTD, nick + " :- " + newline.c_str());
+            rh.process_response(client, RPL_MOTD, "", NULL, newline);
             newline.clear();
         }
-        rh.process_response(client, RPL_ENDOFMOTD, nick);
+        rh.process_response(client, RPL_ENDOFMOTD, "");
+    }
+    else {
+        LOG_w_CMD(strerror(errno));
+        rh.process_response(client, ERR_NOMOTD);
     }
     inputFile.close();
 }
 
 /**
- * @brief find a word in a line and replace by an other
- *
+ * @brief find a word in a line and replace it by an other
  * @param str the raw line
  * @param find  the word to replace
  * @param replace the new word
@@ -81,8 +92,7 @@ std::string Motd::_str_replace(const std::string& str, const std::string& find, 
 
 /**
  * @brief calculate and format the current date
- *
- * @return date like AAAA-MM-DD
+ * @return date formatted as YYYY-MM-DD
  */
 std::string Motd::_get_current_time()
 {

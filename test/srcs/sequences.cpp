@@ -110,11 +110,12 @@ void make_op(const TcpSocket& so)
 void make_two_ops(const TcpSocket& so, const TcpSocket& so2)
 {
     make_op(so);
-    send_line(so2, validPassMsg);
-    send_line(so2, validNickOp2Msg);
-    send_line(so2, validUserOp2Msg);
+    do_cmd(so2, validPassMsg);
+    do_cmd(so2, validNickOp2Msg);
+    do_cmd(so2, validUserOp2Msg);
+    do_cmd(so2, validJoinMsg);
     recv_lines(so);
-    send_line(so, validJoinMsg);
-    recv_lines(so);
-    send_line(so, validModePlusOMsg);
+
+    do_cmd(so, validModePlusOMsg);
+    recv_lines(so2);
 }
