@@ -143,7 +143,7 @@ void valid_change_should_notice(Server& s)
         TcpSocket& so2 = *sockets.at(1);
         make_op(so);
         authenticate_and_join_second_user(so2);
-
+        recv_lines(so);
         send_line(so, validNickChangeMsg);
         std::string reply = recv_lines(so);
         AssertReply ar(reply);
