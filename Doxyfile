@@ -1,6 +1,6 @@
 PROJECT_NAME = "hazardous irc"
-PROJECT_BRIEF = "Attention"
-PROJECT_LOGO = doc/hazardous.png
+PROJECT_BRIEF = "Back to the future ... a basic IRC server (school 42 project)"
+PROJECT_LOGO = docs/hazardousirc.png
 PROJECT_NUMBER = 0.1.0
 OUTPUT_DIRECTORY = docs
 CREATE_SUBDIRS = YES
@@ -11,6 +11,7 @@ RECURSIVE = YES
 EXCLUDE_PATTERNS = /test/ /.github/ /build/ /cmake- /./
 EXCLUDE_SYMLINKS = YES
 STRIP_FROM_PATH = ./
+EXCLUDE_SYMBOLS = std*
 
 SHOW_NAMESPACES = YES
 HIDE_SCOPE_NAMES = NO

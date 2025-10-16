@@ -46,15 +46,15 @@ class Privmsg : public ICommand
      * syntax rules:
      * - trailing message (after `:`) should not be empty
      * - at least one target (#Channel or #Client sender)
-     * - at max MAX_TARGET (defined in @link Config)
+     * - at max MAX_TARGET (defined in @ref irc.conf)
      * other rules:
      * - targets should be existing nicks or channels
-     * @param server #Server
-     * @param client sender #Client
+     * @param server @ref Server
+     * @param client sender @ref Client
      * @param params string following the command name
-     * @return #ReplyCode corresponding to RFC ERR replies or CORRECT_FORMAT if syntax is correct
+     * @return @ref ReplyCode corresponding to RFC ERR replies or CORRECT_FORMAT if syntax is correct
      */
-    static ReplyCode check_args(Server& s, Client& c, std::string& p);
+    static ReplyCode check_args(Server& server, Client& client, std::string& params);
 
     /**
      * @brief proceed to extra checks (presence of sender on target channel) and to message transfer
@@ -62,10 +62,10 @@ class Privmsg : public ICommand
      * - message is transferred to target #Client
      * - or broadcasted to #Channel for other members (sender excepted)
      * @pre Privmsg::check_args should have returned CORRECT_FORMAT
-     * @param server
-     * @param client sender
+     * @param server @ref Server
+     * @param client sender @ref Client
      */
-    void execute(Server& s, Client& c);
+    void execute(Server& server, Client& client);
 
   private:
     std::string           _params;

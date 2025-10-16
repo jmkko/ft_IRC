@@ -1,0 +1,16 @@
+<map id="LogManager.hpp" name="LogManager.hpp">
+<area shape="rect" id="Node000001" title=" " alt="" coords="307,5,435,33"/>
+<area shape="rect" id="Node000002" href="$d7/d42/Channel_8hpp.html" title=" " alt="" coords="219,81,321,109"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="342,45,289,83,286,78,339,40"/>
+<area shape="rect" id="Node000006" href="$df/d93/Who_8hpp.html" title=" " alt="" coords="345,157,424,184"/>
+<area shape="poly" id="edge7_Node000001_Node000006" title=" " alt="" coords="376,48,386,156,381,156,371,49"/>
+<area shape="rect" id="Node000007" href="$de/d3e/Motd_8hpp.html" title=" " alt="" coords="409,81,491,109"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="398,42,438,79,434,83,395,46"/>
+<area shape="rect" id="Node000003" href="$d0/d9f/Invite_8hpp.html" title=" " alt="" coords="5,157,92,184"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="217,117,89,159,87,154,215,111"/>
+<area shape="rect" id="Node000004" href="$df/d5f/Pass_8hpp.html" title=" " alt="" coords="116,157,194,184"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="238,120,177,158,174,154,235,115"/>
+<area shape="rect" id="Node000005" href="$d6/df8/Privmsg_8hpp.html" title="Implements IRC PRIVMSG command." alt="" coords="219,157,321,184"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="272,124,272,156,267,156,267,124"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="305,115,366,154,363,158,302,120"/>
+</map>
