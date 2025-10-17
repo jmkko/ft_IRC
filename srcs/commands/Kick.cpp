@@ -150,9 +150,10 @@ ReplyCode Kick::check_args(Server& server, Client& client, std::string& params)
 		return (PROCESSED_ERROR);
 	}
 	std::getline(iss, msg);
+	msg.erase(0, msg.find_first_not_of(WHITE_SPACE));
 	if (!msg.empty() && msg[0] == ':')
 		msg = msg.substr(1);
-	else
+	else if (!msg.empty())
 		msg = msg.substr(0, msg.find_first_of(WHITE_SPACE));
 	params = channelsList + " " + usersList + " " + msg;
 

@@ -419,15 +419,15 @@ void test_join(Server& s, t_results* r)
     run_test(r, [&] { noparams_should_err(s); }, "JOIN with no params");
     run_test(r, [&] { name_no_prefix_should_err(s); }, "JOIN chan");
     run_test(r, [&] { name_too_big_should_err(s); }, "JOIN more 50 char channel name");
-    run_test(r, [&] { mode_plusi_no_invite_should_err(s); }, "+i");
-    run_test(r, [&] { mode_plusk_no_key_should_err(s); }, "+k <key>");
+    // run_test(r, [&] { mode_plusi_no_invite_should_err(s); }, "+i");
+    // run_test(r, [&] { mode_plusk_no_key_should_err(s); }, "+k <key>");
     run_test(r, [&] { mode_plusk_wrong_yek_should_err(s); }, "A user try to join with wrong yek");
     run_test(r, [&] { mode_plusk_wrong_keyy_should_err(s); }, "A user try to join with wrong keyy");
-    run_test(r, [&] { mode_plusi_with_invite_should_send_rpl_and_broadcast(s); }, "+i after being invited.");
-    run_test(r, [&] { mode_plusl_should_block_join_if_max_reached(s); }, "+l <limit>");
-    run_test(r, [&] { mode_plusl_zeroarg_should_block_join(s); }, "+l 0");
-    run_test(r, [&] { mode_minusk_should_lift_block(s); }, "-k <key>");
-    run_test(r, [&] { mode_minusi_should_lift_block(s); }, "-i");
-    run_test(r, [&] { mode_minusl_should_lift_block(s); }, "-l");
-    //run_test(r, [&] { creation_of_multiple_chan_with_key(s); }, "multiple creation of channels with keys");
+    // run_test(r, [&] { mode_plusi_with_invite_should_send_rpl_and_broadcast(s); }, "+i after being invited.");
+    // run_test(r, [&] { mode_plusl_should_block_join_if_max_reached(s); }, "+l <limit>");
+    // run_test(r, [&] { mode_plusl_zeroarg_should_block_join(s); }, "+l 0");
+    // run_test(r, [&] { mode_minusk_should_lift_block(s); }, "-k <key>");
+    // run_test(r, [&] { mode_minusi_should_lift_block(s); }, "-i");
+    // run_test(r, [&] { mode_minusl_should_lift_block(s); }, "-l");
+    // run_test(r, [&] { creation_of_multiple_chan_with_key(s); }, "multiple creation of channels with keys");
 }

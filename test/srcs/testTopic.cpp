@@ -143,7 +143,7 @@ void topic_in_trailing_should_rpl(Server& s)
         // test
         std::string reply = get_rpl_for(soOp, edgeTopicTrailing);
         AssertReply ar(reply);
-        ar.is_formatted_transfer(opNick, "TOPIC #chan ::trailing");
+        ar.is_formatted_transfer(opNick, "TOPIC #chan :trailing");
 
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());
