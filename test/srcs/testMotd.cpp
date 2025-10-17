@@ -22,6 +22,7 @@
 #include <stdexcept>
 #include <string>
 #include <sys/stat.h>
+#include <thread>
 
 /************************************************************
  *		✅  VALID											*

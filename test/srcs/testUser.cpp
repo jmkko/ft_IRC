@@ -29,6 +29,8 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
+#include <chrono>
+#include <thread>
 
 /************************************************************
  *                      ✅  VALID                           *
@@ -64,14 +66,21 @@ void valid_user_after_nick_should_rpl(Server& s)
 
         // test
         send_line(so, "USER Marco 0 * :Marco Polo\r\n");
+        std::this_thread::sleep_for(std::chrono::milliseconds(SERVER_MOTD_WAIT_MS));
+
         std::string reply = recv_lines(so);
         LOG_E_TEST("reply of User mcpolo", reply);
 
         AssertReply ar(reply);
-        ar.matches_entirely(":" + s.get_name() + " 001 mcpolo :" + ircCodes.trailing(RPL_WELCOME) + " mcpolo!Marco@localhost");
-        ar.matches_entirely(":" + s.get_name() + " 002 mcpolo :" + ircCodes.trailing(RPL_YOURHOST) + " " + s.get_name());
-        ar.matches_entirely(":" + s.get_name() + " 003 mcpolo :" + ircCodes.trailing(RPL_CREATED));
-        ar.matches_entirely(":" + s.get_name() + " 004 mcpolo :" + s.get_name() + " 1.0  0 0");
+        ar.is_formatted(RPL_WELCOME, "mcpolo", "", "Welcome to the IRC HazADoU& SerVerRrrr mcpolo!Marco@localhost");
+        ar.is_formatted(RPL_YOURHOST, "mcpolo", "", ircCodes.trailing(RPL_YOURHOST) + " " + s.get_name());
+        ar.is_formatted(RPL_CREATED, "mcpolo", "", ircCodes.trailing(RPL_CREATED));
+        ar.is_formatted(RPL_MYINFO, "mcpolo", "", s.get_name() + " 1.0  0 0");
+
+        // ar.matches_entirely(":" + s.get_name() + " 001 mcpolo :" + ircCodes.trailing(RPL_WELCOME) + " mcpolo!Marco@localhost");
+        // ar.matches_entirely(":" + s.get_name() + " 002 mcpolo :" + ircCodes.trailing(RPL_YOURHOST) + " " + s.get_name());
+        // ar.matches_entirely(":" + s.get_name() + " 003 mcpolo :" + ircCodes.trailing(RPL_CREATED));
+        // ar.matches_entirely(":" + s.get_name() + " 004 mcpolo :" + s.get_name() + " 1.0  0 0");
 
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());
@@ -104,7 +113,7 @@ void test_user(Server& s, t_results* r)
     print_test_series("command USER");
     print_test_series_part("valid cases");
     run_test(r, [&] { valid_user_should_void(s); }, "Marco should void himself");
-    run_test(r, [&] { valid_user_after_nick_should_rpl(s); }, "Marco should received the welcome msg");
+    run_test(r, [&] { valid_user_after_nick_should_rpl(s); }, "Marco should receive the welcome msg");
     print_test_series_part("invalid cases");
     run_test(r, [&] { invalid_user_char_arobase_should_err(s); }, "Mar@co should err");
 }

@@ -103,7 +103,8 @@ generate_code_response(Client& client, ReplyCode code, const std::string& parame
     if (!parameters.empty()) {
         separatedParams = " " + parameters;
     }
-
+    LOG_DV_SERVER(separatedParams);
+    LOG_DV_SERVER(trailingMessage);
     return (numericPrefix + separatedParams + trailingMessage);
 }
 

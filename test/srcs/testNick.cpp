@@ -6,7 +6,7 @@
 /*   By: fpetit <fpetit@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/17 16:00:12 by jhervoch          #+#    #+#             */
-/*   Updated: 2025/10/17 22:13:58 by fpetit           ###   ########.fr       */
+/*   Updated: 2025/10/17 22:49:26 by fpetit           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,10 +90,15 @@ void valid_nick_after_user_should_notice(Server& s)
         std::string reply = recv_lines(so);
         LOG_E_TEST("reply of roro should notice after user", reply);
         AssertReply ar(reply);
-        ar.matches_entirely(":" + s.get_name() + " 001 roro :" + ircCodes.trailing(RPL_WELCOME) + " roro!roro@localhost");
-        ar.matches_entirely(":" + s.get_name() + " 002 roro :" + ircCodes.trailing(RPL_YOURHOST) + " " + s.get_name());
-        ar.matches_entirely(":" + s.get_name() + " 003 roro :" + ircCodes.trailing(RPL_CREATED));
-        ar.matches_entirely(":" + s.get_name() + " 004 roro :" + s.get_name() + " 1.0  0 0");
+        ar.is_formatted(RPL_WELCOME, "roro", "", "Welcome to the IRC HazADoU& SerVerRrrr roro!roro@localhost");
+        ar.is_formatted(RPL_YOURHOST, "roro", "", ircCodes.trailing(RPL_YOURHOST) + " " + s.get_name());
+        ar.is_formatted(RPL_CREATED, "roro", "", ircCodes.trailing(RPL_CREATED));
+        ar.is_formatted(RPL_MYINFO, "roro", "", s.get_name() + " 1.0  0 0");
+
+        // ar.matches_entirely(":" + s.get_name() + " 001 roro :" + ircCodes.trailing(RPL_WELCOME) + " roro!roro@localhost");
+        // ar.matches_entirely(":" + s.get_name() + " 002 roro :" + ircCodes.trailing(RPL_YOURHOST) + " " + s.get_name());
+        // ar.matches_entirely(":" + s.get_name() + " 003 roro :" + ircCodes.trailing(RPL_CREATED));
+        // ar.matches_entirely(":" + s.get_name() + " 004 roro :" + s.get_name() + " 1.0  0 0");
 
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());
