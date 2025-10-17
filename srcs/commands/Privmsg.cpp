@@ -47,13 +47,13 @@ ReplyCode Privmsg::check_args(Server& server, Client& client, std::string& param
         return (ERR_NORECIPIENT);
     }
     std::getline(iss, msg);
-    msg.erase(0, msg.find_first_not_of(WHITE_SPACE));
-    if (!msg.empty() && msg[0] == ':')
-        msg = msg.erase(0, 1);
-    else if (!msg.empty())
-        msg = msg.substr(0, msg.find_first_of(WHITE_SPACE));
-
+	msg.erase(0, msg.find_first_not_of(WHITE_SPACE));
+	std::string::size_type colon = msg.find(':');
+	if (colon == std::string::npos || colon + 1 >= msg.size()) {
+	 	return (ERR_NOTEXTTOSEND);
+	}
     params = targetList + " " + msg;
+
     return CORRECT_FORMAT;
 }
 
