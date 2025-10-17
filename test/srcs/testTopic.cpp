@@ -49,7 +49,7 @@ void valid_topic_info_when_empty_should_rpl(Server& s)
 /**
  @brief integration test - normal case
  */
-void valid_topic_change_should_rpl(Server& s)
+void valid_topic_change_should_broadcast(Server& s)
 {
     try {
         TEST_SETUP(test, s, 1);
@@ -133,7 +133,7 @@ void mode_minust_should_grant_topic_to_all(Server& s)
 /**
  @brief integration test - normal case
  */
-void topic_in_trailing_should_rpl(Server& s)
+void topic_in_trailing_should_broadcast(Server& s)
 {
     try {
         TEST_SETUP(test, s, 1);
@@ -153,7 +153,27 @@ void topic_in_trailing_should_rpl(Server& s)
 /**
  @brief integration test - normal case
  */
-void concurrent_changes_should_rpl(Server& s)
+void topic_empty_str_should_broadcast(Server& s)
+{
+    try {
+        TEST_SETUP(test, s, 1);
+        TcpSocket& soOp = *sockets.at(0);
+        make_op(soOp);
+
+        // test that topic is erased
+        std::string reply = get_rpl_for(soOp, edgeTopicEmptyStr);
+        AssertReply ar(reply);
+        ar.is_formatted_transfer(opNick, "TOPIC #chan : ");
+
+    } catch (const std::runtime_error& e) {
+        LOG_TEST.error(e.what());
+    }
+}
+
+/**
+ @brief integration test - normal case
+ */
+void concurrent_changes_should_broadcast_and_preserve_last_changes(Server& s)
 {
     try {
         TEST_SETUP(test, s, 2);
@@ -250,17 +270,18 @@ void test_topic(Server& s, t_results* r)
 {
     print_test_series("command TOPIC");
     print_test_series_part("common cases");
-    run_test(r, [&] { valid_topic_info_when_empty_should_rpl(s); }, "'TOPIC #chan' for RPL_TOPIC");
-    run_test(r, [&] { valid_topic_change_should_rpl(s); }, "'TOPIC #chan new topic'");
-    run_test(r, [&] { mode_plust_should_reserve_topic_to_op(s); }, "TOPIC after MODE +t");
-    run_test(r, [&] { mode_minust_should_grant_topic_to_all(s); }, "TOPIC after MODE -t");
+    run_test(r, [&] { valid_topic_info_when_empty_should_rpl(s); }, "TOPIC without arg should send RPL_TOPIC");
+    run_test(r, [&] { valid_topic_change_should_broadcast(s); }, "TOPIC with arg should update");
+    run_test(r, [&] { mode_plust_should_reserve_topic_to_op(s); }, "TOPIC after MODE +t should be granted to all members");
+    run_test(r, [&] { mode_minust_should_grant_topic_to_all(s); }, "TOPIC after MODE -t should be reserved to ops");
 
     print_test_series_part("edge cases");
-    run_test(r, [&] { topic_in_trailing_should_rpl(s); }, "'TOPIC #chan :new topic'");
-    run_test(r, [&] { concurrent_changes_should_rpl(s); }, "TOPIC quasi concurrent changes");
+    run_test(r, [&] { topic_in_trailing_should_broadcast(s); }, "TOPIC #chan :new topic");
+    run_test(r, [&] { topic_empty_str_should_broadcast(s); }, "TOPIC #chan : should reset topic");
+    run_test(r, [&] { concurrent_changes_should_broadcast_and_preserve_last_changes(s); }, "TOPIC quasi concurrent changes should keep last update");
 
     print_test_series_part("error cases");
-    run_test(r, [&] { no_params_should_err_topic(s); }, "'TOPIC'");
+    run_test(r, [&] { no_params_should_err_topic(s); }, "TOPIC no param");
     run_test(r, [&] { invalid_channel_should_err(s); }, "TOPIC on non existing channel");
     run_test(r, [&] { not_a_channel_member_should_err(s); }, "TOPIC user is not a channel member");
 }

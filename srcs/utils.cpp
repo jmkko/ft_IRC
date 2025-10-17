@@ -137,4 +137,4 @@ bool Utils::MatchPattern::operator()(const Client* c) const
            || is_matching_pattern(pattern, c->get_userhost()) || is_matching_pattern(pattern, c->get_real_name());
 }
 
-bool Utils::is_invalid_char(char c) { return (!std::isalpha(c) && !Utils::is_special_abnf(c)); }
+bool Utils::is_not_alpha_or_specialbnf(char c) { return (!std::isalpha(c) && !Utils::is_special_abnf(c)); }

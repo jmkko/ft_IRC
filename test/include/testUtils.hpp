@@ -164,6 +164,7 @@ static const std::string& validTopic             = "TOPIC #chan new topic\r\n";
 static const std::string& validTopic2            = "TOPIC #chan new topic2\r\n";
 static const std::string& validTopicEmpty        = "TOPIC #chan\r\n";
 static const std::string& edgeTopicTrailing      = "TOPIC #chan :trailing\r\n";
+static const std::string& edgeTopicEmptyStr      = "TOPIC #chan :\r\n";
 static const std::string& invalidTopicNoParam    = "TOPIC\r\n";
 static const std::string& validTopicWrongChannel = "TOPIC $notvalid\r\n";
 // static const std::string& notAChannelMemberTopic	= "TOPIC #chan\r\n";

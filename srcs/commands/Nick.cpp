@@ -52,7 +52,7 @@ ReplyCode Nick::check_args(Server& server, Client& client, std::string& params)
     LOG_DTV_CMD(nickname);
     if (nickname.empty())
         return (ERR_NONICKNAMEGIVEN);
-    invalidChar = std::count_if(nickname.begin(), nickname.end(), Utils::is_invalid_char);
+    invalidChar = std::count_if(nickname.begin(), nickname.begin() + 1, Utils::is_not_alpha_or_specialbnf);
     if (invalidChar) {
         return (ERR_ERRONEUSNICKNAME);
     } else if (nickname.length() > ircConfig.get_nickname_max_len()) {
