@@ -68,6 +68,9 @@ void valid_nick2_should_void(Server& s)
 
         // test
         send_line(so, "NICK ro3ro\r\n");
+        std::string reply = recv_lines(so);
+        AssertReply ar(reply);
+        ar.is_empty();
 
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());
