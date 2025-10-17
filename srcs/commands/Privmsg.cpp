@@ -14,7 +14,7 @@ ReplyCode Privmsg::check_args(Server& server, Client& client, std::string& param
 
     ReplyHandler       rh          = ReplyHandler::get_instance(&server);
     int                targetLimit = TARGET_LIMIT;
-    std::string        targetList, msg, channels, target, coma;
+    std::string        targetList, msg, channels, target, comma;
     std::istringstream iss(params);
 
     iss >> channels;
@@ -29,15 +29,15 @@ ReplyCode Privmsg::check_args(Server& server, Client& client, std::string& param
             std::map<std::string, Channel*>::iterator chan = server.channels.find(target);
             if (chan != server.channels.end()) {
                 LOG_D_CMD("add channel", target);
-                targetList += coma + target;
-                coma = ",";
+                targetList += comma + target;
+                comma = ",";
             } else {
                 rh.process_response(client, ERR_NOSUCHCHANNEL, target);
             }
         } else if (server.find_client_by_nickname(target)) {
             LOG_D_CMD("add client", target);
-            targetList += coma + target;
-            coma = ",";
+            targetList += comma + target;
+            comma = ",";
         } else {
             rh.process_response(client, ERR_NOSUCHNICK, target);
         }

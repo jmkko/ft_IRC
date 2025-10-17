@@ -76,7 +76,7 @@ ReplyCode Join::check_args(Server& server, Client& client, std::string& params)
     if (channels.empty()) {
         return (ERR_NEEDMOREPARAMS);
     }
-    std::string        currentChannel, currentKey, coma;
+    std::string        currentChannel, currentKey, comma;
     std::istringstream issChannels(channels), issKeys(keys);
     while (std::getline(issChannels, currentChannel, ',')) {
         std::getline(issKeys, currentKey, ',');
@@ -86,9 +86,9 @@ ReplyCode Join::check_args(Server& server, Client& client, std::string& params)
         } else if (!Channel::is_valid_channel_key(currentKey)) {
             rh.process_response(client, ERR_BADCHANNELKEY, client.get_nickname() + " " + currentChannel);
         } else {
-            channelsNames += coma + currentChannel;
-            channelsKeys += coma + currentKey;
-            coma = ",";
+            channelsNames += comma + currentChannel;
+            channelsKeys += comma + currentKey;
+            comma = ",";
         }
         currentChannel.clear();
         currentKey.clear();

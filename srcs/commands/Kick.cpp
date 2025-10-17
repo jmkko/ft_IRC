@@ -129,7 +129,7 @@ ReplyCode Kick::check_args(Server& server, Client& client, std::string& params)
     if (channels.empty() || users.empty()) {
         return (ERR_NEEDMOREPARAMS);
     }
-    std::string        currentChannel, currentUser, coma;
+    std::string        currentChannel, currentUser, comma;
     std::istringstream issChannels(channels), issUsers(users);
     while (std::getline(issChannels, currentChannel, ',')) {
         std::getline(issUsers, currentUser, ',');
@@ -138,9 +138,9 @@ ReplyCode Kick::check_args(Server& server, Client& client, std::string& params)
         } else if (!server.find_client_by_nickname(currentUser)) {
             rh.process_response(client, ERR_NOSUCHNICK, currentUser);
         } else if (!currentChannel.empty() && !currentUser.empty()) {
-            channelsList += coma + currentChannel;
-            usersList += coma + currentUser;
-            coma = ",";
+            channelsList += comma + currentChannel;
+            usersList += comma + currentUser;
+            comma = ",";
         } else if (currentChannel.empty() != currentChannel.empty()) {
             return (ERR_NEEDMOREPARAMS);
         }
