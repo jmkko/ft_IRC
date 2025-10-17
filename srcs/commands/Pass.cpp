@@ -4,6 +4,7 @@
 #include "LogManager.hpp"
 #include "ReplyHandler.hpp"
 #include "Server.hpp"
+#include "reply_codes.hpp"
 
 #include <iostream>
 
@@ -28,26 +29,31 @@ void Pass::execute(Server& server, Client& client)
 {
     (void)server;
     (void)client;
+
     client.set_status(AUTHENTICATED);
-    LOG_CMD.info("PASS - correct");
+    LOG_I_CMD("AUTHENTICATED", client);
 }
 
 ReplyCode Pass::check_args(Server& server, Client& client, std::string& params)
 {
-    std::string        pass;
+    std::string        pass = "";
     std::istringstream iss(params);
+    ReplyHandler rh          = ReplyHandler::get_instance(&server);
 
     iss >> pass;
-    if (pass.empty()) {
-        LOG_CMD.warning("461 ERR_NEEDMOREPARAMS");
-        return (ERR_NEEDMOREPARAMS);
+    if (client.is_registered()) {
+        rh.process_response(client, ERR_ALREADYREGISTRED);
+        return PROCESSED_ERROR;
+    }
+    if (iss.str().empty()) {
+        client.set_status(UNAUTHENTICATED);
+        rh.process_response(client, ERR_NEEDMOREPARAMS, "PASS");
+        return PROCESSED_ERROR;
     }
     if (server.get_password() != pass) {
-        LOG_CMD.warning("464 ERR_PASSWDMISMATCH");
-        return (ERR_PASSWDMISMATCH);
-    } else if (client.get_status() == REGISTERED) {
-        LOG_CMD.warning("462 ERR_ALREADYREGISTRED");
-        return (ERR_ALREADYREGISTRED);
+        client.set_status(UNAUTHENTICATED);
+        rh.process_response(client, ERR_PASSWDMISMATCH);
+        return PROCESSED_ERROR;
     }
     params = pass;
     return (CORRECT_FORMAT);

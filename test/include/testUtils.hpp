@@ -70,7 +70,9 @@ static const std::string& op2Nick      = "op2";
 static const std::string& channelName  = "#chan";
 static const std::string& channel2Name = "#chan2";
 
-static const std::string& validPassMsg = std::string("PASS ") + DEFAULT_PASSWORD + "\r\n";
+static const std::string& validPassMsg          = std::string("PASS ") + DEFAULT_PASSWORD + "\r\n";
+static const std::string& validPassWrongMsg     = std::string("PASS ") + "caramba" + "\r\n";
+static const std::string& invalidPassNoParamMsg = "PASS\r\n";
 
 static const std::string& validUserMsg             = "USER roro 0 * :realroro\r\n";
 static const std::string& validUser2Msg            = "USER toto 0 * :realtoto\r\n";
@@ -193,6 +195,7 @@ void test_motd(Server& s, t_results* r);
 void test_nick(Server& s, t_results* r);
 void test_who(Server& s, t_results* r);
 void test_privmsg(Server& s, t_results* r);
+void test_pass(Server& s, t_results* r);
 void test_ping(Server& s, t_results* r);
 void test_topic(Server& s, t_results* r);
 

@@ -95,7 +95,7 @@ ICommand* CmdFactory::make_command(Server& server, Client& client, std::string& 
             }
             std::string params;
             std::getline(iss, params);
-            // LOG_CMD.debug("make_command : params : " + params);
+            LOG_d_CMD(params);
             if (!params.empty() && params[0] == ' ') {
                 params = params.substr(1);
             }
@@ -150,6 +150,8 @@ ICommand* CmdFactory::pass_cmd(Server& server, Client& client, std::string& para
 
     if (replyCode == CORRECT_FORMAT) {
         return new Pass(params);
+    } else if (replyCode == PROCESSED_ERROR) {
+        return NULL;
     } else {
         rh.process_response(client, replyCode, params);
     }

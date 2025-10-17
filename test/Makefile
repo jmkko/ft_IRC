@@ -37,6 +37,7 @@ SRCS_FILES		:= 	main.cpp\
 					testNick.cpp\
 					testWho.cpp\
 					testJoin.cpp\
+					testPass.cpp\
 					testPing.cpp\
 					testPrivmsg.cpp\
 					testTopic.cpp\

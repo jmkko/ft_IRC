@@ -57,6 +57,7 @@ void User::execute(Server& server, Client& client)
     ReplyHandler& rh = ReplyHandler::get_instance(&server);
     if (!client.get_nickname().empty()) {
         client.set_status(REGISTERED);
+        LOG_DV_CMD(client);
         rh.process_response(
             client,
             RPL_WELCOME,
