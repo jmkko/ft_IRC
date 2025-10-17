@@ -12,21 +12,14 @@
 ReplyCode Privmsg::check_args(Server& server, Client& client, std::string& params)
 {
 
-    std::string::size_type pos = params.find(" :");
-    if (params.empty())
-        return (ERR_NEEDMOREPARAMS);
-    if (pos == std::string::npos || pos + 2 >= params.size())
-        return ERR_NOTEXTTOSEND;
+    ReplyHandler       rh          = ReplyHandler::get_instance(&server);
+    int                targetLimit = TARGET_LIMIT;
+    std::string        targetList, msg, channels, target, coma;
+    std::istringstream iss(params);
 
-    ReplyHandler rh          = ReplyHandler::get_instance(&server);
-    std::string  msg         = params.substr(pos);
-    int          targetLimit = TARGET_LIMIT;
-    std::string  targetList;
-    params = params.substr(0, pos);
-    std::stringstream ss(params);
-    std::string       target;
-
-    while (std::getline(ss, target, ',')) {
+    iss >> channels;
+    std::istringstream issChan(channels);
+    while (std::getline(issChan, target, ',')) {
         LOG_DTV_CMD(target);
         if (targetLimit <= 0) {
             rh.process_response(client, ERR_TOOMANYTARGETS, target);
@@ -36,21 +29,31 @@ ReplyCode Privmsg::check_args(Server& server, Client& client, std::string& param
             std::map<std::string, Channel*>::iterator chan = server.channels.find(target);
             if (chan != server.channels.end()) {
                 LOG_D_CMD("add channel", target);
-                targetList += target + " ";
+                targetList += coma + target;
+                coma = ",";
             } else {
                 rh.process_response(client, ERR_NOSUCHCHANNEL, target);
             }
         } else if (server.find_client_by_nickname(target)) {
             LOG_D_CMD("add client", target);
-            targetList += target + " ";
+            targetList += coma + target;
+            coma = ",";
         } else {
             rh.process_response(client, ERR_NOSUCHNICK, target);
         }
         targetLimit--;
     }
-    if (targetList.empty())
+    if (targetList.empty()) {
         return (ERR_NORECIPIENT);
-    params = targetList + msg;
+    }
+    std::getline(iss, msg);
+    msg.erase(0, msg.find_first_not_of(WHITE_SPACE));
+    if (!msg.empty() && msg[0] == ':')
+        msg = msg.erase(0, 1);
+    else if (!msg.empty())
+        msg = msg.substr(0, msg.find_first_of(WHITE_SPACE));
+
+    params = targetList + " " + msg;
     return CORRECT_FORMAT;
 }
 
@@ -104,10 +107,13 @@ void Privmsg::_add_client(Client* client)
 void Privmsg::_build_args(Server& server, std::string& params)
 {
     std::istringstream                        iss(params);
-    std::string                               target;
+    std::string                               target, msg, channels;
     Client*                                   client = NULL;
     std::map<std::string, Channel*>::iterator chan;
-    while (iss >> target && target[0] != ':') {
+
+    iss >> channels;
+    std::istringstream issChan(channels);
+    while (std::getline(issChan, target, ',')) {
         chan = server.channels.find(target);
         if (chan != server.channels.end()) {
             _add_channel(chan->second);
@@ -121,10 +127,11 @@ void Privmsg::_build_args(Server& server, std::string& params)
         }
     }
 
-    std::string::size_type pos = params.find(" :");
-    if (pos != std::string::npos) {
-        _msg = params.substr(pos + 2);
-    } else {
-        _msg = "";
-    }
+    std::getline(iss, msg);
+    msg.erase(0, msg.find_first_not_of(WHITE_SPACE));
+    if (!msg.empty() && msg[0] == ':')
+        msg = msg.substr(1);
+    else if (!msg.empty())
+        msg = msg.substr(0, msg.find_first_of(WHITE_SPACE));
+    _msg = msg;
 }
