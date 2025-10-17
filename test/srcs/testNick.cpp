@@ -143,16 +143,18 @@ void valid_change_should_notice(Server& s)
         TcpSocket& so2 = *sockets.at(1);
         make_op(so);
         authenticate_and_join_second_user(so2);
-        recv_lines(so);
+        recv_lines(so); // join message received from so2
+
+        // test
+        // Client should don't received message
         send_line(so, validNickChangeMsg);
         std::string reply = recv_lines(so);
         AssertReply ar(reply);
+        ar.is_empty();
         LOG_SERVER.error(reply);
-        ar.is_formatted_transfer("roro", "NICK", "rorotheboss");
         std::string reply2 = recv_lines(so2);
         AssertReply ar2(reply2);
-        LOG_TEST.error(reply2);
-        ar2.is_empty();
+        ar2.matches_entirely(":op!op@" + s.get_name() + " NICK rorothebo");
 
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());

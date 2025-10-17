@@ -1,6 +1,5 @@
-#include "Motd.hpp"
-
 #include "LogManager.hpp"
+#include "Motd.hpp"
 #include "ReplyHandler.hpp"
 #include "consts.hpp"
 #include "reply_codes.hpp"
@@ -10,7 +9,7 @@
 #include <ctime>
 #include <fstream>
 #include <iomanip>
-#include <linux/limits.h>
+#include <limits.h>
 #include <ostream>
 #include <sstream>
 #include <unistd.h>

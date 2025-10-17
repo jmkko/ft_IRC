@@ -94,7 +94,7 @@ void valid_join_should_send_rpl_and_broadcast(Server& s)
         std::string reply = recv_lines(so);
         AssertReply ar(reply);
         ar.is_formatted_transfer(userNick, "JOIN #chan", "");
-        //ar.is_formatted(RPL_NAMREPLY, userNick, "= #chan", userNick + " @" + opNick);
+        // ar.is_formatted(RPL_NAMREPLY, userNick, "= #chan", userNick + " @" + opNick);
         ar.is_formatted(RPL_ENDOFNAMES, userNick, "#chan");
         ar.is_formatted(RPL_NOTOPIC, userNick, "#chan");
 
@@ -400,12 +400,12 @@ void creation_of_multiple_chan_with_key(Server& s)
         std::string reply = recv_lines(sop);
         AssertReply ar(reply);
 
-        ar.is_formatted_transfer(opNick, "JOIN #chan1");	
+        ar.is_formatted_transfer(opNick, "JOIN #chan1");
         ar.is_formatted_transfer(opNick, "MODE #chan1 +o");
-		ar.is_formatted(RPL_CHANNELMODEIS, opNick, "#chan1 +k key1");
+        ar.is_formatted(RPL_CHANNELMODEIS, opNick, "#chan1 +k key1");
 
         // test 2
-        //join_assert(so);
+        // join_assert(so);
 
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());
@@ -420,7 +420,7 @@ void test_join(Server& s, t_results* r)
     run_test(r, [&] { name_no_prefix_should_err(s); }, "JOIN chan");
     run_test(r, [&] { name_too_big_should_err(s); }, "JOIN more 50 char channel name");
     run_test(r, [&] { mode_plusi_no_invite_should_err(s); }, "+i");
-    run_test(r, [&] { mode_plusk_no_key_should_err(s); }, "+k <key>");
+    run_test(r, [&] { mode_plusk_no_key_should_err(s); }, "+k second user don't give key");
     run_test(r, [&] { mode_plusk_wrong_yek_should_err(s); }, "A user try to join with wrong yek");
     run_test(r, [&] { mode_plusk_wrong_keyy_should_err(s); }, "A user try to join with wrong keyy");
     run_test(r, [&] { mode_plusi_with_invite_should_send_rpl_and_broadcast(s); }, "+i after being invited.");
@@ -429,5 +429,5 @@ void test_join(Server& s, t_results* r)
     run_test(r, [&] { mode_minusk_should_lift_block(s); }, "-k <key>");
     run_test(r, [&] { mode_minusi_should_lift_block(s); }, "-i");
     run_test(r, [&] { mode_minusl_should_lift_block(s); }, "-l");
-    //run_test(r, [&] { creation_of_multiple_chan_with_key(s); }, "multiple creation of channels with keys");
+    // run_test(r, [&] { creation_of_multiple_chan_with_key(s); }, "multiple creation of channels with keys");
 }

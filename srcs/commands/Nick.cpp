@@ -1,8 +1,7 @@
-#include "Nick.hpp"
-
 #include "Client.hpp"
 #include "Config.hpp"
 #include "LogManager.hpp"
+#include "Nick.hpp"
 #include "ReplyHandler.hpp"
 #include "Server.hpp"
 #include "reply_codes.hpp"
@@ -22,8 +21,8 @@ void Nick::execute(Server& server, Client& client)
     ReplyHandler& rh          = ReplyHandler::get_instance(&server);
     LOG_DV_CMD(_nickname);
 
-    client.set_nickname(_nickname);
     if (oldNickname.empty() && !client.get_user_name().empty()) {
+        client.set_nickname(_nickname);
         LOG_dt_CMD("Nick after USER");
         client.set_status(REGISTERED);
         rh.process_response(
@@ -36,8 +35,9 @@ void Nick::execute(Server& server, Client& client)
         rh.process_response(client, RPL_CREATED);
         rh.process_response(client, RPL_MYINFO, "", NULL, server.get_name() + " 1.0  0 0");
     } else if (!oldNickname.empty() && !client.get_user_name().empty() && client.is_registered()) {
-        client.broadcast_to_all_channels(server, TRANSFER_NICK, oldNickname); // ! \\ ;
+        client.broadcast_to_all_channels(server, TRANSFER_NICK, _nickname); // ! \\ ;
     }
+    client.set_nickname(_nickname);
 }
 
 ReplyCode Nick::check_args(Server& server, Client& client, std::string& params)
