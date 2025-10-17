@@ -90,7 +90,7 @@ static std::string
 generate_code_response(Client& client, ReplyCode code, const std::string& parameters, const std::string& trailing)
 {
     std::string nick          = client.get_nickname().empty() ? "*" : client.get_nickname();
-    std::string numericPrefix = ":" + ircConfig.get_name() + " " + utils::code_to_str(code) + " " + nick + " ";
+    std::string numericPrefix = ":" + ircConfig.get_name() + " " + Utils::code_to_str(code) + " " + nick + " ";
     if (parameters.empty() && trailing.empty())
         return (numericPrefix + ":" + ircCodes.trailing(code));
     else if (parameters.empty() && !trailing.empty())
@@ -102,7 +102,7 @@ generate_code_response(Client& client, ReplyCode code, const std::string& parame
 }
 
 static std::string generate_non_numerical_response(
-    Client& client, ReplyCode code, const std::string& parameters, Client* sender, const std::string& trailing)
+	Client& client, ReplyCode code, const std::string& parameters, Client* sender, const std::string& trailing = "")
 {
     if (!sender)
         sender = &client;
@@ -115,7 +115,7 @@ static std::string generate_non_numerical_response(
     case TRANSFER_PRIVMSG:
         return (get_user_id_of(*sender) + "PRIVMSG " + parameters + " :" + trailing);
     case TRANSFER_KICK:
-        return (get_user_id_of(*sender) + "KICK " + parameters);
+        return (get_user_id_of(*sender) + "KICK " + parameters + trailing);
     case TRANSFER_INVITE:
         return (get_user_id_of(*sender) + "INVITE " + parameters);
     case TRANSFER_QUIT:

@@ -13,16 +13,18 @@ class Server;
 class Kick : public ICommand
 {
   public:
-    Kick(const std::vector<std::string>& args);
+    Kick(const std::string& params);
     ~Kick();
 
-    void             execute(Server& server, Client& client);
-    static ReplyCode check_args(Server& server, Client& client, std::vector<std::string>& args);
+    void	     		execute(Server& server, Client& client);
+    static ReplyCode	check_args(Server& server, Client& client, std::vector<std::string>& args);
+    static ReplyCode	check_args(Server& server, Client& client, std::string& params);
 
   private:
-    std::vector<std::string> _args;
-    // std::vector<std::string> _channelsNames;
-    // std::vector<std::string> _userNames;
+	std::vector<std::string> _channelsNames;
+	std::vector<std::string> _usersNames;
+	std::string				_msg;
+
 
     Kick();
     Kick(const Kick& other);

@@ -6,7 +6,7 @@
 /*   By: fpetit <fpetit@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/13 14:12:49 by jhervoch          #+#    #+#             */
-/*   Updated: 2025/10/01 19:08:16 by fpetit           ###   ########.fr       */
+/*   Updated: 2025/10/16 14:53:14 by jhervoch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -179,7 +179,7 @@ int TcpSocket::do_receive(std::vector<unsigned char>& buffer)
     expectedSize = ntohs(expectedSize);
     buffer.resize(expectedSize);
     ssize_t bytesRead = 0;
-    do {
+    do { // NOLINT
         ssize_t ret
             = recv(_sckt, reinterpret_cast<char*>(&buffer[bytesRead]), (expectedSize - bytesRead) * sizeof(unsigned char), 0);
         if (ret <= 0) {
