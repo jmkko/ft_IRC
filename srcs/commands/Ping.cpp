@@ -23,10 +23,10 @@ ReplyCode Ping::check_args(Server& server, Client& client, std::string& params)
     (void)server;
     (void)client;
 
-    std::string token;
+    std::string        token;
     std::istringstream iss(params);
     iss >> token;
-   
+
     if (token.empty())
         return ERR_NOORIGIN;
     params = token;

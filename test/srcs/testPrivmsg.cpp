@@ -178,8 +178,8 @@ void msg_in_arg_instead_of_trailing_should_err(Server& s)
     try {
         TEST_SETUP(test, s, 3);
         TcpSocket& soOp = *sockets.at(0);
-        TcpSocket& so = *sockets.at(1);
-        TcpSocket& so2 = *sockets.at(2);
+        TcpSocket& so   = *sockets.at(1);
+        TcpSocket& so2  = *sockets.at(2);
         make_op(soOp);
         authenticate_and_join(so);
         recv_lines(soOp);

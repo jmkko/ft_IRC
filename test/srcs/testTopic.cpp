@@ -278,7 +278,10 @@ void test_topic(Server& s, t_results* r)
     print_test_series_part("edge cases");
     run_test(r, [&] { topic_in_trailing_should_broadcast(s); }, "TOPIC #chan :new topic");
     run_test(r, [&] { topic_empty_str_should_broadcast(s); }, "TOPIC #chan : should reset topic");
-    run_test(r, [&] { concurrent_changes_should_broadcast_and_preserve_last_changes(s); }, "TOPIC quasi concurrent changes should keep last update");
+    run_test(
+        r,
+        [&] { concurrent_changes_should_broadcast_and_preserve_last_changes(s); },
+        "TOPIC quasi concurrent changes should keep last update");
 
     print_test_series_part("error cases");
     run_test(r, [&] { no_params_should_err_topic(s); }, "TOPIC no param");

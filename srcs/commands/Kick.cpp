@@ -35,7 +35,7 @@ Kick::Kick(const std::string& params)
             _channelsNames.push_back(currentChannel);
         currentChannel.clear();
     }
-     while (std::getline(issUsers, currentUser, ',')) {
+    while (std::getline(issUsers, currentUser, ',')) {
         LOG_DV_CMD(currentUser);
         if (!currentUser.empty())
             _usersNames.push_back(currentUser);
@@ -86,9 +86,8 @@ void Kick::execute(Server& server, Client& client)
             rh.process_response(client, ERR_CHANOPRIVSNEEDED, channel->get_name());
             continue;
         }
-        for (size_t j = 0; j < _usersNames.size(); ++j)
-        {
-            Client*  target  = server.find_client_by_nickname(_usersNames[j]);
+        for (size_t j = 0; j < _usersNames.size(); ++j) {
+            Client* target = server.find_client_by_nickname(_usersNames[j]);
             LOG_D_CMD("looking for", _usersNames[j]);
 
             if (!target) {
@@ -118,19 +117,16 @@ ReplyCode Kick::check_args(Server& server, Client& client, std::string& params)
     }
     std::string        currentChannel, currentUser, comma;
     std::istringstream issChannels(channels), issUsers(users);
-    while (std::getline(issChannels, currentChannel, ','))
-    {
+    while (std::getline(issChannels, currentChannel, ',')) {
         if (!Channel::is_valid_channel_name(currentChannel)) {
             rh.process_response(client, ERR_BADCHANMASK, currentChannel);
-        }
-        else {
+        } else {
             channelsList.empty() ? channelsList += currentChannel : channelsList += "," + currentChannel;
         }
         currentChannel.clear();
     }
     comma = "";
-    while (std::getline(issUsers, currentUser, ','))
-    {
+    while (std::getline(issUsers, currentUser, ',')) {
         if (currentUser.empty())
             return (ERR_NEEDMOREPARAMS);
         else {

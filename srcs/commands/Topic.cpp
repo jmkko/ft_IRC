@@ -55,8 +55,7 @@ Topic::Topic(Server& server, std::string& params) : _isTopicChange(false)
 
     std::getline(iss, topic);
 
-    if (!topic.empty() && topic.length() > 1)
-    {
+    if (!topic.empty() && topic.length() > 1) {
         topic.erase(0, 1); // remove space after #chan
         _isTopicChange = true;
         if (!topic.empty() && topic[0] == ':') {
@@ -74,8 +73,8 @@ Topic::~Topic(void) {}
 
 void Topic::execute(Server& server, Client& client)
 {
-    std::string topicTrailing = _topic;
-    ReplyHandler rh = ReplyHandler::get_instance(&server);
+    std::string  topicTrailing = _topic;
+    ReplyHandler rh            = ReplyHandler::get_instance(&server);
 
     if (_chan) {
         if (_isTopicChange == false) {
