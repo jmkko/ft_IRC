@@ -49,15 +49,20 @@ Topic::Topic(Server& server, std::string& params)
     std::istringstream iss(params);
     std::string        channel;
     std::string        topic;
-    std::string        token;
 
     iss >> channel;
-    iss >> topic;
-    while (iss >> token) {
-        topic += " " + token;
-    }
     _chan  = server.find_channel_by_name(channel);
+
+	std::getline(iss, topic);
+	topic.erase(0, topic.find_first_not_of(WHITE_SPACE));
+	if (!topic.empty() && topic[0] == ':') {
+		topic.erase(0, 1);
+	} else if (!topic.empty()) {
+		topic = topic.substr(0, topic.find_first_not_of(WHITE_SPACE));
+	}
     _topic = topic;
+
+
 }
 
 Topic::~Topic(void) {}

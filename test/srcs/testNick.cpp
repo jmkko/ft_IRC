@@ -221,7 +221,7 @@ void invalid_char_star_should_err(Server& s)
     }
 }
 
-void invalid_char_coma_should_err(Server& s)
+void invalid_char_comma_should_err(Server& s)
 {
     try {
         TEST_SETUP(test, s, 1);
@@ -288,7 +288,7 @@ void test_nick(Server& s, t_results* r)
     run_test(r, [&] { valid_change_should_notice(s); }, "roro->\"roro the boss\" should tell is new nick to other");
     run_test(r, [&] { no_arg_should_err(s); }, "no arg");
     run_test(r, [&] { invalid_char_star_should_err(s); }, "ro*ro should err");
-    run_test(r, [&] { invalid_char_coma_should_err(s); }, "ro,ro should err");
+    run_test(r, [&] { invalid_char_comma_should_err(s); }, "ro,ro should err");
     run_test(r, [&] { invalid_char_arobase_should_err(s); }, "ro@ro should err");
     run_test(r, [&] { starting_with_number_should_err(s); }, "3oro");
     run_test(r, [&] { taken_should_err(s); }, "taken");
