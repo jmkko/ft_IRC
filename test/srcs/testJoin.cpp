@@ -94,7 +94,7 @@ void valid_join_should_send_rpl_and_broadcast(Server& s)
         std::string reply = recv_lines(so);
         AssertReply ar(reply);
         ar.is_formatted_transfer(userNick, "JOIN #chan", "");
-        //ar.is_formatted(RPL_NAMREPLY, userNick, "= #chan", userNick + " @" + opNick);
+        // ar.is_formatted(RPL_NAMREPLY, userNick, "= #chan", userNick + " @" + opNick);
         ar.is_formatted(RPL_ENDOFNAMES, userNick, "#chan");
         ar.is_formatted(RPL_NOTOPIC, userNick, "#chan");
 
@@ -400,12 +400,12 @@ void creation_of_multiple_chan_with_key(Server& s)
         std::string reply = recv_lines(sop);
         AssertReply ar(reply);
 
-        ar.is_formatted_transfer(opNick, "JOIN #chan1");	
+        ar.is_formatted_transfer(opNick, "JOIN #chan1");
         ar.is_formatted_transfer(opNick, "MODE #chan1 +o");
-		ar.is_formatted(RPL_CHANNELMODEIS, opNick, "#chan1 +k key1");
+        ar.is_formatted(RPL_CHANNELMODEIS, opNick, "#chan1 +k key1");
 
         // test 2
-        //join_assert(so);
+        // join_assert(so);
 
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());

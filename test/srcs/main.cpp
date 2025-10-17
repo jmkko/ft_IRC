@@ -43,11 +43,11 @@ int main(int ac, char** av)
             functions["KICK"]    = &test_kick;
             functions["WHO"]     = &test_who;
             functions["JOIN"]    = &test_join;
-            functions["PASS"] = &test_pass;
+            functions["PASS"]    = &test_pass;
             functions["PRIVMSG"] = &test_privmsg;
             functions["PING"]    = &test_ping;
             functions["TOPIC"]   = &test_topic;
-            functions["MOTD"]   = &test_motd;
+            functions["MOTD"]    = &test_motd;
 
             functions[av[1]](*s, &results);
         } else {

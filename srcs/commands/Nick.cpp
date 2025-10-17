@@ -23,7 +23,7 @@ void Nick::execute(Server& server, Client& client)
     LOG_DV_CMD(_nickname);
 
     if (oldNickname.empty() && !client.get_user_name().empty()) {
-    	client.set_nickname(_nickname);
+        client.set_nickname(_nickname);
         LOG_dt_CMD("Nick after USER");
         client.set_status(REGISTERED);
         rh.process_response(

@@ -149,7 +149,7 @@ ICommand* CmdFactory::pass_cmd(Server& server, Client& client, std::string& para
     ReplyCode     replyCode = Pass::check_args(server, client, params);
 
     if (replyCode == CORRECT_FORMAT) {
-        return new Pass(params);
+        return new Pass();
     } else if (replyCode == PROCESSED_ERROR) {
         return NULL;
     } else {
@@ -161,7 +161,7 @@ ICommand* CmdFactory::pass_cmd(Server& server, Client& client, std::string& para
 
 ICommand* CmdFactory::kick_cmd(Server& server, Client& client, std::string& params)
 {
-    ReplyHandler&            rh = ReplyHandler::get_instance(&server);
+    ReplyHandler& rh = ReplyHandler::get_instance(&server);
 
     ReplyCode replyCode = Kick::check_args(server, client, params);
     if (replyCode == CORRECT_FORMAT) {

@@ -111,16 +111,16 @@ static std::string generate_non_numerical_response(
     Client& client, ReplyCode code, const std::string& parameters, Client* sender, const std::string& trailing = "")
 {
     if (!sender) {
-    	sender = &client;
+        sender = &client;
     }
 
     std::string trailingMessage, separatedParams;
     if (!trailing.empty()) {
         trailingMessage = " :" + trailing;
     }
-	if (!parameters.empty()) {
-		separatedParams = " " + parameters;
-	}
+    if (!parameters.empty()) {
+        separatedParams = " " + parameters;
+    }
 
     switch (code) {
     case TRANSFER_NICK:

@@ -133,7 +133,7 @@ std::string recv_lines(const TcpSocket& so, const std::string& nick)
                 LOG_TEST.debug("recv_line: recv nothing to receive", strerror(errno));
             } else {
                 buffer[bytesReceived] = '\0';
-                result                += std::string(static_cast<char*>(buffer));
+                result += std::string(static_cast<char*>(buffer));
                 std::string dest = nick.empty() ? "" : " for " + nick;
                 LOG_D_TEST("received " + TO_STRING(bytesReceived) + " bytes" + dest, result);
                 if (result.find("\r\n") != std::string::npos)

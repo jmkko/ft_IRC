@@ -23,8 +23,8 @@
 #include <thread>
 
 /************************************************************
-*		✅  VALID											*
-************************************************************/
+ *		✅  VALID											*
+ ************************************************************/
 
 /**
  @brief integration test - normal case
@@ -59,7 +59,7 @@ void valid_topic_change_should_rpl(Server& s)
         // test
         std::string reply = get_rpl_for(soOp, validTopic);
         AssertReply ar(reply);
-        ar.is_formatted_transfer(opNick, "TOPIC #chan",  "new topic");
+        ar.is_formatted_transfer(opNick, "TOPIC #chan", "new topic");
 
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());
@@ -127,8 +127,8 @@ void mode_minust_should_grant_topic_to_all(Server& s)
 }
 
 /************************************************************
-*      ❔ EDGE CASES 								    	*
-************************************************************/
+ *      ❔ EDGE CASES 								    	*
+ ************************************************************/
 
 /**
  @brief integration test - normal case
@@ -157,7 +157,7 @@ void concurrent_changes_should_rpl(Server& s)
 {
     try {
         TEST_SETUP(test, s, 2);
-        TcpSocket& soOp = *sockets.at(0);
+        TcpSocket& soOp  = *sockets.at(0);
         TcpSocket& soOp2 = *sockets.at(1);
         make_two_ops(soOp, soOp2);
 
@@ -187,8 +187,8 @@ void concurrent_changes_should_rpl(Server& s)
 }
 
 /************************************************************
-*		❌ ERRORS											*
-************************************************************/
+ *		❌ ERRORS											*
+ ************************************************************/
 
 void no_params_should_err_topic(Server& s)
 {

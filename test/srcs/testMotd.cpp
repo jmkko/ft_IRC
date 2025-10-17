@@ -24,8 +24,8 @@
 #include <sys/stat.h>
 
 /************************************************************
-*		✅  VALID											*
-************************************************************/
+ *		✅  VALID											*
+ ************************************************************/
 
 /**
  @brief integration test - normal case
@@ -56,9 +56,8 @@ void valid_motd_should_rpl(Server& s)
         send_line(so, validMotd);
         std::this_thread::sleep_for(std::chrono::milliseconds(SERVER_MOTD_WAIT_MS));
         std::string reply = "";
-        int tries = 0;
-        while (reply.find(ircCodes.trailing(RPL_ENDOFMOTD)) == std::string::npos || tries < MAX_TRIES_MOTD)
-        {
+        int         tries = 0;
+        while (reply.find(ircCodes.trailing(RPL_ENDOFMOTD)) == std::string::npos || tries < MAX_TRIES_MOTD) {
             reply += recv_lines(so, "roro on motd");
             ++tries;
         }
@@ -74,8 +73,8 @@ void valid_motd_should_rpl(Server& s)
 }
 
 /************************************************************
-*		❌ ERRORS											*
-************************************************************/
+ *		❌ ERRORS											*
+ ************************************************************/
 
 /**
  @brief integration test - error case
@@ -112,7 +111,7 @@ void test_motd(Server& s, t_results* r)
     print_test_series_part("common cases");
 
     run_test(r, [&] { valid_motd_should_rpl(s); }, "'MOTD");
-    
+
     print_test_series_part("error cases");
     run_test(r, [&] { motd_not_opening_should_err(s); }, "'MOTD file with no rights");
 }

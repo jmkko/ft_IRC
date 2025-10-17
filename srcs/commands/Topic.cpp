@@ -51,18 +51,16 @@ Topic::Topic(Server& server, std::string& params)
     std::string        topic;
 
     iss >> channel;
-    _chan  = server.find_channel_by_name(channel);
+    _chan = server.find_channel_by_name(channel);
 
-	std::getline(iss, topic);
-	topic.erase(0, topic.find_first_not_of(WHITE_SPACE));
-	if (!topic.empty() && topic[0] == ':') {
-		topic.erase(0, 1);
-	} else if (!topic.empty()) {
-		topic = topic.substr(0, topic.find_first_not_of(WHITE_SPACE));
-	}
+    std::getline(iss, topic);
+    topic.erase(0, topic.find_first_not_of(WHITE_SPACE));
+    if (!topic.empty() && topic[0] == ':') {
+        topic.erase(0, 1);
+    } else if (!topic.empty()) {
+        topic = topic.substr(0, topic.find_first_not_of(WHITE_SPACE));
+    }
     _topic = topic;
-
-
 }
 
 Topic::~Topic(void) {}
