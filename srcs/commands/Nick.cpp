@@ -35,7 +35,7 @@ void Nick::execute(Server& server, Client& client)
         rh.process_response(client, RPL_CREATED);
         rh.process_response(client, RPL_MYINFO, "", NULL, server.get_name() + " 1.0  0 0");
     } else if (!oldNickname.empty() && !client.get_user_name().empty() && client.is_registered()) {
-        client.broadcast_to_all_channels(server, TRANSFER_NICK, _nickname); // ! \\ ;
+        client.broadcast_to_all_channels(server, TRANSFER_NICK, "", _nickname); // ! \\ ;
     }
     client.set_nickname(_nickname);
 }

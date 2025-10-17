@@ -17,7 +17,8 @@ class Invite : public ICommand
     static ReplyCode check_args(Server& s, Client& c, std::string& params);
 
   private:
-    std::string _params;
+	std::string _nickname;
+	std::string _channelName;
     Invite();
     Invite(const Invite& other);
     Invite& operator=(const Invite& other);

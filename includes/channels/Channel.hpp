@@ -183,12 +183,15 @@ class Channel
      */
 
     ReplyCode add_member(Client& client);
+
     /**
      * @brief removes a client from the member list
      *
      * @param client
+	 * @return false if member was not in the channel
      */
-    void      remove_member(Client& client);
+    bool      remove_member(Client& client);
+
     ReplyCode ban_member(Client& client);
     /**
      * @brief grants op status to the client
