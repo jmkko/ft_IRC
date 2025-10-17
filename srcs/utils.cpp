@@ -138,4 +138,5 @@ bool Utils::MatchPattern::operator()(const Client* c) const
            || is_matching_pattern(pattern, c->get_userhost()) || is_matching_pattern(pattern, c->get_real_name());
 }
 
-bool Utils::is_invalid_nick(char c) { return (!std::isalnum(c) && !Utils::is_special_abnf(c) && !is_special_abnf(c)); }
+bool Utils::is_invalid_char_nick(char c) { return (!std::isalnum(c) && !is_special_abnf(c)); }
+bool Utils::is_invalid_char_user(char c) { return (is_char_of(c, std::string(FORBIDEN_CHAR_USER, 5))); }

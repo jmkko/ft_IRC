@@ -23,6 +23,7 @@ class ReplyHandler
                                  Client*            sender     = NULL,
                                  const std::string& trailing   = "");
 
+    void process_welcome(Server& server, Client& client);
     // int         process_code_response(Client& client, ReplyCode code, const std::string& parameters);
     // int         process_nocode_response(Client& client, const std::string& parameters, Client* sender = NULL);
 

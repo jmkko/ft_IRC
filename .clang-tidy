@@ -10,6 +10,7 @@ Checks: >
   -cppcoreguidelines-pro-bounds-constant-array-index,
   -cppcoreguidelines-pro-bounds-array-to-pointer-decay,
   -cppcoreguidelines-owning-memory,
+  -cppcoreguidelines-avoid-magic-numbers,
   bugprone-*,
   -bugprone-easily-swappable-parameters,
   performance-*,

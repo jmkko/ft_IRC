@@ -40,6 +40,7 @@ SRCS_FILES		:= 	main.cpp\
 					testPing.cpp\
 					testPrivmsg.cpp\
 					testTopic.cpp\
+					testUser.cpp\
 
 IRC_SRCS_FILES	:=	utils.cpp\
 					signal_handler.cpp\
