@@ -1,5 +1,6 @@
-#include "Client.hpp"
 #include "CmdFactory.hpp"
+
+#include "Client.hpp"
 #include "ICommand.hpp"
 #include "Invite.hpp"
 #include "Join.hpp"

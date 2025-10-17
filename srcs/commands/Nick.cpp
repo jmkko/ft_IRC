@@ -1,7 +1,8 @@
+#include "Nick.hpp"
+
 #include "Client.hpp"
 #include "Config.hpp"
 #include "LogManager.hpp"
-#include "Nick.hpp"
 #include "ReplyHandler.hpp"
 #include "Server.hpp"
 #include "reply_codes.hpp"
