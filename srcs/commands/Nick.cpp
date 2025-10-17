@@ -8,6 +8,7 @@
 #include "utils.hpp"
 
 #include <algorithm>
+#include <cctype>
 #include <iostream>
 
 Nick::Nick(const std::string& nickname) : _nickname(nickname) {}
@@ -51,8 +52,8 @@ ReplyCode Nick::check_args(Server& server, Client& client, std::string& params)
     LOG_DTV_CMD(nickname);
     if (nickname.empty())
         return (ERR_NONICKNAMEGIVEN);
-    invalidChar = std::count_if(nickname.begin(), nickname.end(), Utils::is_invalid_char);
-    if (invalidChar) {
+    invalidChar = std::count_if(nickname.begin(), nickname.end(), Utils::is_invalid_nick);
+    if (invalidChar || std::isdigit(nickname[0])) {
         return (ERR_ERRONEUSNICKNAME);
     } else if (nickname.length() > ircConfig.get_nickname_max_len()) {
         nickname = nickname.substr(0, ircConfig.get_nickname_max_len());
