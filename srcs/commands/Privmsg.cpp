@@ -17,6 +17,8 @@ ReplyCode Privmsg::check_args(Server& server, Client& client, std::string& param
     std::string        targetList, msg, channels, target, comma;
     std::istringstream iss(params);
 
+    if (iss.str().empty())
+        return ERR_NEEDMOREPARAMS;
     iss >> channels;
     std::istringstream issChan(channels);
     while (std::getline(issChan, target, ',')) {
@@ -28,14 +30,14 @@ ReplyCode Privmsg::check_args(Server& server, Client& client, std::string& param
         if (Channel::is_valid_channel_name(target)) {
             std::map<std::string, Channel*>::iterator chan = server.channels.find(target);
             if (chan != server.channels.end()) {
-                LOG_D_CMD("add channel", target);
+                LOG_DT_CMD("add channel", target);
                 targetList += comma + target;
                 comma = ",";
             } else {
                 rh.process_response(client, ERR_NOSUCHCHANNEL, target);
             }
         } else if (server.find_client_by_nickname(target)) {
-            LOG_D_CMD("add client", target);
+            LOG_DT_CMD("add client", target);
             targetList += comma + target;
             comma = ",";
         } else {

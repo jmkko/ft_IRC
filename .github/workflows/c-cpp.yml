@@ -29,6 +29,6 @@ jobs:
    - name: Install dependencies
      run: sudo apt-get update && sudo apt-get install -y clang-12 make
    - name: build
-     run: make -C test
+     run: cd test && make test
    - name: test
      run: ./test/test
