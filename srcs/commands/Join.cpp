@@ -34,7 +34,7 @@ Join::Join(const std::string& params)
 {
     std::istringstream iss(params);
     std::string        channels;
-std::string        keys;
+    std::string        keys;
 
     iss >> channels;
     iss >> keys;
@@ -76,7 +76,7 @@ ReplyCode Join::check_args(Server& server, Client& client, std::string& params)
     if (channels.empty()) {
         return (ERR_NEEDMOREPARAMS);
     }
-    std::string        currentChannel, currentKey;
+    std::string        currentChannel, currentKey, comma;
     std::istringstream issChannels(channels), issKeys(keys);
     while (std::getline(issChannels, currentChannel, ',')) {
         std::getline(issKeys, currentKey, ',');
@@ -86,8 +86,9 @@ ReplyCode Join::check_args(Server& server, Client& client, std::string& params)
         } else if (!Channel::is_valid_channel_key(currentKey)) {
             rh.process_response(client, ERR_BADCHANNELKEY, client.get_nickname() + " " + currentChannel);
         } else {
-            channelsNames += currentChannel + ",";
-            channelsKeys += currentKey + ",";
+            channelsNames += comma + currentChannel;
+            channelsKeys += comma + currentKey;
+            comma = ",";
         }
         currentChannel.clear();
         currentKey.clear();
@@ -130,7 +131,6 @@ void Join::display_topic(ReplyHandler& rh, Client& client, Channel& channel)
     }
 }
 
-
 /**
  * @brief Allows a client to join a channel or create it if it does not exist
  * after checking if the name of the channel is valid accordind to the RFC_2812
@@ -163,24 +163,24 @@ void Join::execute(Server& server, Client& client)
             server.channels[chanName] = channel;                        // add it to the server
             LOG_I_CMD("#️⃣ New channel", channel->get_name());
         } else if ((channel->get_mode() & CHANMODE_KEY)
-                   && (chanKey != channel->get_key())) { 				// if the channel exist but wrong key has been given
-            rh.process_response(client, ERR_BADCHANNELKEY, chanName);	// send error - no connexions
-            continue;                                                   // continue iteration
+                   && (chanKey != channel->get_key())) {              // if the channel exist but wrong key has been given
+            rh.process_response(client, ERR_BADCHANNELKEY, chanName); // send error - no connexions
+            continue;                                                 // continue iteration
         }
-        replyCode = channel->add_member(client); 									// try to add the members to the channel
-        if (replyCode == CORRECT_FORMAT) {       									// if right permissions ...
+        replyCode = channel->add_member(client); // try to add the members to the channel
+        if (replyCode == CORRECT_FORMAT) {       // if right permissions ...
             LOG_CONN.info(client.get_nickname() + " joined channel: " + chanName);
-            rh.process_response(client, TRANSFER_JOIN, chanName);        			// send connection success message
-            channel->broadcast(server, TRANSFER_JOIN, chanName, &client); 			// + broadcast
+            rh.process_response(client, TRANSFER_JOIN, chanName);         // send connection success message
+            channel->broadcast(server, TRANSFER_JOIN, chanName, &client); // + broadcast
             channel->remove_from_invited_list(client);
-            if (channel->get_nb_members() == 1) { 									// if first and/or only user
-                channel->make_operator(client);   									// --> make the client operator
+            if (channel->get_nb_members() == 1) { // if first and/or only user
+                channel->make_operator(client);   // --> make the client operator
                 rh.process_response(client, RPL_CHANNELMODEIS, chanName + " +o ");
             }
-            send_list_of_names(rh, client, *channel); 								// send the list of names
-            display_topic(rh, client, *channel); 									// display the topic
+            send_list_of_names(rh, client, *channel); // send the list of names
+            display_topic(rh, client, *channel);      // display the topic
         } else {
-            rh.process_response(client, replyCode, chanName); 			// else if not added to chan -> send permissions error
+            rh.process_response(client, replyCode, chanName); // else if not added to chan -> send permissions error
         }
     }
 }
