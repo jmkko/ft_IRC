@@ -1,6 +1,5 @@
-#include "Motd.hpp"
-
 #include "LogManager.hpp"
+#include "Motd.hpp"
 #include "ReplyHandler.hpp"
 #include "consts.hpp"
 #include "reply_codes.hpp"

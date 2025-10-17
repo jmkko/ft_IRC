@@ -200,5 +200,6 @@ void test_privmsg(Server& s, t_results* r);
 void test_pass(Server& s, t_results* r);
 void test_ping(Server& s, t_results* r);
 void test_topic(Server& s, t_results* r);
+void test_user(Server& s, t_results* r);
 
 #endif

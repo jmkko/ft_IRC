@@ -48,16 +48,24 @@ int main(int ac, char** av)
             functions["PING"]    = &test_ping;
             functions["TOPIC"]   = &test_topic;
             functions["MOTD"]    = &test_motd;
+            functions["USER"]    = &test_user;
 
-            functions[av[1]](*s, &results);
+            // functions[av[1]](*s, &results);
+            std::string                                                    key(av[1]);
+            std::map<std::string, void (*)(Server&, t_results*)>::iterator it = functions.find(key);
+            if (it != functions.end())
+                it->second(*s, &results);
+            else
+                std::cerr << "Commande inconnue : " << key << "\n";
         } else {
-            test_mode(*s, &results);
             test_nick(*s, &results);
-            test_kick(*s, &results);
+            test_user(*s, &results);
             test_who(*s, &results);
+            test_mode(*s, &results);
             test_join(*s, &results);
             test_pass(*s, &results);
             test_privmsg(*s, &results);
+            test_kick(*s, &results);
             test_ping(*s, &results);
             test_topic(*s, &results);
             test_motd(*s, &results);

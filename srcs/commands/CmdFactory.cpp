@@ -1,6 +1,5 @@
-#include "CmdFactory.hpp"
-
 #include "Client.hpp"
+#include "CmdFactory.hpp"
 #include "ICommand.hpp"
 #include "Invite.hpp"
 #include "Join.hpp"
@@ -137,7 +136,7 @@ ICommand* CmdFactory::user_cmd(Server& server, Client& client, std::string& para
         }
         return (new User(username, realname));
     } else {
-        rh.process_response(client, replyCode, params);
+        rh.process_response(client, replyCode, "USER");
     }
 
     return NULL;

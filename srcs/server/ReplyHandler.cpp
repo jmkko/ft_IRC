@@ -1,8 +1,7 @@
-#include "ReplyHandler.hpp"
-
 #include "Client.hpp"
 #include "Config.hpp"
 #include "LogManager.hpp"
+#include "ReplyHandler.hpp"
 #include "Server.hpp"
 #include "reply_codes.hpp"
 #include "utils.hpp"
@@ -167,7 +166,17 @@ int ReplyHandler::process_response(
     }
     return (code);
 }
-
+void ReplyHandler::process_welcome(Server& server, Client& client)
+{
+    process_response(client,
+                     RPL_WELCOME,
+                     "",
+                     NULL,
+                     ircCodes.trailing(RPL_WELCOME) + " " + client.get_nickname() + "!" + client.get_user_name() + "@localhost");
+    process_response(client, RPL_YOURHOST, "", NULL, ircCodes.trailing(RPL_YOURHOST) + " " + server.get_name());
+    process_response(client, RPL_CREATED);
+    process_response(client, RPL_MYINFO, "", NULL, server.get_name() + " 1.0  0 0");
+}
 void ReplyHandler::_send_reply(Client& client, const std::string& msg)
 {
     client.append_to_send_buffer(msg + "\r\n");

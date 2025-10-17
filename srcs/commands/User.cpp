@@ -1,13 +1,13 @@
-#include "User.hpp"
-
 #include "Client.hpp"
 #include "Config.hpp"
 #include "LogManager.hpp"
 #include "Motd.hpp"
 #include "ReplyHandler.hpp"
 #include "Server.hpp"
+#include "User.hpp"
 #include "reply_codes.hpp"
 
+#include <algorithm>
 #include <iostream>
 
 // Default constructor
@@ -57,16 +57,7 @@ void User::execute(Server& server, Client& client)
     ReplyHandler& rh = ReplyHandler::get_instance(&server);
     if (!client.get_nickname().empty()) {
         client.set_status(REGISTERED);
-        LOG_DV_CMD(client);
-        rh.process_response(
-            client,
-            RPL_WELCOME,
-            "",
-            NULL,
-            ircCodes.trailing(RPL_WELCOME) + " " + client.get_nickname() + "!" + client.get_user_name() + "@localhost");
-        rh.process_response(client, RPL_YOURHOST, "", NULL, ircCodes.trailing(RPL_YOURHOST) + " " + server.get_name());
-        rh.process_response(client, RPL_CREATED);
-        rh.process_response(client, RPL_MYINFO, "", NULL, server.get_name() + " 1.0  0 0");
+        rh.process_welcome(server, client);
 #ifndef TEST
         Motd motd("");
         motd.execute(server, client);
@@ -94,9 +85,11 @@ ReplyCode User::check_args(Server& server, Client& client, std::string& params)
     (void)server;
     std::istringstream iss(params);
     std::string        username, modearg, unusedarg, realname;
+    size_t             invalidChar = 0;
 
     iss >> username;
-    if (username.empty()) {
+    invalidChar = std::count_if(username.begin(), username.end(), Utils::is_invalid_char_user);
+    if (username.empty() || invalidChar) {
         return (ERR_NEEDMOREPARAMS);
     }
     iss >> modearg;
