@@ -175,7 +175,7 @@ void ReplyHandler::process_welcome(Server& server, Client& client)
                      NULL,
                      ircCodes.trailing(RPL_WELCOME) + " " + client.get_nickname() + "!" + client.get_user_name() + "@localhost");
     process_response(client, RPL_YOURHOST, "", NULL, ircCodes.trailing(RPL_YOURHOST) + " " + server.get_name());
-    process_response(client, RPL_CREATED);
+    process_response(client, RPL_CREATED, "", NULL, ircCodes.trailing(RPL_CREATED));
     process_response(client, RPL_MYINFO, "", NULL, server.get_name() + " 1.0  0 0");
 }
 void ReplyHandler::_send_reply(Client& client, const std::string& msg)
