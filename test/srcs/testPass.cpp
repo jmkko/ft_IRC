@@ -23,8 +23,8 @@
 #include <thread>
 
 /************************************************************
-*		✅  VALID											*
-************************************************************/
+ *		✅  VALID											*
+ ************************************************************/
 
 void correct_pass_should_void(Server& s)
 {
@@ -78,23 +78,23 @@ void wrong_pass_should_err(Server& s)
     }
 }
 
-// void already_registered_should_err(Server& s)
-// {
-//     try {
-//         TEST_SETUP(test, s, 1);
-//         TcpSocket& so = *sockets.at(0);
-//         authenticate(so);
-        
-//         std::string reply = get_rpl_for(so, validPassMsg);
-//         AssertReply ar(reply);
-//         ar.is_formatted(ERR_ALREADYREGISTRED, userNick);
+void already_registered_should_err(Server& s)
+{
+    try {
+        TEST_SETUP(test, s, 1);
+        TcpSocket& so = *sockets.at(0);
+        authenticate(so);
 
-//     } catch (const std::runtime_error& e) {
-//         LOG_TEST.error(e.what());
-//     }
-// }
+        std::string reply = get_rpl_for(so, validPassMsg);
+        AssertReply ar(reply);
+        ar.is_formatted(ERR_ALREADYREGISTRED, userNick);
 
- void test_pass(Server& s, t_results* r)
+    } catch (const std::runtime_error& e) {
+        LOG_TEST.error(e.what());
+    }
+}
+
+void test_pass(Server& s, t_results* r)
 {
     print_test_series("command PASS");
     print_test_series_part("common cases");
@@ -102,5 +102,5 @@ void wrong_pass_should_err(Server& s)
     print_test_series_part("error cases");
     run_test(r, [&] { no_pass_should_err(s); }, "PASS with no arg");
     run_test(r, [&] { wrong_pass_should_err(s); }, "PASS wrong");
-    // run_test(r, [&] { already_registered_should_err(s); }, "PASS already registered");
+    run_test(r, [&] { already_registered_should_err(s); }, "PASS already registered");
 }
