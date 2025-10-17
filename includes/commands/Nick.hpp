@@ -13,7 +13,7 @@ class Nick : public ICommand
 {
   public:
     explicit Nick(const std::string& nickname);
-    ~Nick();
+    ~Nick(); // NOLINT
 
     /**
      * @brief set nickname or change nickname
@@ -36,7 +36,7 @@ class Nick : public ICommand
      * @param server not used
      * @param client
      */
-    void execute(Server& s, Client& c);
+    void execute(Server& s, Client& c); // NOLINT
     /**
      * @brief check the args of command NICK
      *

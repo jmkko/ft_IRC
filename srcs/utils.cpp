@@ -1,9 +1,10 @@
-#include "utils.hpp"
-
 #include "LogManager.hpp"
 #include "consts.hpp"
+#include "utils.hpp"
 
+#include <cctype>
 #include <poll.h>
+#include <string>
 
 bool Utils::is_char_of(unsigned char c, const std::string& set)
 {
@@ -137,4 +138,5 @@ bool Utils::MatchPattern::operator()(const Client* c) const
            || is_matching_pattern(pattern, c->get_userhost()) || is_matching_pattern(pattern, c->get_real_name());
 }
 
-bool Utils::is_invalid_char(char c) { return (!std::isalpha(c) && !Utils::is_special_abnf(c)); }
+bool Utils::is_invalid_char_nick(char c) { return (!std::isalnum(c) && !is_special_abnf(c)); }
+bool Utils::is_invalid_char_user(char c) { return (is_char_of(c, std::string(FORBIDEN_CHAR_USER, 5))); }

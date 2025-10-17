@@ -1,6 +1,5 @@
-#include "CmdFactory.hpp"
-
 #include "Client.hpp"
+#include "CmdFactory.hpp"
 #include "ICommand.hpp"
 #include "Invite.hpp"
 #include "Join.hpp"
@@ -139,7 +138,7 @@ ICommand* CmdFactory::user_cmd(Server& server, Client& client, std::string& para
         }
         return (new User(username, realname));
     } else {
-        rh.process_response(client, replyCode, params);
+        rh.process_response(client, replyCode, "USER");
     }
 
     return NULL;
@@ -161,7 +160,7 @@ ICommand* CmdFactory::pass_cmd(Server& server, Client& client, std::string& para
 
 ICommand* CmdFactory::kick_cmd(Server& server, Client& client, std::string& params)
 {
-    ReplyHandler&            rh = ReplyHandler::get_instance(&server);
+    ReplyHandler& rh = ReplyHandler::get_instance(&server);
 
     ReplyCode replyCode = Kick::check_args(server, client, params);
     if (replyCode == CORRECT_FORMAT) {
@@ -187,8 +186,8 @@ ICommand* CmdFactory::quit_cmd(Server& server, Client& client, std::string& para
 
 ICommand* CmdFactory::join_cmd(Server& server, Client& client, std::string& params)
 {
-    ReplyHandler&            rh = ReplyHandler::get_instance(&server);
-    ReplyCode replyCode = Join::check_args(server, client, params);
+    ReplyHandler& rh        = ReplyHandler::get_instance(&server);
+    ReplyCode     replyCode = Join::check_args(server, client, params);
     if (replyCode == CORRECT_FORMAT) {
         return new Join(params);
     } else if (replyCode == ERR_NEEDMOREPARAMS) {

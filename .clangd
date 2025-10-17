@@ -38,5 +38,10 @@ CompileFlags:
     - -Iincludes/commands
     - -Iincludes/server
     - -Itest/include
+    - -Iclients
+    - -I../includes/channels
+    - -I../includes/clients
+    - -I../includes/commands
+    - -Iincludes/server
 InlayHints:
   Enabled: true
