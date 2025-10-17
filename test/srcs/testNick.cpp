@@ -6,7 +6,7 @@
 /*   By: fpetit <fpetit@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/17 16:00:12 by jhervoch          #+#    #+#             */
-/*   Updated: 2025/10/17 22:08:34 by fpetit           ###   ########.fr       */
+/*   Updated: 2025/10/17 22:13:58 by fpetit           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,7 @@ void valid_nick_after_user_should_notice(Server& s)
         // test
         send_line(so, "NICK roro\r\n");
         std::string reply = recv_lines(so);
+        LOG_E_TEST("reply of roro should notice after user", reply);
         AssertReply ar(reply);
         ar.matches_entirely(":" + s.get_name() + " 001 roro :" + ircCodes.trailing(RPL_WELCOME) + " roro!roro@localhost");
         ar.matches_entirely(":" + s.get_name() + " 002 roro :" + ircCodes.trailing(RPL_YOURHOST) + " " + s.get_name());

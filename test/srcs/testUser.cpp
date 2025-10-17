@@ -65,6 +65,8 @@ void valid_user_after_nick_should_rpl(Server& s)
         // test
         send_line(so, "USER Marco 0 * :Marco Polo\r\n");
         std::string reply = recv_lines(so);
+        LOG_E_TEST("reply of User mcpolo", reply);
+
         AssertReply ar(reply);
         ar.matches_entirely(":" + s.get_name() + " 001 mcpolo :" + ircCodes.trailing(RPL_WELCOME) + " mcpolo!Marco@localhost");
         ar.matches_entirely(":" + s.get_name() + " 002 mcpolo :" + ircCodes.trailing(RPL_YOURHOST) + " " + s.get_name());
