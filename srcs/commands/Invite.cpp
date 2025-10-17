@@ -8,17 +8,27 @@
  *                  CONSTRUCTOR AND DESTRUCTOR                                *
  ******************************************************************************/
 
-Invite::Invite() : _params() {}
-Invite::Invite(const Invite& other) : _params(other._params) {}
+Invite::Invite() : _nickname(), _channelName() {}
+Invite::Invite(const Invite& other) : _nickname(other._nickname), _channelName(other._channelName) {}
 Invite::~Invite() {}
 Invite& Invite::operator=(const Invite& other)
 {
     if (this != &other) {
-        _params = other._params;
+        _nickname = other._nickname;
+		_channelName = other._channelName;
     }
     return (*this);
 }
-Invite::Invite(const std::string& params) : _params(params) {}
+Invite::Invite(const std::string& params) {
+    std::istringstream iss(params);
+    std::string        nick;
+    std::string        chan;
+
+    iss >> nick;
+    iss >> chan;
+	_nickname = nick;
+	_channelName = chan;
+}
 
 /******************************************************************************
  *                                 METHODS                                    *
@@ -29,8 +39,7 @@ ReplyCode Invite::check_args(Server& server, Client& client, std::string& params
     (void)server;
     (void)client;
     std::istringstream iss(params);
-    std::string        nick;
-    std::string        chan;
+    std::string        nick ,chan;
 
     iss >> nick;
     iss >> chan;
@@ -42,35 +51,22 @@ ReplyCode Invite::check_args(Server& server, Client& client, std::string& params
 void Invite::execute(Server& server, Client& client)
 {
     ReplyHandler&      rh = ReplyHandler::get_instance(&server);
-    std::istringstream iss(_params);
-    std::string        nick;
-    std::string        chan;
 
-    iss >> nick;
-    iss >> chan;
-    Client*  target  = server.find_client_by_nickname(nick);
-    Channel* channel = server.channels[chan];
+    Client*  target  = server.find_client_by_nickname(_nickname);
+    Channel* channel = server.find_channel_by_name(_channelName);
     if (!target) {
-        rh.process_response(client, ERR_NOSUCHNICK, nick);
-        return;
-    }
-    if (!channel) {
-        rh.process_response(client, ERR_NOSUCHCHANNEL, chan);
-        return;
-    }
-    if (!channel->is_member(client)) {
+        rh.process_response(client, ERR_NOSUCHNICK, _nickname);
+    } else if (!channel) {
+        rh.process_response(client, ERR_NOSUCHCHANNEL, _channelName);
+    } else if (!channel->is_member(client)) {
         rh.process_response(client, ERR_NOTONCHANNEL);
-        return;
-    }
-    if (channel->is_member(*target)) {
-        rh.process_response(client, ERR_USERONCHANNEL, nick + " " + chan);
-        return;
-    }
-    if (channel->is_invite_only() && !channel->is_operator(client)) {
-        rh.process_response(client, ERR_CHANOPRIVSNEEDED, chan);
-        return;
-    }
-    channel->invite_client(*target);
-    rh.process_response(client, RPL_INVITING, nick + " " + chan);
-    rh.process_response(*target, TRANSFER_INVITE, " INVITE " + nick + " :" + chan, &client);
+    } else if (channel->is_member(*target)) {
+        rh.process_response(client, ERR_USERONCHANNEL, _nickname + " " + _channelName);
+    } else if (channel->is_invite_only() && !channel->is_operator(client)) {
+        rh.process_response(client, ERR_CHANOPRIVSNEEDED, _channelName);
+    } else {
+		channel->invite_client(*target);
+		rh.process_response(client, RPL_INVITING, _nickname + " " + _channelName);
+		rh.process_response(*target, TRANSFER_INVITE, _nickname, &client, _channelName);
+	}
 }

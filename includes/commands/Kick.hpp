@@ -32,7 +32,7 @@ class Kick : public ICommand
      *
      * @param args
      */
-    Kick(const std::vector<std::string>& args);
+    Kick(const std::string& params);
     /**
      * @brief Destroy the Kick object
      *
@@ -51,7 +51,7 @@ class Kick : public ICommand
      *      - execute : remove - broadcast + direct notice
      * @param server
      * @param client
-     * @warning can send ERR_BADCHANMASK, ERR_NOSUCHCHANNEL, ERR_CHANOPRIVSNEEDED, ERR_USERNOTINCHANNEL
+     * @warning can send ERR_NOSUCHCHANNEL, ERR_CHANOPRIVSNEEDED, ERR_USERNOTINCHANNEL
      */
     void execute(Server& server, Client& client);
     /**
@@ -63,11 +63,14 @@ class Kick : public ICommand
      * @param client
      * @param args should match `<channel> *( "," <channel> ) <user> *( "," <user> ) [<comment>]`
      * @return #ReplyCode to be used in #CommandFactory
+     * @warning can send ERR_NEEDMOREPARAMS, ERR_BADCHANMASK, ERR_NOSUCHNICK
      */
-    static ReplyCode check_args(Server& server, Client& client, std::vector<std::string>& args);
+    static ReplyCode check_args(Server& server, Client& client, std::string& params);
 
   private:
-    std::vector<std::string> _args;
+  	std::vector<std::string> _channelsNames;
+	std::vector<std::string> _usersNames;
+	std::string				_msg;
 
     Kick();
     Kick(const Kick& other);

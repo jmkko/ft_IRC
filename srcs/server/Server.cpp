@@ -39,7 +39,7 @@ Server::Server(const unsigned short port, const std::string& password) : _psswd(
         std::cout << e.what();
         exit(1);
     }
-    LOG_SERVER.info("Server " + _name + " start at port :" + utils::to_string(port));
+    LOG_SERVER.info("Server " + _name + " start at port :" + Utils::to_string(port));
     std::cout << "\n";
 
     _listen_to_socket(_serverSocket.get_socket(), POLLIN);
@@ -121,7 +121,7 @@ void Server::_handle_new_connection(int pfdIndex)
         pollEvent.append("POLLHUP ");
     if (_pfds[pfdIndex].revents & POLLERR)
         pollEvent.append("POLLERR ");
-    LOG_SOCKET.debug("Socket " + utils::to_string(_pfds[pfdIndex].fd) + " events: " + pollEvent);
+    LOG_SOCKET.debug("Socket " + Utils::to_string(_pfds[pfdIndex].fd) + " events: " + pollEvent);
 
     sockaddr_in clientAddr = {};
     memset(&clientAddr, 0, sizeof(clientAddr));
@@ -135,8 +135,8 @@ void Server::_handle_new_connection(int pfdIndex)
             close(socket);
         } else {
             Client* newClient = new Client(socket, clientAddr); // NOLINT
-            LOG_CONN.info(std::string("New connection accepted on socket ") + utils::to_string(socket) + " => "
-                          + utils::to_string(*newClient));
+            LOG_CONN.info(std::string("New connection accepted on socket ") + Utils::to_string(socket) + " => "
+                          + Utils::to_string(*newClient));
             _clients[socket] = newClient;
 
             _listen_to_socket(socket, POLLIN);
@@ -163,7 +163,7 @@ void Server::_handle_client_disconnection(int pfdIndex)
             LOG_SOCKET.warning(std::string("socket error : ") + strerror(static_cast<int>(err)));
         }
     }
-    LOG_CONN.info(std::string("Client at ") + client->get_address() + ":" + utils::to_string(client->get_port())
+    LOG_CONN.info(std::string("Client at ") + client->get_address() + ":" + Utils::to_string(client->get_port())
                   + " disconnected");
     cleanup_socket_and_client(pfdIndex);
 }
@@ -192,8 +192,8 @@ void Server::_handle_client_input(int pfdIndex)
         }
         return;
     } else {
-        if (utils::safe_at(buffer, bytesRead))
-            utils::safe_at(buffer, bytesRead) = '\0';
+        if (Utils::safe_at(buffer, bytesRead))
+            Utils::safe_at(buffer, bytesRead) = '\0';
         client->append_to_read_buffer(std::string(static_cast<char*>(buffer)));
         bool clientDisconnected = this->_handle_commands(pfdIndex);
         if (clientDisconnected) {
@@ -225,8 +225,8 @@ void Server::_handle_client_output(int pfdIndex)
                 _handle_client_disconnection(pfdIndex);
             }
         } else if (static_cast<size_t>(bytesSent) < sendBuffer.length()) {
-            LOG_SERVER.warning(std::string("Queue has been partially sent (") + utils::to_string(bytesSent) + "/"
-                               + utils::to_string(sendBuffer.length()) + ")");
+            LOG_SERVER.warning(std::string("Queue has been partially sent (") + Utils::to_string(bytesSent) + "/"
+                               + Utils::to_string(sendBuffer.length()) + ")");
             client->set_send_buffer(sendBuffer.substr(bytesSent));
         } else {
             client->get_send_buffer().clear();
@@ -355,7 +355,7 @@ std::vector<Client*> Server::find_clients_by_pattern(const std::string& pattern)
 {
     std::vector<Client*> result;
     for (std::map<Socket, Client*>::const_iterator it = _clients.begin(); it != _clients.end(); it++) {
-        if (utils::MatchPattern(pattern)(it->second)) {
+        if (Utils::MatchPattern(pattern)(it->second)) {
             LOG_D_CMD("pattern " + pattern + " matched", it->second->get_nickname());
             result.push_back(it->second);
         }

@@ -160,16 +160,10 @@ ICommand* CmdFactory::pass_cmd(Server& server, Client& client, std::string& para
 ICommand* CmdFactory::kick_cmd(Server& server, Client& client, std::string& params)
 {
     ReplyHandler&            rh = ReplyHandler::get_instance(&server);
-    std::vector<std::string> vectorParams;
-    std::istringstream       iss(params);
-    std::string              token;
-    while (std::getline(iss, token, ' ')) {
-        vectorParams.push_back(token);
-        LOG_CMD.debug("factory token", token);
-    }
-    ReplyCode replyCode = Kick::check_args(server, client, vectorParams);
+
+    ReplyCode replyCode = Kick::check_args(server, client, params);
     if (replyCode == CORRECT_FORMAT) {
-        return new Kick(vectorParams);
+        return new Kick(params);
     } else {
         rh.process_response(client, replyCode, "KICK");
     }

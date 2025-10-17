@@ -19,7 +19,7 @@ TestFixture::~TestFixture() { cleanup(); }
 
 std::vector<TcpSocket*> TestFixture::setup(size_t nbSockets)
 {
-    LOG_TEST.debug("Fixture setup - creating " + utils::to_string(nbSockets) + " socket(s)");
+    LOG_TEST.debug("Fixture setup - creating " + Utils::to_string(nbSockets) + " socket(s)");
 
     std::vector<TcpSocket*> socketsPtrs;
     _sockets.reserve(_sockets.size() + nbSockets);
@@ -41,7 +41,7 @@ void TestFixture::cleanup()
     std::cout << BWHITE << "=====================END OF TEST=====================" << RESET << '\n';
 #endif
     if (!_sockets.empty()) {
-        LOG_dt_TEST("Fixture cleanup - closing " + utils::to_string(_sockets.size()) + " socket(s)");
+        LOG_dt_TEST("Fixture cleanup - closing " + Utils::to_string(_sockets.size()) + " socket(s)");
         for (auto& socket : _sockets) {
             if (socket && socket->get_socket() != -1) {
                 // Send QUIT command to properly disconnect from server
