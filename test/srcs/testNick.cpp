@@ -146,8 +146,8 @@ void valid_change_should_notice(Server& s)
         recv_lines(so);
         send_line(so, validNickChangeMsg);
         std::string reply = recv_lines(so);
-        AssertReply ar(reply);
         LOG_SERVER.error(reply);
+        AssertReply ar(reply);
         ar.is_formatted_transfer("roro", "NICK", "rorotheboss");
         std::string reply2 = recv_lines(so2);
         AssertReply ar2(reply2);
