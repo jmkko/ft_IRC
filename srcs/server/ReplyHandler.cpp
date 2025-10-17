@@ -92,7 +92,7 @@ generate_code_response(Client& client, ReplyCode code, const std::string& parame
     std::string nick          = client.get_nickname().empty() ? "*" : client.get_nickname();
     std::string numericPrefix = ":" + ircConfig.get_name() + " " + Utils::code_to_str(code) + " " + nick;
 
-    std::string        trailingMessage, params;
+    std::string        trailingMessage, separatedParams;
     const std::string& defaultTrailing = ircCodes.trailing(code);
 
     if (!trailing.empty()) {
@@ -101,10 +101,10 @@ generate_code_response(Client& client, ReplyCode code, const std::string& parame
         trailingMessage = " :" + defaultTrailing;
     }
     if (!parameters.empty()) {
-        params = " " + parameters;
+        separatedParams = " " + parameters;
     }
 
-    return (numericPrefix + params + trailingMessage);
+    return (numericPrefix + separatedParams + trailingMessage);
 }
 
 static std::string generate_non_numerical_response(

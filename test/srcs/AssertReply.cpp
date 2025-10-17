@@ -212,14 +212,15 @@ AssertReply& AssertReply::matches_entirely(const std::string& message)
     }
     return *this;
 }
-void AssertReply::print_target_and_messages(const std::string& target) {
-	std::cout << "Looking for: "<< target << "\nin:\n";
+void AssertReply::print_target_and_messages(const std::string& target)
+{
+    std::cout << "Looking for: " << target << "\nin:\n";
     for (std::vector<Message>::iterator it = _messages.begin(); it != _messages.end(); ++it) {
-		for (std::vector<std::string>::iterator itstring = it->args.begin(); itstring != it->args.end(); itstring++) {
-			std::cout << *itstring;
-		}
-		std::cout << "\n";
-	}
+        for (std::vector<std::string>::iterator itstring = it->args.begin(); itstring != it->args.end(); itstring++) {
+            std::cout << *itstring;
+        }
+        std::cout << "\n";
+    }
 }
 AssertReply& AssertReply::is_empty()
 {
@@ -246,26 +247,37 @@ AssertReply& AssertReply::is_empty()
 AssertReply&
 AssertReply::is_formatted(ReplyCode code, const std::string& clientNick, const std::string& params, const std::string& trailing)
 {
-    std::string expectedStart
-        = std::string(":" + ircConfigTest.get_name()) + " " + Utils::code_to_str(code) + " " + clientNick + " ";
-    if (params.empty() && trailing.empty())
-        return this->has_code(code).matches_entirely(expectedStart + ":" + ircCodes.trailing(code));
-    else if (!params.empty() && trailing.empty())
-        return this->has_code(code).matches_entirely(expectedStart + params + " :" + ircCodes.trailing(code));
-    else if (params.empty() && !trailing.empty())
-        return this->has_code(code).matches_entirely(expectedStart + ":" + trailing);
-    else
-        return this->has_code(code).matches_entirely(expectedStart + params + " :" + trailing);
+    std::string        trailingMessage{}, separatedParams{};
+    const std::string& defaultTrailing = ircCodes.trailing(code);
+
+    if (!trailing.empty()) {
+        trailingMessage = " :" + trailing;
+    } else if (!defaultTrailing.empty()) {
+        trailingMessage = " :" + defaultTrailing;
+    }
+    if (!params.empty()) {
+        separatedParams = " " + params;
+    }
+
+    std::string expectedStart = std::string(":" + ircConfigTest.get_name()) + " " + Utils::code_to_str(code) + " " + clientNick;
+
+    return this->has_code(code).matches_entirely(expectedStart + separatedParams + trailingMessage);
 }
 
 AssertReply&
 AssertReply::is_formatted_transfer(const std::string& clientNick, const std::string& params, const std::string& trailing)
 {
-    std::string expectedStart = std::string(":" + clientNick + "!" + clientNick + "@" + ircConfigTest.get_name()) + " ";
-    if (trailing.empty())
-        return this->matches_entirely(expectedStart + params);
-    else
-        return this->matches_entirely(expectedStart + params + " :" + trailing);
+    std::string trailingMessage{}, separatedParams{};
+
+    if (!trailing.empty()) {
+        trailingMessage = " :" + trailing;
+    }
+    if (!params.empty()) {
+        separatedParams = " " + params;
+    }
+    std::string expectedStart = std::string(":" + clientNick + "!" + clientNick + "@" + ircConfigTest.get_name());
+
+    return this->matches_entirely(expectedStart + separatedParams + trailingMessage);
 }
 
 AssertReply& AssertReply::handle_new_reply(const std::string& reply)

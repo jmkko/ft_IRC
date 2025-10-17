@@ -81,7 +81,8 @@ void op_existing_chan_valid_users_should_notice(Server& s)
         // as a member, operator receives the transferred message
         std::string reply = recv_lines(soOp);
         AssertReply ar(reply);
-        ar.is_formatted_transfer(opNick, "KICK #chan roro,toto");
+        ar.is_formatted_transfer(opNick, "KICK #chan roro");
+        ar.is_formatted_transfer(opNick, "KICK #chan toto");
 
         // kicked user1 gets an individual noticd
         reply = recv_lines(so);
