@@ -28,9 +28,9 @@ class Ping : public ICommand
     /**
      * @brief Construct a new Ping object
      *
-     * @param token
+     * @param params
      */
-    Ping(const std::string& token);
+    Ping(const std::string& params);
     virtual ~Ping();
     /**
      * @brief sends a PONG message with token provided by PING sender

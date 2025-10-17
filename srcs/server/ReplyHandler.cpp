@@ -140,7 +140,7 @@ static std::string generate_non_numerical_response(
     case TRANSFER_TOPIC:
         return (get_user_id_of(*sender) + "TOPIC" + separatedParams + trailingMessage);
     case MSG_PING:
-        return ":" + ircConfig.get_name() + " " + "PONG :" + separatedParams;
+        return ":" + ircConfig.get_name() + " " + "PONG :" + parameters;
     default:
         return "";
     }
