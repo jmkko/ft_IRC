@@ -99,6 +99,7 @@ static const std::string& noSpecCharJoin         = "JOIN chan\r\n";
 static const std::string& toobigJoin             = "JOIN #chanllllllllllllllllllllllllllllllllllllllllllllllllll\r\n";
 
 static const std::string& validKickMsg                  = "KICK #chan roro\r\n";
+static const std::string& validKickReasonMsg            = "KICK #chan roro :please behave roro\r\n";
 static const std::string& validManyUsersKickMsg         = "KICK #chan roro,toto\r\n";
 static const std::string& validManyChansUsersKickMsg    = "KICK #chan,#chan2 roro,toto\r\n";
 static const std::string& invalidWrongChanKickMsg       = "KICK *chan roro\r\n";
