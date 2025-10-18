@@ -133,6 +133,10 @@ $(BUILD_DIR)/%.o: %.cpp | $(DIRS)
 comp-data:
 	@intercept-build make re
 
+github-test:
+	CXXFLAGS += -DTEST=0
+github-test: all
+
 debug: CXXFLAGS += -g -DDEB
 debug: all
 

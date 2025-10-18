@@ -6,7 +6,7 @@
 /*   By: fpetit <fpetit@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/17 16:00:12 by jhervoch          #+#    #+#             */
-/*   Updated: 2025/10/17 22:56:19 by fpetit           ###   ########.fr       */
+/*   Updated: 2025/10/18 14:51:04 by fpetit           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,10 +91,14 @@ void valid_nick_after_user_should_notice(Server& s)
         std::string reply = recv_lines(so);
 
         AssertReply ar(reply);
-        ar.has_code(RPL_WELCOME).contains("roro");
-        ar.has_code(RPL_YOURHOST).contains("roro");
-        ar.has_code(RPL_CREATED).contains("roro");
-        ar.has_code(RPL_MYINFO).contains("roro");
+        // ar.has_code(RPL_WELCOME).contains("roro");
+        // ar.has_code(RPL_YOURHOST).contains("roro");
+        // ar.has_code(RPL_CREATED).contains("roro");
+        // ar.has_code(RPL_MYINFO).contains("roro");
+        ar.matches_entirely(":" + s.get_name() + " 001 roro :" + ircCodes.trailing(RPL_WELCOME) + " roro!roro@localhost");
+        ar.matches_entirely(":" + s.get_name() + " 002 roro :" + ircCodes.trailing(RPL_YOURHOST) + " " + s.get_name());
+        ar.matches_entirely(":" + s.get_name() + " 003 roro :" + ircCodes.trailing(RPL_CREATED));
+        ar.matches_entirely(":" + s.get_name() + " 004 roro :" + s.get_name() + " 1.0  0 0");
 
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());
