@@ -68,6 +68,9 @@ void valid_nick2_should_void(Server& s)
 
         // test
         send_line(so, "NICK ro3ro\r\n");
+        std::string reply = recv_lines(so);
+        AssertReply ar(reply);
+        ar.is_empty();
 
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());
@@ -319,7 +322,7 @@ void test_nick(Server& s, t_results* r)
     run_test(r, [&] { valid_nick_rename_special_should_void(s); }, "roro->[roro] should void himself");
     run_test(r, [&] { valid_change_should_void(s); }, "roro->\"roro the boss should\" void himself");
     run_test(r, [&] { valid_change_should_notice(s); }, "roro->\"roro the boss\" should tell is new nick to other");
-    print_test_series_part("erro cases");
+    print_test_series_part("error cases");
     run_test(r, [&] { no_arg_should_err(s); }, "no arg");
     run_test(r, [&] { invalid_char_star_should_err(s); }, "ro*ro should err");
     run_test(r, [&] { invalid_char_comma_should_err(s); }, "ro,ro should err");
