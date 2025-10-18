@@ -19,6 +19,7 @@ INCLUDES		:=	-Iincludes\
 					-Iincludes/clients\
 					-Iincludes/commands\
 					-Iincludes/server\
+					-Iincludes/parsing\
 
 SRCS			:=	srcs/main.cpp\
 					srcs/utils.cpp\
@@ -45,6 +46,7 @@ SRCS			:=	srcs/main.cpp\
 					srcs/commands/Invite.cpp\
 					srcs/commands/Topic.cpp\
 					srcs/server/ReplyHandler.cpp\
+					srcs/parsing/Parser.cpp\
 
 HEADERS			:=	$(wildcard INCLUDES)/*.hpp)
 OBJS_DIR		:=	.objs

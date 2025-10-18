@@ -21,7 +21,8 @@ SRC_DIR			:=	srcs
 INCLUDE_DIR		:=	include
 BUILD_DIR		:=	.build
 
-INC				:= 	-I$(INCLUDE_DIR) -I$(IRC_INCLUDE_DIR) -I$(IRC_INCLUDE_DIR)/channels -I$(IRC_INCLUDE_DIR)/clients -I$(IRC_INCLUDE_DIR)/commands -I$(IRC_INCLUDE_DIR)/server
+INC				:= 	-I$(INCLUDE_DIR) -I$(IRC_INCLUDE_DIR) -I$(IRC_INCLUDE_DIR)/channels -I$(IRC_INCLUDE_DIR)/clients -I$(IRC_INCLUDE_DIR)/commands -I$(IRC_INCLUDE_DIR)/server -I$(IRC_INCLUDE_DIR)/parsing
+
 
 SRCS_FILES		:= 	main.cpp\
 					fakeClient.cpp\
@@ -66,6 +67,7 @@ IRC_SRCS_FILES	:=	utils.cpp\
 					commands/Motd.cpp\
 					commands/Who.cpp\
 					commands/Topic.cpp\
+					parsing/Parser.cpp\
 
 EXT				:= .cpp
 
@@ -76,8 +78,7 @@ SRCS			:=	$(TEST_SRCS) $(IRC_SRCS)
 OBJS			:=	$(patsubst %.cpp,$(BUILD_DIR)/%.o,$(notdir $(SRCS)))
 DIRS			:=	$(sort $(shell dirname $(OBJS)))
 
-vpath %.cpp $(SRC_DIR) $(IRC_DIR) $(IRC_DIR)/commands $(IRC_DIR)/clients $(IRC_DIR)/channels $(IRC_DIR)/server
-
+vpath %.cpp $(SRC_DIR) $(IRC_DIR) $(IRC_DIR)/commands $(IRC_DIR)/clients $(IRC_DIR)/channels $(IRC_DIR)/server $(IRC_DIR)/parsing 
 # Paths for clang-format / clang-tidy-12 / intercept-build if manually installed
 export PATH 	:=	$(PATH):$(HOME)/local/bin:/usr/bin/:/usr/share/clang/scan-build-py-12/bin/
 

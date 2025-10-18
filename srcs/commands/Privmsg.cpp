@@ -48,8 +48,7 @@ ReplyCode Privmsg::check_args(Server& server, Client& client, std::string& param
     }
     std::getline(iss, msg);
 	msg.erase(0, msg.find_first_not_of(WHITE_SPACE));
-	std::string::size_type colon = msg.find(':');
-	if (colon == std::string::npos || colon + 1 >= msg.size()) {
+	if (msg.empty() || msg.find(" :") + 2 >= msg.size()) {
 	 	return (ERR_NOTEXTTOSEND);
 	}
     params = targetList + " " + msg;

@@ -9,6 +9,7 @@
 #include "consts.hpp"
 #include "reply_codes.hpp"
 #include "utils.hpp"
+#include "Parser.hpp"
 
 #include <sstream>
 #include <string>
@@ -17,32 +18,20 @@
  *		🥚 CONSTRUCTORS & DESTRUCTOR						*
  ************************************************************/
 
-Kick::Kick() : _channelsNames(), _usersNames(), _msg("") {}
-Kick::Kick(const std::string& params)
-{
-    std::istringstream iss(params);
-    std::string        channels, users, msg;
+Kick::Kick() : _channelsNames(), _usersNames(), _msg() {}
 
-    iss >> channels;
-    iss >> users;
-    std::string        currentChannel, currentUser;
-    std::istringstream issChannels(channels), issUsers(users);
-    while (std::getline(issChannels, currentChannel, ',')) {
-        std::getline(issUsers, currentUser, ',');
-        if (!currentChannel.empty())
-            _channelsNames.push_back(currentChannel);
-        if (!currentUser.empty())
-            _usersNames.push_back(currentUser);
-        currentChannel.clear();
-        currentUser.clear();
-    }
-    std::getline(iss, msg);
-    msg.erase(0, msg.find_first_not_of(WHITE_SPACE));
-    if (!msg.empty() && msg[0] == ':')
-        msg = msg.erase(0, 1);
-    else if (!msg.empty())
-        msg = msg.substr(0, msg.find_first_of(WHITE_SPACE));
-    _msg = msg;
+Kick::Kick(std::string& params): ICommand()
+{
+	Parser parser;
+	std::string channels,users,message;
+
+	channels	= parser.format_parameter(params, NULL);
+	users		= parser.format_parameter(params, NULL);
+	_msg = parser.format_parameter(params, NULL);
+
+	_channelsNames = parser.convert_to_vector(channels);
+	_usersNames = parser.convert_to_vector(users);
+
 }
 
 Kick::Kick(const Kick& other) : ICommand(), _channelsNames(other._channelsNames), _usersNames(other._usersNames), _msg("") {}
@@ -86,7 +75,7 @@ void Kick::execute(Server& server, Client& client)
     LOG_CMD.debug("Kick.cpp execute() -->");
 
     if (_channelsNames.size() != _usersNames.size()) {
-        rh.process_response(client, ERR_NEEDMOREPARAMS, "");
+        rh.process_response(client, ERR_NEEDMOREPARAMS, "KICK");
         return;
     }
     for (size_t i = 0; i < _channelsNames.size(); ++i) {
@@ -107,6 +96,23 @@ void Kick::execute(Server& server, Client& client)
             rh.process_response(client, ERR_USERNOTINCHANNEL, channel->get_name());
         }
     }
+}
+
+bool Kick::check_syntax(Server& server, Client& client, std::string& params)
+{
+	Parser 	parser(server, client);
+
+	std::string 		channels	= parser.format_parameter(params, &Parser::correct_channel);
+	std::string 		targets 	= parser.format_parameter(params, NULL);
+	std::string			trailing 	= parser.format_parameter(params, NULL);
+
+	if (channels.empty() || targets.empty()) {
+		parser.rh->process_response(client, ERR_NEEDMOREPARAMS, "KICK");
+		return (false);
+	}
+	params = channels + " " + targets + " " + trailing;
+	LOG_CMD.error("params: " + params);
+	return (true);
 }
 
 /**
