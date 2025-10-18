@@ -6,6 +6,8 @@ class Server;
 class Client;
 class ReplyHandler;
 
+#define INVALID_PARAM "*"
+
 class Parser
 {
   public:

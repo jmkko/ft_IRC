@@ -160,16 +160,10 @@ ICommand* CmdFactory::pass_cmd(Server& server, Client& client, std::string& para
 
 ICommand* CmdFactory::kick_cmd(Server& server, Client& client, std::string& params)
 {
-	if (Kick::check_syntax(server, client, params))
-		return new Kick(params);
-	return NULL;
-    // ReplyCode replyCode = Kick::check_args(server, client, params);
-    // if (replyCode == CORRECT_FORMAT) {
-    //     return new Kick(params);
-    // } else {
-    //     rh.process_response(client, replyCode, "KICK");
-    // }
-    return NULL;
+	(void)server;
+	(void)client;
+
+	return new Kick(params);
 };
 
 ICommand* CmdFactory::quit_cmd(Server& server, Client& client, std::string& params)

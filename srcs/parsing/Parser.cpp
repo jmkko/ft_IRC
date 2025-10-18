@@ -39,7 +39,6 @@ bool Parser::correct_channel(std::string& name)
 {
 	ReplyCode code = CORRECT_FORMAT;
     if (name.empty()) {
-		
 		return (response(ERR_BADCHANMASK));
     }
     for (std::string::const_iterator it = name.begin(); it != name.end(); ++it) {
@@ -56,7 +55,7 @@ bool Parser::correct_channel(std::string& name)
 		code = ERR_BADCHANMASK;
 	}
 
-	return response(code);
+	return response(code, name);
 }
 
 bool Parser::correct_target(std::string& target)
@@ -122,19 +121,21 @@ std::vector<std::string> Parser::convert_to_vector(std::string& params)
 // return an formated string of parameters args = param1,param2,param3
 std::string Parser::format_parameter(std::string& params, Checker function)
 {
-    std::string        arguments, list;
+    std::string        arguments, list, trailing;
     std::string        currentParam, comma;
     std::istringstream iss(params);
 
 	// std::cout << "format_parameter: " << params << std::endl;;
     iss >> arguments;
 	if (!arguments.empty() && arguments[0] == ':') {
-		return (arguments);
+		arguments.erase(0, 1);
+		std::getline(iss, trailing);
+		return (arguments + trailing);
 	}
     std::istringstream issParams(arguments);
     while (std::getline(issParams, currentParam, ','))
 	{
-		if (function && (this->*function)(currentParam) == false) {	
+		if (function && (this->*function)(currentParam) == false) {
 			continue ;
 		}
 		list += comma + currentParam;

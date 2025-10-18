@@ -17,19 +17,15 @@ class Kick : public ICommand
     ~Kick();
 
     void	     		execute(Server& server, Client& client);
-    static ReplyCode	check_args(Server& server, Client& client, std::string& params);
-    static bool				check_syntax(Server& server, Client& client, std::string& params);
-
 
   private:
+    Kick(void);
+    Kick(const Kick& other);
+    Kick& operator=(const Kick& other);
+
 	std::vector<std::string> _channelsNames;
 	std::vector<std::string> _usersNames;
 	std::string				_msg;
-
-
-    Kick();
-    Kick(const Kick& other);
-    Kick& operator=(const Kick& other);
 };
 
 #endif
