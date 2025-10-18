@@ -10,6 +10,7 @@
 #include "reply_codes.hpp"
 #include "utils.hpp"
 
+#include <cstddef>
 #include <sstream>
 #include <string>
 
@@ -17,7 +18,6 @@
  *		🥚 CONSTRUCTORS & DESTRUCTOR						*
  ************************************************************/
 
-Kick::Kick() : _channelsNames(), _usersNames(), _msg("") {}
 Kick::Kick(const std::string& params)
 {
     std::istringstream iss(params);
@@ -25,18 +25,22 @@ Kick::Kick(const std::string& params)
 
     iss >> channels;
     iss >> users;
-    std::string        currentChannel, currentUser;
+    std::getline(iss, msg);
+
     std::istringstream issChannels(channels), issUsers(users);
+    std::string        currentChannel, currentUser;
     while (std::getline(issChannels, currentChannel, ',')) {
-        std::getline(issUsers, currentUser, ',');
+        LOG_DV_CMD(currentChannel);
         if (!currentChannel.empty())
             _channelsNames.push_back(currentChannel);
+        currentChannel.clear();
+    }
+    while (std::getline(issUsers, currentUser, ',')) {
+        LOG_DV_CMD(currentUser);
         if (!currentUser.empty())
             _usersNames.push_back(currentUser);
-        currentChannel.clear();
         currentUser.clear();
     }
-    std::getline(iss, msg);
     msg.erase(0, msg.find_first_not_of(WHITE_SPACE));
     if (!msg.empty() && msg[0] == ':')
         msg = msg.erase(0, 1);
@@ -45,7 +49,6 @@ Kick::Kick(const std::string& params)
     _msg = msg;
 }
 
-Kick::Kick(const Kick& other) : ICommand(), _channelsNames(other._channelsNames), _usersNames(other._usersNames), _msg("") {}
 Kick::~Kick() {}
 
 /************************************************************
@@ -66,57 +69,40 @@ Kick& Kick::operator=(const Kick& other)
  *		🛠️ FUNCTIONS											*
  *************************************************************/
 
-/**
- * @brief Force part a channel
- * loop over channels :
- * check for invalid channel name -> ERR_BADCHANMASK
- * then check for existing channel -> ERR_NOSUCHCHANNEL
- * then check for op privilege -> ERR_CHANOPRIVSNEEDED
- * inner loop over channel members :
- * - then check for user presence -> ERR_USERNOTINCHANNEL
- * - then execute : remove - broadcast + direct notice
- * @param server
- * @param client
- */
 void Kick::execute(Server& server, Client& client)
 {
     ReplyHandler& rh = ReplyHandler::get_instance(&server);
     t_params      channelNames;
     t_params      nicknames;
-    LOG_CMD.debug("Kick.cpp execute() -->");
 
-    if (_channelsNames.size() != _usersNames.size()) {
-        rh.process_response(client, ERR_NEEDMOREPARAMS, "");
-        return;
-    }
     for (size_t i = 0; i < _channelsNames.size(); ++i) {
         Channel* channel = server.find_channel_by_name(_channelsNames[i]);
-        Client*  target  = server.find_client_by_nickname(_usersNames[i]);
-        LOG_CMD.debug("Kick.cpp execute() -->" + _channelsNames[i] + " " + _usersNames[i] + " " + _msg);
+        LOG_D_CMD("looking in", _channelsNames[i]);
+
         if (!channel) {
             rh.process_response(client, ERR_NOSUCHCHANNEL, _channelsNames[i]);
+            continue;
         } else if (!channel->is_operator(client)) {
             rh.process_response(client, ERR_CHANOPRIVSNEEDED, channel->get_name());
-        } else if (!target) {
-            rh.process_response(client, ERR_NOSUCHNICK, channel->get_name());
-        } else if (channel->remove_member(*target)) {
-            rh.process_response(*target, TRANSFER_KICK, channel->get_name() + " " + target->get_nickname(), &client, _msg);
-            channel->broadcast(server, TRANSFER_KICK, channel->get_name() + " " + target->get_nickname(), &client, _msg);
-            rh.process_response(client, TRANSFER_KICK, channel->get_name() + " " + target->get_nickname(), &client, _msg);
-        } else {
-            rh.process_response(client, ERR_USERNOTINCHANNEL, channel->get_name());
+            continue;
+        }
+        for (size_t j = 0; j < _usersNames.size(); ++j) {
+            Client* target = server.find_client_by_nickname(_usersNames[j]);
+            LOG_D_CMD("looking for", _usersNames[j]);
+
+            if (!target) {
+                rh.process_response(client, ERR_NOSUCHNICK, channel->get_name());
+            } else if (channel->remove_member(*target)) {
+                rh.process_response(*target, TRANSFER_KICK, channel->get_name() + " " + target->get_nickname(), &client, _msg);
+                channel->broadcast(server, TRANSFER_KICK, channel->get_name() + " " + target->get_nickname(), &client, _msg);
+                rh.process_response(client, TRANSFER_KICK, channel->get_name() + " " + target->get_nickname(), &client, _msg);
+            } else {
+                rh.process_response(client, ERR_USERNOTINCHANNEL, channel->get_name());
+            }
         }
     }
 }
 
-/**
- * @brief
- * first check for missing arg -> ERR_NEEDMOREPARAMS
- * @param server
- * @param client
- * @param args
- * @return ReplyCode to be used in CommandFactory and potentially generate an error
- */
 ReplyCode Kick::check_args(Server& server, Client& client, std::string& params)
 {
     ReplyHandler       rh = ReplyHandler::get_instance(&server);
@@ -132,33 +118,31 @@ ReplyCode Kick::check_args(Server& server, Client& client, std::string& params)
     std::string        currentChannel, currentUser, comma;
     std::istringstream issChannels(channels), issUsers(users);
     while (std::getline(issChannels, currentChannel, ',')) {
-        std::getline(issUsers, currentUser, ',');
         if (!Channel::is_valid_channel_name(currentChannel)) {
             rh.process_response(client, ERR_BADCHANMASK, currentChannel);
-        } else if (!server.find_client_by_nickname(currentUser)) {
-            rh.process_response(client, ERR_NOSUCHNICK, currentUser);
-        } else if (!currentChannel.empty() && !currentUser.empty()) {
-            channelsList += comma + currentChannel;
-            usersList += comma + currentUser;
-            comma = ",";
-        } else if (currentChannel.empty() != currentChannel.empty()) {
-            return (ERR_NEEDMOREPARAMS);
+        } else {
+            channelsList.empty() ? channelsList += currentChannel : channelsList += "," + currentChannel;
         }
         currentChannel.clear();
-        currentUser.clear();
     }
-    if (channelsList.empty() || usersList.empty()) {
-        return (PROCESSED_ERROR);
+    comma = "";
+    while (std::getline(issUsers, currentUser, ',')) {
+        if (currentUser.empty())
+            return (ERR_NEEDMOREPARAMS);
+        else {
+            usersList.empty() ? usersList += currentUser : usersList += "," + currentUser;
+        }
+        currentUser.clear();
     }
 
     std::getline(iss, msg);
-    msg.erase(0, msg.find_first_not_of(WHITE_SPACE));
-    if (!msg.empty() && msg[0] == ':')
-        msg.erase(0, 1);
-    else if (!msg.empty())
-        msg = msg.substr(0, msg.find_first_of(WHITE_SPACE));
+    // msg.erase(0, msg.find_first_not_of(WHITE_SPACE));
+    // if (!msg.empty() && msg[0] == ':')
+    //     msg.erase(0, 1);
+    // else if (!msg.empty())
+    //     msg = msg.substr(0, msg.find_first_of(WHITE_SPACE));
     params = channelsList + " " + usersList + " " + msg;
+    LOG_DV_CMD(params);
 
-    LOG_CMD.warning("check_aaargs: " + params);
     return (CORRECT_FORMAT);
 }

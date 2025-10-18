@@ -71,6 +71,7 @@ class Topic : public ICommand
   private:
     std::string _topic;
     Channel*    _chan;
+    bool        _isTopicChange;
 
     Topic(void);
     Topic(const Topic& other);

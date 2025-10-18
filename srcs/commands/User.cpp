@@ -1,10 +1,11 @@
+#include "User.hpp"
+
 #include "Client.hpp"
 #include "Config.hpp"
 #include "LogManager.hpp"
 #include "Motd.hpp"
 #include "ReplyHandler.hpp"
 #include "Server.hpp"
-#include "User.hpp"
 #include "reply_codes.hpp"
 
 #include <algorithm>

@@ -33,12 +33,6 @@ ReplyCode Quit::check_args(Server& server, Client& client, std::string& params)
     return CORRECT_FORMAT;
 }
 
-/**
- * @brief no confirmation message is sent
- *
- * @param server
- * @param client
- */
 void Quit::execute(Server& server, Client& client)
 {
     int pfdIndex = server.index_of(client);
@@ -51,7 +45,3 @@ void Quit::execute(Server& server, Client& client)
     server.add_events_of(client, 0);
     server.cleanup_socket_and_client(pfdIndex);
 }
-
-/*************************************************************
- *		👁️‍ GETTERS and SETTERS				 				*
- *************************************************************/

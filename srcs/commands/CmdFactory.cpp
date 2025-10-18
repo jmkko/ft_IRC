@@ -1,5 +1,6 @@
-#include "Client.hpp"
 #include "CmdFactory.hpp"
+
+#include "Client.hpp"
 #include "ICommand.hpp"
 #include "Invite.hpp"
 #include "Join.hpp"
@@ -25,21 +26,19 @@
 #include <iostream>
 #include <sstream>
 
-// Default constructor
+/************************************************************
+ *		🥚 CONSTRUCTORS & DESTRUCTOR						*
+ ************************************************************/
+
 CmdFactory::CmdFactory(void) {}
 
-// Copy constructor
 CmdFactory::CmdFactory(const CmdFactory& other) { (void)other; }
 
-// Assignment operator overload
-CmdFactory& CmdFactory::operator=(const CmdFactory& other)
-{
-    (void)other;
-    return (*this);
-}
-
-// Destructor
 CmdFactory::~CmdFactory(void) {}
+
+/*************************************************************
+ *		🛠️ FUNCTIONS											*
+ *************************************************************/
 
 bool CmdFactory::check_in(Client& client, std::string& command)
 {
@@ -96,7 +95,7 @@ ICommand* CmdFactory::make_command(Server& server, Client& client, std::string& 
             }
             std::string params;
             std::getline(iss, params);
-            // LOG_CMD.debug("make_command : params : " + params);
+            LOG_d_CMD(params);
             if (!params.empty() && params[0] == ' ') {
                 params = params.substr(1);
             }
@@ -150,7 +149,9 @@ ICommand* CmdFactory::pass_cmd(Server& server, Client& client, std::string& para
     ReplyCode     replyCode = Pass::check_args(server, client, params);
 
     if (replyCode == CORRECT_FORMAT) {
-        return new Pass(params);
+        return new Pass();
+    } else if (replyCode == PROCESSED_ERROR) {
+        return NULL;
     } else {
         rh.process_response(client, replyCode, params);
     }
