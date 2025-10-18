@@ -30,7 +30,7 @@
 /**
  @brief integration test - normal case
 */
-void op_existing_chan_valid_user_should_broadcast(Server& s)
+void op_existing_chan_valid_user_should_transfer(Server& s)
 {
     try {
         TEST_SETUP(test, s, 2);
@@ -65,7 +65,7 @@ void op_existing_chan_valid_user_should_broadcast(Server& s)
 /**
  @brief integration test - normal case - many users
 */
-void op_existing_chan_valid_users_should_notice(Server& s)
+void op_existing_chan_valid_users_should_transfer(Server& s)
 {
     try {
         TEST_SETUP(test, s, 3);
@@ -93,6 +93,34 @@ void op_existing_chan_valid_users_should_notice(Server& s)
         reply = recv_lines(so2);
         ar.handle_new_reply(reply);
         ar.is_formatted_transfer(opNick, "KICK #chan toto");
+
+    } catch (const std::runtime_error& e) {
+        LOG_TEST.error(e.what());
+    }
+}
+
+/**
+ @brief integration test - normal case - custom reason
+*/
+void kick_with_reason_should_transfer(Server& s)
+{
+    try {
+        TEST_SETUP(test, s, 2);
+        TcpSocket& soOp = *sockets.at(0);
+        TcpSocket& so   = *sockets.at(1);
+
+        make_op(soOp);
+        authenticate_and_join(so);
+
+        // test - operator receives broadcast with reason
+        std::string reply = get_rpl_for(soOp, validKickReasonMsg);
+        AssertReply ar(reply);
+        ar.is_formatted_transfer(opNick, "KICK #chan roro", "please behave roro");
+
+        // kicked user1 gets an individual notice
+        reply = recv_lines(so);
+        ar.handle_new_reply(reply);
+        ar.is_formatted_transfer(opNick, "KICK #chan roro", "please behave roro");
 
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());
@@ -301,8 +329,12 @@ void op_matching_size_channel_list_and_user_list_should_notice(Server& s)
 void test_kick(Server& s, t_results* r)
 {
     print_test_series("command KICK");
-    run_test(r, [&] { op_existing_chan_valid_user_should_broadcast(s); }, "single kick");
-    run_test(r, [&] { op_existing_chan_valid_users_should_notice(s); }, "combo double kick");
+    print_test_series_part("common cases");
+    run_test(r, [&] { op_existing_chan_valid_user_should_transfer(s); }, "single kick");
+    run_test(r, [&] { op_existing_chan_valid_users_should_transfer(s); }, "combo double kick");
+    run_test(r, [&] { kick_with_reason_should_transfer(s); }, "custom reason should appear in message");
+
+    print_test_series_part("error cases");
     run_test(r, [&] { no_op_should_err(s); }, "no op");
     run_test(r, [&] { op_missing_chan_should_err(s); }, "no chan");
     run_test(r, [&] { op_missing_user_should_err(s); }, "no user");

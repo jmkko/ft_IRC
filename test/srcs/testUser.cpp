@@ -29,6 +29,8 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
+#include <chrono>
+#include <thread>
 
 /************************************************************
  *                      ✅  VALID                           *
@@ -53,6 +55,7 @@ void valid_user_should_void(Server& s)
     }
 }
 
+// Failing on GITHUB Actions if assert on whole message - can't get codes.conf ?
 void valid_user_after_nick_should_rpl(Server& s)
 {
     try {
@@ -64,12 +67,17 @@ void valid_user_after_nick_should_rpl(Server& s)
 
         // test
         send_line(so, "USER Marco 0 * :Marco Polo\r\n");
+        std::this_thread::sleep_for(std::chrono::milliseconds(SERVER_MOTD_WAIT_MS));
         std::string reply = recv_lines(so);
         AssertReply ar(reply);
         ar.matches_entirely(":" + s.get_name() + " 001 mcpolo :" + ircCodes.trailing(RPL_WELCOME) + " mcpolo!Marco@localhost");
         ar.matches_entirely(":" + s.get_name() + " 002 mcpolo :" + ircCodes.trailing(RPL_YOURHOST) + " " + s.get_name());
         ar.matches_entirely(":" + s.get_name() + " 003 mcpolo :" + ircCodes.trailing(RPL_CREATED));
         ar.matches_entirely(":" + s.get_name() + " 004 mcpolo :" + s.get_name() + " 1.0  0 0");
+        // ar.has_code(RPL_WELCOME).contains("mcpolo");
+        // ar.has_code(RPL_YOURHOST).contains("mcpolo");
+        // ar.has_code(RPL_CREATED).contains("mcpolo");
+        // ar.has_code(RPL_MYINFO).contains("mcpolo");
 
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());
@@ -101,8 +109,8 @@ void test_user(Server& s, t_results* r)
 {
     print_test_series("command USER");
     print_test_series_part("valid cases");
-    run_test(r, [&] { valid_user_should_void(s); }, "Marco should void himself");
-    run_test(r, [&] { valid_user_after_nick_should_rpl(s); }, "Marco should received the welcome msg");
+    run_test(r, [&] { valid_user_should_void(s); }, "USER Marco should void himself");
+    run_test(r, [&] { valid_user_after_nick_should_rpl(s); }, "USER Marco should receive the welcome msg");
     print_test_series_part("invalid cases");
-    run_test(r, [&] { invalid_user_char_arobase_should_err(s); }, "Mar@co should err");
+    run_test(r, [&] { invalid_user_char_arobase_should_err(s); }, "USER Mar@co should err");
 }

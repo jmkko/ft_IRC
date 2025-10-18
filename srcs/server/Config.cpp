@@ -34,7 +34,6 @@ Config::Config(const std::string& fileName) :
     // NOLINTNEXTLINE(performance-unnecessary-copy-initialization)
     std::string actualFileName = fileName;
 #ifdef TEST
-    std::cout << "in TEST !!!!! " << '\n';
     if (fileName == CODES_CONF_FILE)
         actualFileName = CODES_CONF_FILE_FOR_TEST;
     else if (fileName == SERVER_CONF_FILE)

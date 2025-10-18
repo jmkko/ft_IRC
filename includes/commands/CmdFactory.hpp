@@ -1,3 +1,12 @@
+/**
+ * @file CmdFactory.hpp
+ * @brief Factory for classes implementing #ICommand
+ * @version 0.1
+ * @date 2025-10-16
+ *
+ * @copyright Copyright (c) 2025
+ *
+ */
 #ifndef CMDFACTORY_HPP
 #define CMDFACTORY_HPP
 
@@ -7,16 +16,48 @@ class Server;
 class Client;
 class ICommand;
 
+/**
+ * @brief Generates a new Command among those implemented by the server
+ * @details
+ * - perform checks on Client status
+ * - delegate to a series of helper functions arguments checking and instanciation
+ */
 class CmdFactory
 {
   public:
+    /**
+     * @brief Construct a new Cmd Factory object
+     * @details is instanciated in #Server
+     */
     CmdFactory(void);
-    CmdFactory(Server& server, Client& client);
-    CmdFactory(const CmdFactory& other);
-    CmdFactory& operator=(const CmdFactory& other);
+    /**
+     * @brief Destroy the Cmd Factory object
+     *
+     */
     ~CmdFactory();
 
-    bool      check_in(Client& client, std::string& command);
+    /**
+     * @brief checks client status against detected command
+     * @details when client is ..
+     - #UNAUTHENTICATED only #Pass and #Quitcan be handled
+     - #AUTHENTICATED only #Pass, #Quit, #Nick and #User can be handled
+     - #REGISTERED all commands can be handled
+     * @param client
+     * @param command
+     * @return true if command is usable in client state
+     * @return false otherwise
+     */
+    bool check_in(Client& client, std::string& command);
+    /**
+     * @brief main command in charge of
+     * - checking command availability
+     * - calling adequate helper command
+     * @param server
+     * @param client
+     * @param params
+     * @return ICommand*
+     * @warning can send ERR_NOTREGISTERED, ERR_UNKNOWNCOMMAND
+     */
     ICommand* make_command(Server& server, Client& client, std::string& params);
     ICommand* user_cmd(Server& server, Client& client, std::string& params);
     ICommand* pass_cmd(Server& server, Client& client, std::string& params);
@@ -33,6 +74,17 @@ class CmdFactory
     ICommand* who_cmd(Server& server, Client& client, std::string& params);
     ICommand* motd_cmd(Server& server, Client& client, std::string& params);
     ICommand* ping_cmd(Server& server, Client& client, std::string& params);
+
+  private:
+    /**
+     * @brief Construct a new Cmd Factory object
+     *
+     * @remark not used
+     * @param server
+     * @param client
+     */
+    CmdFactory(Server& server, Client& client);
+    CmdFactory(const CmdFactory& other);
 };
 
 #endif

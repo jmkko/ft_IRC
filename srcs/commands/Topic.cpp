@@ -44,25 +44,25 @@ ReplyCode Topic::check_args(Server& server, Client& client, std::string& params)
  *		🥚 CONSTRUCTORS & DESTRUCTOR						*
  ************************************************************/
 
-Topic::Topic(Server& server, std::string& params)
+Topic::Topic(Server& server, std::string& params) : _isTopicChange(false)
 {
     std::istringstream iss(params);
     std::string        channel;
     std::string        topic;
 
     iss >> channel;
-    _chan  = server.find_channel_by_name(channel);
+    _chan = server.find_channel_by_name(channel);
 
-	std::getline(iss, topic);
-	topic.erase(0, topic.find_first_not_of(WHITE_SPACE));
-	if (!topic.empty() && topic[0] == ':') {
-		topic.erase(0, 1);
-	} else if (!topic.empty()) {
-		topic = topic.substr(0, topic.find_first_not_of(WHITE_SPACE));
-	}
+    std::getline(iss, topic);
+
+    if (!topic.empty() && topic.length() > 1) {
+        topic.erase(0, 1); // remove space after #chan
+        _isTopicChange = true;
+        if (!topic.empty() && topic[0] == ':') {
+            topic.erase(0, 1);
+        }
+    }
     _topic = topic;
-
-
 }
 
 Topic::~Topic(void) {}
@@ -73,11 +73,11 @@ Topic::~Topic(void) {}
 
 void Topic::execute(Server& server, Client& client)
 {
-
-    ReplyHandler rh = ReplyHandler::get_instance(&server);
+    std::string  topicTrailing = _topic;
+    ReplyHandler rh            = ReplyHandler::get_instance(&server);
 
     if (_chan) {
-        if (_topic.empty()) {
+        if (_isTopicChange == false) {
             std::string channelTopic = _chan->get_topic();
             if (channelTopic.empty()) {
                 rh.process_response(client, RPL_NOTOPIC, _chan->get_name());
@@ -87,8 +87,10 @@ void Topic::execute(Server& server, Client& client)
         } else {
             ReplyCode code = _chan->set_topic(client, _topic);
             if (code == CORRECT_FORMAT) {
-                _chan->broadcast(server, TRANSFER_TOPIC, _chan->get_name(), &client, _topic);
-                rh.process_response(client, TRANSFER_TOPIC, _chan->get_name(), &client, _topic);
+                if (_topic.empty())
+                    topicTrailing = " ";
+                _chan->broadcast(server, TRANSFER_TOPIC, _chan->get_name(), &client, topicTrailing);
+                rh.process_response(client, TRANSFER_TOPIC, _chan->get_name(), &client, topicTrailing);
             } else {
                 rh.process_response(client, code, _chan->get_name());
             }
