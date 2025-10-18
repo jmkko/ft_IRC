@@ -14,11 +14,12 @@ Invite::~Invite() {}
 Invite& Invite::operator=(const Invite& other)
 {
     if (this != &other) {
-        _nickname = other._nickname;
-		_channelName = other._channelName;
+        _nickname    = other._nickname;
+        _channelName = other._channelName;
     }
     return (*this);
 }
+
 Invite::Invite(std::string& params) {
 
 	Parser parser;

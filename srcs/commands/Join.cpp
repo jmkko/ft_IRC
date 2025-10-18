@@ -111,28 +111,29 @@ void Join::execute(Server& server, Client& client)
         if (!channel) {
 			if (!p.correct_key(chanKey))
 				chanKey.clear();
-            channel = new Channel(chanName, chanKey); // make a new one
-            server.channels[chanName] = channel;                        // add it to the server
+            channel = new Channel(chanName, chanKey); 
+            server.channels[chanName] = channel;
             LOG_I_CMD("#️⃣ New channel", channel->get_name());
         } else if ((channel->get_mode() & CHANMODE_KEY)
-                   && (chanKey != channel->get_key())) {              // if the channel exist but wrong key has been given
-            p.response(ERR_BADCHANNELKEY, chanName); // send error - no connexions
-            continue;                                                 // continue iteration
+                   && (chanKey != channel->get_key())) { 
+            p.response(ERR_BADCHANNELKEY, chanName); 
+            continue;
         }
-        replyCode = channel->add_member(client); // try to add the members to the channel
-        if (replyCode == CORRECT_FORMAT) {       // if right permissions ...
+        replyCode = channel->add_member(client);
+        if (replyCode == CORRECT_FORMAT) { 
             LOG_CONN.info(client.get_nickname() + " joined channel: " + chanName);
-            p.response(TRANSFER_JOIN, chanName);         // send connection success message
-            channel->broadcast(server, TRANSFER_JOIN, chanName, &client); // + broadcast
+            p.response(TRANSFER_JOIN, chanName);
+            channel->broadcast(server, TRANSFER_JOIN, chanName, &client);
             channel->remove_from_invited_list(client);
-            if (channel->get_nb_members() == 1) { // if first and/or only user
-                channel->make_operator(client);   // --> make the client operator
+            if (channel->get_nb_members() == 1) {
+                channel->make_operator(client);
                 p.response(RPL_CHANNELMODEIS, chanName + " +o ");
+                //rh.process_response(client, TRANSFER_MODE, chanName + " +o " + client.get_nickname());  <-- merge changements ?? why ??
             }
-            send_list_of_names(*p.rh, client, *channel); // send the list of names
-            display_topic(*p.rh, client, *channel);      // display the topic
+            send_list_of_names(*p.rh, client, *channel); 
+            display_topic(*p.rh, client, *channel);
         } else {
-            p.response(replyCode, chanName); // else if not added to chan -> send permissions error
+            p.response(replyCode, chanName);
         }
     }
 }

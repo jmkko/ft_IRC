@@ -51,7 +51,7 @@ class Privmsg : public ICommand
      * - targets should be existing nicks or channels
      * @param server @ref Server
      * @param client sender @ref Client
-     * @param params string following the command name
+     * @param params should match should match `<msgtarget> <text to be sent>`
      * @return @ref ReplyCode corresponding to RFC ERR replies or CORRECT_FORMAT if syntax is correct
      * @warning can return ERR_NEEDMOREPARAMS, ERR_NORECIPIENT, ERR_NOTEXTTOSEND or process directly replies ERR_TOOMANYTARGETS,
      * ERR_NOSUCHCHANNEL, ERR_NOSUCHNICK

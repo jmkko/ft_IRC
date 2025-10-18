@@ -54,6 +54,7 @@ class Utils
         MatchPattern(const std::string& p);
         bool operator()(const Client* c) const;
     };
+    static bool is_not_alpha_or_specialbnf(char c);
     static bool is_invalid_char_nick(char c);
     static bool is_invalid_char_user(char c);
 

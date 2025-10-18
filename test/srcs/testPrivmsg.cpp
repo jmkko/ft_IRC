@@ -22,17 +22,16 @@
 #include <string>
 #include <thread>
 
-
 /************************************************************
-*		✅  VALID											*
-************************************************************/
+ *		✅  VALID											*
+ ************************************************************/
 
 void nick_as_receiver_should_transfer(Server& s)
 {
     try {
         TEST_SETUP(test, s, 2);
         TcpSocket& soOp = *sockets.at(0);
-        TcpSocket& so = *sockets.at(1);
+        TcpSocket& so   = *sockets.at(1);
         make_op(soOp);
         authenticate_and_join(so);
 
@@ -52,7 +51,7 @@ void channel_as_receiver_should_broadcast(Server& s)
     try {
         TEST_SETUP(test, s, 2);
         TcpSocket& soOp = *sockets.at(0);
-        TcpSocket& so = *sockets.at(1);
+        TcpSocket& so   = *sockets.at(1);
         make_op(soOp);
         authenticate_and_join(so);
         recv_lines(soOp);
@@ -78,8 +77,8 @@ void multiple_channels_as_receiver_should_broadcast(Server& s)
     try {
         TEST_SETUP(test, s, 3);
         TcpSocket& soOp = *sockets.at(0);
-        TcpSocket& so = *sockets.at(1);
-        TcpSocket& so2 = *sockets.at(2);
+        TcpSocket& so   = *sockets.at(1);
+        TcpSocket& so2  = *sockets.at(2);
         make_op(soOp);
         authenticate_and_join(so);
         authenticate_second_user(so2);
@@ -112,7 +111,7 @@ void nick_and_channel_as_receiver_should_transfer_and_broadcast(Server& s)
     try {
         TEST_SETUP(test, s, 2);
         TcpSocket& soOp = *sockets.at(0);
-        TcpSocket& so = *sockets.at(1);
+        TcpSocket& so   = *sockets.at(1);
         make_op(soOp);
         authenticate(so);
 
@@ -133,8 +132,8 @@ void nick_and_channel_as_receiver_should_transfer_and_broadcast(Server& s)
 }
 
 /************************************************************
-*      ❔ EDGE CASES 								    	*
-************************************************************/
+ *      ❔ EDGE CASES 								    	*
+ ************************************************************/
 
 void empty_msg_should_err(Server& s)
 {
@@ -159,7 +158,7 @@ void blank_msg_should_do_broadcast(Server& s)
     try {
         TEST_SETUP(test, s, 2);
         TcpSocket& soOp = *sockets.at(0);
-        TcpSocket& so = *sockets.at(1);
+        TcpSocket& so   = *sockets.at(1);
         make_op(soOp);
         authenticate_and_join(so);
 
@@ -174,13 +173,18 @@ void blank_msg_should_do_broadcast(Server& s)
     }
 }
 
-
 void msg_in_arg_instead_of_trailing_should_err(Server& s)
 {
     try {
-        TEST_SETUP(test, s, 1);
+        TEST_SETUP(test, s, 3);
         TcpSocket& soOp = *sockets.at(0);
+        TcpSocket& so   = *sockets.at(1);
+        TcpSocket& so2  = *sockets.at(2);
         make_op(soOp);
+        authenticate_and_join(so);
+        recv_lines(soOp);
+        authenticate_and_join_second_user(so2);
+        recv_lines(soOp);
 
         // test is received
         send_line(soOp, invalidPrivMsgInArg);
@@ -193,16 +197,35 @@ void msg_in_arg_instead_of_trailing_should_err(Server& s)
     }
 }
 
+void msg_in_arg_instead_of_trailing_should_notice(Server& s)
+{
+    try {
+        TEST_SETUP(test, s, 2);
+        TcpSocket& soOp = *sockets.at(0);
+        TcpSocket& so = *sockets.at(1);
+        make_op(soOp);
+
+		authenticate(so, "user");
+        // test is received
+        send_line(soOp, "PRIVMSG user message only must be displayed\r\n");
+        std::string reply = recv_lines(so);
+        AssertReply ar(reply);
+        ar.matches_entirely(":" + s.get_name() + " PRIVMSG user :message");
+
+    } catch (const std::runtime_error& e) {
+        LOG_TEST.error(e.what());
+    }
+}
 /************************************************************
-*		❌ ERRORS											*
-************************************************************/
+ *		❌ ERRORS											*
+ ************************************************************/
 
 void not_channel_member_should_err(Server& s)
 {
     try {
         TEST_SETUP(test, s, 2);
         TcpSocket& soOp = *sockets.at(0);
-        TcpSocket& so = *sockets.at(1);
+        TcpSocket& so   = *sockets.at(1);
         make_op(soOp);
         authenticate(so);
 
@@ -325,11 +348,12 @@ void test_privmsg(Server& s, t_results* r)
     run_test(r, [&] { channel_as_receiver_should_broadcast(s); }, "PRIVMSG to #chan");
     run_test(r, [&] { multiple_channels_as_receiver_should_broadcast(s); }, "PRIVMSG to #chan,#chan2");
     run_test(r, [&] { nick_and_channel_as_receiver_should_transfer_and_broadcast(s); }, "PRIVMSG to roro,#chan");
-    
+
     print_test_series_part("edge cases");
     run_test(r, [&] { empty_msg_should_err(s); }, "'PRIVMSG #chan :'");
     run_test(r, [&] { blank_msg_should_do_broadcast(s); }, "'PRIVMSG #chan : '");
-    run_test(r, [&] { msg_in_arg_instead_of_trailing_should_err(s); }, "'PRIVMSG #chan msg'");
+    run_test(r, [&] { msg_in_arg_instead_of_trailing_should_notice(s); }, "'PRIVMSG #chan msg'"); // <-- add opposite test 
+    run_test(r, [&] { msg_in_arg_instead_of_trailing_should_err(s); }, "'PRIVMSG roro,toto hi'"); // of this one
     
     print_test_series_part("error cases");
     run_test(r, [&] { not_channel_member_should_err(s); }, "PRIVMSG to #chan without being a member");

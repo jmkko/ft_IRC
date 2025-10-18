@@ -184,7 +184,7 @@ void mode_plusk_wrong_keyy_should_err(Server& s)
     }
 }
 
-void mode_plusi_with_invite_should_send_rpl_and_broadcast(Server& s)
+void mode_plusi_with_invite_should_broadcast(Server& s)
 {
     try {
         // init test_join
@@ -250,7 +250,7 @@ void mode_plusi_no_invite_should_err(Server& s)
 /**
  @brief integration test - normal case
 */
-void mode_plusl_should_block_join_if_max_reached(Server& s)
+void mode_plusl_when_max_reached_should_err(Server& s)
 {
     try {
         TEST_SETUP(test, s, 2);
@@ -279,7 +279,7 @@ void mode_plusl_should_block_join_if_max_reached(Server& s)
 /**
  @brief integration test - error case
 */
-void mode_plusl_zeroarg_should_block_join(Server& s)
+void mode_plusl_zeroarg_should_err(Server& s)
 {
     try {
         TEST_SETUP(test, s, 2);
@@ -308,7 +308,7 @@ void mode_plusl_zeroarg_should_block_join(Server& s)
 /**
  @brief integration test - normal case
 */
-void mode_minusk_should_lift_block(Server& s)
+void mode_minusk_should_transfer(Server& s)
 {
     try {
         TEST_SETUP(test, s, 2);
@@ -337,7 +337,7 @@ void mode_minusk_should_lift_block(Server& s)
 /**
  @brief integration test - normal case
 */
-void mode_minusi_should_lift_block(Server& s)
+void mode_minusi_should_transfer(Server& s)
 {
     try {
         TEST_SETUP(test, s, 2);
@@ -363,7 +363,7 @@ void mode_minusi_should_lift_block(Server& s)
 /**
  @brief integration test - normal case
 */
-void mode_minusl_should_lift_block(Server& s)
+void mode_minusl_should_transfer(Server& s)
 {
     try {
         TEST_SETUP(test, s, 2);
@@ -386,7 +386,7 @@ void mode_minusl_should_lift_block(Server& s)
     }
 }
 
-void creation_of_multiple_chan_with_key(Server& s)
+void creation_of_multiple_chan_with_key_should_transfer(Server& s)
 {
     try {
         TEST_SETUP(test, s, 2);
@@ -395,17 +395,15 @@ void creation_of_multiple_chan_with_key(Server& s)
         make_op(sop);
         authenticate(so);
 
-        // test 1
-        send_line(sop, "JOIN #chan1,#chan2,#chan3 key1,key2,key3\r\n");
+        // test 1 - check that user is in channels
+        send_line(sop, "JOIN #chan1,#chan2 key1,key2\r\n");
         std::string reply = recv_lines(sop);
         AssertReply ar(reply);
-
         ar.is_formatted_transfer(opNick, "JOIN #chan1");
-        ar.is_formatted_transfer(opNick, "MODE #chan1 +o");
-        ar.is_formatted(RPL_CHANNELMODEIS, opNick, "#chan1 +k key1");
-
-        // test 2
-        // join_assert(so);
+        ar.is_formatted_transfer(opNick, "JOIN #chan2");
+        // test 2 - check that user has op status in channels
+        ar.is_formatted_transfer(opNick, "MODE #chan1 +o " + opNick);
+        ar.is_formatted_transfer(opNick, "MODE #chan2 +o " + opNick);
 
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());
@@ -415,19 +413,23 @@ void creation_of_multiple_chan_with_key(Server& s)
 void test_join(Server& s, t_results* r)
 {
     print_test_series("command JOIN");
-    run_test(r, [&] { valid_join_should_send_rpl_and_broadcast(s); }, "JOIN #chan (op user)");
+    print_test_series_part("common cases");
+    run_test(r, [&] { valid_join_should_send_rpl_and_broadcast(s); }, "JOIN #chan");
+    print_test_series_part("common cases - modes");
+    run_test(r, [&] { mode_plusi_with_invite_should_broadcast(s); }, "JOIN after MODE +i and being invited.");
+    run_test(r, [&] { creation_of_multiple_chan_with_key_should_transfer(s); }, "JOIN multiple creation of channels with keys");
+    run_test(r, [&] { mode_minusk_should_transfer(s); }, "JOIN without key after MODE -k");
+    run_test(r, [&] { mode_minusi_should_transfer(s); }, "JOIN without invite after MODE -i");
+    run_test(r, [&] { mode_minusl_should_transfer(s); }, "JOIN full channel after MODE -l");
+    print_test_series_part("edge cases");
+    run_test(r, [&] { mode_plusl_zeroarg_should_err(s); }, "JOIN after MODE +l 0");
+    print_test_series_part("error cases");
     run_test(r, [&] { noparams_should_err(s); }, "JOIN with no params");
+    run_test(r, [&] { mode_plusl_when_max_reached_should_err(s); }, "JOIN full channel after MODE +l <limit>");
     run_test(r, [&] { name_no_prefix_should_err(s); }, "JOIN chan");
     run_test(r, [&] { name_too_big_should_err(s); }, "JOIN more 50 char channel name");
-    // run_test(r, [&] { mode_plusi_no_invite_should_err(s); }, "+i");
-    // run_test(r, [&] { mode_plusk_no_key_should_err(s); }, "+k <key>");
+    run_test(r, [&] { mode_plusi_no_invite_should_err(s); }, "JOIN without invite +i");
+    run_test(r, [&] { mode_plusk_no_key_should_err(s); }, "+k <key>");
     run_test(r, [&] { mode_plusk_wrong_yek_should_err(s); }, "A user try to join with wrong yek");
     run_test(r, [&] { mode_plusk_wrong_keyy_should_err(s); }, "A user try to join with wrong keyy");
-    // run_test(r, [&] { mode_plusi_with_invite_should_send_rpl_and_broadcast(s); }, "+i after being invited.");
-    // run_test(r, [&] { mode_plusl_should_block_join_if_max_reached(s); }, "+l <limit>");
-    // run_test(r, [&] { mode_plusl_zeroarg_should_block_join(s); }, "+l 0");
-    // run_test(r, [&] { mode_minusk_should_lift_block(s); }, "-k <key>");
-    // run_test(r, [&] { mode_minusi_should_lift_block(s); }, "-i");
-    // run_test(r, [&] { mode_minusl_should_lift_block(s); }, "-l");
-    // run_test(r, [&] { creation_of_multiple_chan_with_key(s); }, "multiple creation of channels with keys");
 }

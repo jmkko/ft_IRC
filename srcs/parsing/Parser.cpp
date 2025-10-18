@@ -37,14 +37,17 @@ bool Parser::response(ReplyCode code, const std::string& params, const std::stri
 
 bool Parser::correct_password(std::string& password)
 {
-    if (password.empty()) {
-        return response(ERR_NEEDMOREPARAMS);
-    }
+
+	std::cout << "CORRECT PASSWORD" << std::endl;
     if (_server->get_password() != password) {
         return response(ERR_PASSWDMISMATCH);
-    } else if (_client->get_status() == REGISTERED) {
+    } else if (_client->get_status() == AUTHENTICATED) {
+		std::cout << "AUTHENTICATED" << std::endl;
         return response(ERR_ALREADYREGISTRED);
-    }
+    } else if (_client->get_status() == REGISTERED) {
+		std::cout << "REGISTERED" << std::endl;
+	}
+	std::cout << "TRUE" << std::endl;
     return (true);
 }
 

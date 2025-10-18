@@ -11,6 +11,7 @@
 #include "utils.hpp"
 #include "Parser.hpp"
 
+#include <cstddef>
 #include <sstream>
 #include <string>
 
@@ -34,6 +35,7 @@ Kick::Kick(std::string& params): ICommand()
 
 Kick::Kick(void): _channelsNames(), _usersNames(), _msg() {}
 Kick::Kick(const Kick& other) : ICommand(), _channelsNames(other._channelsNames), _usersNames(other._usersNames), _msg("") {}
+
 Kick::~Kick() {}
 
 /************************************************************
@@ -67,8 +69,9 @@ void Kick::execute(Server& server, Client& client)
 		if (!p.correct_channel(_channelsNames[i]))
 			continue ;
         Channel* channel = server.find_channel_by_name(_channelsNames[i]);
-        Client*  target  = server.find_client_by_nickname(_usersNames[i]);
-        LOG_CMD.debug("Kick.cpp execute() -->" + _channelsNames[i] + " " + _usersNames[i] + " " + _msg);
+		Client* target = server.find_client_by_nickname(_usersNames[i]);
+        LOG_D_CMD("looking in", _channelsNames[i]);
+
         if (!channel) {
             p.response(ERR_NOSUCHCHANNEL, _channelsNames[i]);
         } else if (!channel->is_operator(client)) {
