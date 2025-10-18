@@ -14,7 +14,7 @@ class Pass : public ICommand
 {
   public:
     Pass(void);
-    Pass(const std::string& pass);
+    Pass(std::string& params);
     Pass(const Pass& other);
     Pass& operator=(const Pass& other);
     ~Pass();

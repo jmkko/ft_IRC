@@ -11,7 +11,7 @@ class Invite : public ICommand
 {
 
   public:
-    Invite(const std::string& params);
+    Invite(std::string& params);
     ~Invite();                                      // NOLINT
     void             execute(Server& s, Client& c); // NOLINT
 

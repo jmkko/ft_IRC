@@ -111,16 +111,19 @@ ICommand* CmdFactory::make_command(Server& server, Client& client, std::string& 
 // Return a NICK command object if the nickname is valid
 ICommand* CmdFactory::nick_cmd(Server& server, Client& client, std::string& params)
 {
-    ReplyHandler& rh        = ReplyHandler::get_instance(&server);
-    ReplyCode     replyCode = Nick::check_args(server, client, params);
-
-    if (replyCode == CORRECT_FORMAT)
-        return (new Nick(params));
-    else {
-        rh.process_response(client, replyCode, params);
-    }
-
-    return NULL;
+	(void)server;
+	(void)client;
+    // ReplyHandler& rh        = ReplyHandler::get_instance(&server);
+    // ReplyCode     replyCode = Nick::check_args(server, client, params);
+    //
+    // if (replyCode == CORRECT_FORMAT)
+    //     return (new Nick(params));
+    // else {
+    //     rh.process_response(client, replyCode, params);
+    // }
+    //
+    // return NULL;
+	return new Nick(params);
 }
 
 ICommand* CmdFactory::user_cmd(Server& server, Client& client, std::string& params)
@@ -263,18 +266,20 @@ ICommand* CmdFactory::who_cmd(Server& server, Client& client, std::string& param
 
 ICommand* CmdFactory::privmsg_cmd(Server& server, Client& client, std::string& params)
 {
-    ReplyHandler rh   = ReplyHandler::get_instance(&server);
-    ReplyCode    code = Privmsg::check_args(server, client, params);
-    if (code == ERR_NOTEXTTOSEND) {
-        rh.process_response(client, code);
-        return (NULL);
-    } else if (code == ERR_NEEDMOREPARAMS) {
-        rh.process_response(client, code, "PRIVMSG");
-        return (NULL);
-    } else if (code != CORRECT_FORMAT) {
-        rh.process_response(client, code, params, NULL);
-        return (NULL);
-    }
+	(void)client;
+	(void)server;
+    // ReplyHandler rh   = ReplyHandler::get_instance(&server);
+    // ReplyCode    code = Privmsg::check_args(server, client, params);
+    // if (code == ERR_NOTEXTTOSEND) {
+    //     rh.process_response(client, code);
+    //     return (NULL);
+    // } else if (code == ERR_NEEDMOREPARAMS) {
+    //     rh.process_response(client, code, "PRIVMSG");
+    //     return (NULL);
+    // } else if (code != CORRECT_FORMAT) {
+    //     rh.process_response(client, code, params, NULL);
+    //     return (NULL);
+    // }
     Privmsg* privmsg = new Privmsg(params);
     return privmsg;
 };

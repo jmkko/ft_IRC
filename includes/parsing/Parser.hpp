@@ -4,6 +4,7 @@
 #include <map>
 
 #include "reply_codes.hpp"
+#include "ReplyHandler.hpp"
 class Server;
 class Client;
 class ReplyHandler;
@@ -23,6 +24,7 @@ class Parser
 	std::vector<std::string> convert_to_vector(std::string& params);
 	std::map<std::string, std::string> to_map(std::string& key, std::string& value);
 
+	bool correct_password(std::string& password);
     bool correct_nickname(std::string& nickname);
 	bool correct_target(std::string& target);
     bool correct_channel(std::string& name);

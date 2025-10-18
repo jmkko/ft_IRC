@@ -1,6 +1,6 @@
 #include "LogManager.hpp"
 #include "Motd.hpp"
-#include "ReplyHandler.hpp"
+#include "Parser.hpp"
 #include "consts.hpp"
 #include "reply_codes.hpp"
 
@@ -29,28 +29,28 @@ void Motd::execute(Server& server, Client& client)
 {
     std::string   line, newline;
     std::ifstream inputFile;
+	Parser p(server, client);
 
     const char* filename = MOTD_FILE;
 #ifdef TEST
     filename = MOTD_FILE_FOR_TEST;
 #endif
 
-    ReplyHandler& rh = ReplyHandler::get_instance(&server);
     inputFile.open(filename);
     if (inputFile.is_open()) {
         std::string nick = client.get_nickname();
-        rh.process_response(client, RPL_MOTDSTART, "", NULL, "- " + server.get_name() + " message of the day -");
+        p.response(RPL_MOTDSTART, "", "- " + server.get_name() + " message of the day -");
         while (getline(inputFile, line)) {
             newline = _str_replace(line, "$(servername)", server.get_name());
             newline = _str_replace(newline, "$(nick)", nick);
             newline = _str_replace(newline, "$(date)", _get_current_time());
-            rh.process_response(client, RPL_MOTD, "", NULL, newline);
+            p.response(RPL_MOTD, "", newline);
             newline.clear();
         }
-        rh.process_response(client, RPL_ENDOFMOTD, "");
+        p.response(RPL_ENDOFMOTD);
     } else {
         LOG_w_CMD(strerror(errno));
-        rh.process_response(client, ERR_NOMOTD);
+        p.response(ERR_NOMOTD);
     }
     inputFile.close();
 }

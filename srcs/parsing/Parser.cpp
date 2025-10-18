@@ -35,6 +35,19 @@ bool Parser::response(ReplyCode code, const std::string& params, const std::stri
 	return (true);
 }
 
+bool Parser::correct_password(std::string& password)
+{
+    if (password.empty()) {
+        return response(ERR_NEEDMOREPARAMS);
+    }
+    if (_server->get_password() != password) {
+        return response(ERR_PASSWDMISMATCH);
+    } else if (_client->get_status() == REGISTERED) {
+        return response(ERR_ALREADYREGISTRED);
+    }
+    return (true);
+}
+
 bool Parser::correct_channel(std::string& name)
 {
     if (name.empty()) {
@@ -98,11 +111,16 @@ bool Parser::correct_nickname(std::string& nickname)
 
     if (nickname.empty()) {
 		return response(ERR_NONICKNAMEGIVEN);	
-	} else if (invalidChar || std::isdigit(nickname[0])) {
+	}
+    invalidChar = std::count_if(nickname.begin(), nickname.end(), Utils::is_invalid_char_nick);
+	if (invalidChar || std::isdigit(nickname[0])) {
         return response(ERR_ERRONEUSNICKNAME, nickname);
     } else if (nickname.length() > ircConfig.get_nickname_max_len()) {
         nickname = nickname.substr(0, ircConfig.get_nickname_max_len());
     } 
+    if (_server->find_client_by_nickname(nickname)) {
+        return response(ERR_NICKNAMEINUSE, nickname);
+    }
 	return true;
 }
 

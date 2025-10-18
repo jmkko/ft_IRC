@@ -19,15 +19,12 @@ Invite& Invite::operator=(const Invite& other)
     }
     return (*this);
 }
-Invite::Invite(const std::string& params) {
-    std::istringstream iss(params);
-    std::string        nick;
-    std::string        chan;
+Invite::Invite(std::string& params) {
 
-    iss >> nick;
-    iss >> chan;
-	_nickname = nick;
-	_channelName = chan;
+	Parser parser;
+
+	_nickname = parser.format_parameter(params, NULL);
+	_channelName = parser.format_parameter(params, NULL);
 }
 
 /******************************************************************************

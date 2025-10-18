@@ -2,14 +2,19 @@
 
 #include "Client.hpp"
 #include "LogManager.hpp"
-#include "ReplyHandler.hpp"
+#include "Parser.hpp"
 #include "Server.hpp"
 
 #include <iostream>
 
 // Default constructor
 Pass::Pass(void) {}
-Pass::Pass(const std::string& pass) : _pass(pass) {}
+Pass::Pass(std::string& params)
+{
+	Parser parser;
+
+	_pass = parser.format_parameter(params, NULL);
+}
 
 // Copy constructor
 Pass::Pass(const Pass& other) : ICommand() { (void)other; }
@@ -26,8 +31,10 @@ Pass::~Pass(void) {}
 
 void Pass::execute(Server& server, Client& client)
 {
-    (void)server;
-    (void)client;
+	Parser p(server, client);
+	if (!p.correct_password(_pass)) {
+		return ;
+	}
     client.set_status(AUTHENTICATED);
     LOG_CMD.info("PASS - correct");
 }
