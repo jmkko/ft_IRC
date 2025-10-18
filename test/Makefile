@@ -1,7 +1,5 @@
 include ../colors.mk
 
-export PATH := $(HOME)/local/bin:$(PATH)
-
 NAME			:=	test
 
 IRC_EXEC		:=  ircserv
@@ -22,6 +20,15 @@ INCLUDE_DIR		:=	include
 BUILD_DIR		:=	.build
 
 INC				:= 	-I$(INCLUDE_DIR) -I$(IRC_INCLUDE_DIR) -I$(IRC_INCLUDE_DIR)/channels -I$(IRC_INCLUDE_DIR)/clients -I$(IRC_INCLUDE_DIR)/commands -I$(IRC_INCLUDE_DIR)/server
+
+HEADERS_FILES	:=	AssertFail.hpp\
+					AssertReply.hpp\
+					AssertUtils.hpp\
+					fakeClient.hpp\
+					printUtils.hpp\
+					ServerRunner.hpp\
+					TestFixture.hpp\
+					tesUtils.hpp
 
 SRCS_FILES		:= 	main.cpp\
 					fakeClient.cpp\
@@ -72,6 +79,7 @@ EXT				:= .cpp
 
 TEST_SRCS		:=	$(addprefix $(SRC_DIR)/, $(SRCS_FILES))
 IRC_SRCS 		:=	$(addprefix $(IRC_DIR)/, $(IRC_SRCS_FILES))
+HEADERS			:=  $(addprefix $(INCLUDE_DIR)/, $(HEADERS_FILES))
 SRCS			:=	$(TEST_SRCS) $(IRC_SRCS)
 
 OBJS			:=	$(patsubst %.cpp,$(BUILD_DIR)/%.o,$(notdir $(SRCS)))
@@ -82,7 +90,6 @@ vpath %.cpp $(SRC_DIR) $(IRC_DIR) $(IRC_DIR)/commands $(IRC_DIR)/clients $(IRC_D
 # Paths for clang-format / clang-tidy-12 / intercept-build if manually installed
 export PATH 	:=	$(PATH):$(HOME)/local/bin:/usr/bin/:/usr/share/clang/scan-build-py-12/bin/
 
-HEADERS			:=	$(wildcard $(INCLUDES)/*.hpp)
 FILES_TO_FORMAT	:=	$(SRCS) $(HEADERS)
 
 ################	LOADER
@@ -133,8 +140,7 @@ $(BUILD_DIR)/%.o: %.cpp | $(DIRS)
 comp-data:
 	@intercept-build make re
 
-github-test:
-	CXXFLAGS += -DTEST=0
+github-test: CXXFLAGS += -DTEST=0
 github-test: all
 
 debug: CXXFLAGS += -g -DDEB
