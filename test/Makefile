@@ -6,7 +6,7 @@ IRC_EXEC		:=  ircserv
 
 CXX				:=	clang++
 
-TEST			:= 1
+TEST			:=	1
 
 CXXFLAGS		:=	-Wall -Wextra -Werror -std=c++20 -g -DTEST=$(TEST) -fPIE
 
@@ -140,7 +140,7 @@ $(BUILD_DIR)/%.o: %.cpp | $(DIRS)
 comp-data:
 	@intercept-build make re
 
-github-test: CXXFLAGS += -DTEST=0
+github-test: TEST=0
 github-test: all
 
 debug: CXXFLAGS += -g -DDEB
