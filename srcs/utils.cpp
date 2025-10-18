@@ -1,26 +1,37 @@
+#include "utils.hpp"
+
 #include "LogManager.hpp"
 #include "consts.hpp"
-#include "utils.hpp"
+
+#include <cctype>
 #include <poll.h>
+#include <string>
 
+bool Utils::is_char_of(unsigned char c, const std::string& set)
+{
+    for (std::string::const_iterator it = set.begin(); it != set.end(); ++it) {
+        if (c == static_cast<unsigned char>(*it))
+            return true;
+    }
+    return false;
+}
 
-
-bool is_special_abnf(char c)
+bool Utils::is_special_abnf(char c)
 {
     unsigned char uc = (unsigned char)c;
     return (uc >= '[' && uc <= '`') || (uc >= '{' && uc <= '}');
 }
 
-bool check_port(const std::string& s, int* port)
+bool Utils::check_port(const std::string& s, int* port)
 {
-    long n = utils::string_to_ulong(s.c_str());
+    long n = string_to_ulong(s.c_str());
     if (!(n > WELL_KNOWN_PORT_MAX && n < DYNAMIC_PORT_MIN))
         return false;
     *port = static_cast<int>(n);
     return true;
 }
 
-bool check_password(const std::string& s)
+bool Utils::check_password(const std::string& s)
 {
     if (s.length() < MIN_PASSWORD_LEN) {
         LOG_SERVER.warning(std::string("password must be ") + TO_STRING(MIN_PASSWORD_LEN) + " long at least");
@@ -29,7 +40,7 @@ bool check_password(const std::string& s)
     return true;
 }
 
-bool check_args(int ac, char** av, int* port)
+bool Utils::check_args(int ac, char** av, int* port)
 {
     if (ac != EXPECTED_ARGS_NB) {
         LOG_SERVER.warning("usage: ./ircserv <port> <password>");
@@ -42,17 +53,14 @@ bool check_args(int ac, char** av, int* port)
     return true;
 }
 
-namespace utils
-{
-
-const std::string code_to_str(ReplyCode code)
+const std::string Utils::code_to_str(ReplyCode code)
 {
     std::stringstream ss;
     ss << std::setw(3) << std::setfill('0') << code;
     return ss.str();
 }
 
-long string_to_ulong(const std::string& str)
+long Utils::string_to_ulong(const std::string& str)
 {
     std::stringstream ss(str);
     long              result = 0;
@@ -63,19 +71,20 @@ long string_to_ulong(const std::string& str)
     return result;
 }
 
-std::string event_to_str(int event){
-	switch (event) {
-		case POLLIN:
-			return ("POLLIN");
-		case POLLOUT:
-			return ("POLLOUT");
-		case POLLERR:
-			return ("POLLERR");
-		case POLLNVAL:
-			return ("POLLNVAL");
-		default:
-			return ("undefined");
-	}
+std::string Utils::event_to_str(int event)
+{
+    switch (event) {
+    case POLLIN:
+        return ("POLLIN");
+    case POLLOUT:
+        return ("POLLOUT");
+    case POLLERR:
+        return ("POLLERR");
+    case POLLNVAL:
+        return ("POLLNVAL");
+    default:
+        return ("undefined");
+    }
 }
 /**
  * @brief test if the string matching a wildcard with * pattern
@@ -94,8 +103,10 @@ std::string event_to_str(int event){
  * Conformément à la RFC 2812, les wildcards servent pour les masks
  * dans les commandes WHO, NAMES, LIST, etc.
  */
-bool is_matching_pattern(const std::string& pattern, const std::string& str)
+bool Utils::is_matching_pattern(const std::string& pattern, const std::string& str)
 {
+    if (pattern.empty() || str.empty())
+        return false;
     size_t p = 0, s = 0, star = std::string::npos, match = 0;
 
     while (s < str.size()) {
@@ -120,12 +131,14 @@ bool is_matching_pattern(const std::string& pattern, const std::string& str)
         p++;
     return (p == pattern.size());
 }
-MatchPattern::MatchPattern(const std::string& p) : pattern(p) {}
+Utils::MatchPattern::MatchPattern(const std::string& p) : pattern(p) {}
 
-bool MatchPattern::operator()(const Client* c) const
+bool Utils::MatchPattern::operator()(const Client* c) const
 {
     return is_matching_pattern(pattern, c->get_nickname()) || is_matching_pattern(pattern, c->get_user_name())
            || is_matching_pattern(pattern, c->get_userhost()) || is_matching_pattern(pattern, c->get_real_name());
 }
 
-} // namespace utils
+bool Utils::is_not_alpha_or_specialbnf(char c) { return (!std::isalpha(c) && !Utils::is_special_abnf(c)); }
+bool Utils::is_invalid_char_nick(char c) { return (!std::isalnum(c) && !is_special_abnf(c)); }
+bool Utils::is_invalid_char_user(char c) { return (is_char_of(c, std::string(FORBIDEN_CHAR_USER, 5))); }

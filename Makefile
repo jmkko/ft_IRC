@@ -4,8 +4,15 @@ NAME			:=	ircserv
 OS 				:= $(shell uname)
 
 CXX				:=	clang++
-CXXFLAGS		:=	-Wall -Wextra -Werror -std=c++98 -g -MMD
+CXXFLAGS		:=	-Wall -Wextra -Werror -std=c++98 -g -MMD 
+LDFLAGS			:=	
 MAKEFLAGS		:=	--no-print-directory
+ASANFLAGS		:=	-fsanitize=address -O0 -g
+
+ifeq ($(MAKECMDGOALS),asan)
+CXXFLAGS += $(ASANFLAGS)
+LDFLAGS += $(ASANFLAGS)
+endif
 
 INCLUDES		:=	-Iincludes\
 					-Iincludes/channels\
@@ -37,10 +44,9 @@ SRCS			:=	srcs/main.cpp\
 					srcs/commands/Join.cpp\
 					srcs/commands/Who.cpp\
 					srcs/commands/Invite.cpp\
-					srcs/commands/Motd.cpp\
+					srcs/commands/Topic.cpp\
 					srcs/server/ReplyHandler.cpp\
 
-HEADERS			:=	$(wildcard INCLUDES)/*.hpp)
 OBJS_DIR		:=	.objs
 OBJS			:=	$(SRCS:%.cpp=$(OBJS_DIR)/%.o)
 DEPS			:=	$(OBJS:%.o=%.d)
@@ -76,7 +82,7 @@ all : $(NAME)
 
 $(NAME) : $(OBJS)
 	@echo "\n$(BOLD)=== Linkage ... generating binaries ===$(NOC)"
-	@$(CXX) $(INCLUDES) $^ -o $@
+	@$(CXX) $(LDFLAGS) $(INCLUDES) $^ -o $@
 
 $(OBJS) :$(OBJS_DIR)/%.o : %.cpp | $(OBJ_DIRS)
 ifeq ($(OS), Linux)
@@ -100,6 +106,9 @@ endif
 $(OBJ_DIRS) :
 	@mkdir -p $@
 	@mkdir -p logs
+
+asan : all
+@ASAN_OPTIONS=detect_leaks=1:log_path=logs/asan.log:atexit_print_stats=true ./ircserv 9999 password
 
 forminette:
 	@echo "$(YELLOW)=== Checking code format ===$(NOC)"

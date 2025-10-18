@@ -30,7 +30,7 @@
 /**
  @brief integration test - normal case
 */
-void op_existing_chan_valid_user_should_notice(Server& s)
+void op_existing_chan_valid_user_should_transfer(Server& s)
 {
     try {
         TEST_SETUP(test, s, 2);
@@ -42,21 +42,20 @@ void op_existing_chan_valid_user_should_notice(Server& s)
         // test
         send_line(soOp, validKickMsg);
         // as a member, operator receives the notice
-        std::string reply = recv_lines(soOp);
-        LOG_TEST.debug("test_valid1: reply op", reply);
+        std::string reply = recv_lines(soOp, opNick);
         AssertReply ar(reply);
-        // ar.contains("KICK").contains(channelName).contains(userNick);
+        ar.is_formatted_transfer(opNick, "KICK #chan roro");
 
         // kicked user gets a notice
-        reply = recv_lines(so);
+        reply = recv_lines(so, userNick);
         ar.handle_new_reply(reply);
-        ar.contains("KICK").contains(channelName).contains(userNick);
+        ar.is_formatted_transfer(opNick, "KICK #chan roro");
 
         // kicked user can join again
         send_line(so, validJoinMsg);
         std::string joinReplies = recv_lines(so);
         ar.handle_new_reply(joinReplies);
-        ar.contains("JOIN");
+        ar.is_formatted(RPL_NOTOPIC, userNick, "#chan");
 
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());
@@ -66,7 +65,7 @@ void op_existing_chan_valid_user_should_notice(Server& s)
 /**
  @brief integration test - normal case - many users
 */
-void op_existing_chan_valid_users_should_notice(Server& s)
+void op_existing_chan_valid_users_should_transfer(Server& s)
 {
     try {
         TEST_SETUP(test, s, 3);
@@ -79,31 +78,58 @@ void op_existing_chan_valid_users_should_notice(Server& s)
 
         // test
         send_line(soOp, validManyUsersKickMsg);
-        // as a member, operator receives the notice
+        // as a member, operator receives the transferred message
         std::string reply = recv_lines(soOp);
         AssertReply ar(reply);
-        LOG_TEST.debug("test 2 - reply Op after KICK", reply);
-        // ar.contains("KICK").contains(channelName).contains(userNick);
+        ar.is_formatted_transfer(opNick, "KICK #chan roro");
+        ar.is_formatted_transfer(opNick, "KICK #chan toto");
 
-        // kicked user1 gets a notice
+        // kicked user1 gets an individual noticd
         reply = recv_lines(so);
-        LOG_TEST.debug("test 2 - reply kicked user1 after KICK", reply);
         ar.handle_new_reply(reply);
-        ar.contains("KICK").contains(channelName).contains(userNick);
+        ar.is_formatted_transfer(opNick, "KICK #chan roro");
 
-        // kicked user2 gets a notice
+        // kicked user2 gets an individual notice
         reply = recv_lines(so2);
-        LOG_TEST.debug("test 2 - reply kicked user2 after KICK", reply);
         ar.handle_new_reply(reply);
-        ar.contains("KICK").contains(channelName).contains(user2Nick);
+        ar.is_formatted_transfer(opNick, "KICK #chan toto");
+
+    } catch (const std::runtime_error& e) {
+        LOG_TEST.error(e.what());
+    }
+}
+
+/**
+ @brief integration test - normal case - custom reason
+*/
+void kick_with_reason_should_transfer(Server& s)
+{
+    try {
+        TEST_SETUP(test, s, 2);
+        TcpSocket& soOp = *sockets.at(0);
+        TcpSocket& so   = *sockets.at(1);
+
+        make_op(soOp);
+        authenticate_and_join(so);
+
+        // test - operator receives broadcast with reason
+        std::string reply = get_rpl_for(soOp, validKickReasonMsg);
+        AssertReply ar(reply);
+        ar.is_formatted_transfer(opNick, "KICK #chan roro", "please behave roro");
+
+        // kicked user1 gets an individual notice
+        reply = recv_lines(so);
+        ar.handle_new_reply(reply);
+        ar.is_formatted_transfer(opNick, "KICK #chan roro", "please behave roro");
+
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());
     }
 }
 
 /************************************************************
-*		❌ ERRORS											*
-************************************************************/
+ *		❌ ERRORS											*
+ ************************************************************/
 
 /**
  @brief integration test - error case
@@ -124,7 +150,7 @@ void no_op_should_err(Server& s)
         send_line(so2, validKickMsg);
         std::string reply = recv_lines(so2);
         AssertReply ar(reply);
-        ar.has_code(ERR_CHANOPRIVSNEEDED);
+        ar.is_formatted(ERR_CHANOPRIVSNEEDED, user2Nick, "#chan");
 
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());
@@ -149,7 +175,7 @@ void op_missing_chan_should_err(Server& s)
         send_line(soOp, invalidNoChanKickMsg);
         std::string reply = recv_lines(soOp);
         AssertReply ar(reply);
-        ar.has_code(ERR_NEEDMOREPARAMS);
+        ar.is_formatted(ERR_NEEDMOREPARAMS, opNick, "KICK");
 
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());
@@ -174,7 +200,7 @@ void op_missing_user_should_err(Server& s)
         send_line(soOp, invalidNoUserKickMsg);
         std::string reply = recv_lines(soOp);
         AssertReply ar(reply);
-        ar.has_code(ERR_NEEDMOREPARAMS);
+        ar.is_formatted(ERR_NEEDMOREPARAMS, opNick, "KICK");
 
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());
@@ -198,7 +224,7 @@ void op_user_not_in_channel_should_err(Server& s)
         send_line(soOp, validKickMsg);
         std::string reply = recv_lines(soOp);
         AssertReply ar(reply);
-        ar.has_code(ERR_USERNOTINCHANNEL);
+        ar.is_formatted(ERR_USERNOTINCHANNEL, opNick, "#chan");
 
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());
@@ -223,7 +249,7 @@ void op_invalid_channel_should_err(Server& s)
         send_line(soOp, invalidWrongChanKickMsg);
         std::string reply = recv_lines(soOp);
         AssertReply ar(reply);
-        ar.has_code(ERR_BADCHANMASK);
+        ar.is_formatted(ERR_BADCHANMASK, opNick, "*chan");
 
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());
@@ -248,22 +274,26 @@ void op_valid_inexistent_channel_should_err(Server& s)
         send_line(soOp, validInexistentChannelKickMsg);
         std::string reply = recv_lines(soOp);
         AssertReply ar(reply);
-        ar.has_code(ERR_NOSUCHCHANNEL);
+        ar.is_formatted(ERR_NOSUCHCHANNEL, opNick, "#chanel");
 
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());
     }
 }
 
-void test_kick(Server& s)
+void test_kick(Server& s, t_results* r)
 {
     print_test_series("command KICK");
-    run_test([&] { op_existing_chan_valid_user_should_notice(s); }, "single kick");
-    run_test([&] { op_existing_chan_valid_users_should_notice(s); }, "combo double kick");
-    run_test([&] { no_op_should_err(s); }, "no op");
-    run_test([&] { op_missing_chan_should_err(s); }, "no chan");
-    run_test([&] { op_missing_user_should_err(s); }, "no user");
-    run_test([&] { op_user_not_in_channel_should_err(s); }, "not in chan");
-    run_test([&] { op_invalid_channel_should_err(s); }, "invalid chan");
-    run_test([&] { op_valid_inexistent_channel_should_err(s); }, "inexisting chan");
+    print_test_series_part("common cases");
+    run_test(r, [&] { op_existing_chan_valid_user_should_transfer(s); }, "single kick");
+    run_test(r, [&] { op_existing_chan_valid_users_should_transfer(s); }, "combo double kick");
+    run_test(r, [&] { kick_with_reason_should_transfer(s); }, "custom reason should appear in message");
+
+    print_test_series_part("error cases");
+    run_test(r, [&] { no_op_should_err(s); }, "no op");
+    run_test(r, [&] { op_missing_chan_should_err(s); }, "no chan");
+    run_test(r, [&] { op_missing_user_should_err(s); }, "no user");
+    run_test(r, [&] { op_user_not_in_channel_should_err(s); }, "not in chan");
+    run_test(r, [&] { op_invalid_channel_should_err(s); }, "invalid chan");
+    run_test(r, [&] { op_valid_inexistent_channel_should_err(s); }, "inexisting chan");
 }

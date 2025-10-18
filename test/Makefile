@@ -1,14 +1,14 @@
 include ../colors.mk
 
-export PATH := $(HOME)/local/bin:$(PATH)
-
 NAME			:=	test
 
 IRC_EXEC		:=  ircserv
 
 CXX				:=	clang++
 
-CXXFLAGS		:=	-Wall -Wextra -Werror -std=c++20 -g -DTEST
+TEST			:=	1
+
+CXXFLAGS		:=	-Wall -Wextra -Werror -std=c++20 -g -DTEST=$(TEST) -fPIE
 
 MAKEFLAGS		:=	--no-print-directory
 
@@ -21,6 +21,15 @@ BUILD_DIR		:=	.build
 
 INC				:= 	-I$(INCLUDE_DIR) -I$(IRC_INCLUDE_DIR) -I$(IRC_INCLUDE_DIR)/channels -I$(IRC_INCLUDE_DIR)/clients -I$(IRC_INCLUDE_DIR)/commands -I$(IRC_INCLUDE_DIR)/server
 
+HEADERS_FILES	:=	AssertFail.hpp\
+					AssertReply.hpp\
+					AssertUtils.hpp\
+					fakeClient.hpp\
+					printUtils.hpp\
+					ServerRunner.hpp\
+					TestFixture.hpp\
+					tesUtils.hpp
+
 SRCS_FILES		:= 	main.cpp\
 					fakeClient.cpp\
 					AssertFail.cpp\
@@ -31,11 +40,15 @@ SRCS_FILES		:= 	main.cpp\
 					TestFixture.cpp\
 					testKick.cpp\
 					testMode.cpp\
+					testMotd.cpp\
 					testNick.cpp\
 					testWho.cpp\
 					testJoin.cpp\
+					testPass.cpp\
 					testPing.cpp\
 					testPrivmsg.cpp\
+					testTopic.cpp\
+					testUser.cpp\
 
 IRC_SRCS_FILES	:=	utils.cpp\
 					signal_handler.cpp\
@@ -52,19 +65,21 @@ IRC_SRCS_FILES	:=	utils.cpp\
 					commands/Join.cpp\
 					commands/Kick.cpp\
 					commands/Mode.cpp\
-					commands/Motd.cpp\
 					commands/Nick.cpp\
 					commands/Pass.cpp\
 					commands/Ping.cpp\
 					commands/Privmsg.cpp\
 					commands/Quit.cpp\
 					commands/User.cpp\
+					commands/Motd.cpp\
 					commands/Who.cpp\
+					commands/Topic.cpp\
 
 EXT				:= .cpp
 
 TEST_SRCS		:=	$(addprefix $(SRC_DIR)/, $(SRCS_FILES))
 IRC_SRCS 		:=	$(addprefix $(IRC_DIR)/, $(IRC_SRCS_FILES))
+HEADERS			:=  $(addprefix $(INCLUDE_DIR)/, $(HEADERS_FILES))
 SRCS			:=	$(TEST_SRCS) $(IRC_SRCS)
 
 OBJS			:=	$(patsubst %.cpp,$(BUILD_DIR)/%.o,$(notdir $(SRCS)))
@@ -75,7 +90,6 @@ vpath %.cpp $(SRC_DIR) $(IRC_DIR) $(IRC_DIR)/commands $(IRC_DIR)/clients $(IRC_D
 # Paths for clang-format / clang-tidy-12 / intercept-build if manually installed
 export PATH 	:=	$(PATH):$(HOME)/local/bin:/usr/bin/:/usr/share/clang/scan-build-py-12/bin/
 
-HEADERS			:=	$(wildcard $(INCLUDES)/*.hpp)
 FILES_TO_FORMAT	:=	$(SRCS) $(HEADERS)
 
 ################	LOADER
@@ -115,12 +129,6 @@ $(BUILD_DIR)/%.o: %.cpp | $(DIRS)
 			1) anim="०ᵒ०ᵒ०";; \
 			2) anim="०००००";; \
 			3) anim="ᵒ०ᵒ०ᵒ";; \
-			4) anim="००ooᵒ";; \
-			5) anim="०ᵒᵒᵒ०";; \
-			6) anim="००o००";; \
-			7) anim="०o०ᵒ०";; \
-			8) anim="०o०o०";; \
-			9) anim="०ᵒ०ᵒ०";; \
 			*) anim="०ooo०";; \
 		esac; \
 		printf "                                                                     "; \
@@ -131,6 +139,9 @@ $(BUILD_DIR)/%.o: %.cpp | $(DIRS)
 
 comp-data:
 	@intercept-build make re
+
+github-test: TEST=0
+github-test: all
 
 debug: CXXFLAGS += -g -DDEB
 debug: all

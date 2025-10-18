@@ -10,77 +10,45 @@
 #include "reply_codes.hpp"
 #include "utils.hpp"
 
+#include <cstddef>
 #include <sstream>
 #include <string>
-
-/*************************************************************
- *		🛠️ UTIL FUNCTIONS											*
- *************************************************************/
-
-static ReplyCode parse_args(std::vector<std::string>& args,
-                            std::vector<std::string>* channelNames,
-                            std::vector<std::string>* userNames,
-                            std::string*              comment)
-{
-    std::vector<std::string>::iterator it = args.begin();
-    std::istringstream                 iss(*it);
-    std::string                        token;
-    while (std::getline(iss, token, ',')) {
-        channelNames->push_back(token);
-    }
-
-    ++it;
-    if (it == args.end())
-        return ERR_NEEDMOREPARAMS;
-    iss.clear();
-    iss.str(*it);
-    while (std::getline(iss, token, ',')) {
-        userNames->push_back(token);
-    }
-    ++it;
-    if (it != args.end())
-        *comment = *it;
-
-    return RPL_SUCCESS;
-}
-
-/************************************************************
- *		📁 CLASS METHODS									*
- ************************************************************/
-
-/**
- * @brief
- * first check for missing arg -> ERR_NEEDMOREPARAMS
- * @param server
- * @param client
- * @param args
- * @return ReplyCode to be used in CommandFactory and potentially generate an error
- */
-ReplyCode Kick::check_args(Server& server, Client& client, std::vector<std::string>& args)
-{
-    (void)server;
-    (void)client;
-    t_params    channelNames;
-    t_params    nicknames;
-    std::string comment;
-    // ReplyHandler& 	rh = ReplyHandler::get_instance(&server);
-
-    ReplyCode code = parse_args(args, &channelNames, &nicknames, &comment);
-    if (code != RPL_SUCCESS) {
-        LOG_CMD.warning(TO_STRING(code) + " = parsing error");
-        return code;
-    }
-    (void)comment;
-    return RPL_SUCCESS;
-}
 
 /************************************************************
  *		🥚 CONSTRUCTORS & DESTRUCTOR						*
  ************************************************************/
 
-Kick::Kick() : _args() {}
-Kick::Kick(const std::vector<std::string>& args) : _args(args) {}
-Kick::Kick(const Kick& other) : ICommand(), _args(other._args) {}
+Kick::Kick(const std::string& params)
+{
+    std::istringstream iss(params);
+    std::string        channels, users, msg;
+
+    iss >> channels;
+    iss >> users;
+    std::getline(iss, msg);
+
+    std::istringstream issChannels(channels), issUsers(users);
+    std::string        currentChannel, currentUser;
+    while (std::getline(issChannels, currentChannel, ',')) {
+        LOG_DV_CMD(currentChannel);
+        if (!currentChannel.empty())
+            _channelsNames.push_back(currentChannel);
+        currentChannel.clear();
+    }
+    while (std::getline(issUsers, currentUser, ',')) {
+        LOG_DV_CMD(currentUser);
+        if (!currentUser.empty())
+            _usersNames.push_back(currentUser);
+        currentUser.clear();
+    }
+    msg.erase(0, msg.find_first_not_of(WHITE_SPACE));
+    if (!msg.empty() && msg[0] == ':')
+        msg = msg.erase(0, 1);
+    else if (!msg.empty())
+        msg = msg.substr(0, msg.find_first_of(WHITE_SPACE));
+    _msg = msg;
+}
+
 Kick::~Kick() {}
 
 /************************************************************
@@ -90,7 +58,9 @@ Kick::~Kick() {}
 Kick& Kick::operator=(const Kick& other)
 {
     if (this != &other) {
-        _args = other._args;
+        _channelsNames = other._channelsNames;
+        _usersNames    = other._usersNames;
+        _msg           = other._msg;
     }
     return *this;
 }
@@ -99,54 +69,80 @@ Kick& Kick::operator=(const Kick& other)
  *		🛠️ FUNCTIONS											*
  *************************************************************/
 
-/**
- * @brief Force part a channel
- * loop over channels :
- * check for invalid channel name -> ERR_BADCHANMASK
- * then check for existing channel -> ERR_NOSUCHCHANNEL
- * then check for op privilege -> ERR_CHANOPRIVSNEEDED
- * inner loop over channel members :
- * - then check for user presence -> ERR_USERNOTINCHANNEL
- * - then execute : remove - broadcast + direct notice
- * @param server
- * @param client
- */
 void Kick::execute(Server& server, Client& client)
 {
     ReplyHandler& rh = ReplyHandler::get_instance(&server);
     t_params      channelNames;
     t_params      nicknames;
-    std::string   comment;
 
-    parse_args(_args, &channelNames, &nicknames, &comment);
+    for (size_t i = 0; i < _channelsNames.size(); ++i) {
+        Channel* channel = server.find_channel_by_name(_channelsNames[i]);
+        LOG_D_CMD("looking in", _channelsNames[i]);
 
-    for (t_params::iterator chanNamesIt = channelNames.begin(); chanNamesIt != channelNames.end(); ++chanNamesIt) {
-        if (!Channel::is_valid_channel_name(*chanNamesIt)) {
-            rh.process_response(client, ERR_BADCHANMASK);
+        if (!channel) {
+            rh.process_response(client, ERR_NOSUCHCHANNEL, _channelsNames[i]);
             continue;
-        }
-        std::map<std::string, Channel*>::iterator chanIt = server.channels.find(*chanNamesIt);
-        if (chanIt == server.channels.end()) {
-            rh.process_response(client, ERR_NOSUCHCHANNEL);
-            continue;
-        }
-        Channel* channel = chanIt->second;
-        if (!channel->is_operator(client)) {
+        } else if (!channel->is_operator(client)) {
             rh.process_response(client, ERR_CHANOPRIVSNEEDED, channel->get_name());
             continue;
         }
-        for (t_params::iterator nickIt = nicknames.begin(); nickIt != nicknames.end(); ++nickIt) {
-            Client* targetUser = server.find_client_by_nickname(static_cast<const std::string&>(*nickIt));
-            if (!channel->is_member(*targetUser)) {
-                rh.process_response(client, ERR_USERNOTINCHANNEL);
+        for (size_t j = 0; j < _usersNames.size(); ++j) {
+            Client* target = server.find_client_by_nickname(_usersNames[j]);
+            LOG_D_CMD("looking for", _usersNames[j]);
+
+            if (!target) {
+                rh.process_response(client, ERR_NOSUCHNICK, channel->get_name());
+            } else if (channel->remove_member(*target)) {
+                rh.process_response(*target, TRANSFER_KICK, channel->get_name() + " " + target->get_nickname(), &client, _msg);
+                channel->broadcast(server, TRANSFER_KICK, channel->get_name() + " " + target->get_nickname(), &client, _msg);
+                rh.process_response(client, TRANSFER_KICK, channel->get_name() + " " + target->get_nickname(), &client, _msg);
             } else {
-                channel->remove_member(*targetUser);
-                std::string messageParam = channel->get_name() + " " + targetUser->get_nickname();
-                if (!comment.empty())
-                    messageParam.append(" :").append(comment);
-                channel->broadcast(server, RPL_KICK, messageParam, &client);
-                rh.process_response(*targetUser, RPL_KICK, messageParam, &client);
+                rh.process_response(client, ERR_USERNOTINCHANNEL, channel->get_name());
             }
         }
     }
+}
+
+ReplyCode Kick::check_args(Server& server, Client& client, std::string& params)
+{
+    ReplyHandler       rh = ReplyHandler::get_instance(&server);
+    std::istringstream iss(params);
+    std::string        channels, users;
+    std::string        channelsList, usersList, msg;
+
+    iss >> channels;
+    iss >> users;
+    if (channels.empty() || users.empty()) {
+        return (ERR_NEEDMOREPARAMS);
+    }
+    std::string        currentChannel, currentUser, comma;
+    std::istringstream issChannels(channels), issUsers(users);
+    while (std::getline(issChannels, currentChannel, ',')) {
+        if (!Channel::is_valid_channel_name(currentChannel)) {
+            rh.process_response(client, ERR_BADCHANMASK, currentChannel);
+        } else {
+            channelsList.empty() ? channelsList += currentChannel : channelsList += "," + currentChannel;
+        }
+        currentChannel.clear();
+    }
+    comma = "";
+    while (std::getline(issUsers, currentUser, ',')) {
+        if (currentUser.empty())
+            return (ERR_NEEDMOREPARAMS);
+        else {
+            usersList.empty() ? usersList += currentUser : usersList += "," + currentUser;
+        }
+        currentUser.clear();
+    }
+
+    std::getline(iss, msg);
+    // msg.erase(0, msg.find_first_not_of(WHITE_SPACE));
+    // if (!msg.empty() && msg[0] == ':')
+    //     msg.erase(0, 1);
+    // else if (!msg.empty())
+    //     msg = msg.substr(0, msg.find_first_of(WHITE_SPACE));
+    params = channelsList + " " + usersList + " " + msg;
+    LOG_DV_CMD(params);
+
+    return (CORRECT_FORMAT);
 }

@@ -1,4 +1,5 @@
 #include "Channel.hpp"
+
 #include "Client.hpp"
 #include "Config.hpp"
 #include "ICommand.hpp"
@@ -6,6 +7,7 @@
 #include "colors.hpp"
 #include "consts.hpp"
 #include "reply_codes.hpp"
+#include "utils.hpp"
 
 #include <algorithm>
 #include <bitset>
@@ -16,16 +18,42 @@
  **
  ************************************************************/
 
-/// @brief checks validity according to RFC
 bool Channel::is_valid_channel_name(const std::string& name)
 {
-    size_t posColon = name.find(':');
-    size_t posBell  = name.find('\a');
-    if (posColon != std::string::npos && posBell != std::string::npos)
+    if (name.empty()) {
+        return (false);
+    }
+    for (std::string::const_iterator it = name.begin(); it != name.end(); ++it) {
+        unsigned char c = *it;
+        if (c > 0xFF || Utils::is_char_of(c, std::string(FORBIDEN_CHAR_CHAN_NAME, 7))) { // NOLINT
+            return false;
+        }
+    }
+    if (!Utils::is_char_of(static_cast<unsigned char>(name[0]), "#&+!"))
         return false;
-    if (name[0] != '#' && name[0] != '&' && name[0] != '+' && name[0] != '!')
+    return (name.length() > 1 && name.length() <= ircConfig.get_chan_name_max_len());
+}
+
+/**
+ * @brief check if the key is valid -- no commas or spaces allowed
+ *
+ * @param key
+ * @return true or false
+ */
+bool Channel::is_valid_channel_key(const std::string& key)
+{
+    if (key.empty()) {
+        return true;
+    } else if (key.size() > CHAN_KEY_MAX_LEN) {
         return false;
-    return name.length() > 1 && name.length() <= ircConfig.get_chan_name_max_len();
+    }
+    for (std::string::const_iterator it = key.begin(); it != key.end(); ++it) {
+        unsigned char c = *it;
+        if (c > 0x07F || Utils::is_char_of(c, std::string(FORBIDEN_CHAR_CHAN_KEY, 7))) { // NOLINT
+            return false;
+        }
+    }
+    return true;
 }
 
 /************************************************************
@@ -33,10 +61,13 @@ bool Channel::is_valid_channel_name(const std::string& name)
  **
  ************************************************************/
 
-/// @throw exception if name is invalid
-Channel::Channel(const std::string& name) :
-    _topic("No topic is set"), _key(""), _mode(CHANMODE_INIT), _userLimit(NO_LIMIT), _members(), _invites(), _operators()
+Channel::Channel(const std::string& name, const std::string& key) :
+    _topic(""), _key(key), _mode(CHANMODE_INIT), _userLimit(NO_LIMIT), _members(), _invites(), _operators()
+
 {
+    if (!key.empty()) {
+        this->add_mode(CHANMODE_KEY);
+    }
     set_name(name);
 }
 
@@ -53,7 +84,7 @@ Channel::Channel(const Channel& other) :
 }
 
 Channel::Channel(void) :
-    _name(""), _topic("No topic is set"), _key(""), _mode(CHANMODE_INIT), _userLimit(NO_LIMIT), _members(), _invites(), _operators()
+    _name(""), _topic(""), _key(""), _mode(CHANMODE_INIT), _userLimit(NO_LIMIT), _members(), _invites(), _operators()
 {
 }
 
@@ -68,7 +99,7 @@ Channel& Channel::operator=(const Channel& other)
     if (this != &other) {
         _name      = other._name;
         _topic     = other._topic;
-        _key	   = other._key;
+        _key       = other._key;
         _userLimit = other._userLimit;
         _members   = other._members;
         _operators = other._operators;
@@ -95,15 +126,17 @@ std::ostream&	operator<<(std::ostream& os, const Channel& c)
  *		🛠️ FUNCTIONS											*
  *************************************************************/
 
-void Channel::broadcast(Server& server, ReplyCode replyCode, const std::string& message, Client* sender) const
+void Channel::broadcast(
+    Server& server, ReplyCode replyCode, const std::string& params, Client* sender, const std::string& trailing) const
 {
     ReplyHandler& rh = ReplyHandler::get_instance(&server);
+    LOG_DV_CMD(_members.size());
     for (std::set<Client*>::iterator it = _members.begin(); it != _members.end(); ++it) {
         Client* recipient = *it;
         if (sender && recipient == sender)
-           continue;
-        LOG_DT_SERVER(recipient->get_nickname() + " received a broadcast from " + get_name(), "");
-        rh.process_response(*recipient, replyCode, message, sender);
+            continue;
+        LOG_D_SERVER(recipient->get_nickname() + " received a broadcast from " + get_name(), ircCodes.str(replyCode));
+        rh.process_response(*recipient, replyCode, params, sender, trailing);
     }
 }
 
@@ -135,22 +168,22 @@ ReplyCode Channel::set_name(const std::string& name)
         _name = name;
     else
         return ERR_BADCHANMASK;
-    return RPL_SUCCESS;
+    return CORRECT_FORMAT;
 }
 
 ReplyCode Channel::set_topic(Client& client, const std::string& topic)
 {
-    if ((_mode & CHANMODE_TOPIC && is_operator(client)) || (!(_mode & CHANMODE_TOPIC)))
+    if ((_mode & CHANMODE_TOPIC && is_operator(client)) || (!(_mode & CHANMODE_TOPIC))) {
         _topic = topic;
-    else
+    } else
         return ERR_CHANOPRIVSNEEDED;
-    return RPL_SUCCESS;
+    return CORRECT_FORMAT;
 }
 
 ReplyCode Channel::set_key(const std::string& key)
 {
     _key = key;
-    return RPL_SUCCESS;
+    return CORRECT_FORMAT;
 }
 
 void Channel::set_user_limit(int limit)
@@ -162,29 +195,38 @@ void Channel::set_user_limit(int limit)
 }
 
 void Channel::invite_client(Client& client) { _invites.insert(&client); }
-// Can we invite a banned client ?
-// Or when we invite a banned client it's remove it from banned list ?
 
 ReplyCode Channel::add_member(Client& client)
 {
     if (is_member(client))
-        return RPL_SUCCESS;
+        return CORRECT_FORMAT;
     if (_userLimit != NO_LIMIT && _members.size() >= static_cast<size_t>(_userLimit))
         return ERR_CHANNELISFULL;
     if (is_invite_only() && !is_invited(client)) {
         return ERR_INVITEONLYCHAN;
     }
-    _invites.erase(&client);
     if (ircConfig.get_max_joined_channels() != NO_LIMIT && client.get_nb_joined_channels() >= ircConfig.get_max_joined_channels())
         return ERR_CHANNELISFULL;
     if (is_banned(client))
         return ERR_BANNEDFROMCHAN;
     _members.insert(&client);
     client.add_joined_channel(*this);
-    return RPL_SUCCESS;
+    return CORRECT_FORMAT;
 }
 
-void Channel::remove_member(Client& client) { _members.erase(&client); }
+bool Channel::remove_from_invited_list(Client& client)
+{
+    bool invited = is_invited(client);
+    _invites.erase(&client);
+    return (invited);
+}
+
+bool Channel::remove_member(Client& client)
+{
+    bool member = is_member(client);
+    _members.erase(&client);
+    return (member);
+}
 
 void Channel::remove_operator(Client& client) { _operators.erase(&client); }
 
@@ -192,7 +234,7 @@ ReplyCode Channel::ban_member(Client& client)
 {
     if (is_member(client)) {
         _banList.insert(&client);
-        return RPL_SUCCESS;
+        return CORRECT_FORMAT;
     }
     return ERR_USERNOTINCHANNEL;
 }
@@ -203,7 +245,7 @@ ReplyCode Channel::make_operator(Client& client)
 {
     if (is_member(client)) {
         _operators.insert(&client);
-        return RPL_SUCCESS;
+        return CORRECT_FORMAT;
     }
     return ERR_USERNOTINCHANNEL;
 }
@@ -227,8 +269,10 @@ std::vector<std::string> Channel::get_members_list() const
         Client* c = *it;
         if (is_operator(*c))
             users.append("@");
-        users.append(c->get_nickname() + " ");
+        users.append(c->get_nickname());
         ++it;
+        if (it != _members.end())
+            users.append(" ");
         ++count;
         if (count % nbUserPerLine == 0) {
             list.push_back(users);

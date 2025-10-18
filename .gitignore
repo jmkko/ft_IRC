@@ -1,6 +1,13 @@
 # bot
 llama_response.txt
 
+# logger
+logs/*
+
+# doxygen
+doxygen-warnings.log
+docs/*
+
 # analysis
 .cache
 compile_commands.json

@@ -22,7 +22,7 @@ echo ""
 {
     printf "PASS %s\r\n" "$PASSWORD"
     printf "NICK %s\r\n" "$NICKNAME"
-    printf "USER %s 0 * :%s\r\n" "$NICKNAME" "$REALNAME"
+    printf "USER username 0 * :%s\r\n" "$REALNAME"
     # Garder la connexion ouverte pour interaction
     cat
 } | nc localhost 9999

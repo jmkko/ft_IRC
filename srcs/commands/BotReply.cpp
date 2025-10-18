@@ -35,14 +35,14 @@ ReplyCode BotReply::check_args(Server& s, Client& c, std::vector<Client*>& clien
         return (ERR_NEEDMOREPARAMS);
     // TODO check for malicious input (bash commands, pipes)
     if (!clients.empty() && !channels.empty())
-        return (ERR_WRONG_FORMAT);
+        return (CUSTOMERR_WRONG_FORMAT);
     if (clients.empty() && channels.empty())
-        return (ERR_WRONG_FORMAT);
+        return (CUSTOMERR_WRONG_FORMAT);
     if (clients.size() > TARGET_LIMIT)
-        return (ERR_WRONG_FORMAT);
+        return (CUSTOMERR_WRONG_FORMAT);
     if (channels.size() > 1)
-        return (ERR_WRONG_FORMAT);
-    return (RPL_SUCCESS);
+        return (CUSTOMERR_WRONG_FORMAT);
+    return (CORRECT_FORMAT);
 }
 
 /************************************************************
@@ -102,6 +102,9 @@ void	BotReply::execute(Server& s, Client& c, std::vector<Client*>& clients, Chan
     std::string prompt = "Please reply to this message in less than 500 characters : ";
     prompt += _params;
 
+    // if channel
+    // transfer prompt to channel
+
     // send request
     std::string response;
     send_llama_equest(prompt, response);
@@ -110,12 +113,12 @@ void	BotReply::execute(Server& s, Client& c, std::vector<Client*>& clients, Chan
     LOG_D_CMD("answer read from file", response);
     // TODO channel broadcast with Client Bot as sender
     if (channel)
-        channel->broadcast(s, RPL_BOT, response);
+        channel->broadcast(s, TRANSFER_BOT, response);
     else
     {
         for (std::vector<Client*>::iterator it = clients.begin(); it != clients.end(); ++it)
         {
-            rh.process_response(**it, RPL_BOT, response);
+            rh.process_response(**it, TRANSFER_BOT, response);
         }
     }
     (void) c;

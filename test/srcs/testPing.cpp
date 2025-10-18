@@ -13,7 +13,7 @@
 #include "testUtils.hpp"
 
 /************************************************************
- *		✅  VALID											*
+ *                      ✅ VALID                            *
  ************************************************************/
 
 /**
@@ -32,7 +32,7 @@ void valid_ping_should_pong(Server& s)
         // test
         std::string reply = recv_lines(so);
         AssertReply ar(reply);
-        ar.contains("PONG").ends_with(std::string(":" + token));
+        ar.matches_entirely(":" + ircConfigTest.get_name() + " PONG :" + token);
 
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());
@@ -58,17 +58,18 @@ void invalid_ping_should_err(Server& s)
         // test
         std::string reply = recv_lines(so);
         AssertReply ar(reply);
-        ar.is_formatted(ERR_NOORIGIN, "roro");
+        ar.is_formatted(ERR_NOORIGIN, userNick);
 
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());
     }
 }
 
-
-void test_ping(Server& s)
+void test_ping(Server& s, t_results* r)
 {
     print_test_series("command PING");
-    run_test([&] { valid_ping_should_pong(s); }, "ping");
-    run_test([&] { invalid_ping_should_err(s); }, "no origin");
+    print_test_series_part("common cases");
+    run_test(r, [&] { valid_ping_should_pong(s); }, "ping");
+    print_test_series_part("error cases");
+    run_test(r, [&] { invalid_ping_should_err(s); }, "no origin");
 }
