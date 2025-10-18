@@ -14,7 +14,6 @@ class Invite : public ICommand
     Invite(const std::string& params);
     ~Invite();                                      // NOLINT
     void             execute(Server& s, Client& c); // NOLINT
-    static ReplyCode check_args(Server& s, Client& c, std::string& params);
 
   private:
 	std::string _nickname;

@@ -37,27 +37,26 @@ bool Parser::response(ReplyCode code, const std::string& params, const std::stri
 
 bool Parser::correct_channel(std::string& name)
 {
-	ReplyCode code = CORRECT_FORMAT;
     if (name.empty()) {
 		return (response(ERR_BADCHANMASK));
     }
     for (std::string::const_iterator it = name.begin(); it != name.end(); ++it) {
         unsigned char c = *it;
         if (c > 0xFF || Utils::is_char_of(c, std::string(FORBIDEN_CHAR_CHAN_NAME, 7))) { // NOLINT
-			code = ERR_BADCHANMASK;
-            break ;
+			return response(ERR_BADCHANMASK, name);
         }
     }
     if (!Utils::is_char_of(static_cast<unsigned char>(name[0]), "#&+!")) {
-		code = ERR_BADCHANMASK;
+		return response(ERR_BADCHANMASK, name);
 	}
-	if (name.length() <= 1 && name.length() >= ircConfig.get_chan_name_max_len()) {
-		code = ERR_BADCHANMASK;
+	if (name.length() <= 1 || name.length() >= ircConfig.get_chan_name_max_len()) {
+		return response(ERR_BADCHANMASK, name);
 	}
 
-	return response(code, name);
+	return true;
 }
 
+// not used
 bool Parser::correct_target(std::string& target)
 {
 	Parser parser;
@@ -67,6 +66,7 @@ bool Parser::correct_target(std::string& target)
 
 	if (!validChannel && !validNickname)
 		return response(ERR_NOTONCHANNEL);
+
 	return CORRECT_FORMAT;
 }
 
@@ -81,12 +81,12 @@ bool Parser::correct_key(std::string& key)
     if (key.empty()) {
         return true;
     } else if (key.size() > CHAN_KEY_MAX_LEN) {
-        return false;
+        return response(ERR_BADCHANNELKEY);
     }
     for (std::string::const_iterator it = key.begin(); it != key.end(); ++it) {
         unsigned char c = *it;
         if (c > 0x07F || Utils::is_char_of(c, std::string(FORBIDEN_CHAR_CHAN_KEY, 7))) { // NOLINT
-            return false;
+            return response(ERR_BADCHANNELKEY);
         }
     }
     return true;
@@ -94,17 +94,16 @@ bool Parser::correct_key(std::string& key)
 
 bool Parser::correct_nickname(std::string& nickname)
 {
-	ReplyCode 		code = CORRECT_FORMAT;
     bool 			invalidChar = std::count_if(nickname.begin(), nickname.end(), Utils::is_invalid_char_nick);
 
     if (nickname.empty()) {
-		code = ERR_NONICKNAMEGIVEN;	
+		return response(ERR_NONICKNAMEGIVEN);	
 	} else if (invalidChar || std::isdigit(nickname[0])) {
-        code = ERR_ERRONEUSNICKNAME;
+        return response(ERR_ERRONEUSNICKNAME, nickname);
     } else if (nickname.length() > ircConfig.get_nickname_max_len()) {
         nickname = nickname.substr(0, ircConfig.get_nickname_max_len());
     } 
-	return response(code, nickname);
+	return true;
 }
 
 std::vector<std::string> Parser::convert_to_vector(std::string& params)
@@ -117,6 +116,21 @@ std::vector<std::string> Parser::convert_to_vector(std::string& params)
 		result.push_back(str);
 	}
 	return (result);
+}
+
+std::map<std::string, std::string> Parser::to_map(std::string& keys, std::string& values)
+{
+	std::istringstream issKeys(keys);
+	std::istringstream issValues(values);
+	std::string 		key, value;
+	std::map<std::string, std::string> result;
+
+	while (std::getline(issKeys, key, ',')) {
+        std::getline(issValues, value, ',');
+		result[key] = value;
+	}
+	return (result);
+
 }
 // return an formated string of parameters args = param1,param2,param3
 std::string Parser::format_parameter(std::string& params, Checker function)

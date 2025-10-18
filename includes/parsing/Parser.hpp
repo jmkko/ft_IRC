@@ -1,6 +1,8 @@
 #ifndef PARSER_HPP
 #define PARSER_HPP
 #include <iostream>
+#include <map>
+
 #include "reply_codes.hpp"
 class Server;
 class Client;
@@ -19,6 +21,7 @@ class Parser
     std::string format_parameter(std::string& params, Checker function);
 
 	std::vector<std::string> convert_to_vector(std::string& params);
+	std::map<std::string, std::string> to_map(std::string& key, std::string& value);
 
     bool correct_nickname(std::string& nickname);
 	bool correct_target(std::string& target);

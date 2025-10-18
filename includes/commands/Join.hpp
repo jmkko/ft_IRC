@@ -27,14 +27,12 @@ class ReplyHandler;
 class Join : public ICommand
 {
   public:
-    Join(const std::vector<std::string>& channelsLst);
-    Join(const std::string& params);
+    Join(std::string& params);
     ~Join();
 
     void             execute(Server& s, Client& c);
     void             send_list_of_names(ReplyHandler& rh, Client& client, Channel& channel);
     void             display_topic(ReplyHandler& rh, Client& client, Channel& channel);
-    static ReplyCode check_args(Server& s, Client& c, std::string& params);
 
   private:
     std::map<std::string, std::string> _chans;

@@ -181,16 +181,19 @@ ICommand* CmdFactory::quit_cmd(Server& server, Client& client, std::string& para
 
 ICommand* CmdFactory::join_cmd(Server& server, Client& client, std::string& params)
 {
-    ReplyHandler& rh        = ReplyHandler::get_instance(&server);
-    ReplyCode     replyCode = Join::check_args(server, client, params);
-    if (replyCode == CORRECT_FORMAT) {
-        return new Join(params);
-    } else if (replyCode == ERR_NEEDMOREPARAMS) {
-        rh.process_response(client, replyCode, "JOIN");
-    } else {
-        rh.process_response(client, replyCode, params);
-    }
-    return NULL;
+	(void)server;
+	(void)client;
+    // ReplyHandler& rh        = ReplyHandler::get_instance(&server);
+    // ReplyCode     replyCode = Join::check_args(server, client, params);
+    // if (replyCode == CORRECT_FORMAT) {
+    //     return new Join(params);
+    // } else if (replyCode == ERR_NEEDMOREPARAMS) {
+    //     rh.process_response(client, replyCode, "JOIN");
+    // } else {
+    //     rh.process_response(client, replyCode, params);
+    // }
+    // return NULL;
+	return new Join(params);
 };
 
 ICommand* CmdFactory::mode_cmd(Server& server, Client& client, std::string& params)
@@ -235,12 +238,14 @@ ICommand* CmdFactory::oper_cmd(Server& server, Client& client, std::string& para
 
 ICommand* CmdFactory::invite_cmd(Server& server, Client& client, std::string& params)
 {
-    ReplyHandler& rh        = ReplyHandler::get_instance(&server);
-    ReplyCode     replyCode = Invite::check_args(server, client, params);
-    if (replyCode != CORRECT_FORMAT) {
-        rh.process_response(client, replyCode, params);
-        return NULL;
-    }
+	(void)client;
+	(void)server;
+    // ReplyHandler& rh        = ReplyHandler::get_instance(&server);
+    // ReplyCode     replyCode = Invite::check_args(server, client, params);
+    // if (replyCode != CORRECT_FORMAT) {
+    //     rh.process_response(client, replyCode, params);
+    //     return NULL;
+    // }
     return new Invite(params);
 };
 

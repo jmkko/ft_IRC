@@ -7,7 +7,7 @@
 #include "consts.hpp"
 #include "reply_codes.hpp"
 #include "utils.hpp"
-
+#include "Parser.hpp"
 #include <bitset>
 
 /******************************************************************************
@@ -30,74 +30,19 @@ Join& Join::operator=(const Join& other)
  *
  * @param params
  */
-Join::Join(const std::string& params)
+Join::Join(std::string& params)
 {
-    std::istringstream iss(params);
-    std::string        channels;
-    std::string        keys;
+	Parser parser;
 
-    iss >> channels;
-    iss >> keys;
+	std::string channels = parser.format_parameter(params, NULL);
+	std::string keys = parser.format_parameter(params, NULL);
 
-    std::string        currentChannel, currentKey;
-    std::istringstream issChannels(channels), issKeys(keys);
-    while (std::getline(issChannels, currentChannel, ',')) {
-        std::getline(issKeys, currentKey, ',');
-        if (!currentChannel.empty() && Channel::is_valid_channel_name(currentChannel)) {
-            _chans[currentChannel] = currentKey;
-        }
-        currentChannel.clear();
-        currentKey.clear();
-    }
+	_chans = parser.to_map(channels, keys);
 }
 
 /******************************************************************************
  *                                 METHODS                                    *
  ******************************************************************************/
-
-/**
- * @brief check and keep only true parameters [#chan1,#chan2,#chan3 key1,key2,key3]
- *	the key can be an empty string (means no key for the channel) like key1,,key2
- *	list of channels and list of keys (each value separated with a commas) are separated by a space.
- * @param server
- * @param client
- * @param params
- * @return formated string of true parameters: <#chan1>,<#chan2> <key1>,<key2>
- */
-ReplyCode Join::check_args(Server& server, Client& client, std::string& params)
-{
-    ReplyHandler       rh = ReplyHandler::get_instance(&server);
-    std::istringstream iss(params);
-    std::string        channels, keys;
-    std::string        channelsNames, channelsKeys;
-
-    iss >> channels;
-    iss >> keys;
-    if (channels.empty()) {
-        return (ERR_NEEDMOREPARAMS);
-    }
-    std::string        currentChannel, currentKey, comma;
-    std::istringstream issChannels(channels), issKeys(keys);
-    while (std::getline(issChannels, currentChannel, ',')) {
-        std::getline(issKeys, currentKey, ',');
-        LOG_CMD.debug("Current channel: " + currentChannel + " key: " + currentKey); // NOLINT
-        if (!Channel::is_valid_channel_name(currentChannel)) {
-            rh.process_response(client, ERR_BADCHANMASK, currentChannel);
-        } else if (!Channel::is_valid_channel_key(currentKey)) {
-            rh.process_response(client, ERR_BADCHANNELKEY, client.get_nickname() + " " + currentChannel);
-        } else {
-            channelsNames += comma + currentChannel;
-            channelsKeys += comma + currentKey;
-            comma = ",";
-        }
-        currentChannel.clear();
-        currentKey.clear();
-    }
-    if (channelsNames.empty())
-        return (PROCESSED_ERROR);
-    params = channelsNames + " " + channelsKeys;
-    return (CORRECT_FORMAT);
-}
 
 /**
  * @brief send the users's list of a channel to the client
@@ -149,38 +94,45 @@ void Join::display_topic(ReplyHandler& rh, Client& client, Channel& channel)
  */
 void Join::execute(Server& server, Client& client)
 {
-    ReplyHandler&                                rh        = ReplyHandler::get_instance(&server);
-    std::map<std::string, std::string>::iterator it        = _chans.begin();
+	Parser p(server, client);
     ReplyCode                                    replyCode = CORRECT_FORMAT;
 
     LOG_CMD.debug("Join.cpp execute()");
-    for (; it != _chans.end(); ++it) {
+	if (_chans.empty()) {
+		p.response(ERR_NEEDMOREPARAMS, "JOIN");
+	}
+    for (std::map<std::string, std::string>::iterator it = _chans.begin(); it != _chans.end(); ++it) {
         std::string chanName = it->first;
         std::string chanKey  = it->second;
+		if (!p.correct_channel(chanName)) {
+			continue;
+		}
         Channel*    channel  = server.find_channel_by_name(chanName);
-        if (!channel) {                                                 // if the channel doesnt exist
-            channel                   = new Channel(chanName, chanKey); // make a new one
+        if (!channel) {
+			if (!p.correct_key(chanKey))
+				chanKey.clear();
+            channel = new Channel(chanName, chanKey); // make a new one
             server.channels[chanName] = channel;                        // add it to the server
             LOG_I_CMD("#️⃣ New channel", channel->get_name());
         } else if ((channel->get_mode() & CHANMODE_KEY)
                    && (chanKey != channel->get_key())) {              // if the channel exist but wrong key has been given
-            rh.process_response(client, ERR_BADCHANNELKEY, chanName); // send error - no connexions
+            p.response(ERR_BADCHANNELKEY, chanName); // send error - no connexions
             continue;                                                 // continue iteration
         }
         replyCode = channel->add_member(client); // try to add the members to the channel
         if (replyCode == CORRECT_FORMAT) {       // if right permissions ...
             LOG_CONN.info(client.get_nickname() + " joined channel: " + chanName);
-            rh.process_response(client, TRANSFER_JOIN, chanName);         // send connection success message
+            p.response(TRANSFER_JOIN, chanName);         // send connection success message
             channel->broadcast(server, TRANSFER_JOIN, chanName, &client); // + broadcast
             channel->remove_from_invited_list(client);
             if (channel->get_nb_members() == 1) { // if first and/or only user
                 channel->make_operator(client);   // --> make the client operator
-                rh.process_response(client, RPL_CHANNELMODEIS, chanName + " +o ");
+                p.response(RPL_CHANNELMODEIS, chanName + " +o ");
             }
-            send_list_of_names(rh, client, *channel); // send the list of names
-            display_topic(rh, client, *channel);      // display the topic
+            send_list_of_names(*p.rh, client, *channel); // send the list of names
+            display_topic(*p.rh, client, *channel);      // display the topic
         } else {
-            rh.process_response(client, replyCode, chanName); // else if not added to chan -> send permissions error
+            p.response(replyCode, chanName); // else if not added to chan -> send permissions error
         }
     }
 }
