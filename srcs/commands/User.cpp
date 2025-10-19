@@ -107,11 +107,11 @@ ReplyCode User::check_args(Server& server, Client& client, std::string& params)
     }
 
     // trim white space around realname; return 461 if only space in realname
-    size_t start = realname.find_first_not_of(" \t\r\n");
+    size_t start = realname.find_first_not_of(WHITE_SPACE);
     if (start == std::string::npos) {
         return (ERR_NEEDMOREPARAMS);
     }
-    size_t end = realname.find_last_not_of(" \t\r\n");
+    size_t end = realname.find_last_not_of(WHITE_SPACE);
     realname   = realname.substr(start, end - start + 1);
 
     if (!client.get_user_name().empty() && !client.get_nickname().empty() && client.is_registered()) {

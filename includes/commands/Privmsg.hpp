@@ -32,7 +32,7 @@ class Privmsg : public ICommand
      *
      * @param params
      */
-    Privmsg(const std::string& params);
+    Privmsg(std::string& params);
 
     /**
      * @brief Destroy the Privmsg:: Privmsg object
@@ -70,6 +70,8 @@ class Privmsg : public ICommand
     void execute(Server& server, Client& client);
 
   private:
+	std::vector<std::string> _targets;
+	std::string				 _message;
     std::string           _params;
     std::string           _msg;
     std::vector<Channel*> _chans;

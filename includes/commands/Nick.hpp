@@ -12,7 +12,7 @@ class Client;
 class Nick : public ICommand
 {
   public:
-    explicit Nick(const std::string& nickname);
+    explicit Nick(std::string& params);
     ~Nick(); // NOLINT
 
     /**

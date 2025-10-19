@@ -3,7 +3,9 @@
 #include "Client.hpp"
 #include "Config.hpp"
 #include "LogManager.hpp"
-#include "ReplyHandler.hpp"
+#include "Nick.hpp"
+#include "Parser.hpp"
+//#include "ReplyHandler.hpp"
 #include "Server.hpp"
 #include "reply_codes.hpp"
 #include "utils.hpp"
@@ -12,7 +14,11 @@
 #include <cctype>
 #include <iostream>
 
-Nick::Nick(const std::string& nickname) : _nickname(nickname) {}
+Nick::Nick(std::string& params)
+{
+	Parser parser;
+	_nickname = parser.format_parameter(params, NULL);
+}
 
 Nick::~Nick(void) {}
 
@@ -20,14 +26,17 @@ void Nick::execute(Server& server, Client& client)
 {
     (void)server;
     std::string   oldNickname = client.get_nickname();
-    ReplyHandler& rh          = ReplyHandler::get_instance(&server);
+	Parser p(server, client);
+
     LOG_DV_CMD(_nickname);
 
+    if (!p.correct_nickname(_nickname))
+		return ;
     if (oldNickname.empty() && !client.get_user_name().empty()) {
         client.set_nickname(_nickname);
         LOG_dt_CMD("Nick after USER");
         client.set_status(REGISTERED);
-        rh.process_welcome(server, client);
+        p.rh->process_welcome(server, client);
     } else if (!oldNickname.empty() && !client.get_user_name().empty() && client.is_registered()) {
         client.broadcast_to_all_channels(server, TRANSFER_NICK, "", _nickname); // ! \\ ;
     }

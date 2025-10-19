@@ -29,10 +29,11 @@ class Kick : public ICommand
   public:
     /**
      * @brief Construct a new Kick object
-     *
-     * @param args
+     * - one or many channels, comma separated
+     * - one or many users, comma separated
+     * @param args should match `<channel> *( "," <channel> ) <user> *( "," <user> ) [<comment>]`
      */
-    Kick(const std::string& params);
+    Kick(std::string& params);
     /**
      * @brief Destroy the Kick object
      *
@@ -41,7 +42,8 @@ class Kick : public ICommand
 
     /**
      * @brief Force part a channel
-     * @details
+     * @details cf. [RFC specs](https://datatracker.ietf.org/doc/html/rfc2812#section-3.2.8)
+	 * checks syntaxic validity of args
      * - loop over channels :
      *   - check for invalid channel name -> ERR_BADCHANMASK
      *   - check for existing channel -> ERR_NOSUCHCHANNEL
@@ -52,20 +54,9 @@ class Kick : public ICommand
      * @param server
      * @param client
      * @warning can send ERR_NOSUCHCHANNEL, ERR_CHANOPRIVSNEEDED, ERR_USERNOTINCHANNEL
-     */
-    void execute(Server& server, Client& client);
-    /**
-     * @brief checks syntaxic validity of args
-     * @details cf. [RFC specs](https://datatracker.ietf.org/doc/html/rfc2812#section-3.2.8)
-     * - one or many channels, comma separated
-     * - one or many users, comma separated
-     * @param server
-     * @param client
-     * @param args should match `<channel> *( "," <channel> ) <user> *( "," <user> ) [<comment>]`
-     * @return #ReplyCode to be used in #CommandFactory
      * @warning can send ERR_NEEDMOREPARAMS, ERR_BADCHANMASK, ERR_NOSUCHNICK
      */
-    static ReplyCode check_args(Server& server, Client& client, std::string& params);
+    void execute(Server& server, Client& client);
 
   private:
   	std::vector<std::string> _channelsNames;
