@@ -1,8 +1,11 @@
 #ifndef PARSER_HPP
 #define PARSER_HPP
+#include <cstddef>
 #include <iostream>
 #include <map>
+#include <vector>
 
+#include "Channel.hpp"
 #include "reply_codes.hpp"
 #include "ReplyHandler.hpp"
 class Server;
@@ -19,7 +22,10 @@ class Parser
     Parser(Server& server, Client& client);
 
 	typedef bool (Parser::*Checker)(std::string&);
+	typedef ReplyCode (Parser::*CheckerCode)(std::string&);
     std::string format_parameter(std::string& params, Checker function);
+    std::string from_arg(std::string& params);
+    std::string from_trailing(std::string& params);
 
 	std::vector<std::string> to_vector(std::string& params);
 	std::map<std::string, std::string> to_map(std::string& key, std::string& value);
@@ -30,11 +36,21 @@ class Parser
     bool correct_channel(std::string& name);
     bool correct_key(std::string& key);
 
+    Parser& is_such_nick(std::string& nickname, bool failCommandIfTrue = false);
+    Parser& is_such_channel(std::string& channelName, bool failCommandIfTrue = false);
+    Parser& has_no_more_than(std::vector<std::string>& vector, std::size_t max, bool failCommandIfTrue = true);
+    Parser& is_channel_member(std::string& channelName, const std::string& nickname, bool failCommandIfTrue = true);
+    Parser& is_valid_bot_prompt(const std::string& prompt, const std::string& commandName, bool failCommandIfTrue = true);
+    Parser& is_valid_bot_subcommand(const std::string& subcommand, const std::string& cmdName, bool failCommandIfTrue = true);
+    Parser& is_not_empty_arg(const std::string& arg, const std::string& commandName, bool failCommandIfTrue = true);
+
 	size_t count_parameter(const std::string& params);
 	bool response(ReplyCode code, const std::string& params  = "", const std::string& trailing = "");
 	bool response(Client* dest, ReplyCode code, const std::string& params  = "", const std::string& trailing = "");
 	bool response(Client* dest, Client* author, ReplyCode code, const std::string& params  = "", const std::string& trailing = "");
     ReplyHandler* rh;
+
+    bool   has_passed_checks() const;
 
   private:
     Parser& operator=(const Parser& other);
@@ -42,6 +58,7 @@ class Parser
 
     Server* _server;
     Client* _client;
+    bool    _isValidCommand;
 };
 
 #endif

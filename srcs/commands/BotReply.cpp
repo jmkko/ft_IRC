@@ -1,5 +1,7 @@
 #include "BotReply.hpp"
+#include "Client.hpp"
 #include "LogManager.hpp"
+#include "Parser.hpp"
 #include "ReplyHandler.hpp"
 #include "consts.hpp"
 #include "reply_codes.hpp"
@@ -11,53 +13,51 @@
 #include <cstdlib>
 #include <iomanip>
 #include <unistd.h>
+#include <vector>
+
+const std::string& cmdName = "BOT";
 
 /************************************************************
 *		🥚 CONSTRUCTORS & DESTRUCTOR						*
 ************************************************************/
 
-BotReply::BotReply(void) {}
+Bot::Bot(std::string& params) : _params(params), _targets(), _targetChannelName(), _targetChannels(), _targetClients() {}
 
-BotReply::BotReply(const std::string& params) : _params(params) {}
-
-BotReply::BotReply(const BotReply& other)
-{
-    (void) other;
-}
-
-BotReply::~BotReply(void) {}
-
-ReplyCode BotReply::check_args(Server& s, Client& c, std::vector<Client*>& clients, std::vector<Channel*>& channels, std::string& params)
-{
-    (void) s;
-    (void) c;
-    if (params.empty())
-        return (ERR_NEEDMOREPARAMS);
-    // TODO check for malicious input (bash commands, pipes)
-    if (!clients.empty() && !channels.empty())
-        return (CUSTOMERR_WRONG_FORMAT);
-    if (clients.empty() && channels.empty())
-        return (CUSTOMERR_WRONG_FORMAT);
-    if (clients.size() > TARGET_LIMIT)
-        return (CUSTOMERR_WRONG_FORMAT);
-    if (channels.size() > 1)
-        return (CUSTOMERR_WRONG_FORMAT);
-    return (CORRECT_FORMAT);
-}
+Bot::~Bot(void) {}
 
 /************************************************************
 *		➕ OPERATORS											*
 ************************************************************/
 
-BotReply& BotReply::operator=(const BotReply& other) 
-{
-    (void) other;
-    return (*this);
-}
-
 /*************************************************************
 *		🛠️ FUNCTIONS											*
 *************************************************************/
+
+// BOT #chan :prompt
+bool Bot::_check_args(Server& s, Client& c)
+{
+    Parser  parser(s, c);
+
+    _targetChannelName    = parser.from_arg(_params);
+    _subcommand           = parser.from_arg(_params);
+    _prompt               = parser.from_trailing(_params);
+
+    LOG_DV_CMD(_targetChannelName);
+    LOG_DV_CMD(_subcommand);
+    LOG_DV_CMD(_prompt);
+    parser.is_such_channel(_targetChannelName, true)
+    .is_channel_member(_targetChannelName, c.get_nickname())
+    .is_valid_bot_subcommand(_subcommand, "BOT")
+    .is_valid_bot_prompt(_prompt, "BOT");
+    LOG_DV_CMD(parser.has_passed_checks());
+
+    if (!parser.has_passed_checks())
+        return false;
+ 
+    _targetChannels.push_back(s.find_channel_by_name(_targetChannelName));
+    
+    return true;
+}
 
 void add_key_val_bool(std::string& command, const std::string& key, bool value)
 {
@@ -95,15 +95,19 @@ static void send_llama_equest(const std::string& prompt, std::string& response)
     response.assign((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
 }
 
-
-void	BotReply::execute(Server& s, Client& c, std::vector<Client*>& clients, Channel* channel)
+void	Bot::execute(Server& s, Client& c)
 {
-    // build prompt;
-    std::string prompt = "Please reply to this message in less than 500 characters : ";
-    prompt += _params;
+    if (!_check_args(s, c))
+        return;
 
-    // if channel
-    // transfer prompt to channel
+    std::string prompt = "";
+    if (_subcommand == "!reply")
+        prompt = "Please reply to this message in less than 500 characters : ";
+    prompt += _prompt;
+
+    // if channel target -> transfer prompt to channel
+    if (!_targetChannels.empty())
+        _targetChannels[0]->broadcast(s, TRANSFER_PROMPT_BOT, _params, &c);
 
     // send request
     std::string response;
@@ -111,14 +115,15 @@ void	BotReply::execute(Server& s, Client& c, std::vector<Client*>& clients, Chan
 
     ReplyHandler&   rh = ReplyHandler::get_instance(&s);
     LOG_D_CMD("answer read from file", response);
+
     // TODO channel broadcast with Client Bot as sender
-    if (channel)
-        channel->broadcast(s, TRANSFER_BOT, response);
+    if (!_targetChannels.empty())
+        _targetChannels[0]->broadcast(s, TRANSFER_REPLY_BOT, _targetChannels[0]->get_name(), NULL, response);
     else
     {
-        for (std::vector<Client*>::iterator it = clients.begin(); it != clients.end(); ++it)
+        for (std::vector<Client*>::iterator it = _targetClients.begin(); it != _targetClients.end(); ++it)
         {
-            rh.process_response(**it, TRANSFER_BOT, response);
+            rh.process_response(**it, TRANSFER_REPLY_BOT, (*it)->get_nickname(), NULL, response);
         }
     }
     (void) c;

@@ -1,5 +1,6 @@
 #include "CmdFactory.hpp"
 
+#include "BotReply.hpp"
 #include "Client.hpp"
 #include "ICommand.hpp"
 #include "Invite.hpp"
@@ -68,6 +69,7 @@ ICommand* CmdFactory::make_command(Server& server, Client& client, std::string& 
                                                                                        "WHO",
                                                                                        "KICK",
                                                                                        "MOTD",
+                                                                                       "BOT",
                                                                                        "PING"};
     ICommand* (CmdFactory::* ptr[NB_AVAILABLE_CMD])(Server&, Client&, std::string&) = {&CmdFactory::user_cmd,
                                                                                        &CmdFactory::pass_cmd,
@@ -83,6 +85,7 @@ ICommand* CmdFactory::make_command(Server& server, Client& client, std::string& 
                                                                                        &CmdFactory::who_cmd,
                                                                                        &CmdFactory::kick_cmd,
                                                                                        &CmdFactory::motd_cmd,
+                                                                                       &CmdFactory::bot_cmd,
                                                                                        &CmdFactory::ping_cmd};
 
     iss >> commandLine;
@@ -307,6 +310,13 @@ ICommand* CmdFactory::motd_cmd(Server& server, Client& client, std::string& para
     (void)server;
     (void)client;
     return new Motd(params);
+};
+
+ICommand* CmdFactory::bot_cmd(Server& server, Client& client, std::string& params)
+{
+    (void)server;
+    (void)client;
+    return new Bot(params);
 };
 
 ICommand* CmdFactory::topic_cmd(Server& server, Client& client, std::string& params)

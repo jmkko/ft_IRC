@@ -73,6 +73,7 @@ class CmdFactory
     ICommand* invite_cmd(Server& server, Client& client, std::string& params);
     ICommand* who_cmd(Server& server, Client& client, std::string& params);
     ICommand* motd_cmd(Server& server, Client& client, std::string& params);
+    ICommand* bot_cmd(Server& server, Client& client, std::string& params);
     ICommand* ping_cmd(Server& server, Client& client, std::string& params);
 
   private:
