@@ -60,6 +60,8 @@ void User::execute(Server& server, Client& client)
         client.set_status(REGISTERED);
         rh.process_welcome(server, client);
 #ifndef TEST
+        if (client.get_nickname() == "bot")
+            return;
         Motd motd("");
         motd.execute(server, client);
 #endif

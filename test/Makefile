@@ -62,6 +62,7 @@ IRC_SRCS_FILES	:=	utils.cpp\
 					server/LogManager.cpp\
 					server/ReplyHandler.cpp\
 					commands/CmdFactory.cpp\
+					commands/Bot.cpp\
 					commands/Invite.cpp\
 					commands/Join.cpp\
 					commands/Kick.cpp\

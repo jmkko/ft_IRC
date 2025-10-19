@@ -6,7 +6,7 @@
 /*   By: fpetit <fpetit@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 23:38:52 by npolack           #+#    #+#             */
-/*   Updated: 2025/10/19 18:47:29 by fpetit           ###   ########.fr       */
+/*   Updated: 2025/10/20 01:48:10 by fpetit           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #define EXPECTED_ARGS_NB          3
 #define MIN_PASSWORD_LEN          8
 #define POLL_TIMEOUT              1000
+#define MESSAGE_SIZE              512
 #define PERM_755                  0755
 #define PERM_644                  0644
 #define PERM_777                  0777

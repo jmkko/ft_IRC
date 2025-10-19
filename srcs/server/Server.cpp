@@ -8,6 +8,7 @@
 #include "LogManager.hpp"
 #include "ReplyHandler.hpp"
 #include "consts.hpp"
+#include "reply_codes.hpp"
 #include "signal_handler.hpp"
 #include "utils.hpp"
 
@@ -24,13 +25,14 @@
 #include <string>
 #include <sys/poll.h>
 #include <sys/socket.h>
+#include <sys/types.h>
 #include <unistd.h> // close
 
 /************************************************************
  *		🥚 CONSTRUCTORS & DESTRUCTOR*
  ************************************************************/
 
-Server::Server(const unsigned short port, const std::string& password) : _psswd(password), _name(ircConfig.get_name())
+Server::Server(const unsigned short port, const std::string& password) : _psswd(password), _name(ircConfig.get_name()), _port(port)
 {
     try {
         _serverSocket.tcp_bind(port);
@@ -53,6 +55,8 @@ Server::~Server() { _clean(); }
 
 std::string Server::get_password() const { return _psswd; }
 std::string Server::get_name() const { return _name; }
+int Server::get_port() const { return  _port; }
+int Server::get_socket_fd() const { return  _serverSocket.get_socket(); }
 
 /*************************************************************
  *		🛠️ FUNCTIONS                                 *
@@ -108,6 +112,17 @@ void Server::start()
         }
     }
     _clean();
+}
+
+void    Server::update_bot_state(Socket socketfd, Channel* targetChannel, const std::string& subCommand, const std::string& botReply, bool readyToSend)
+{
+    BotState state;
+    state.socketfd = socketfd;
+    state.targetChannel = targetChannel;
+    state.subCommand = subCommand;
+    state.pendingMsg = botReply;
+    state.readyToSend = readyToSend;
+    _bots[socketfd] = state;
 }
 
 void Server::_handle_new_connection(int pfdIndex)
@@ -168,12 +183,69 @@ void Server::_handle_client_disconnection(int pfdIndex)
     cleanup_socket_and_client(pfdIndex);
 }
 
+void Server::cleanup_bot(Socket so)
+{
+    _bots.erase(so);
+}
+
+void Server::_handle_bot_input(int pfdIndex, Client* botClient, BotState& state)
+{
+    LOG_D_SERVER("state", state.pendingMsg);
+    char buffer[CLIENT_READ_BUFFER_SIZE];
+    memset(static_cast<char*>(buffer), 0, CLIENT_READ_BUFFER_SIZE);
+    ssize_t bytesRead = recv(botClient->get_socket(), static_cast<char*>(buffer), CLIENT_READ_BUFFER_SIZE - 1, 0);
+    Socket so = botClient->get_socket();
+    if (bytesRead == 0) {
+        LOG_CONN.warning("Bot connection closed properly");
+        cleanup_bot(so);
+        cleanup_socket_and_client(pfdIndex);
+        return;
+    } else if (bytesRead == -1) {
+        if (errno != EAGAIN && errno != EWOULDBLOCK) {
+            LOG_ERR.error("Reception failed:" + TO_STRING(strerror(errno)));
+            cleanup_bot(so);
+            cleanup_socket_and_client(pfdIndex);
+        }
+        return;
+    } else {
+        if (Utils::safe_at(buffer, bytesRead))
+            Utils::safe_at(buffer, bytesRead) = '\0';
+        LOG_D_SERVER("bot received", buffer);
+        botClient->append_to_read_buffer(std::string(static_cast<char*>(buffer)));
+        std::string response(botClient->get_read_buffer());
+        ReplyHandler rh = ReplyHandler::get_instance(this);
+
+        if (response.find("JOIN") != std::string::npos)
+        {
+            LOG_DV_SERVER(response);
+            _handle_commands(pfdIndex);
+            state.targetChannel->broadcast_bot(*this, TRANSFER_PRIVMSG, state.targetChannel->get_name(), botClient, state.pendingMsg);
+            rh.process_response(*botClient, TRANSFER_PRIVMSG, state.targetChannel->get_name());
+            state.readyToSend = true;
+            return;
+        }
+        if (response.find("PRIVMSG") != std::string::npos && state.readyToSend == true)
+        {
+            LOG_DV_SERVER(state.pendingMsg);
+            _handle_commands(pfdIndex);
+            cleanup_bot(so);
+            cleanup_socket_and_client(pfdIndex);
+        }
+    }
+}
+
 void Server::_handle_client_input(int pfdIndex)
 {
     LOG_dt_SERVER("");
     Socket  socket = _pfds[pfdIndex].fd;
     Client* client = _clients[socket];
     if (!client) {
+        return;
+    }
+
+    if (_bots.count(socket))
+    {
+        _handle_bot_input(pfdIndex, client, _bots[socket]);
         return;
     }
 
@@ -314,7 +386,8 @@ void Server::_clean()
     for (int i = static_cast<int>(_pfds.size()) - 1; i >= 1; --i) {
         cleanup_socket_and_client(i);
     }
-
+    _bots.erase(_bots.begin(), _bots.end());
+    _bots.clear();
     cleanup_channels();
 
     globalSignal = 0;

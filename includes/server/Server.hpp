@@ -22,6 +22,15 @@ class TcpSocket;
 class Client;
 class Channel;
 
+struct BotState {
+    // Client* client;
+    int socketfd;
+    Channel* targetChannel;
+    std::string subCommand;
+    std::string pendingMsg;
+    bool readyToSend;
+};
+
 /**
 * @class Server
  * @brief Ser
@@ -62,6 +71,20 @@ class Server
      * @remark required by #Pass - not very secure yet we couldn't implement a proper hash function
      */
     std::string get_password() const;
+
+    /**
+     * @brief Get the port
+     * 
+     * @return int 
+     */
+    int get_port() const;
+
+    /**
+     * @brief Get the socket fd object
+     * 
+     * @return int 
+     */
+    int get_socket_fd() const;
     /**
      * @brief Get the name object
      * @details also accessible through #Config
@@ -91,7 +114,8 @@ class Server
      * @return int
      */
     int index_of(Client& client);
-
+    
+    void    update_bot_state(Socket socketfd, Channel* targetChannel, const std::string& subCommand, const std::string& botReply, bool readyToSend);
     /**
      * @brief update events on socket the server is subscribed to
      *
@@ -116,17 +140,19 @@ class Server
      *
      */
     void cleanup_channels();
+    void cleanup_bot(Socket so);
 
-  public:
     std::map<std::string, Channel*> channels;
 
   private:
     TcpSocket                      _serverSocket;
     std::vector<pollfd>            _pfds;
     std::map<Socket, Client*>      _clients;
+    std::map<Socket, BotState>     _bots;
     std::map<std::string, Client*> _clientsByNick;
     std::string                    _psswd;
     std::string                    _name;
+    unsigned short                  _port;
 
     Server();
     Server(const Server&);
@@ -156,6 +182,8 @@ class Server
  * @param pfdIndex index of monitored fd
  */
     void _handle_client_input(int pfdIndex);
+    
+    void _handle_bot_input(int pfdIndex, Client* botClient, BotState& state);
     /**
  *@brief attempt sending the queued messages
  if a message is partially sent, updates send buffer accordingly

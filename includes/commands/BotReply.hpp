@@ -5,6 +5,7 @@
 #include "Client.hpp"
 #include "ICommand.hpp"
 #include "Server.hpp"
+#include "TcpSocket.hpp"
 #include "reply_codes.hpp"
 #include <string>
 
@@ -29,6 +30,7 @@ class Bot : public ICommand
     std::vector<Client*>        _targetClients;
     std::string                 _subcommand;
     std::string                 _prompt;
+    TcpSocket                   _socket;
 
     Bot();
     Bot(const Bot& other);
