@@ -83,7 +83,7 @@ void User::execute(Server& server, Client& client)
     }
 	
     client.set_user_name(_username);
-    client.set_real_name(_realname.substr(1));
+    client.set_real_name(_realname);
     LOG_DV_CMD(_realname);
     if (!client.get_nickname().empty()) {
         client.set_status(REGISTERED);
