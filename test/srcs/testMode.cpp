@@ -227,6 +227,25 @@ void many_modes_work(Server& s)
         LOG_TEST.error(e.what());
     }
 }
+void many_many_modes_work(Server& s)
+{
+    try {
+        TEST_SETUP(test, s, 2);
+        TcpSocket& sop = *sockets.at(0);
+        TcpSocket& so  = *sockets.at(1);
+        make_op(sop);
+        authenticate_and_join(so);
+
+        // test 1
+        send_line(sop, "MODE #chan +kl key 10 +it +o roro\r\n");
+        std::string reply = recv_lines(sop);
+        AssertReply ar(reply);
+        ar.is_formatted_transfer(opNick, "MODE #chan +klito key 10 roro");
+
+    } catch (const std::runtime_error& e) {
+        LOG_TEST.error(e.what());
+    }
+}
 
 /************************************************************
  *		❔ EDGE CASES										*
@@ -401,7 +420,7 @@ void mode_l_negativearg_should_err(Server& s)
         send_line(sop, invalidModePlusLNegativeMsg);
         std::string reply = recv_lines(sop);
         AssertReply ar(reply);
-        ar.is_formatted(CUSTOMERR_WRONG_FORMAT, opNick, "#chan +l -1");
+        ar.is_formatted(ERR_NEEDMOREPARAMS, opNick, "MODE");
 
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());
@@ -462,6 +481,7 @@ void test_mode(Server& s, t_results* r)
     run_test(r, [&] { mode_pluso_should_grant_op_and_kick(s); }, "+o <user>");
     run_test(r, [&] { mode_minuso_should_remove_op_and_kick(s); }, "-o <user>");
     run_test(r, [&] { many_modes_work(s); }, "+kl <key> <limit>");
+    run_test(r, [&] { many_many_modes_work(s); }, "+kl key 10 +it +o roro");
 
     run_test(r, [&] { no_chan_should_err(s); }, "no chan");
     run_test(r, [&] { no_keyarg_should_err(s); }, "+k no arg");
