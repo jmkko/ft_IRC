@@ -74,6 +74,7 @@ class CmdFactory
     ICommand* who_cmd(Server& server, Client& client, std::string& params);
     ICommand* motd_cmd(Server& server, Client& client, std::string& params);
     ICommand* ping_cmd(Server& server, Client& client, std::string& params);
+    ICommand* part_cmd(std::string& params);
 
   private:
     /**

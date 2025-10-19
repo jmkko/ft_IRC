@@ -67,7 +67,7 @@ class Kick : public ICommand
     Kick();
     Kick(const Kick& other);
     Kick& operator=(const Kick& other);
-	void _kick_all_users_from(std::string& chanName, std::vector<std::string> usersNames, Parser& p);
+	void _kick_all_users_from(std::string& chanName, std::vector<std::string>& usersNames, Parser& p);
 };
 
 #endif

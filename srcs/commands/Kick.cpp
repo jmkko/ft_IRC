@@ -55,7 +55,7 @@ Kick& Kick::operator=(const Kick& other)
  *		🛠️ FUNCTIONS											*
  *************************************************************/
 
-void Kick::_kick_all_users_from(std::string& chanName, std::vector<std::string> usersNames, Parser& p)
+void Kick::_kick_all_users_from(std::string& chanName, std::vector<std::string>& usersNames, Parser& p)
 {
     Server*  server  = p.get_server();
     Channel* channel = server->find_channel_by_name(chanName);

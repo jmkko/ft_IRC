@@ -45,6 +45,7 @@ SRCS			:=	srcs/main.cpp\
 					srcs/commands/Who.cpp\
 					srcs/commands/Invite.cpp\
 					srcs/commands/Topic.cpp\
+					srcs/commands/Part.cpp\
 					srcs/server/ReplyHandler.cpp\
 					srcs/parsing/Parser.cpp\
 

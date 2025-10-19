@@ -13,6 +13,7 @@
 #include "Ping.hpp"
 #include "Privmsg.hpp"
 #include "Quit.hpp"
+#include "Part.hpp"
 #include "ReplyHandler.hpp"
 #include "Server.hpp"
 #include "Topic.hpp"
@@ -232,9 +233,7 @@ ICommand* CmdFactory::part_cmd(Server& server, Client& client, std::string& para
 {
     (void)client;
     (void)server;
-    (void)params;
-    LOG_CMD.debug("Build PART (not implemented)");
-    return NULL;
+	return new Part(params);
 };
 
 ICommand* CmdFactory::oper_cmd(Server& server, Client& client, std::string& params)
