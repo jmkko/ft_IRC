@@ -46,8 +46,8 @@ void Part::execute(Server& server, Client& client) {
 		} else if (!channel->is_member(client)) {
 			p.response(ERR_NOTONCHANNEL);
 		} else {
-			channel->broadcast(server, TRANSFER_PART, _chanNames[i], NULL, _message);
-			//p.response(TRANSFER_PART, _chanNames[i], _message);
+			channel->broadcast(server, TRANSFER_PART, _chanNames[i], &client, _message);
+			p.response(TRANSFER_PART, _chanNames[i], _message);
 			channel->remove_member(client);
 		}
 	}
