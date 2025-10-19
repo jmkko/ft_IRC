@@ -127,23 +127,26 @@ ICommand* CmdFactory::nick_cmd(Server& server, Client& client, std::string& para
 
 ICommand* CmdFactory::user_cmd(Server& server, Client& client, std::string& params)
 {
-    std::string   username = "", realname = "";
-    ReplyCode     replyCode = User::check_args(server, client, params);
-    ReplyHandler& rh        = ReplyHandler::get_instance(&server);
-
-    if (replyCode == CORRECT_FORMAT) {
-        std::istringstream iss(params);
-        iss >> username;
-        std::getline(iss, realname);
-        if (!realname.empty() && realname[0] == ' ') {
-            realname = realname.substr(1);
-        }
-        return (new User(username, realname));
-    } else {
-        rh.process_response(client, replyCode, "USER");
-    }
-
-    return NULL;
+	(void)server;
+	(void)client;
+    // std::string   username = "", realname = "";
+    // ReplyCode     replyCode = User::check_args(server, client, params);
+    // ReplyHandler& rh        = ReplyHandler::get_instance(&server);
+    //
+    // if (replyCode == CORRECT_FORMAT) {
+    //     std::istringstream iss(params);
+    //     iss >> username;
+    //     std::getline(iss, realname);
+    //     if (!realname.empty() && realname[0] == ' ') {
+    //         realname = realname.substr(1);
+    //     }
+    //     return (new User(username, realname));
+    // } else {
+    //     rh.process_response(client, replyCode, "USER");
+    // }
+    //
+    // return NULL;
+	return new User(params);
 };
 
 ICommand* CmdFactory::pass_cmd(Server& server, Client& client, std::string& params)
