@@ -194,3 +194,23 @@ std::string Parser::format_parameter(std::string& params, Checker function)
     };
     return list;
 }
+
+size_t Parser::count_params(const std::string& argument)
+{
+    std::istringstream iss(argument);
+    std::string        param;
+
+    size_t count = 0;
+    while (std::getline(iss, param, ',')) {
+        count++;
+    }
+    return count;
+}
+
+Server* Parser::get_server() {
+	return _server;
+}
+
+Client* Parser::get_client() {
+	return _client;
+}
