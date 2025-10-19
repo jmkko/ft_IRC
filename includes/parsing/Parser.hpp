@@ -21,7 +21,7 @@ class Parser
 	typedef bool (Parser::*Checker)(std::string&);
     std::string format_parameter(std::string& params, Checker function);
 
-	std::vector<std::string> convert_to_vector(std::string& params);
+	std::vector<std::string> to_vector(std::string& params);
 	std::map<std::string, std::string> to_map(std::string& key, std::string& value);
 
 	bool correct_password(std::string& password);
@@ -32,6 +32,8 @@ class Parser
 
 	size_t count_parameter(const std::string& params);
 	bool response(ReplyCode code, const std::string& params  = "", const std::string& trailing = "");
+	bool response(Client* dest, ReplyCode code, const std::string& params  = "", const std::string& trailing = "");
+	bool response(Client* dest, Client* author, ReplyCode code, const std::string& params  = "", const std::string& trailing = "");
     ReplyHandler* rh;
 
   private:

@@ -28,11 +28,15 @@ Pass::~Pass(void) {}
 void Pass::execute(Server& server, Client& client)
 {
 	Parser p(server, client);
+
     if (_pass.empty()) {
         p.response(ERR_NEEDMOREPARAMS, "PASS");
-    } else if (!p.correct_password(_pass)) {
-		return;
+    } else if (client.is_registered()) {
+        p.response(ERR_ALREADYREGISTRED);
+	} else if (server.get_password() != _pass) {
+        p.response(ERR_PASSWDMISMATCH);
+	} else {
+		client.set_status(AUTHENTICATED);
+		LOG_I_CMD("AUTHENTICATED", client);
 	}
-	client.set_status(AUTHENTICATED);
-	LOG_I_CMD("AUTHENTICATED", client);
 }

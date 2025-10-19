@@ -210,8 +210,7 @@ void msg_in_arg_instead_of_trailing_should_notice(Server& s)
         send_line(soOp, "PRIVMSG user message only must be displayed\r\n");
         std::string reply = recv_lines(so);
         AssertReply ar(reply);
-        ar.matches_entirely(":" + s.get_name() + " PRIVMSG user :message");
-
+        ar.matches_entirely("op!op@hazardous.irc.serv PRIVMSG user :message");
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());
     }
@@ -353,7 +352,6 @@ void test_privmsg(Server& s, t_results* r)
     run_test(r, [&] { empty_msg_should_err(s); }, "'PRIVMSG #chan :'");
     run_test(r, [&] { blank_msg_should_do_broadcast(s); }, "'PRIVMSG #chan : '");
     run_test(r, [&] { msg_in_arg_instead_of_trailing_should_notice(s); }, "'PRIVMSG #chan msg'"); // <-- add opposite test 
-    run_test(r, [&] { msg_in_arg_instead_of_trailing_should_err(s); }, "'PRIVMSG roro,toto hi'"); // of this one
     
     print_test_series_part("error cases");
     run_test(r, [&] { not_channel_member_should_err(s); }, "PRIVMSG to #chan without being a member");

@@ -1,89 +1,103 @@
 #include "Parser.hpp"
-# include "ReplyHandler.hpp"
-# include "Server.hpp"
-# include "utils.hpp"
-# include "Config.hpp"
-// Default constructor
-Parser::Parser(void): rh(NULL), _server(NULL), _client(NULL) {}
 
-Parser::Parser(Server& server, Client& client): rh(&ReplyHandler::get_instance(&server)), _server(&server), _client(&client) {}
+#include "Config.hpp"
+#include "ReplyHandler.hpp"
+#include "Server.hpp"
+#include "utils.hpp"
+// Default constructor
+Parser::Parser(void) : rh(NULL), _server(NULL), _client(NULL) {}
+
+Parser::Parser(Server& server, Client& client) : rh(&ReplyHandler::get_instance(&server)), _server(&server), _client(&client) {}
 
 // Copy constructor
-Parser::Parser(const Parser &other): rh(other.rh), _server(other._server), _client(other._client) {}
+Parser::Parser(const Parser& other) : rh(other.rh), _server(other._server), _client(other._client) {}
 
 // Assignment operator overload
-Parser &Parser::operator=(const Parser &other)
+Parser& Parser::operator=(const Parser& other)
 {
-	if (this != &other) {
-		rh = other.rh;
-		_client = other._client;
-		_server = other._server;
-	}
+    if (this != &other) {
+        rh      = other.rh;
+        _client = other._client;
+        _server = other._server;
+    }
     return (*this);
 }
 
 // Destructor
 Parser::~Parser(void) {}
 
-bool Parser::response(ReplyCode code, const std::string& params, const std::string& trailing) {
-	if (code != CORRECT_FORMAT) {
-		if (rh && _client) {
-			rh->process_response(*_client, code, params, NULL, trailing);
-		}
-		return (false);
-	}
-	return (true);
+bool Parser::response(ReplyCode code, const std::string& params, const std::string& trailing)
+{
+    return response(NULL, NULL, code, params, trailing);
 }
 
+bool Parser::response(Client* dest, ReplyCode code, const std::string& params, const std::string& trailing)
+{
+    return response(dest, NULL, code, params, trailing);
+}
+
+bool Parser::response(Client* dest, Client* author, ReplyCode code, const std::string& params, const std::string& trailing)
+{
+    if (code != CORRECT_FORMAT) {
+        if (rh && _client) {
+            if (dest && author) {
+                rh->process_response(*dest, code, params, author, trailing);
+            } else if (dest) {
+                rh->process_response(*dest, code, params, NULL, trailing);
+            } else {
+                rh->process_response(*_client, code, params, NULL, trailing);
+            }
+        }
+        return (false);
+    }
+    return (true);
+}
+
+// Not in use //
 bool Parser::correct_password(std::string& password)
 {
 
-	std::cout << "CORRECT PASSWORD" << std::endl;
     if (_server->get_password() != password) {
         return response(ERR_PASSWDMISMATCH);
-    } else if (_client->get_status() == AUTHENTICATED) {
-		std::cout << "AUTHENTICATED" << std::endl;
+    } else if (_client->is_registered()) {
         return response(ERR_ALREADYREGISTRED);
-    } else if (_client->get_status() == REGISTERED) {
-		std::cout << "REGISTERED" << std::endl;
-	}
-	std::cout << "TRUE" << std::endl;
+    }
     return (true);
 }
 
 bool Parser::correct_channel(std::string& name)
 {
     if (name.empty()) {
-		return (response(ERR_BADCHANMASK));
+        return (response(ERR_BADCHANMASK));
     }
     for (std::string::const_iterator it = name.begin(); it != name.end(); ++it) {
         unsigned char c = *it;
         if (c > 0xFF || Utils::is_char_of(c, std::string(FORBIDEN_CHAR_CHAN_NAME, 7))) { // NOLINT
-			return response(ERR_BADCHANMASK, name);
+            return response(ERR_BADCHANMASK, name);
         }
     }
     if (!Utils::is_char_of(static_cast<unsigned char>(name[0]), "#&+!")) {
-		return response(ERR_BADCHANMASK, name);
-	}
-	if (name.length() <= 1 || name.length() >= ircConfig.get_chan_name_max_len()) {
-		return response(ERR_BADCHANMASK, name);
-	}
+        return response(ERR_BADCHANMASK, name);
+    }
+    if (name.length() <= 1 || name.length() >= ircConfig.get_chan_name_max_len()) {
+        return response(ERR_BADCHANMASK, name);
+    }
 
-	return true;
+    return true;
 }
 
-// not used
+// not in use //
 bool Parser::correct_target(std::string& target)
 {
-	Parser parser;
+    Parser parser;
 
-	bool validChannel = parser.correct_channel(target);
-	bool validNickname = parser.correct_nickname(target);
+    bool validChannel  = parser.correct_channel(target);
+    bool validNickname = parser.correct_nickname(target);
 
-	if (!validChannel && !validNickname)
-		return response(ERR_NOTONCHANNEL);
+    if (!validChannel && !validNickname)
+        return response(ERR_NOTONCHANNEL);
 
-	return CORRECT_FORMAT;
+    return CORRECT_FORMAT;
 }
 
 /**
@@ -110,74 +124,73 @@ bool Parser::correct_key(std::string& key)
 
 bool Parser::correct_nickname(std::string& nickname)
 {
-    bool 			invalidChar = std::count_if(nickname.begin(), nickname.end(), Utils::is_invalid_char_nick);
+    bool invalidChar = std::count_if(nickname.begin(), nickname.end(), Utils::is_invalid_char_nick);
 
     if (nickname.empty()) {
-		return response(ERR_NONICKNAMEGIVEN);	
-	}
+        return response(ERR_NONICKNAMEGIVEN);
+    }
     invalidChar = std::count_if(nickname.begin(), nickname.end(), Utils::is_invalid_char_nick);
-	if (invalidChar || std::isdigit(nickname[0])) {
+    if (invalidChar || std::isdigit(nickname[0])) {
         return response(ERR_ERRONEUSNICKNAME, nickname);
     } else if (nickname.length() > ircConfig.get_nickname_max_len()) {
         nickname = nickname.substr(0, ircConfig.get_nickname_max_len());
-    } 
+    }
     if (_server->find_client_by_nickname(nickname)) {
         return response(ERR_NICKNAMEINUSE, nickname);
     }
-	return true;
+    return true;
 }
 
-std::vector<std::string> Parser::convert_to_vector(std::string& params)
+std::vector<std::string> Parser::to_vector(std::string& params)
 {
-	std::istringstream iss(params);
-	std::string 		str;
-	std::vector<std::string> result;
+    std::istringstream       iss(params);
+    std::string              str;
+    std::vector<std::string> result;
 
-	while (std::getline(iss, str, ',')) {
-		result.push_back(str);
-	}
-	return (result);
+    while (std::getline(iss, str, ',')) {
+        result.push_back(str);
+    }
+    return (result);
 }
 
 std::map<std::string, std::string> Parser::to_map(std::string& keys, std::string& values)
 {
-	std::istringstream issKeys(keys);
-	std::istringstream issValues(values);
-	std::string 		key, value;
-	std::map<std::string, std::string> result;
+    std::istringstream                 issKeys(keys);
+    std::istringstream                 issValues(values);
+    std::string                        key, value;
+    std::map<std::string, std::string> result;
 
-	while (std::getline(issKeys, key, ',')) {
+    while (std::getline(issKeys, key, ',')) {
         std::getline(issValues, value, ',');
-		result[key] = value;
-	}
-	return (result);
-
+        result[key] = value;
+    }
+    return (result);
 }
-// return an formated string of parameters args = param1,param2,param3
+// return an argument, as a formated string of parameters args = param1,param2,param3
+// can apply a function on every param (but not in use for now)
+// if arguments start by ':' takes the all line
 std::string Parser::format_parameter(std::string& params, Checker function)
 {
     std::string        arguments, list, trailing;
     std::string        currentParam, comma;
     std::istringstream iss(params);
 
-	// std::cout << "format_parameter: " << params << std::endl;;
     iss >> arguments;
-	if (!arguments.empty() && arguments[0] == ':') {
-		arguments.erase(0, 1);
-		std::getline(iss, trailing);
-		return (arguments + trailing);
-	}
-    std::istringstream issParams(arguments);
-    while (std::getline(issParams, currentParam, ','))
-	{
-		if (function && (this->*function)(currentParam) == false) {
-			continue ;
-		}
-		list += comma + currentParam;
-		comma = ",";
+    if (!arguments.empty() && arguments[0] == ':') {
+        arguments.erase(0, 1);
+        std::getline(iss, trailing);
+        return (arguments + trailing);
     }
-	if (!std::getline(iss, params)) {
-		params.clear();
-	};
-	return list;
+    std::istringstream issParams(arguments);
+    while (std::getline(issParams, currentParam, ',')) {
+        if (function && (this->*function)(currentParam) == false) {
+            continue;
+        }
+        list += comma + currentParam;
+        comma = ",";
+    }
+    if (!std::getline(iss, params)) {
+        params.clear();
+    };
+    return list;
 }

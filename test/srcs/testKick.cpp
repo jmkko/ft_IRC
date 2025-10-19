@@ -314,7 +314,6 @@ void op_matching_size_channel_list_and_user_list_should_notice(Server& s)
 
         send_line(soOp, "KICK #chan1,#chan2,#chan3,#chan4,#chan5 user1,user2,user3,user4,user5 :you're kicked, badass\r\n");
 
-		std::cout<<recv_lines(so1)<<std::endl;
         recv_lines(soOp);
 
         // test

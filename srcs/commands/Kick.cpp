@@ -28,8 +28,8 @@ Kick::Kick(std::string& params): ICommand()
 	users		= parser.format_parameter(params, NULL);
 	_msg 		= parser.format_parameter(params, NULL);
 
-	_channelsNames = parser.convert_to_vector(channels);
-	_usersNames = parser.convert_to_vector(users);
+	_channelsNames = parser.to_vector(channels);
+	_usersNames = parser.to_vector(users);
 
 }
 
@@ -77,9 +77,9 @@ void Kick::execute(Server& server, Client& client)
         } else if (!channel->is_operator(client)) {
             p.response(ERR_CHANOPRIVSNEEDED, channel->get_name());
         } else if (target && channel->remove_member(*target)) {
-            p.rh->process_response(*target, TRANSFER_KICK, channel->get_name() + " " + target->get_nickname(), &client, _msg);
+            p.response(target, &client, TRANSFER_KICK, channel->get_name() + " " + target->get_nickname(), _msg);
             channel->broadcast(server, TRANSFER_KICK, channel->get_name() + " " + target->get_nickname(), &client, _msg);
-            p.rh->process_response(client, TRANSFER_KICK, channel->get_name() + " " + target->get_nickname(), &client, _msg);
+            p.response(&client, &client, TRANSFER_KICK, channel->get_name() + " " + target->get_nickname(), _msg);
         } else {
             p.response(ERR_USERNOTINCHANNEL, channel->get_name());
         }
