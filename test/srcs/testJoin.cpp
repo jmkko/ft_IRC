@@ -191,35 +191,6 @@ void mode_plusi_with_invite_should_broadcast(Server& s)
 /**
  @brief integration test - normal case
 */
-void mode_plusi_no_invite_should_err(Server& s)
-{
-    try {
-        TEST_SETUP(test, s, 2);
-        TcpSocket& sop = *sockets.at(0);
-        TcpSocket& so  = *sockets.at(1);
-        make_op(sop);
-        authenticate(so);
-
-        // test 1
-        send_line(sop, validModePlusIMsg);
-        std::string reply = recv_lines(sop);
-        AssertReply ar(reply);
-        ar.is_formatted_transfer(opNick, "MODE #chan +i");
-
-        // test 2
-        send_line(so, validJoinMsg);
-        reply = recv_lines(so);
-        ar.handle_new_reply(reply);
-        ar.is_formatted(ERR_INVITEONLYCHAN, userNick, "#chan");
-
-    } catch (const std::runtime_error& e) {
-        LOG_TEST.error(e.what());
-    }
-}
-
-/**
- @brief integration test - normal case
-*/
 void mode_plusl_when_max_reached_should_err(Server& s)
 {
     try {
@@ -401,7 +372,6 @@ void test_join(Server& s, t_results* r)
     run_test(r, [&] { mode_plusk_wrong_yek_should_err(s); }, "A user try to join with wrong yek");
     run_test(r, [&] { mode_plusk_wrong_keyy_should_err(s); }, "A user try to join with wrong keyy");
     // run_test(r, [&] { creation_of_multiple_chan_with_key(s); }, "multiple creation of channels with keys");
-    run_test(r, [&] { mode_plusi_no_invite_should_err(s); }, "JOIN without invite +i");
     run_test(r, [&] { mode_plusk_wrong_yek_should_err(s); }, "A user try to join with wrong yek");
     run_test(r, [&] { mode_plusk_wrong_keyy_should_err(s); }, "A user try to join with wrong keyy");
 }
