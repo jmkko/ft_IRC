@@ -87,7 +87,7 @@ void add_key_val(std::string& command, const std::string& key, const std::string
     command += '"' + key + "\": " + '"' + value + "\",";
 }
 
-static void send_llama_equest(const std::string& prompt, std::string& response)
+static void send_ollama_request(const std::string& prompt, std::string& response)
 {
     // build curl request
     std::string command = "curl -X POST -H \"Content-Type: application/json\" -v localhost:11434/api/generate -d '{";
@@ -200,7 +200,7 @@ void Bot::execute(Server& s, Client& c)
 
     // send request
     std::string response = "\"\"";
-    send_llama_equest(prompt, response);
+    send_ollama_request(prompt, response);
 
     // connect bot as client
     if (!connect_to_server(s, _socket))

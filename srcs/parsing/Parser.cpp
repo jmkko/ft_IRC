@@ -205,8 +205,8 @@ Parser& Parser::is_channel_member(std::string& channelName, const std::string& n
 
 Parser& Parser::has_no_more_than(std::vector<std::string>& vector, size_t max, bool failCommandIfFalse)
 {
-    if (_isValidCommand && vector.size() <= max) {
-        response(ERR_TOOMANYTARGETS, vector.back());
+    if (_isValidCommand && vector.size() > max) {
+        response(ERR_TOOMANYTARGETS, vector.at(max));
         if (failCommandIfFalse)
             _isValidCommand = false;
     }
@@ -236,7 +236,7 @@ Parser& Parser::is_valid_bot_subcommand(const std::string& subcommand, const std
         if (!passedCheck)
             response(CUSTOMERR_WRONG_FORMAT, subcommand);
     }
-    if (failCommandIfFalse & !passedCheck)
+    if (failCommandIfFalse && !passedCheck)
         _isValidCommand = false;
     return *this;
 }
@@ -254,7 +254,7 @@ Parser& Parser::is_valid_bot_prompt(const std::string& prompt, const std::string
             }
         }
     }
-    if (failCommandIfFalse & !passedCheck)
+    if (failCommandIfFalse && !passedCheck)
         _isValidCommand = false;
     return *this;
 }
