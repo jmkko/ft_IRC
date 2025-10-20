@@ -1,9 +1,10 @@
+#include "Mode.hpp"
+
 #include "Channel.hpp"
 #include "Client.hpp"
 #include "Config.hpp"
 #include "LogManager.hpp"
 #include "Logger.hpp"
-#include "Mode.hpp"
 #include "ReplyHandler.hpp"
 #include "Server.hpp"
 #include "consts.hpp"

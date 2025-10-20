@@ -1,13 +1,13 @@
 #ifndef PARSER_HPP
 #define PARSER_HPP
+#include "Channel.hpp"
+#include "ReplyHandler.hpp"
+#include "reply_codes.hpp"
+
 #include <cstddef>
 #include <iostream>
 #include <map>
 #include <vector>
-
-#include "Channel.hpp"
-#include "reply_codes.hpp"
-#include "ReplyHandler.hpp"
 class Server;
 class Client;
 class ReplyHandler;
@@ -21,18 +21,18 @@ class Parser
     ~Parser();
     Parser(Server& server, Client& client);
 
-	typedef bool (Parser::*Checker)(std::string&);
-	typedef ReplyCode (Parser::*CheckerCode)(std::string&);
+    typedef bool (Parser::*Checker)(std::string&);
+    typedef ReplyCode (Parser::*CheckerCode)(std::string&);
     std::string format_parameter(std::string& params, Checker function);
     std::string from_arg(std::string& params);
     std::string from_trailing(std::string& params);
 
-	std::vector<std::string> to_vector(std::string& params);
-	std::map<std::string, std::string> to_map(std::string& key, std::string& value);
+    std::vector<std::string>           to_vector(std::string& params);
+    std::map<std::string, std::string> to_map(std::string& key, std::string& value);
 
-	bool correct_password(std::string& password);
+    bool correct_password(std::string& password);
     bool correct_nickname(std::string& nickname);
-	bool correct_target(std::string& target);
+    bool correct_target(std::string& target);
     bool correct_channel(std::string& name);
     bool correct_key(std::string& key);
 
@@ -44,13 +44,13 @@ class Parser
     Parser& is_valid_bot_subcommand(const std::string& subcommand, const std::string& cmdName, bool failCommandIfFalse = true);
     Parser& is_not_empty_arg(const std::string& arg, const std::string& commandName, bool failCommandIfFalse = true);
 
-	size_t count_parameter(const std::string& params);
-	bool response(ReplyCode code, const std::string& params  = "", const std::string& trailing = "");
-	bool response(Client* dest, ReplyCode code, const std::string& params  = "", const std::string& trailing = "");
-	bool response(Client* dest, Client* author, ReplyCode code, const std::string& params  = "", const std::string& trailing = "");
+    size_t count_parameter(const std::string& params);
+    bool   response(ReplyCode code, const std::string& params = "", const std::string& trailing = "");
+    bool   response(Client* dest, ReplyCode code, const std::string& params = "", const std::string& trailing = "");
+    bool response(Client* dest, Client* author, ReplyCode code, const std::string& params = "", const std::string& trailing = "");
     ReplyHandler* rh;
 
-    bool   has_passed_checks() const;
+    bool has_passed_checks() const;
 
   private:
     Parser& operator=(const Parser& other);

@@ -24,14 +24,12 @@ class Channel;
 
 struct BotState {
     // Client* client;
-    int socketfd;
-    Channel* targetChannel;
+    int         socketfd;
+    Channel*    targetChannel;
     std::string subCommand;
     std::string pendingMsg;
-    bool readyToSend;
-    BotState()
-        : socketfd(-1), targetChannel(), readyToSend(false)
-    {}
+    bool        readyToSend;
+    BotState() : socketfd(-1), targetChannel(), readyToSend(false) {}
 };
 
 /**
@@ -77,15 +75,15 @@ class Server
 
     /**
      * @brief Get the port
-     * 
-     * @return int 
+     *
+     * @return int
      */
     int get_port() const;
 
     /**
      * @brief Get the socket fd object
-     * 
-     * @return int 
+     *
+     * @return int
      */
     int get_socket_fd() const;
     /**
@@ -117,8 +115,9 @@ class Server
      * @return int
      */
     int index_of(Client& client);
-    
-    void    update_bot_state(Socket socketfd, Channel* targetChannel, const std::string& subCommand, const std::string& botReply, bool readyToSend);
+
+    void update_bot_state(
+        Socket socketfd, Channel* targetChannel, const std::string& subCommand, const std::string& botReply, bool readyToSend);
     /**
      * @brief update events on socket the server is subscribed to
      *
@@ -155,7 +154,7 @@ class Server
     std::map<std::string, Client*> _clientsByNick;
     std::string                    _psswd;
     std::string                    _name;
-    unsigned short                  _port;
+    unsigned short                 _port;
 
     Server();
     Server(const Server&);
@@ -185,7 +184,7 @@ class Server
  * @param pfdIndex index of monitored fd
  */
     void _handle_client_input(int pfdIndex);
-    
+
     void _handle_bot_input(int pfdIndex, Client* botClient, BotState& state);
     /**
  *@brief attempt sending the queued messages

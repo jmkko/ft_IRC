@@ -9,24 +9,30 @@
 #include "utils.hpp"
 
 #include <algorithm>
-#include <cstddef>
 #include <cstdarg>
+#include <cstddef>
 
 // Default constructor
 Parser::Parser(void) : rh(NULL), _server(NULL), _client(NULL), _isValidCommand(true) {}
 
-Parser::Parser(Server& server, Client& client) : rh(&ReplyHandler::get_instance(&server)), _server(&server), _client(&client), _isValidCommand(true) {}
+Parser::Parser(Server& server, Client& client) :
+    rh(&ReplyHandler::get_instance(&server)), _server(&server), _client(&client), _isValidCommand(true)
+{
+}
 
 // Copy constructor
-Parser::Parser(const Parser& other) : rh(other.rh), _server(other._server), _client(other._client), _isValidCommand(other._isValidCommand) {}
+Parser::Parser(const Parser& other) :
+    rh(other.rh), _server(other._server), _client(other._client), _isValidCommand(other._isValidCommand)
+{
+}
 
 // Assignment operator overload
 Parser& Parser::operator=(const Parser& other)
 {
     if (this != &other) {
-        rh      = other.rh;
-        _client = other._client;
-        _server = other._server;
+        rh              = other.rh;
+        _client         = other._client;
+        _server         = other._server;
         _isValidCommand = other._isValidCommand;
     }
     return (*this);
@@ -135,7 +141,7 @@ bool Parser::correct_key(std::string& key)
 bool Parser::correct_nickname(std::string& nickname)
 {
     bool invalidChar = false;
-    
+
     if (nickname.empty()) {
         return response(ERR_NONICKNAMEGIVEN);
     }
@@ -165,7 +171,7 @@ Parser& Parser::is_such_nick(std::string& nickname, bool failCommandIfFalse)
 // checking if channel exists
 Parser& Parser::is_such_channel(std::string& channelName, bool failCommandIfFalse)
 {
-    if (_isValidCommand && !_server->find_channel_by_name (channelName)) {
+    if (_isValidCommand && !_server->find_channel_by_name(channelName)) {
         response(ERR_NOSUCHCHANNEL, channelName);
         if (failCommandIfFalse)
             _isValidCommand = false;
@@ -178,24 +184,20 @@ Parser& Parser::is_channel_member(std::string& channelName, const std::string& n
     bool passedCheck = false;
     LOG_DV_CMD(_isValidCommand);
 
-    if (_isValidCommand)
-    {
+    if (_isValidCommand) {
         Client* client = _server->find_client_by_nickname(nickname);
         LOG_D_CMD("found nick", client->get_nickname());
 
-        if (client)
-        {
-            Channel* c = _server->find_channel_by_name (channelName);
+        if (client) {
+            Channel* c = _server->find_channel_by_name(channelName);
             LOG_DV_CMD(c->get_nb_members());
-            if (c->is_member(*client) == false)
-            {
+            if (c->is_member(*client) == false) {
                 LOG_W_CMD("not member", client->get_nickname());
                 response(ERR_NOTONCHANNEL, c->get_name());
-            }
-            else
+            } else
                 passedCheck = true;
         }
-    } 
+    }
     if (!passedCheck && failCommandIfFalse)
         _isValidCommand = false;
     return *this;
@@ -203,8 +205,7 @@ Parser& Parser::is_channel_member(std::string& channelName, const std::string& n
 
 Parser& Parser::has_no_more_than(std::vector<std::string>& vector, size_t max, bool failCommandIfFalse)
 {
-    if (_isValidCommand && vector.size() <= max) 
-    {
+    if (_isValidCommand && vector.size() <= max) {
         response(ERR_TOOMANYTARGETS, vector.back());
         if (failCommandIfFalse)
             _isValidCommand = false;
@@ -214,8 +215,7 @@ Parser& Parser::has_no_more_than(std::vector<std::string>& vector, size_t max, b
 
 Parser& Parser::is_not_empty_arg(const std::string& arg, const std::string& commandName, bool failCommandIfFalse)
 {
-    if (_isValidCommand && arg.empty())
-    {
+    if (_isValidCommand && arg.empty()) {
         response(ERR_NEEDMOREPARAMS, commandName);
         if (failCommandIfFalse)
             _isValidCommand = false;
@@ -226,12 +226,10 @@ Parser& Parser::is_not_empty_arg(const std::string& arg, const std::string& comm
 Parser& Parser::is_valid_bot_subcommand(const std::string& subcommand, const std::string& cmdName, bool failCommandIfFalse)
 {
     bool passedCheck = false;
-    if (_isValidCommand)
-    {
+    if (_isValidCommand) {
         this->is_not_empty_arg(subcommand, cmdName);
-        std::string availableSubcommands[NB_AVAILABLE_BOT_SUBCMD] = { "!reply", "!check" };
-        for (int i = 0; i < NB_AVAILABLE_BOT_SUBCMD; ++i)
-        {
+        std::string availableSubcommands[NB_AVAILABLE_BOT_SUBCMD] = {"!reply", "!check"};
+        for (int i = 0; i < NB_AVAILABLE_BOT_SUBCMD; ++i) {
             if (availableSubcommands[i] == subcommand)
                 passedCheck = true;
         }
@@ -246,14 +244,11 @@ Parser& Parser::is_valid_bot_subcommand(const std::string& subcommand, const std
 Parser& Parser::is_valid_bot_prompt(const std::string& prompt, const std::string& commandName, bool failCommandIfFalse)
 {
     bool passedCheck = true;
-    if (_isValidCommand)
-    {
+    if (_isValidCommand) {
         this->is_not_empty_arg(prompt, commandName);
-        for (std::string::const_iterator it = prompt.begin(); it != prompt.end(); ++it)
-        {
+        for (std::string::const_iterator it = prompt.begin(); it != prompt.end(); ++it) {
             unsigned char c = *it;
-            if (Utils::is_char_of(c, std::string(FORBIDEN_CHAR_BOT_PROMPT))) 
-            {
+            if (Utils::is_char_of(c, std::string(FORBIDEN_CHAR_BOT_PROMPT))) {
                 response(CUSTOMERR_WRONG_FORMAT, prompt);
                 passedCheck = false;
             }
@@ -333,24 +328,19 @@ std::string Parser::from_trailing(std::string& params)
 {
     std::string        trailing;
     std::istringstream iss(params);
-    
+
     std::getline(iss, trailing);
     if (trailing.empty())
         return trailing;
     size_t posColon = trailing.find(" :");
     params.erase(0, trailing.size());
 
-    if (posColon != std::string::npos && posColon + 1 < trailing.size())
-    {
+    if (posColon != std::string::npos && posColon + 1 < trailing.size()) {
         trailing = trailing.substr(posColon + 2);
-    }
-    else {
+    } else {
         return "";
     }
     return trailing;
 }
 
-bool    Parser::has_passed_checks() const
-{
-    return _isValidCommand;
-}
+bool Parser::has_passed_checks() const { return _isValidCommand; }

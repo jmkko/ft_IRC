@@ -1,8 +1,8 @@
 #include "Motd.hpp"
-#include "Parser.hpp"
 
 #include "LogManager.hpp"
-//#include "ReplyHandler.hpp"
+#include "Parser.hpp"
+// #include "ReplyHandler.hpp"
 #include "consts.hpp"
 #include "reply_codes.hpp"
 
@@ -31,7 +31,7 @@ void Motd::execute(Server& server, Client& client)
 {
     std::string   line, newline;
     std::ifstream inputFile;
-	Parser p(server, client);
+    Parser        p(server, client);
 
     const char* filename = MOTD_FILE;
 #ifdef TEST

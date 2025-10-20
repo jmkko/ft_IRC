@@ -43,7 +43,7 @@ class Kick : public ICommand
     /**
      * @brief Force part a channel
      * @details cf. [RFC specs](https://datatracker.ietf.org/doc/html/rfc2812#section-3.2.8)
-	 * checks syntaxic validity of args
+     * checks syntaxic validity of args
      * - loop over channels :
      *   - check for invalid channel name -> ERR_BADCHANMASK
      *   - check for existing channel -> ERR_NOSUCHCHANNEL
@@ -59,9 +59,9 @@ class Kick : public ICommand
     void execute(Server& server, Client& client);
 
   private:
-  	std::vector<std::string> _channelsNames;
-	std::vector<std::string> _usersNames;
-	std::string				_msg;
+    std::vector<std::string> _channelsNames;
+    std::vector<std::string> _usersNames;
+    std::string              _msg;
 
     Kick();
     Kick(const Kick& other);

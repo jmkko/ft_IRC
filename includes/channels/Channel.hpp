@@ -187,9 +187,9 @@ class Channel
      * @brief removes a client from the member list
      *
      * @param client
-	 * @return false if member was not in the channel
+     * @return false if member was not in the channel
      */
-    bool      remove_member(Client& client);
+    bool remove_member(Client& client);
 
     ReplyCode ban_member(Client& client);
     /**
@@ -271,10 +271,10 @@ class Channel
      * @param trailing
      */
     void broadcast_bot(Server&            server,
-                   ReplyCode          replyCode,
-                   const std::string& params,
-                   Client*            sender   = NULL,
-                   const std::string& trailing = "") const;
+                       ReplyCode          replyCode,
+                       const std::string& params,
+                       Client*            sender   = NULL,
+                       const std::string& trailing = "") const;
     /**
      * @brief
      * @details cf [grammar](https://datatracker.ietf.org/doc/html/rfc2812#section-2.3.1)
