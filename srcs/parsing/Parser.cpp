@@ -1,9 +1,11 @@
 #include "Parser.hpp"
 
+#include <algorithm>
 #include "Config.hpp"
 #include "ReplyHandler.hpp"
 #include "Server.hpp"
 #include "utils.hpp"
+
 // Default constructor
 Parser::Parser(void) : rh(NULL), _server(NULL), _client(NULL) {}
 

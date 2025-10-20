@@ -128,7 +128,6 @@ void Join::execute(Server& server, Client& client)
             if (channel->get_nb_members() == 1) {
                 channel->make_operator(client);
                 p.response(RPL_CHANNELMODEIS, chanName + " +o ");
-                //rh.process_response(client, TRANSFER_MODE, chanName + " +o " + client.get_nickname());  <-- merge changements ?? why ??
             }
             send_list_of_names(*p.rh, client, *channel); 
             display_topic(*p.rh, client, *channel);

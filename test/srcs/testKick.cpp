@@ -299,18 +299,19 @@ void op_matching_size_channel_list_and_user_list_should_notice(Server& s)
         authenticate(so4, "user4");
         authenticate(so5, "user5");
 
-		send_line(soOp, "JOIN #chan1,#chan2,#chan3,#chan4,#chan5");
+		send_line(soOp, "JOIN #chan1,#chan2,#chan3,#chan4,#chan5\r\n");
+        recv_lines(soOp);
 
 		send_line(so1, "JOIN #chan1\r\n");
-
+        recv_lines(so1);
 		send_line(so2, "JOIN #chan2\r\n");
-		recv_lines(so2);
+		// recv_lines(so2);
 		send_line(so3, "JOIN #chan3\r\n");
-		recv_lines(so3);
+		// recv_lines(so3);
 		send_line(so4, "JOIN #chan4\r\n");
-		recv_lines(so4);
+		// recv_lines(so4);
 		send_line(so5, "JOIN #chan5\r\n");
-		recv_lines(so5);
+		// recv_lines(so5);
 
         send_line(soOp, "KICK #chan1,#chan2,#chan3,#chan4,#chan5 user1,user2,user3,user4,user5 :you're kicked, badass\r\n");
 
@@ -319,7 +320,7 @@ void op_matching_size_channel_list_and_user_list_should_notice(Server& s)
         // test
         std::string reply = recv_lines(so1);
         AssertReply ar(reply);
-        ar.matches_entirely(":" + s.get_name() + " KICK #chan1 user1 :you're kicked, badass");
+        ar.is_formatted_transfer(opNick, "KICK #chan1 user1", "you're kicked, badass");
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());
     }
