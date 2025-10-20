@@ -20,10 +20,10 @@
 class Client;
 class Server;
 
-static const std::string& authorizedModes   = "kilot";
-static const std::string& modesRequiringArg = "klo";
-static const std::string& authorizedOps     = "+-";
-static const std::string& digits            = "0123456789";
+// static const std::string& authorizedModes   = "kilot";
+// static const std::string& modesRequiringArg = "klo";
+// static const std::string& authorizedOps     = "+-";
+// static const std::string& digits            = "0123456789";
 
 /**
  * @class Mode
@@ -41,7 +41,7 @@ class Mode : public ICommand
      *
      * @param args
      */
-    Mode(const std::vector<std::string>& args);
+    Mode(const std::string& params);
     /**
      * @brief Destroy the Mode object
      *
@@ -79,10 +79,10 @@ class Mode : public ICommand
  * @param args should match pattern `<channel> *( ( "-" / "+" ) *<modes> *<modeparams>`
  * @return ReplyCode
  */
-    static ReplyCode check_args(Server& server, Client& client, std::vector<std::string>& args);
+    static ReplyCode check_args(Server& server, Client& client, std::string& params);
 
   private:
-    std::vector<std::string> _args;
+    std::string _params;
 
     Mode();
     Mode(const Mode& other);

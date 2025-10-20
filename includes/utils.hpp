@@ -57,6 +57,8 @@ class Utils
     static bool is_not_alpha_or_specialbnf(char c);
     static bool is_invalid_char_nick(char c);
     static bool is_invalid_char_user(char c);
+    static bool is_invalid_char_key(char c);
+    static bool is_not_digit(char c);
 
 }; // class utils
 

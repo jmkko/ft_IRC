@@ -1,10 +1,9 @@
-#include "Mode.hpp"
-
 #include "Channel.hpp"
 #include "Client.hpp"
 #include "Config.hpp"
 #include "LogManager.hpp"
 #include "Logger.hpp"
+#include "Mode.hpp"
 #include "ReplyHandler.hpp"
 #include "Server.hpp"
 #include "consts.hpp"
@@ -15,6 +14,7 @@
 #include <cctype>
 #include <cstddef>
 #include <limits>
+#include <queue>
 #include <sstream>
 #include <string>
 
@@ -22,87 +22,105 @@
  *		🛠️ UTIL FUNCTIONS											*
  *************************************************************/
 
-static void parse_args(std::vector<std::string>& args,
-                       std::string*              channel,
-                       char*                     operation,
-                       std::string*              modes,
-                       std::vector<std::string>* modeParams)
+static void
+parse_params(std::string& params, std::string* channel, std::queue<std::string>* modeQueue, std::queue<std::string>* paramsQueue)
 {
-    std::vector<std::string>::iterator it = args.begin();
-    *channel                              = *it;
-    ++it;
-    if (it != args.end()) {
-        *operation = (*it)[0];
-        *modes     = it->substr(1);
-        while (++it != args.end()) {
-            modeParams->push_back(*it);
-        }
+    std::string        args;
+    std::istringstream iss(params);
+    LOG_DV_CMD(params);
+    iss >> *channel;
+    // first args must be a modes
+    iss >> args;
+    LOG_DV_CMD(args);
+    LOG_DV_CMD(args.size());
+    if (args.empty())
+        return;
+    if (!Utils::is_char_of(args[0], std::string(MODE_OPERATOR)) || args.size() == 1)
+        modeQueue->push(args);
+    else if (args.size() > 1) {
+        if (std::string(args.begin() + 1, args.end()).find(std::string(MODE_OPERATOR)) != std::string::npos)
+            modeQueue->push(args);
+        else
+            for (std::string::iterator it = args.begin() + 1; it != args.end(); ++it)
+                modeQueue->push(std::string(1, args[0]) + *it);
     }
+    // other args
+    while (iss >> args) {
+        LOG_DV_CMD(args);
+        if (args.size() > 1 && Utils::is_char_of(args[0], std::string(MODE_OPERATOR)) && !std::isdigit(args[1])) {
+            if (std::string(args.begin() + 1, args.end()).find(std::string(MODE_OPERATOR)) != std::string::npos)
+                modeQueue->push(args);
+            else
+                for (std::string::iterator it = args.begin() + 1; it != args.end(); ++it)
+                    modeQueue->push(std::string(1, args[0]) + *it);
+        } else
+            paramsQueue->push(args);
+    }
+}
+static std::string get_modes(unsigned short currentModes, Channel* channel)
+{
+    std::string modeIsReply("");
+    std::string modeIsParams("");
+    std::string modeIsParamsVal("");
+
+    if (!(currentModes & CHANMODE_INIT)) {
+        modeIsParams += '+';
+        if (currentModes & CHANMODE_INVITE)
+            modeIsParams += "i";
+        if (currentModes & CHANMODE_KEY) {
+            modeIsParams += "k";
+            modeIsParamsVal += " " + channel->get_key();
+        }
+        if (currentModes & CHANMODE_LIMIT) {
+            modeIsParams += "l";
+            modeIsParamsVal += " " + TO_STRING(channel->get_user_limit());
+        }
+        if (currentModes & CHANMODE_TOPIC)
+            modeIsParams += "t";
+    }
+    if (!modeIsParamsVal.empty())
+        modeIsReply += " " + modeIsParams + modeIsParamsVal;
+    else if (!modeIsParams.empty())
+        modeIsReply += " " + modeIsParams;
+    return modeIsReply;
+}
+
+static unsigned short char_to_mode(char c)
+{
+    if (c == 'i')
+        return CHANMODE_INVITE;
+    if (c == 'k')
+        return CHANMODE_KEY;
+    if (c == 'l')
+        return CHANMODE_LIMIT;
+    if (c == 't')
+        return CHANMODE_TOPIC;
+    return CHANMODE_INIT;
 }
 
 /************************************************************
  *		📁 CLASS METHODS									*
  ************************************************************/
 
-ReplyCode Mode::check_args(Server& server, Client& client, std::vector<std::string>& args)
+/**
+ * @brief check syntaxic validity of args
+ *
+ * @param server not used
+ * @param client not used
+ * @param args should match pattern `<channel> *( ( "-" / "+" ) *<modes> *<modeparams>`
+ * @return ReplyCode
+ */
+ReplyCode Mode::check_args(Server& server, Client& client, std::string& params)
 {
     (void)server;
     (void)client;
-    std::string              channel;
-    char                     operation = '\0';
-    std::string              modes;
-    std::vector<std::string> modeParams;
-    ReplyHandler             rh = ReplyHandler::get_instance(&server);
+    std::string        channel;
+    std::istringstream iss(params);
+    iss >> channel;
 
-    LOG_DV_CMD(args[0]);
-    LOG_DV_CMD(args.size());
-    LOG_DV_CMD(args.size());
-    if (args.size() == 1 && Channel::is_valid_channel_name(args[0])) {
-        return CORRECT_FORMAT;
-    }
-    if (args.size() < 2) {
-        rh.process_response(client, ERR_NEEDMOREPARAMS, "MODE");
+    LOG_DV_CMD(channel);
+    if (channel.empty()) {
         return PROCESSED_ERROR;
-    }
-    parse_args(args, &channel, &operation, &modes, &modeParams);
-    LOG_DV_CMD(operation);
-    LOG_DV_CMD(modes);
-    if (!modeParams.empty())
-        LOG_DV_CMD(modeParams[0]);
-    if (channel.empty() || modes.empty()) {
-        rh.process_response(client, ERR_NEEDMOREPARAMS, "MODE");
-        return PROCESSED_ERROR;
-    }
-
-    unsigned long idx = modes.find_first_not_of(authorizedModes);
-    if (idx != std::string::npos) {
-        LOG_CMD.log(WARN, __FILE_NAME__, __FUNCTION__, "unknown option (other than kilot)", modes);
-        rh.process_response(client, ERR_UNKNOWNMODE, &(modes.at(idx)));
-        return PROCESSED_ERROR;
-    }
-    unsigned long opIdx = (std::string(1, operation).find_first_not_of(authorizedOps));
-    if (opIdx != std::string::npos) {
-        LOG_CMD.log(WARN, __FILE_NAME__, __FUNCTION__, "unknown operator (other than +-)", operation);
-        rh.process_response(client, ERR_UNKNOWNMODE, std::string(1, operation));
-        return PROCESSED_ERROR;
-    }
-    for (size_t i = 0; i < modes.size(); ++i) {
-        if (modesRequiringArg.find(modes[i]) != std::string::npos && operation == '+' && i >= modeParams.size()) {
-            rh.process_response(client, ERR_NEEDMOREPARAMS, "MODE");
-            return PROCESSED_ERROR;
-        }
-        if (modes[i] == 'o' && operation == '-' && i >= modeParams.size()) {
-            rh.process_response(client, ERR_NEEDMOREPARAMS, "MODE");
-            return PROCESSED_ERROR;
-        }
-        if (modes[i] == 'l' && operation == '+') {
-            if (modeParams[i].find_first_not_of(digits) != std::string::npos) {
-                LOG_DV_CMD(modeParams[i]);
-                return CUSTOMERR_WRONG_FORMAT;
-            }
-            if (std::atol(modeParams[i].c_str()) > std::numeric_limits<int>::max())
-                return CUSTOMERR_WRONG_FORMAT;
-        }
     }
     return CORRECT_FORMAT;
 }
@@ -111,8 +129,8 @@ ReplyCode Mode::check_args(Server& server, Client& client, std::vector<std::stri
  *		🥚 CONSTRUCTORS & DESTRUCTOR						*
  ************************************************************/
 
-Mode::Mode() : _args() {}
-Mode::Mode(const std::vector<std::string>& args) : _args(args) {}
+Mode::Mode() : _params() {}
+Mode::Mode(const std::string& params) : _params(params) {}
 Mode::~Mode() {}
 
 /*************************************************************
@@ -121,117 +139,154 @@ Mode::~Mode() {}
 
 void Mode::execute(Server& server, Client& client)
 {
-    ReplyHandler&            rh = ReplyHandler::get_instance(&server);
-    std::string              channelName;
-    char                     operation = '\0';
-    std::string              modes;
-    std::vector<std::string> modeParams;
-    parse_args(_args, &channelName, &operation, &modes, &modeParams);
+    ReplyHandler&           rh = ReplyHandler::get_instance(&server);
+    std::string             channelName;
+    Channel*                channel = NULL;
+    std::queue<std::string> modeQueue;
+    std::queue<std::string> paramsQueue;
 
-    Channel*                                  channel = NULL;
-    std::map<std::string, Channel*>::iterator it      = server.channels.find(channelName);
-    if (it == server.channels.end()) {
-        rh.process_response(client, ERR_NOSUCHCHANNEL, channelName);
+    parse_params(_params, &channelName, &modeQueue, &paramsQueue);
+    LOG_DV_CMD(modeQueue.size());
+    LOG_DV_CMD(paramsQueue.size());
+    // no params -> MODE
+    if (Channel::is_valid_channel_name(channelName)) {
+        std::map<std::string, Channel*>::iterator it = server.channels.find(channelName);
+        if (it == server.channels.end()) {
+            rh.process_response(client, ERR_NOSUCHCHANNEL, channelName);
+            return;
+        } else
+            channel = it->second;
+    } else {
+        rh.process_response(client, ERR_NEEDMOREPARAMS, "MODE");
         return;
-    } else
-        channel = it->second;
+    }
+    // params but only args no modes iklt-> MODE #chan1 user1
+    if (channel && modeQueue.empty() && !paramsQueue.empty()) {
+        rh.process_response(client, ERR_NEEDMOREPARAMS, "MODE");
+        return;
+    }
     unsigned short currentModes = channel->get_mode();
-
-    if (_args.size() == 1) {
-        LOG_d_CMD("args == 1");
+    // MODE #chan1 with no other args
+    if (channel && modeQueue.empty() && paramsQueue.empty()) {
+        LOG_d_CMD("only Chan param");
         std::string modeIsReply = channel->get_name();
-        std::string modeIsParams("");
-        std::string modeIsParamsVal("");
-        if (!(currentModes & CHANMODE_INIT)) {
-            modeIsParams += '+';
-            if (currentModes & CHANMODE_KEY) {
-                modeIsParams += "k";
-                modeIsParamsVal += channel->get_key();
-            }
-            if (currentModes & CHANMODE_INVITE)
-                modeIsParams += "i";
-            if (currentModes & CHANMODE_LIMIT) {
-                modeIsParams += "l";
-                modeIsParamsVal += TO_STRING(channel->get_user_limit());
-            }
-        }
-        if (!modeIsParamsVal.empty())
-            modeIsReply += " " + modeIsParams + " " + modeIsParamsVal;
-        else if (!modeIsParams.empty())
-            modeIsReply += " " + modeIsParams;
+        modeIsReply += get_modes(currentModes, channel);
         rh.process_response(client, RPL_CHANNELMODEIS, modeIsReply);
         return;
     }
-
+    // to change a MODE you need to be an operator
     if (!channel->is_operator(client)) {
         rh.process_response(client, ERR_CHANOPRIVSNEEDED, channel->get_name());
         return;
     }
-
-    std::string validModes      = operation == '+' ? "+" : "-";
-    std::string validModeParams = "";
-    LOG_CMD.log(DEBUG, __FILE_NAME__, __FUNCTION__, "modes", modes);
-    for (size_t i = 0; i < modes.size(); ++i) {
-        if (modes[i] == 'k') {
-            if (operation == '+') {
-                if (channel->get_mode() & CHANMODE_KEY) {
-                    rh.process_response(client, ERR_KEYSET, channel->get_name());
-                } else {
-                    channel->add_mode(CHANMODE_KEY);
-                    channel->set_key(modeParams[i]);
-                    validModes += "k";
-                    validModeParams += " " + modeParams[i];
-                }
-            } else {
-                channel->remove_mode(CHANMODE_KEY);
-                validModes += "k";
+    // others cases main args loop
+    std::string validPositiveModes = " +";
+    std::string validNegativeModes = " -";
+    std::string validModesParams   = "";
+    while (!modeQueue.empty()) {
+        std::string currentMode = modeQueue.front();
+        modeQueue.pop();
+        // cases more than one + or -, or no operator or only + or -
+        if (currentMode.size() > 2 || currentMode.size() == 1 || !Utils::is_char_of(currentMode[0], std::string(MODE_OPERATOR))) {
+            rh.process_response(client, ERR_NEEDMOREPARAMS, "MODE");
+            return;
+        }
+        // case not a valid mode
+        if (!Utils::is_char_of(currentMode[1], std::string(VALID_CHAN_MODE_NOPARAM))
+            && !Utils::is_char_of(currentMode[1], std::string(VALID_CHAN_MODE_PARAM))) {
+            rh.process_response(client, ERR_UNKNOWNMODE, currentMode.substr(1));
+            continue;
+        }
+        // mode need params but there isn't
+        if ((currentMode == "+k" || currentMode == "+l" || currentMode[1] == 'o') && paramsQueue.empty()) {
+            rh.process_response(client, ERR_NEEDMOREPARAMS, "MODE");
+            continue;
+        }
+        // case mode need no params
+        if (Utils::is_char_of(currentMode[1], std::string(VALID_CHAN_MODE_NOPARAM))) {
+            LOG_d_CMD("MODE without param");
+            LOG_DV_CMD(currentMode);
+            if (currentMode[0] == '+') {
+                channel->add_mode(char_to_mode(currentMode[1]));
+                validPositiveModes += currentMode[1];
             }
-        } else if (modes[i] == 'i') {
-            if (operation == '+') {
-                channel->add_mode(CHANMODE_INVITE);
-            } else {
-                channel->remove_mode(CHANMODE_INVITE);
+            if (currentMode[0] == '-') {
+                channel->remove_mode(char_to_mode(currentMode[1]));
+                validNegativeModes += currentMode[1];
             }
-            validModes += 'i';
-        } else if (modes[i] == 'l') {
-            if (operation == '+') {
-                channel->add_mode(CHANMODE_LIMIT);
-                channel->set_user_limit(std::atoi(modeParams[i].c_str()));
-                validModeParams += " " + modeParams[i];
-            } else {
-                channel->remove_mode(CHANMODE_LIMIT);
-                channel->set_user_limit(NO_LIMIT);
+            continue;
+        }
+        // case mode need param
+        if (Utils::is_char_of(currentMode[1], std::string(VALID_CHAN_MODE_PARAM))) {
+            LOG_d_CMD("MODE with param");
+            LOG_DV_CMD(currentMode);
+            // negative which don't need param
+            if (currentMode[0] == '-' && (currentMode[1] == 'k' || currentMode[1] == 'l')) {
+                LOG_d_CMD("Negative k or l");
+                channel->remove_mode(char_to_mode(currentMode[1]));
+                validNegativeModes += currentMode[1];
+                continue;
             }
-            validModes += 'l';
-        } else if (modes[i] == 'o') {
-            Client* targetOp = server.find_client_by_nickname(modeParams[i]);
-            if (!targetOp)
-                rh.process_response(client, ERR_NOSUCHNICK, modeParams[i]);
-            else if (!channel->is_member(*targetOp))
-                rh.process_response(client, ERR_USERNOTINCHANNEL, modeParams[i]);
-            else {
-                validModes += "o";
-                validModeParams += " " + targetOp->get_nickname();
-                if (operation == '+') {
-                    channel->make_operator(*targetOp);
-                    rh.process_response(*targetOp, RPL_YOUREOPER);
-                } else {
-                    channel->remove_operator(*targetOp);
-                }
+            std::string currentParam = paramsQueue.front();
+            paramsQueue.pop();
+            LOG_DV_CMD(currentParam);
+            if (currentMode[1] == 'k') {
+                size_t invalidChar = 0;
+                if (!currentParam.empty())
+                    invalidChar = std::count_if(currentParam.begin(), currentParam.end(), Utils::is_invalid_char_key);
+                if (currentMode[0] == '+' && !currentParam.empty() && !invalidChar) {
+                    if (channel->get_mode() & char_to_mode(currentMode[1])) {
+                        rh.process_response(client, ERR_KEYSET, channel->get_name());
+                    } else {
+                        channel->add_mode(char_to_mode(currentMode[1]));
+                        channel->set_key(currentParam);
+                        validPositiveModes += currentMode[1];
+                        validModesParams += " " + currentParam;
+                    }
+                } else
+                    rh.process_response(client, ERR_NEEDMOREPARAMS, "MODE");
+            } else if (currentMode[1] == 'l') {
+                size_t invalidChar = 0;
+                if (!currentParam.empty())
+                    invalidChar = std::count_if(currentParam.begin(), currentParam.end(), Utils::is_not_digit);
+                if (!currentParam.empty() && !invalidChar && currentMode[0] == '+') {
+                    int limit = std::atoi(currentParam.c_str());
+                    channel->add_mode(char_to_mode(currentMode[1]));
+                    channel->set_user_limit(limit);
+                    validPositiveModes += currentMode[1];
+                    validModesParams += " " + currentParam;
+                } else
+                    rh.process_response(client, ERR_NEEDMOREPARAMS, "MODE");
+            } else if (currentMode[1] == 'o') {
+                size_t invalidChar = 0;
+                invalidChar        = std::count_if(currentParam.begin(), currentParam.end(), Utils::is_invalid_char_nick);
+                if (!currentParam.empty() && !invalidChar) {
+                    Client* targetOp = server.find_client_by_nickname(currentParam);
+                    if (!targetOp)
+                        rh.process_response(client, ERR_NOSUCHNICK, currentParam);
+                    else if (!channel->is_member(*targetOp))
+                        rh.process_response(client, ERR_USERNOTINCHANNEL, currentParam);
+                    else if (currentMode[0] == '+') {
+                        channel->make_operator(*targetOp);
+                        validPositiveModes += currentMode[1];
+                        validModesParams += " " + currentParam;
+                    } else {
+                        channel->remove_operator(*targetOp);
+                        validNegativeModes += currentMode[1];
+                        validModesParams += " " + currentParam;
+                    }
+                } else
+                    rh.process_response(client, ERR_NEEDMOREPARAMS, "MODE");
             }
-        } else if (modes[i] == 't') {
-            if (operation == '+') {
-                channel->add_mode(CHANMODE_TOPIC);
-            } else {
-                LOG_DV_CMD(*channel);
-                channel->remove_mode(CHANMODE_TOPIC);
-                LOG_DV_CMD(*channel);
-            }
-            validModes += 't';
         }
     }
-
-    // send confirmation
-    std::string confirmationMsg = channelName + " " + validModes + validModeParams;
-    rh.process_response(client, TRANSFER_MODE, confirmationMsg);
+    std::string confirmationMsg = channelName;
+    if (validPositiveModes.size() > 2)
+        confirmationMsg += validPositiveModes;
+    if (validNegativeModes.size() > 2)
+        confirmationMsg += validNegativeModes;
+    if (validModesParams.size() > 1)
+        confirmationMsg += validModesParams;
+    if (confirmationMsg != channelName)
+        rh.process_response(client, TRANSFER_MODE, confirmationMsg);
 }
