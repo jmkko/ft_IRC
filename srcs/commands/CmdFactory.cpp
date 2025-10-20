@@ -201,20 +201,19 @@ ICommand* CmdFactory::join_cmd(Server& server, Client& client, std::string& para
 
 ICommand* CmdFactory::mode_cmd(Server& server, Client& client, std::string& params)
 {
-    ReplyHandler&            rh = ReplyHandler::get_instance(&server);
-    std::vector<std::string> vectorParams;
-    std::istringstream       iss(params);
-    std::string              token = "";
-    while (std::getline(iss, token, ' ')) {
-        vectorParams.push_back(token);
-    }
-    ReplyCode replyCode = Mode::check_args(server, client, vectorParams);
+    ReplyHandler& rh = ReplyHandler::get_instance(&server);
+    // std::vector<std::string> vectorParams;
+    // std::istringstream       iss(params);
+    // std::string              token = "";
+    // while (std::getline(iss, token, ' ')) {
+    //     vectorParams.push_back(token);
+    // }
+    // ReplyCode replyCode = Mode::check_args(server, client, vectorParams);
+    ReplyCode replyCode = Mode::check_args(server, client, params);
     if (replyCode == CORRECT_FORMAT) {
-        return new Mode(vectorParams);
-    } else if (replyCode == PROCESSED_ERROR) {
-        return NULL;
+        return new Mode(params);
     } else {
-        rh.process_response(client, replyCode, params);
+        rh.process_response(client, ERR_NEEDMOREPARAMS, "MODE");
     }
     return NULL;
 };
