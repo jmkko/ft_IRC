@@ -29,6 +29,9 @@ struct BotState {
     std::string subCommand;
     std::string pendingMsg;
     bool readyToSend;
+    BotState()
+        : socketfd(-1), targetChannel(), readyToSend(false)
+    {}
 };
 
 /**

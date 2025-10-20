@@ -134,18 +134,18 @@ bool Parser::correct_key(std::string& key)
 // for a new nickname
 bool Parser::correct_nickname(std::string& nickname)
 {
-    bool invalidChar = std::count_if(nickname.begin(), nickname.end(), Utils::is_invalid_char_nick);
-
+    bool invalidChar = false;
+    
     if (nickname.empty()) {
         return response(ERR_NONICKNAMEGIVEN);
     }
     invalidChar = std::count_if(nickname.begin(), nickname.end(), Utils::is_invalid_char_nick);
-    if (invalidChar > 0 || std::isdigit(nickname[0])) {
+    if (invalidChar == true || std::isdigit(nickname[0])) {
         return response(ERR_ERRONEUSNICKNAME, nickname);
     } else if (nickname.length() > ircConfig.get_nickname_max_len()) {
         nickname = nickname.substr(0, ircConfig.get_nickname_max_len());
     }
-    if (_server->find_client_by_nickname(nickname)) {
+    if (_server && _server->find_client_by_nickname(nickname)) {
         return response(ERR_NICKNAMEINUSE, nickname);
     }
     return true;
