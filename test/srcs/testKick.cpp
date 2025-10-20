@@ -281,6 +281,51 @@ void op_valid_inexistent_channel_should_err(Server& s)
     }
 }
 
+void op_matching_size_channel_list_and_user_list_should_notice(Server& s)
+{
+    try {
+        TEST_SETUP(test, s, 6);
+        TcpSocket& soOp = *sockets.at(0);
+        TcpSocket& so1   = *sockets.at(1);
+        TcpSocket& so2   = *sockets.at(2);
+        TcpSocket& so3  = *sockets.at(3);
+        TcpSocket& so4   = *sockets.at(4);
+        TcpSocket& so5   = *sockets.at(5);
+
+        make_op(soOp);
+        authenticate(so1, "user1");
+        authenticate(so2, "user2");
+        authenticate(so3, "user3");
+        authenticate(so4, "user4");
+        authenticate(so5, "user5");
+
+		send_line(soOp, "JOIN #chan1,#chan2,#chan3,#chan4,#chan5");
+
+		send_line(so1, "JOIN #chan1\r\n");
+
+		send_line(so2, "JOIN #chan2\r\n");
+		recv_lines(so2);
+		send_line(so3, "JOIN #chan3\r\n");
+		recv_lines(so3);
+		send_line(so4, "JOIN #chan4\r\n");
+		recv_lines(so4);
+		send_line(so5, "JOIN #chan5\r\n");
+		recv_lines(so5);
+
+        send_line(soOp, "KICK #chan1,#chan2,#chan3,#chan4,#chan5 user1,user2,user3,user4,user5 :you're kicked, badass\r\n");
+
+		std::cout<<recv_lines(so1)<<std::endl;
+        recv_lines(soOp);
+
+        // test
+        std::string reply = recv_lines(so1);
+        AssertReply ar(reply);
+        ar.matches_entirely(":" + s.get_name() + " KICK #chan1 user1 :you're kicked, badass");
+    } catch (const std::runtime_error& e) {
+        LOG_TEST.error(e.what());
+    }
+}
+
 void test_kick(Server& s, t_results* r)
 {
     print_test_series("command KICK");
@@ -296,4 +341,5 @@ void test_kick(Server& s, t_results* r)
     run_test(r, [&] { op_user_not_in_channel_should_err(s); }, "not in chan");
     run_test(r, [&] { op_invalid_channel_should_err(s); }, "invalid chan");
     run_test(r, [&] { op_valid_inexistent_channel_should_err(s); }, "inexisting chan");
+    run_test(r, [&] { op_matching_size_channel_list_and_user_list_should_notice(s); }, "user list and channel list are same size");
 }
