@@ -1,5 +1,4 @@
 #include "Channel.hpp"
-
 #include "Client.hpp"
 #include "Config.hpp"
 #include "ICommand.hpp"
@@ -29,7 +28,7 @@ bool Channel::is_valid_channel_name(const std::string& name)
             return false;
         }
     }
-    if (!Utils::is_char_of(static_cast<unsigned char>(name[0]), "#&+!"))
+    if (!Utils::is_char_of(static_cast<unsigned char>(name[0]), "#&!"))
         return false;
     return (name.length() > 1 && name.length() <= ircConfig.get_chan_name_max_len());
 }

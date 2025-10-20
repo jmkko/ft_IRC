@@ -2,6 +2,8 @@
 #define PARSER_HPP
 #include <iostream>
 #include <map>
+#include <vector>
+#include <algorithm>
 
 #include "reply_codes.hpp"
 #include "ReplyHandler.hpp"
