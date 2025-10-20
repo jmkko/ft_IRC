@@ -75,6 +75,7 @@ IRC_SRCS_FILES	:=	utils.cpp\
 					commands/Motd.cpp\
 					commands/Who.cpp\
 					commands/Topic.cpp\
+					commands/Part.cpp\
 					parsing/Parser.cpp\
 
 EXT				:= .cpp
