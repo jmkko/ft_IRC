@@ -100,6 +100,11 @@ void Join::execute(Server& server, Client& client)
     LOG_CMD.debug("Join.cpp execute()");
 	if (_chans.empty()) {
 		p.response(ERR_NEEDMOREPARAMS, "JOIN");
+		return;
+	} else if (_chans[0] == "0") {
+		client.remove_from_all_channels();
+        // p.response(TRANSFER_JOIN, chanName);
+		return;
 	}
     for (std::map<std::string, std::string>::iterator it = _chans.begin(); it != _chans.end(); ++it) {
         std::string chanName = it->first;
@@ -125,12 +130,12 @@ void Join::execute(Server& server, Client& client)
             p.response(TRANSFER_JOIN, chanName);
             channel->broadcast(server, TRANSFER_JOIN, chanName, &client);
             channel->remove_from_invited_list(client);
-            if (channel->get_nb_members() == 1) {
-                channel->make_operator(client);
-                p.response(RPL_CHANNELMODEIS, chanName + " +o ");
-            }
-            send_list_of_names(*p.rh, client, *channel); 
-            display_topic(*p.rh, client, *channel);
+            // if (channel->get_nb_members() == 1) {
+            //     channel->make_operator(client);
+            //     p.response(RPL_CHANNELMODEIS, chanName + " +o ");
+            // }
+            // send_list_of_names(*p.rh, client, *channel); 
+            // display_topic(*p.rh, client, *channel);
         } else {
             p.response(replyCode, chanName);
         }
