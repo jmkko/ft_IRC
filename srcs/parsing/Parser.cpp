@@ -220,7 +220,7 @@ Parser& Parser::is_valid_bot_subcommand(const std::string& subcommand, const std
     if (_isValidCommand)
     {
         this->is_not_empty_arg(subcommand, cmdName);
-        std::string availableSubcommands[NB_AVAILABLE_BOT_SUBCMD] = { "!reply" };
+        std::string availableSubcommands[NB_AVAILABLE_BOT_SUBCMD] = { "!reply", "!check" };
         for (int i = 0; i < NB_AVAILABLE_BOT_SUBCMD; ++i)
         {
             if (availableSubcommands[i] == subcommand)

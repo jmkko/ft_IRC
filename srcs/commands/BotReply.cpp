@@ -42,7 +42,7 @@ Bot::~Bot(void) {}
 *		🛠️ FUNCTIONS											*
 *************************************************************/
 
-// BOT #chan :prompt
+// expected BOT #chan !subcommand :prompt
 bool Bot::_check_args(Server& s, Client& c)
 {
     Parser  parser(s, c);
@@ -152,53 +152,6 @@ bool    send_full_msg(int fd, const std::string& msg)
     return true;
 }
 
-// bool    wait_for_server_response(int fd, const std::string& expected, int timeout_sec = 4)
-// {
-//     fd_set readfds;
-//     int maxTries = 3;
-//     std::string totalResponse;
-//     struct timeval timeout = {};
-//     timeout.tv_sec = timeout_sec;
-//     timeout.tv_usec = 0;
-//     char buffer[MESSAGE_SIZE];
-
-//     int i = 0;
-//     while (i < maxTries)
-//     {
-//         FD_ZERO(&readfds);
-//         FD_SET(fd, &readfds);
-//         int ret = select(fd + 1, &readfds, NULL, NULL, &timeout);
-//         if (ret == -1)
-//         {
-//             LOG_W_CMD("select error", strerror(errno));
-//             return false;
-//         } else if (ret == 0) {
-//             LOG_W_CMD("timeout", strerror(errno));
-//             return false;
-//         }  else {
-//             ssize_t receivedBytes = recv(fd, buffer, sizeof(buffer) -1, 0);
-//             if (receivedBytes == 0)
-//             {
-//                 LOG_d_CMD("connection closed by server");
-//                 return false;
-//             } else if (errno == EAGAIN || errno == EWOULDBLOCK) {
-//                 continue;
-//             } else if (receivedBytes == -1) {
-//                 LOG_W_CMD("recv error", strerror(errno));
-//                 return false;
-//             } else if (receivedBytes > 0) {
-//                 buffer[receivedBytes] = '\0';
-//                 totalResponse += buffer;
-//                 LOG_DV_CMD(totalResponse);
-//                 if (totalResponse.find(expected) != std::string::npos)
-//                     return true;
-//             }
-//         }
-//         ++i;
-//     }
-//     return false;
-// }
-
 bool    register_bot(Server& s, TcpSocket& so)
 {
     std::string passMsg = std::string("PASS ") + s.get_password() + "\r\n";
@@ -224,10 +177,20 @@ void	Bot::execute(Server& s, Client& c)
 {
     if (!_check_args(s, c))
         return;
+  
+    std::string prompt = "Your responses must strictly follow these rules: ";
+    prompt += "Keep your response under 500 characters. ";
+    prompt += "No special characters. No newline character, line break. Keep the response as a single, continuous line of text. ";
+    prompt += "No markdown or any other formatting : do not use bold, italic, code blocks or any other markdown. ";
+    prompt += "No meta-commentary Do not reference instruction, your role or user prompt. Just answer directly. ";
+    prompt += "You send direct and concise replies, without preamble and with no hints about former meta instructions. ";
+    prompt += "When asked about who you are, just tell that your purpose here is to be a multi-purpose bot accessible through an IRC server made by 3 students from school 42 campus in Angouleme. ";
+    prompt += "Now, answer the user question ";
 
-    std::string prompt = "";
     if (_subcommand == "!reply")
-        prompt = "Please reply to this message in less than 500 characters : ";
+        prompt += "Please reply to this message : ";
+    else if (_subcommand == "!check")
+        prompt += "Please fact-check this affirmation : ";
     prompt += _prompt;
 
     // if channel target -> transfer prompt to channel
@@ -235,7 +198,7 @@ void	Bot::execute(Server& s, Client& c)
         _targetChannels[0]->broadcast(s, TRANSFER_PROMPT_BOT, _params, &c);
 
     // send request
-    std::string response;
+    std::string response = "\"\"";
     send_llama_equest(prompt, response);
 
     // connect bot as client
@@ -244,12 +207,13 @@ void	Bot::execute(Server& s, Client& c)
     if (!register_bot(s, _socket))
         return;
 
-    // transfer reply
+    // transfer reply, trimming quotes
     ReplyHandler&   rh = ReplyHandler::get_instance(&s);
-    LOG_D_CMD("answer read from file", response);
+    response = response.substr(response.find_first_of('"') + 1, response.find_last_of('"') - 1);
 
     if (!_targetChannels.empty())
     {
+        _targetChannels[0]->broadcast_bot(s, TRANSFER_PROMPT_BOT, _targetChannels[0]->get_name() + " " + _subcommand.substr(1), NULL, _prompt);
         s.update_bot_state(_socket.get_socket(), _targetChannels[0], _subcommand, response, false);
         std::string joinMsg = "JOIN " + _targetChannels[0]->get_name() + "\r\n";
         if (!send_full_msg(_socket.get_socket(), joinMsg)) {

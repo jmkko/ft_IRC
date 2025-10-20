@@ -5,7 +5,7 @@
 
 #include <string>
 
-#define LOWER_CUSTOM_CODE              200
+#define LOWER_CUSTOM_CODE              100
 #define UPPER_CUSTOM_CODE              299
 #define LOWER_CUSTOM_NONNUMERICAL_CODE 800
 
