@@ -8,6 +8,8 @@
 #include <iostream>
 #include <map>
 #include <vector>
+#include <algorithm>
+
 class Server;
 class Client;
 class ReplyHandler;

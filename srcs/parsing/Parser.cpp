@@ -140,7 +140,7 @@ bool Parser::correct_key(std::string& key)
 // for a new nickname
 bool Parser::correct_nickname(std::string& nickname)
 {
-    bool invalidChar = false;
+    bool 			invalidChar = false;
 
     if (nickname.empty()) {
         return response(ERR_NONICKNAMEGIVEN);

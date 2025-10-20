@@ -44,6 +44,8 @@ Invite::Invite(std::string& params)
  *
  * @param server Server
  * @param client Client = the sender
+ * @warning in case of error, can send ERR_NEEDMOREPARAMS, ERR_NOSUCHCHANNEL, ERR_NOSUCHNICK, ERR_CHANOPRIVSNEEDED, ERR_USERONCHANNEL, ERR_NOTONCHANNE
+     ERR_USERNOTINCHANNEL
  */
 void Invite::execute(Server& server, Client& client)
 {
