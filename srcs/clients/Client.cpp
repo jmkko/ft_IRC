@@ -30,7 +30,7 @@ std::ostream& operator<<(std::ostream& os, const Client& c)
     return os << "Client" << "["
 		<< "socket_fd = " << c.get_socket()
 		<< " address = " << c.get_address()
-    	<< " status=" << (c.get_status() == REGISTERED ? "registered" : "unauthenticated")
+    	<< " status=" << (c.is_registered() ? "registered" : c.is_authenticated() ? "authenticated" : "unauthenticated")
 		<< " nick=" << c.get_nickname()
 		<< " to receive=" << c.get_read_buffer().size()
 		<< " to send=" << c.get_send_buffer().size()

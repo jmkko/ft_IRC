@@ -1,6 +1,7 @@
+#include "utils.hpp"
+
 #include "LogManager.hpp"
 #include "consts.hpp"
-#include "utils.hpp"
 
 #include <cctype>
 #include <poll.h>
@@ -138,6 +139,7 @@ bool Utils::MatchPattern::operator()(const Client* c) const
            || is_matching_pattern(pattern, c->get_userhost()) || is_matching_pattern(pattern, c->get_real_name());
 }
 
+bool Utils::is_not_alpha_or_specialbnf(char c) { return (!std::isalpha(c) && !Utils::is_special_abnf(c)); }
 bool Utils::is_invalid_char_nick(char c) { return (!std::isalnum(c) && !is_special_abnf(c)); }
 bool Utils::is_invalid_char_user(char c) { return (is_char_of(c, std::string(FORBIDEN_CHAR_USER, 5))); }
 bool Utils::is_invalid_char_key(char c) { return (is_char_of(c, std::string(FORBIDEN_CHAR_CHAN_KEY, 7))); }

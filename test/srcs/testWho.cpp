@@ -108,9 +108,9 @@ void good_pattern_should_send_rpl(Server& s)
     try {
         // init test
         TEST_SETUP(test, s, 3);
-        TcpSocket& soOp = *sockets.at(0);
-        TcpSocket& so   = *sockets.at(1);
-        TcpSocket& soOp2   = *sockets.at(2);
+        TcpSocket& soOp  = *sockets.at(0);
+        TcpSocket& so    = *sockets.at(1);
+        TcpSocket& soOp2 = *sockets.at(2);
         make_two_ops(soOp, soOp2);
         authenticate_and_join(so);
         recv_lines(soOp, "op");

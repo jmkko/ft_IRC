@@ -43,6 +43,7 @@ int main(int ac, char** av)
             functions["KICK"]    = &test_kick;
             functions["WHO"]     = &test_who;
             functions["JOIN"]    = &test_join;
+            functions["PASS"]    = &test_pass;
             functions["PRIVMSG"] = &test_privmsg;
             functions["PING"]    = &test_ping;
             functions["TOPIC"]   = &test_topic;
@@ -62,6 +63,7 @@ int main(int ac, char** av)
             test_who(*s, &results);
             test_mode(*s, &results);
             test_join(*s, &results);
+            test_pass(*s, &results);
             test_privmsg(*s, &results);
             test_kick(*s, &results);
             test_ping(*s, &results);

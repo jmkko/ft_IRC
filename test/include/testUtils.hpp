@@ -70,7 +70,9 @@ static const std::string& op2Nick      = "op2";
 static const std::string& channelName  = "#chan";
 static const std::string& channel2Name = "#chan2";
 
-static const std::string& validPassMsg = std::string("PASS ") + DEFAULT_PASSWORD + "\r\n";
+static const std::string& validPassMsg          = std::string("PASS ") + DEFAULT_PASSWORD + "\r\n";
+static const std::string& validPassWrongMsg     = std::string("PASS ") + "caramba" + "\r\n";
+static const std::string& invalidPassNoParamMsg = "PASS\r\n";
 
 static const std::string& validUserMsg             = "USER roro 0 * :realroro\r\n";
 static const std::string& validUser2Msg            = "USER toto 0 * :realtoto\r\n";
@@ -97,6 +99,7 @@ static const std::string& noSpecCharJoin         = "JOIN chan\r\n";
 static const std::string& toobigJoin             = "JOIN #chanllllllllllllllllllllllllllllllllllllllllllllllllll\r\n";
 
 static const std::string& validKickMsg                  = "KICK #chan roro\r\n";
+static const std::string& validKickReasonMsg            = "KICK #chan roro :please behave roro\r\n";
 static const std::string& validManyUsersKickMsg         = "KICK #chan roro,toto\r\n";
 static const std::string& validManyChansUsersKickMsg    = "KICK #chan,#chan2 roro,toto\r\n";
 static const std::string& invalidWrongChanKickMsg       = "KICK *chan roro\r\n";
@@ -156,12 +159,13 @@ static const std::string& invalidPrivmsgNoText          = "PRIVMSG #chan\r\n";
 static const std::string& invalidPrivmsgEmptyTrailing   = "PRIVMSG #chan :\r\n";
 static const std::string& validPrivmsgBlank             = "PRIVMSG #chan : \r\n";
 static const std::string& invalidPrivMsgSpaceAfterComma = "PRIVMSG roro, toto :hi\r\n";
-static const std::string& invalidPrivMsgInArg           = "PRIVMSG roro, toto hi\r\n";
+static const std::string& invalidPrivMsgInArg           = "PRIVMSG roro,toto hi\r\n";
 
 static const std::string& validTopic             = "TOPIC #chan new topic\r\n";
 static const std::string& validTopic2            = "TOPIC #chan new topic2\r\n";
 static const std::string& validTopicEmpty        = "TOPIC #chan\r\n";
 static const std::string& edgeTopicTrailing      = "TOPIC #chan :trailing\r\n";
+static const std::string& edgeTopicEmptyStr      = "TOPIC #chan :\r\n";
 static const std::string& invalidTopicNoParam    = "TOPIC\r\n";
 static const std::string& validTopicWrongChannel = "TOPIC $notvalid\r\n";
 // static const std::string& notAChannelMemberTopic	= "TOPIC #chan\r\n";
@@ -193,6 +197,7 @@ void test_motd(Server& s, t_results* r);
 void test_nick(Server& s, t_results* r);
 void test_who(Server& s, t_results* r);
 void test_privmsg(Server& s, t_results* r);
+void test_pass(Server& s, t_results* r);
 void test_ping(Server& s, t_results* r);
 void test_topic(Server& s, t_results* r);
 void test_user(Server& s, t_results* r);

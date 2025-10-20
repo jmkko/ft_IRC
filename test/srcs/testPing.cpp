@@ -68,6 +68,8 @@ void invalid_ping_should_err(Server& s)
 void test_ping(Server& s, t_results* r)
 {
     print_test_series("command PING");
+    print_test_series_part("common cases");
     run_test(r, [&] { valid_ping_should_pong(s); }, "ping");
+    print_test_series_part("error cases");
     run_test(r, [&] { invalid_ping_should_err(s); }, "no origin");
 }

@@ -175,7 +175,7 @@ void Join::execute(Server& server, Client& client)
             channel->remove_from_invited_list(client);
             if (channel->get_nb_members() == 1) { // if first and/or only user
                 channel->make_operator(client);   // --> make the client operator
-                rh.process_response(client, RPL_CHANNELMODEIS, chanName + " +o ");
+                rh.process_response(client, TRANSFER_MODE, chanName + " +o " + client.get_nickname());
             }
             send_list_of_names(rh, client, *channel); // send the list of names
             display_topic(rh, client, *channel);      // display the topic

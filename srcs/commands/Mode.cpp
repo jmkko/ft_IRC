@@ -137,13 +137,6 @@ Mode::~Mode() {}
  *		🛠️ FUNCTIONS											*
  *************************************************************/
 
-/**
- * @brief check business validity of args before adjusting modes
- * namely channel modes k/i/l/t and user mode o
- * if duplicate modes are present (as in +kk key1 key2) the last one prevails
- * @param server
- * @param client
- */
 void Mode::execute(Server& server, Client& client)
 {
     ReplyHandler&           rh = ReplyHandler::get_instance(&server);
