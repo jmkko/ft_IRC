@@ -1,5 +1,5 @@
-#ifndef BOT_REPLY_HPP
-#define BOT_REPLY_HPP
+#ifndef BOT_HPP
+#define BOT_HPP
 
 #include "Channel.hpp"
 #include "Client.hpp"

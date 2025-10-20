@@ -10,6 +10,7 @@
 
 #include <algorithm>
 #include <cstddef>
+#include <cstdarg>
 
 // Default constructor
 Parser::Parser(void) : rh(NULL), _server(NULL), _client(NULL), _isValidCommand(true) {}
@@ -151,70 +152,78 @@ bool Parser::correct_nickname(std::string& nickname)
 }
 
 // checking if nick exists
-Parser& Parser::is_such_nick(std::string& nickname, bool failCommandIfTrue)
+Parser& Parser::is_such_nick(std::string& nickname, bool failCommandIfFalse)
 {
     if (!_server->find_client_by_nickname(nickname)) {
         response(ERR_NOSUCHNICK, nickname);
-        if (failCommandIfTrue)
+        if (failCommandIfFalse)
             _isValidCommand = false;
     }
     return *this;
 }
 
 // checking if channel exists
-Parser& Parser::is_such_channel(std::string& channelName, bool failCommandIfTrue)
+Parser& Parser::is_such_channel(std::string& channelName, bool failCommandIfFalse)
 {
     if (_isValidCommand && !_server->find_channel_by_name (channelName)) {
         response(ERR_NOSUCHCHANNEL, channelName);
-        if (failCommandIfTrue)
+        if (failCommandIfFalse)
             _isValidCommand = false;
     }
     return *this;
 }
 
-Parser& Parser::is_channel_member(std::string& channelName, const std::string& nickname, bool failCommandIfTrue)
+Parser& Parser::is_channel_member(std::string& channelName, const std::string& nickname, bool failCommandIfFalse)
 {
     bool passedCheck = false;
+    LOG_DV_CMD(_isValidCommand);
+
     if (_isValidCommand)
     {
         Client* client = _server->find_client_by_nickname(nickname);
+        LOG_D_CMD("found nick", client->get_nickname());
+
         if (client)
         {
             Channel* c = _server->find_channel_by_name (channelName);
-            if (!c->is_member(*client))
+            LOG_DV_CMD(c->get_nb_members());
+            if (c->is_member(*client) == false)
+            {
+                LOG_W_CMD("not member", client->get_nickname());
                 response(ERR_NOTONCHANNEL, c->get_name());
+            }
             else
                 passedCheck = true;
         }
-    }
-    if (!passedCheck && failCommandIfTrue)
+    } 
+    if (!passedCheck && failCommandIfFalse)
         _isValidCommand = false;
     return *this;
 }
 
-Parser& Parser::has_no_more_than(std::vector<std::string>& vector, size_t max, bool failCommandIfTrue)
+Parser& Parser::has_no_more_than(std::vector<std::string>& vector, size_t max, bool failCommandIfFalse)
 {
     if (_isValidCommand && vector.size() <= max) 
     {
         response(ERR_TOOMANYTARGETS, vector.back());
-        if (failCommandIfTrue)
+        if (failCommandIfFalse)
             _isValidCommand = false;
     }
     return *this;
 }
 
-Parser& Parser::is_not_empty_arg(const std::string& arg, const std::string& commandName, bool failCommandIfTrue)
+Parser& Parser::is_not_empty_arg(const std::string& arg, const std::string& commandName, bool failCommandIfFalse)
 {
     if (_isValidCommand && arg.empty())
     {
-        response(ERR_TOOMANYTARGETS, commandName);
-        if (failCommandIfTrue)
+        response(ERR_NEEDMOREPARAMS, commandName);
+        if (failCommandIfFalse)
             _isValidCommand = false;
     }
     return *this;
 }
 
-Parser& Parser::is_valid_bot_subcommand(const std::string& subcommand, const std::string& cmdName, bool failCommandIfTrue)
+Parser& Parser::is_valid_bot_subcommand(const std::string& subcommand, const std::string& cmdName, bool failCommandIfFalse)
 {
     bool passedCheck = false;
     if (_isValidCommand)
@@ -229,12 +238,12 @@ Parser& Parser::is_valid_bot_subcommand(const std::string& subcommand, const std
         if (!passedCheck)
             response(CUSTOMERR_WRONG_FORMAT, subcommand);
     }
-    if (failCommandIfTrue & !passedCheck)
+    if (failCommandIfFalse & !passedCheck)
         _isValidCommand = false;
     return *this;
 }
 
-Parser& Parser::is_valid_bot_prompt(const std::string& prompt, const std::string& commandName, bool failCommandIfTrue)
+Parser& Parser::is_valid_bot_prompt(const std::string& prompt, const std::string& commandName, bool failCommandIfFalse)
 {
     bool passedCheck = true;
     if (_isValidCommand)
@@ -250,7 +259,7 @@ Parser& Parser::is_valid_bot_prompt(const std::string& prompt, const std::string
             }
         }
     }
-    if (failCommandIfTrue & !passedCheck)
+    if (failCommandIfFalse & !passedCheck)
         _isValidCommand = false;
     return *this;
 }

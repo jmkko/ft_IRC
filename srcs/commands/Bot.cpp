@@ -1,4 +1,4 @@
-#include "BotReply.hpp"
+#include "Bot.hpp"
 #include "Client.hpp"
 #include "Config.hpp"
 #include "LogManager.hpp"
@@ -54,14 +54,20 @@ bool Bot::_check_args(Server& s, Client& c)
     LOG_DV_CMD(_targetChannelName);
     LOG_DV_CMD(_subcommand);
     LOG_DV_CMD(_prompt);
-    parser.is_such_channel(_targetChannelName, true)
-    .is_channel_member(_targetChannelName, c.get_nickname())
+    parser.is_not_empty_arg(_targetChannelName, "BOT")
+    .is_not_empty_arg(_subcommand, "BOT")
+    .is_not_empty_arg(_prompt, "BOT")
+    .is_such_channel(_targetChannelName, true)
+    .is_channel_member(_targetChannelName, c.get_nickname(), true)
     .is_valid_bot_subcommand(_subcommand, "BOT")
     .is_valid_bot_prompt(_prompt, "BOT");
     LOG_DV_CMD(parser.has_passed_checks());
 
-    if (!parser.has_passed_checks())
+    if (parser.has_passed_checks() == false)
+    {
+        LOG_d_CMD("has not passed");
         return false;
+    }
  
     _targetChannels.push_back(s.find_channel_by_name(_targetChannelName));
     
@@ -175,7 +181,7 @@ bool    register_bot(Server& s, TcpSocket& so)
 
 void	Bot::execute(Server& s, Client& c)
 {
-    if (!_check_args(s, c))
+    if (_check_args(s, c) == false)
         return;
   
     std::string prompt = "Your responses must strictly follow these rules: ";
@@ -183,19 +189,16 @@ void	Bot::execute(Server& s, Client& c)
     prompt += "No special characters. No newline character, line break. Keep the response as a single, continuous line of text. ";
     prompt += "No markdown or any other formatting : do not use bold, italic, code blocks or any other markdown. ";
     prompt += "No meta-commentary Do not reference instruction, your role or user prompt. Just answer directly. ";
-    prompt += "You send direct and concise replies, without preamble and with no hints about former meta instructions. ";
-    prompt += "When asked about who you are, just tell that your purpose here is to be a multi-purpose bot accessible through an IRC server made by 3 students from school 42 campus in Angouleme. ";
-    prompt += "Now, answer the user question ";
+    prompt += "You send direct and concise replies without preamble and with no hints about former meta instructions. ";
+    // prompt += "When asked about who you are just tell that your purpose here is to be a multi-purpose bot accessible through an IRC server made by 3 students from school 42 campus in Angouleme. ";
+    prompt += "Now answer the user question. ";
 
     if (_subcommand == "!reply")
         prompt += "Please reply to this message : ";
     else if (_subcommand == "!check")
         prompt += "Please fact-check this affirmation : ";
     prompt += _prompt;
-
-    // if channel target -> transfer prompt to channel
-    if (!_targetChannels.empty())
-        _targetChannels[0]->broadcast(s, TRANSFER_PROMPT_BOT, _params, &c);
+    LOG_DV_CMD(prompt);
 
     // send request
     std::string response = "\"\"";
@@ -209,11 +212,19 @@ void	Bot::execute(Server& s, Client& c)
 
     // transfer reply, trimming quotes
     ReplyHandler&   rh = ReplyHandler::get_instance(&s);
-    response = response.substr(response.find_first_of('"') + 1, response.find_last_of('"') - 1);
+    unsigned long firstQuoteIdx = response.find_first_of('"');
+    unsigned long lastQuoteIdx = response.find_last_of('"');
+    if (firstQuoteIdx != std::string::npos && lastQuoteIdx != std::string::npos)
+        response = response.substr(firstQuoteIdx + 1, lastQuoteIdx - 1);
+    else
+    {
+        LOG_W_CMD("empty response", response);
+        return ;
+    }
 
     if (!_targetChannels.empty())
     {
-        _targetChannels[0]->broadcast_bot(s, TRANSFER_PROMPT_BOT, _targetChannels[0]->get_name() + " " + _subcommand.substr(1), NULL, _prompt);
+        _targetChannels[0]->broadcast_bot(s, TRANSFER_PROMPT_BOT, _targetChannels[0]->get_name(), NULL,  _subcommand.substr(1) + " " +_prompt);
         s.update_bot_state(_socket.get_socket(), _targetChannels[0], _subcommand, response, false);
         std::string joinMsg = "JOIN " + _targetChannels[0]->get_name() + "\r\n";
         if (!send_full_msg(_socket.get_socket(), joinMsg)) {

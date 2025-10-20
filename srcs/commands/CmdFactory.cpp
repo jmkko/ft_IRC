@@ -1,6 +1,6 @@
 #include "CmdFactory.hpp"
 
-#include "BotReply.hpp"
+#include "Bot.hpp"
 #include "Client.hpp"
 #include "ICommand.hpp"
 #include "Invite.hpp"

@@ -8,6 +8,7 @@
 
 #define MAX_TRIES_MOTD         10
 #define SERVER_PROCESS_TIME_MS 10
+#define SERVER_BOT_WAIT_MS     8000
 #define SERVER_SEND_WAIT_MS    15
 #define SERVER_MOTD_WAIT_MS    50
 #define SERVER_START_WAIT_MS   50
@@ -198,6 +199,7 @@ void test_nick(Server& s, t_results* r);
 void test_who(Server& s, t_results* r);
 void test_privmsg(Server& s, t_results* r);
 void test_pass(Server& s, t_results* r);
+void test_bot(Server& s, t_results* r);
 void test_ping(Server& s, t_results* r);
 void test_topic(Server& s, t_results* r);
 void test_user(Server& s, t_results* r);

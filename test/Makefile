@@ -39,6 +39,7 @@ SRCS_FILES		:= 	main.cpp\
 					ServerRunner.cpp\
 					sequences.cpp\
 					TestFixture.cpp\
+					testBot.cpp\
 					testKick.cpp\
 					testMode.cpp\
 					testMotd.cpp\
