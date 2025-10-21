@@ -45,6 +45,7 @@ SRCS			:=	srcs/main.cpp\
 					srcs/commands/Who.cpp\
 					srcs/commands/Invite.cpp\
 					srcs/commands/Topic.cpp\
+					srcs/commands/Part.cpp\
 					srcs/server/ReplyHandler.cpp\
 					srcs/parsing/Parser.cpp\
 
@@ -109,7 +110,7 @@ $(OBJ_DIRS) :
 	@mkdir -p logs
 
 asan : all
-@ASAN_OPTIONS=detect_leaks=1:log_path=logs/asan.log:atexit_print_stats=true ./ircserv 9999 password
+	@echo"ASAN_OPTIONS=detect_leaks=1:log_path=logs/asan.log:atexit_print_stats=true ./ircserv 9999 password"
 
 forminette:
 	@echo "$(YELLOW)=== Checking code format ===$(NOC)"

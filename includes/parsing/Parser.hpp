@@ -20,10 +20,13 @@ class Parser
     ~Parser();
     Parser(Server& server, Client& client);
 
+	Server* get_server();
+	Client* get_client();
+
 	typedef bool (Parser::*Checker)(std::string&);
     std::string format_parameter(std::string& params, Checker function);
 
-	std::vector<std::string> convert_to_vector(std::string& params);
+	std::vector<std::string> to_vector(std::string& params);
 	std::map<std::string, std::string> to_map(std::string& key, std::string& value);
 
 	bool correct_password(std::string& password);
@@ -32,8 +35,10 @@ class Parser
     bool correct_channel(std::string& name);
     bool correct_key(std::string& key);
 
-	size_t count_parameter(const std::string& params);
+	size_t count_params(const std::string& argument);
 	bool response(ReplyCode code, const std::string& params  = "", const std::string& trailing = "");
+	bool response(Client* dest, ReplyCode code, const std::string& params  = "", const std::string& trailing = "");
+	bool response(Client* dest, Client* author, ReplyCode code, const std::string& params  = "", const std::string& trailing = "");
     ReplyHandler* rh;
 
   private:

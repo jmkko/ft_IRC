@@ -12,9 +12,7 @@ class Client;
 class User : public ICommand
 {
   public:
-    User(void);
-    User(const std::string& username, const std::string& realname);
-    User(const User& other);
+    User(std::string& params);
     ~User();
 
     User& operator=(const User& other);
@@ -24,7 +22,11 @@ class User : public ICommand
 
   private:
     std::string _username;
+	std::string _mode;
+	std::string _unused;
     std::string _realname;
+    User(const User& other);
+    User(void);
 };
 
 #endif
