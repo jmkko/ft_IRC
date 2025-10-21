@@ -30,9 +30,9 @@ class Join : public ICommand
     Join(std::string& params);
     ~Join();
 
-    void             execute(Server& s, Client& c);
-    void             send_list_of_names(ReplyHandler& rh, Client& client, Channel& channel);
-    void             display_topic(ReplyHandler& rh, Client& client, Channel& channel);
+    void execute(Server& s, Client& c);
+    void send_list_of_names(ReplyHandler& rh, Client& client, Channel& channel);
+    void display_topic(ReplyHandler& rh, Client& client, Channel& channel);
 
   private:
     std::map<std::string, std::string> _chans;

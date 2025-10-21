@@ -80,6 +80,8 @@ class Client
      * @return Socket (an int reprenting socket file descriptor)
      */
     Socket get_socket() const;
+
+    TcpSocket& get_tcp_socket();
     /**
      * @brief Get the address object
      *

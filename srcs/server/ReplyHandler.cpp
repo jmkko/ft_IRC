@@ -140,6 +140,10 @@ static std::string generate_non_numerical_response(
         return (get_user_id_of(*sender) + "MODE" + separatedParams);
     case TRANSFER_TOPIC:
         return (get_user_id_of(*sender) + "TOPIC" + separatedParams + trailingMessage);
+    case TRANSFER_PROMPT_BOT:
+        return (get_user_id_of(*sender) + "PRIVMSG" + separatedParams + trailingMessage);
+    case TRANSFER_REPLY_BOT:
+        return "bot@" + ircConfig.get_name() + " " + "PRIVMSG" + separatedParams + trailingMessage;
     case TRANSFER_PART:
         return (get_user_id_of(*sender) + "PART" + separatedParams + trailingMessage);
     case MSG_PING:

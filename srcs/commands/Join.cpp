@@ -2,12 +2,13 @@
 
 #include "Channel.hpp"
 #include "LogManager.hpp"
+#include "Parser.hpp"
 #include "ReplyHandler.hpp"
 #include "Server.hpp"
 #include "consts.hpp"
 #include "reply_codes.hpp"
 #include "utils.hpp"
-#include "Parser.hpp"
+
 #include <bitset>
 
 /******************************************************************************
@@ -32,12 +33,12 @@ Join& Join::operator=(const Join& other)
  */
 Join::Join(std::string& params)
 {
-	Parser parser;
+    Parser parser;
 
-	std::string channels = parser.format_parameter(params, NULL);
-	std::string keys = parser.format_parameter(params, NULL);
+    std::string channels = parser.format_parameter(params, NULL);
+    std::string keys     = parser.format_parameter(params, NULL);
 
-	_chans = parser.to_map(channels, keys);
+    _chans = parser.to_map(channels, keys);
 }
 
 /******************************************************************************
@@ -94,33 +95,32 @@ void Join::display_topic(ReplyHandler& rh, Client& client, Channel& channel)
  */
 void Join::execute(Server& server, Client& client)
 {
-	Parser p(server, client);
-    ReplyCode                                    replyCode = CORRECT_FORMAT;
+    Parser    p(server, client);
+    ReplyCode replyCode = CORRECT_FORMAT;
 
     LOG_CMD.debug("Join.cpp execute()");
-	if (_chans.empty()) {
-		p.response(ERR_NEEDMOREPARAMS, "JOIN");
-	}
+    if (_chans.empty()) {
+        p.response(ERR_NEEDMOREPARAMS, "JOIN");
+    }
     for (std::map<std::string, std::string>::iterator it = _chans.begin(); it != _chans.end(); ++it) {
         std::string chanName = it->first;
         std::string chanKey  = it->second;
-		if (!p.correct_channel(chanName)) {
-			continue;
-		}
-        Channel*    channel  = server.find_channel_by_name(chanName);
+        if (!p.correct_channel(chanName)) {
+            continue;
+        }
+        Channel* channel = server.find_channel_by_name(chanName);
         if (!channel) {
-			if (!p.correct_key(chanKey))
-				chanKey.clear();
-            channel = new Channel(chanName, chanKey); 
+            if (!p.correct_key(chanKey))
+                chanKey.clear();
+            channel                   = new Channel(chanName, chanKey);
             server.channels[chanName] = channel;
             LOG_I_CMD("#️⃣ New channel", channel->get_name());
-        } else if ((channel->get_mode() & CHANMODE_KEY)
-                   && (chanKey != channel->get_key())) { 
-            p.response(ERR_BADCHANNELKEY, chanName); 
+        } else if ((channel->get_mode() & CHANMODE_KEY) && (chanKey != channel->get_key())) {
+            p.response(ERR_BADCHANNELKEY, chanName);
             continue;
         }
         replyCode = channel->add_member(client);
-        if (replyCode == CORRECT_FORMAT) { 
+        if (replyCode == CORRECT_FORMAT) {
             LOG_CONN.info(client.get_nickname() + " joined channel: " + chanName);
             p.response(TRANSFER_JOIN, chanName);
             channel->broadcast(server, TRANSFER_JOIN, chanName, &client);
@@ -128,9 +128,10 @@ void Join::execute(Server& server, Client& client)
             if (channel->get_nb_members() == 1) {
                 channel->make_operator(client);
                 p.response(RPL_CHANNELMODEIS, chanName + " +o ");
-                //rh.process_response(client, TRANSFER_MODE, chanName + " +o " + client.get_nickname());  <-- merge changements ?? why ??
+                // rh.process_response(client, TRANSFER_MODE, chanName + " +o " + client.get_nickname());  <-- merge changements
+                // ?? why ??
             }
-            send_list_of_names(*p.rh, client, *channel); 
+            send_list_of_names(*p.rh, client, *channel);
             display_topic(*p.rh, client, *channel);
         } else {
             p.response(replyCode, chanName);

@@ -3,6 +3,7 @@
 #include "Channel.hpp"
 #include "Config.hpp"
 #include "LogManager.hpp"
+#include "TcpSocket.hpp"
 #include "consts.hpp"
 #include "utils.hpp"
 
@@ -51,6 +52,8 @@ void Client::append_to_read_buffer(const std::string& msg) { _readBuffer += msg;
  *************************************************************/
 
 Socket             Client::get_socket() const { return _socket.get_socket(); }
+
+TcpSocket&         Client::get_tcp_socket() { return _socket; }
 
 const std::string& Client::get_address() const { return _addrStr; }
 

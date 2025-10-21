@@ -1,9 +1,10 @@
+#include "Mode.hpp"
+
 #include "Channel.hpp"
 #include "Client.hpp"
 #include "Config.hpp"
 #include "LogManager.hpp"
 #include "Logger.hpp"
-#include "Mode.hpp"
 #include "ReplyHandler.hpp"
 #include "Server.hpp"
 #include "consts.hpp"
@@ -154,8 +155,11 @@ void Mode::execute(Server& server, Client& client)
         if (it == server.channels.end()) {
             rh.process_response(client, ERR_NOSUCHCHANNEL, channelName);
             return;
-        } else
+        } else {
             channel = it->second;
+            if (!channel)
+                return;
+        }
     } else {
         rh.process_response(client, ERR_NEEDMOREPARAMS, "MODE");
         return;
@@ -165,9 +169,9 @@ void Mode::execute(Server& server, Client& client)
         rh.process_response(client, ERR_NEEDMOREPARAMS, "MODE");
         return;
     }
-    unsigned short currentModes = channel->get_mode();
     // MODE #chan1 with no other args
     if (channel && modeQueue.empty() && paramsQueue.empty()) {
+        unsigned short currentModes = channel->get_mode();
         LOG_d_CMD("only Chan param");
         std::string modeIsReply = channel->get_name();
         modeIsReply += get_modes(currentModes, channel);

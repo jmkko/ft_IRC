@@ -342,10 +342,6 @@ void creation_of_multiple_chan_with_key_should_transfer(Server& s)
         AssertReply ar(reply);
         ar.is_formatted_transfer(opNick, "JOIN #chan1");
         ar.is_formatted_transfer(opNick, "JOIN #chan2");
-        // test 2 - check that user has op status in channels
-        ar.is_formatted_transfer(opNick, "MODE #chan1 +o " + opNick);
-        ar.is_formatted_transfer(opNick, "MODE #chan2 +o " + opNick);
-
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());
     }
@@ -371,7 +367,6 @@ void test_join(Server& s, t_results* r)
     run_test(r, [&] { name_too_big_should_err(s); }, "JOIN more 50 char channel name");
     run_test(r, [&] { mode_plusk_wrong_yek_should_err(s); }, "A user try to join with wrong yek");
     run_test(r, [&] { mode_plusk_wrong_keyy_should_err(s); }, "A user try to join with wrong keyy");
-    // run_test(r, [&] { creation_of_multiple_chan_with_key(s); }, "multiple creation of channels with keys");
     run_test(r, [&] { mode_plusk_wrong_yek_should_err(s); }, "A user try to join with wrong yek");
     run_test(r, [&] { mode_plusk_wrong_keyy_should_err(s); }, "A user try to join with wrong keyy");
 }

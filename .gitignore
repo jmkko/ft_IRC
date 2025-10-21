@@ -1,8 +1,12 @@
+# bot
+llama_response.txt
+
+# logger
 logs/*
-docs/*
 
 # doxygen
 doxygen-warnings.log
+docs/*
 
 # analysis
 .cache

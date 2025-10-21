@@ -36,6 +36,7 @@ CompileFlags:
     - -Iincludes/channels
     - -Iincludes/clients
     - -Iincludes/commands
+    - -Iincludes/parsing
     - -Iincludes/server
     - -Itest/include
     - -Iclients

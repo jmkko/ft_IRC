@@ -49,6 +49,7 @@ int main(int ac, char** av)
             functions["TOPIC"]   = &test_topic;
             functions["MOTD"]    = &test_motd;
             functions["USER"]    = &test_user;
+            functions["BOT"]    = &test_bot;
 
             // functions[av[1]](*s, &results);
             std::string                                                    key(av[1]);
@@ -69,6 +70,7 @@ int main(int ac, char** av)
             test_ping(*s, &results);
             test_topic(*s, &results);
             test_motd(*s, &results);
+            test_bot(*s, &results);
         }
 
         LOG_TEST.info("All tests completed, stopping server...");

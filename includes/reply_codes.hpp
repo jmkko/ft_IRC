@@ -5,27 +5,32 @@
 enum ReplyCode {
 
     ////////////////////// NON RFC
-    CORRECT_FORMAT = 0, // internal logic
     // RPL_NOTICE  = 101,
     // RPL_PASS    = 201,
     // RPL_USER    = 210,
-    TRANSFER_INVITE  = 202,
-    TRANSFER_JOIN    = 203,
-    TRANSFER_NICK    = 204,
-    TRANSFER_KICK    = 205,
-    TRANSFER_PRIVMSG = 206,
-    TRANSFER_MODE    = 207,
-    TRANSFER_QUIT    = 208,
-    MSG_PING         = 209,
-    TRANSFER_TOPIC   = 210,
-    TRANSFER_PART   = 211,
-    PROCESSED_ERROR  = 806,
+    TRANSFER_INVITE     = 202,
+    TRANSFER_JOIN       = 203,
+    TRANSFER_NICK       = 204,
+    TRANSFER_KICK       = 205,
+    TRANSFER_PRIVMSG    = 206,
+    TRANSFER_MODE       = 207,
+    TRANSFER_QUIT       = 208,
+    MSG_PING            = 209,
+    TRANSFER_TOPIC      = 210,
+    TRANSFER_PART       = 211,
+    TRANSFER_PROMPT_BOT = 118,
+    TRANSFER_REPLY_BOT  = 218,
+    //////////////////////  internal logic
+    CORRECT_FORMAT  = 0,
+    PROCESSED_ERROR = 806,
 
     // SERVER_ERR          = 801,
     // FORMAT_ERR          = 802,
     // PWD_ERR             = 803,
 
-    //////////////////////  numerical errors
+    //////////////////////  numerical custom replies
+    CUSTOMRPL_BOT = 600, // no use for now
+    //////////////////////  numerical custom errors
     CUSTOMERR_WRONG_FORMAT = 705,
 
     ////////////////////// RFC REPLIES (with code defined by RFC)

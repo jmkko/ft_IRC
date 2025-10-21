@@ -1,7 +1,8 @@
 #include "Invite.hpp"
 
-#include "reply_codes.hpp"
 #include "Parser.hpp"
+#include "reply_codes.hpp"
+
 #include <sstream>
 
 /******************************************************************************
@@ -20,12 +21,13 @@ Invite& Invite::operator=(const Invite& other)
     return (*this);
 }
 
-Invite::Invite(std::string& params) {
+Invite::Invite(std::string& params)
+{
 
-	Parser parser;
+    Parser parser;
 
-	_nickname = parser.format_parameter(params, NULL);
-	_channelName = parser.format_parameter(params, NULL);
+    _nickname    = parser.format_parameter(params, NULL);
+    _channelName = parser.format_parameter(params, NULL);
 }
 
 /******************************************************************************
@@ -47,12 +49,12 @@ Invite::Invite(std::string& params) {
  */
 void Invite::execute(Server& server, Client& client)
 {
-	Parser 				p(server, client);
+    Parser p(server, client);
 
     if (_channelName.empty() || _nickname.empty()) {
         p.response(ERR_NEEDMOREPARAMS, "JOIN");
-		return ;
-	}
+        return;
+    }
     Client*  target  = server.find_client_by_nickname(_nickname);
     Channel* channel = server.find_channel_by_name(_channelName);
     if (!target) {
@@ -66,8 +68,8 @@ void Invite::execute(Server& server, Client& client)
     } else if (channel->is_invite_only() && !channel->is_operator(client)) {
         p.response(ERR_CHANOPRIVSNEEDED, _channelName);
     } else {
-		channel->invite_client(*target);
-		p.response(RPL_INVITING, _nickname + " " + _channelName);
-		p.response(target, &client, TRANSFER_INVITE, _nickname, _channelName);
-	}
+        channel->invite_client(*target);
+        p.response(RPL_INVITING, _nickname + " " + _channelName);
+        p.response(target, &client, TRANSFER_INVITE, _nickname, _channelName);
+    }
 }

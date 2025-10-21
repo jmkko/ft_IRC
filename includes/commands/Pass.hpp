@@ -32,7 +32,7 @@ class Pass : public ICommand
      */
     Pass(void);
 
-	Pass(std::string& params);
+    Pass(std::string& params);
     /**
      * @brief Destroy the Pass object
      *
@@ -41,7 +41,7 @@ class Pass : public ICommand
     /**
      * @brief updates client status to #AUTHENTICATED
      *
-	 * checks validity of params
+     * checks validity of params
      * @details perform syntaxic check
      * - one password is given
      * performs other checks
@@ -53,15 +53,15 @@ class Pass : public ICommand
      * @return ReplyCode
      * @warning can return ERR_NEEDMOREPARAMS, ERR_ALREADYREGISTRED, ERR_PASSWDMISMATCH
 
-	 *
-	 *
+     *
+     *
      * @param server
      * @param client
      */
     void execute(Server& server, Client& client);
 
   private:
-	std::string _pass;
+    std::string _pass;
 
     Pass(const Pass& other);
     Pass& operator=(const Pass& other);

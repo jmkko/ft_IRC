@@ -32,6 +32,7 @@ SRCS			:=	srcs/main.cpp\
 					srcs/server/Logger.cpp \
 					srcs/server/LogManager.cpp\
 					srcs/commands/CmdFactory.cpp\
+					srcs/commands/Bot.cpp\
 					srcs/commands/Kick.cpp\
 					srcs/commands/Mode.cpp\
 					srcs/commands/Motd.cpp\

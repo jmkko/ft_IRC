@@ -69,7 +69,7 @@ void test_ping(Server& s, t_results* r)
 {
     print_test_series("command PING");
     print_test_series_part("common cases");
-    run_test(r, [&] { valid_ping_should_pong(s); }, "ping");
+    run_test(r, [&] { valid_ping_should_pong(s); }, "PING");
     print_test_series_part("error cases");
-    run_test(r, [&] { invalid_ping_should_err(s); }, "no origin");
+    run_test(r, [&] { invalid_ping_should_err(s); }, "PING no origin");
 }

@@ -70,12 +70,12 @@ class Privmsg : public ICommand
     void execute(Server& server, Client& client);
 
   private:
-	std::vector<std::string> _targets;
-	std::string				 _message;
-    std::string           _params;
-    std::string           _msg;
-    std::vector<Channel*> _chans;
-    std::vector<Client*>  _dests;
+    std::vector<std::string> _targets;
+    std::string              _message;
+    std::string              _params;
+    std::string              _msg;
+    std::vector<Channel*>    _chans;
+    std::vector<Client*>     _dests;
 
     Privmsg(void);
     Privmsg(const Privmsg& other);

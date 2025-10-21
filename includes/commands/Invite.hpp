@@ -55,8 +55,8 @@ class Invite : public ICommand
     void execute(Server& server, Client& client);
 
   private:
-	std::string _nickname;
-	std::string _channelName;
+    std::string _nickname;
+    std::string _channelName;
     Invite();
     Invite(const Invite& other);
     Invite& operator=(const Invite& other);

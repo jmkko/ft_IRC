@@ -15,9 +15,9 @@
 Pass::Pass(void) {}
 Pass::Pass(std::string& params)
 {
-	Parser parser;
+    Parser parser;
 
-	_pass = parser.format_parameter(params, NULL);
+    _pass = parser.format_parameter(params, NULL);
 }
 Pass::~Pass(void) {}
 
@@ -27,16 +27,16 @@ Pass::~Pass(void) {}
 
 void Pass::execute(Server& server, Client& client)
 {
-	Parser p(server, client);
+    Parser p(server, client);
 
     if (_pass.empty()) {
         p.response(ERR_NEEDMOREPARAMS, "PASS");
     } else if (client.is_registered()) {
         p.response(ERR_ALREADYREGISTRED);
-	} else if (server.get_password() != _pass) {
+    } else if (server.get_password() != _pass) {
         p.response(ERR_PASSWDMISMATCH);
-	} else {
-		client.set_status(AUTHENTICATED);
-		LOG_I_CMD("AUTHENTICATED", client);
-	}
+    } else {
+        client.set_status(AUTHENTICATED);
+        LOG_I_CMD("AUTHENTICATED", client);
+    }
 }
