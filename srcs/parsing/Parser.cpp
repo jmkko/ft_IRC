@@ -344,3 +344,11 @@ std::string Parser::from_trailing(std::string& params)
 }
 
 bool Parser::has_passed_checks() const { return _isValidCommand; }
+
+Server* Parser::get_server() {
+	return _server;
+}
+
+Client* Parser::get_client() {
+	return _client;
+}

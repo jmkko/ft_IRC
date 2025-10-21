@@ -17,6 +17,7 @@ enum ReplyCode {
     TRANSFER_QUIT       = 208,
     MSG_PING            = 209,
     TRANSFER_TOPIC      = 210,
+    TRANSFER_PART       = 211,
     TRANSFER_PROMPT_BOT = 118,
     TRANSFER_REPLY_BOT  = 218,
     //////////////////////  internal logic

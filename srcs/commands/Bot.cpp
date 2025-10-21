@@ -10,6 +10,7 @@
 #include "reply_codes.hpp"
 #include "utils.hpp"
 
+#include <algorithm>
 #include <asm-generic/socket.h>
 #include <cerrno>
 #include <cstddef>
@@ -87,15 +88,28 @@ void add_key_val(std::string& command, const std::string& key, const std::string
     command += '"' + key + "\": " + '"' + value + "\",";
 }
 
+void remove_invalid_prompt_char(char& c)
+{
+    if (c == '\'' || c == '"' || c == '*' || c == ';' || c == '|')
+        c = ' ';
+}
+
 static void send_ollama_request(const std::string& prompt, std::string& response)
 {
     // build curl request
-    std::string command = "curl -X POST -H \"Content-Type: application/json\" -v localhost:11434/api/generate -d '{";
-    add_key_val(command, "model", "gemma3:1b");
-    add_key_val(command, "prompt", prompt);
-    add_key_val_bool(command, "stream", false);
-    command[command.length() - 1] = '}';
-    command += "' | jq \'.response\' ";
+std::string command = "curl -X POST -H \"Content-Type: application/json\" -v localhost:11434/api/generate -d '";
+command += "{\"model\": \"gemma3:1b\",\"prompt\":\"";
+command += prompt;
+command += "\",\"options\": {\"temperature\": 0.99,\"top_p\": 0.8},\"stream\": false}";
+command += "'";
+
+    // add_key_val(command, "model", "gemma3:1b");
+    // add_key_val(command, "prompt", prompt);
+    // command += std::string("\"options\":{\"temperature\":0.1,\"top_p\":0.2},");
+    // add_key_val_bool(command, "stream", false);
+    // command[command.length() - 1] = '}';
+    command += " | jq \'.response\' ";
+    // command += "' | jq \'.response\' ";
     command += " > llama_response.txt";
     LOG_d_CMD(command);
 
@@ -190,12 +204,12 @@ void Bot::execute(Server& s, Client& c)
     // prompt += "When asked about who you are just tell that your purpose here is to be a multi-purpose bot accessible through an
     // IRC server made by 3 students from school 42 campus in Angouleme. ";
     prompt += "Now answer the user question. ";
-
     if (_subcommand == "!reply")
         prompt += "Please reply to this message : ";
     else if (_subcommand == "!check")
         prompt += "Please fact-check this affirmation : ";
     prompt += _prompt;
+    std::for_each(prompt.begin(), prompt.end(), remove_invalid_prompt_char);
     LOG_DV_CMD(prompt);
 
     // send request
