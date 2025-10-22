@@ -1,8 +1,7 @@
-#include "Quit.hpp"
-
 #include "Client.hpp"
 #include "Config.hpp"
 #include "LogManager.hpp"
+#include "Quit.hpp"
 #include "ReplyHandler.hpp"
 #include "Server.hpp"
 #include "consts.hpp"
@@ -39,7 +38,7 @@ void Quit::execute(Server& server, Client& client)
     LOG_DTV_CMD(pfdIndex);
     std::string trailingMsg = _quitMsg;
     if (trailingMsg.empty())
-        trailingMsg = ircCodes.trailing(TRANSFER_QUIT);
+        trailingMsg = ircConfig.trailing(TRANSFER_QUIT);
     client.broadcast_to_all_channels(server, TRANSFER_QUIT, "", trailingMsg);
     // usleep(SLEEP_FOR_BROADCAST_MS);
     server.add_events_of(client, 0);

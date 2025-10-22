@@ -1,6 +1,6 @@
-#include "Motd.hpp"
-
+#include "Config.hpp"
 #include "LogManager.hpp"
+#include "Motd.hpp"
 #include "Parser.hpp"
 // #include "ReplyHandler.hpp"
 #include "consts.hpp"
@@ -11,10 +11,12 @@
 #include <ctime>
 #include <fstream>
 #include <iomanip>
+#include <iostream>
 #include <limits.h>
 #include <ostream>
 #include <sstream>
 #include <unistd.h>
+#include <vector>
 
 /************************************************************
  *		🥚 CONSTRUCTORS & DESTRUCTOR						*
@@ -29,20 +31,15 @@ Motd::~Motd() {}
 
 void Motd::execute(Server& server, Client& client)
 {
-    std::string   line, newline;
-    std::ifstream inputFile;
-    Parser        p(server, client);
+    std::string              line, newline;
+    std::vector<std::string> motd = ircConfig.get_motd();
+    Parser                   p(server, client);
 
-    const char* filename = MOTD_FILE;
-#ifdef TEST
-    filename = MOTD_FILE_FOR_TEST;
-#endif
-
-    inputFile.open(filename);
-    if (inputFile.is_open()) {
+    if (!motd.empty()) {
         std::string nick = client.get_nickname();
         p.response(RPL_MOTDSTART, "", "- " + server.get_name() + " message of the day -");
-        while (getline(inputFile, line)) {
+        for (std::vector<std::string>::iterator it = motd.begin(); it != motd.end(); it++) {
+            line    = *it;
             newline = _str_replace(line, "$(servername)", server.get_name());
             newline = _str_replace(newline, "$(nick)", nick);
             newline = _str_replace(newline, "$(date)", _get_current_time());
@@ -51,10 +48,9 @@ void Motd::execute(Server& server, Client& client)
         }
         p.response(RPL_ENDOFMOTD);
     } else {
-        LOG_w_CMD(strerror(errno));
+        LOG_w_CMD("Empty Motd");
         p.response(ERR_NOMOTD);
     }
-    inputFile.close();
 }
 
 std::string Motd::_str_replace(const std::string& str, const std::string& find, const std::string& replace)

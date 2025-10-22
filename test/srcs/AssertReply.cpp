@@ -1,6 +1,5 @@
-#include "AssertReply.hpp"
-
 #include "AssertFail.hpp"
+#include "AssertReply.hpp"
 #include "Config.hpp"
 #include "LogManager.hpp"
 #include "consts.hpp"
@@ -123,10 +122,10 @@ AssertReply& AssertReply::has_code(ReplyCode code)
             break;
         }
     }
-    const std::string& expectedCodeStr = ircCodes.str(code);
+    const std::string& expectedCodeStr = ircConfig.str(code);
     std::string        actualCodeStr   = std::string("");
     if (!actual.empty())
-        actualCodeStr = ircCodes.str(static_cast<ReplyCode>(std::atoi(actual.c_str())));
+        actualCodeStr = ircConfig.str(static_cast<ReplyCode>(std::atoi(actual.c_str())));
     if (!isMatching)
         throw AssertFail(
             "code", std::string(oss.str()) + " [" + expectedCodeStr + "]", std::string(actual) + " [" + actualCodeStr + "]");
@@ -248,7 +247,7 @@ AssertReply&
 AssertReply::is_formatted(ReplyCode code, const std::string& clientNick, const std::string& params, const std::string& trailing)
 {
     std::string        trailingMessage{}, separatedParams{};
-    const std::string& defaultTrailing = ircCodes.trailing(code);
+    const std::string& defaultTrailing = ircConfig.trailing(code);
 
     if (!trailing.empty()) {
         trailingMessage = " :" + trailing;
