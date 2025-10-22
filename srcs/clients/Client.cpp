@@ -3,6 +3,7 @@
 #include "Channel.hpp"
 #include "Config.hpp"
 #include "LogManager.hpp"
+#include "Part.hpp"
 #include "TcpSocket.hpp"
 #include "consts.hpp"
 #include "utils.hpp"
@@ -105,6 +106,16 @@ void 				Client::remove_from_all_channels()
 	for (std::map<std::string, Channel*>::iterator it = _joinedChannels.begin(); it != _joinedChannels.end(); ++it)
 	{
 		it->second->remove_member(*this);
+	}
+	_joinedChannels.clear();
+}
+void 				Client::part_all_channels(Server& server, Client& client)
+{
+	for (std::map<std::string, Channel*>::iterator it = _joinedChannels.begin(); it != _joinedChannels.end(); ++it)
+	{
+		std::string params = static_cast<std::string>(it->second->get_name());
+		Part doPart(params);
+		doPart.execute(server,client);
 	}
 	_joinedChannels.clear();
 }

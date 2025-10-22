@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Parser.cpp                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jhervoch <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/10/22 10:25:15 by jhervoch          #+#    #+#             */
+/*   Updated: 2025/10/22 10:25:17 by jhervoch         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "Parser.hpp"
 
 #include "Config.hpp"
@@ -91,10 +103,10 @@ bool Parser::correct_channel(std::string& name)
             return response(ERR_BADCHANMASK, name);
         }
     }
-    if (!Utils::is_char_of(static_cast<unsigned char>(name[0]), "#&+!")) {
+    if (!Utils::is_char_of(static_cast<unsigned char>(name[0]), "#&+!0")) {
         return response(ERR_BADCHANMASK, name);
     }
-    if (name.length() <= 1 || name.length() >= ircConfig.get_chan_name_max_len()) {
+    if (name.length() < 1 || name.length() >= ircConfig.get_chan_name_max_len()) {
         return response(ERR_BADCHANMASK, name);
     }
 
@@ -140,7 +152,7 @@ bool Parser::correct_key(std::string& key)
 // for a new nickname
 bool Parser::correct_nickname(std::string& nickname)
 {
-    bool 			invalidChar = false;
+    bool invalidChar = false;
 
     if (nickname.empty()) {
         return response(ERR_NONICKNAMEGIVEN);
@@ -345,10 +357,6 @@ std::string Parser::from_trailing(std::string& params)
 
 bool Parser::has_passed_checks() const { return _isValidCommand; }
 
-Server* Parser::get_server() {
-	return _server;
-}
+Server* Parser::get_server() { return _server; }
 
-Client* Parser::get_client() {
-	return _client;
-}
+Client* Parser::get_client() { return _client; }

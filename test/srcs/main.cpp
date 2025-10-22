@@ -77,58 +77,58 @@ int main(int ac, char** av)
         runner.stop();
         delete s; // NOLINT(cppcoreguidelines-owning-memory)
 
-        // if (chmod(SERVER_CONF_FILE_FOR_TEST, 000) != 0) {
-        //     throw std::runtime_error(TO_STRING("error changing rights ") + strerror(errno));
-        // }
-        // Server*      s2 = new Server(TEST_PORT, DEFAULT_PASSWORD);
-        // ServerRunner runner2(*s2);
-        // runner2.start();
-        //
-        // // Run second command tests
-        // LOG_TEST.info("Running test suite without conf file...");
-        //
-        // if (ac != 1) {
-        //     std::map<std::string, void (*)(Server&, t_results*)> functions;
-        //
-        //     functions["MODE"]    = &test_mode;
-        //     functions["NICK"]    = &test_nick;
-        //     functions["KICK"]    = &test_kick;
-        //     functions["WHO"]     = &test_who;
-        //     functions["JOIN"]    = &test_join;
-        //     functions["PASS"]    = &test_pass;
-        //     functions["PRIVMSG"] = &test_privmsg;
-        //     functions["PING"]    = &test_ping;
-        //     functions["TOPIC"]   = &test_topic;
-        //     functions["MOTD"]    = &test_motd;
-        //     functions["USER"]    = &test_user;
-        //     functions["BOT"]     = &test_bot;
-        //
-        //     // functions[av[1]](*s, &results);
-        //     std::string                                                    key(av[1]);
-        //     std::map<std::string, void (*)(Server&, t_results*)>::iterator it = functions.find(key);
-        //     if (it != functions.end())
-        //         it->second(*s2, &results);
-        //     else
-        //         std::cerr << "Commande inconnue : " << key << "\n";
-        // } else {
-        //     test_nick(*s2, &results);
-        //     test_user(*s2, &results);
-        //     test_who(*s2, &results);
-        //     test_mode(*s2, &results);
-        //     test_join(*s2, &results);
-        //     test_pass(*s2, &results);
-        //     test_privmsg(*s2, &results);
-        //     test_kick(*s2, &results);
-        //     test_ping(*s2, &results);
-        //     test_topic(*s2, &results);
-        //     test_motd(*s2, &results);
-        //     test_bot(*s2, &results);
-        // }
-        // if (chmod(SERVER_CONF_FILE_FOR_TEST, PERM_644) != 0) {
-        //     throw std::runtime_error(TO_STRING("error changing rights ") + strerror(errno));
-        // }
-        // runner2.stop();
-        // delete s2; // NOLINT(cppcoreguidelines-owning-memory)
+        if (chmod(SERVER_CONF_FILE_FOR_TEST, 000) != 0) {
+            throw std::runtime_error(TO_STRING("error changing rights ") + strerror(errno));
+        }
+        Server*      s2 = new Server(TEST_PORT, DEFAULT_PASSWORD);
+        ServerRunner runner2(*s2);
+        runner2.start();
+
+        // Run second command tests
+        LOG_TEST.info("Running test suite without conf file...");
+
+        if (ac != 1) {
+            std::map<std::string, void (*)(Server&, t_results*)> functions;
+
+            functions["MODE"]    = &test_mode;
+            functions["NICK"]    = &test_nick;
+            functions["KICK"]    = &test_kick;
+            functions["WHO"]     = &test_who;
+            functions["JOIN"]    = &test_join;
+            functions["PASS"]    = &test_pass;
+            functions["PRIVMSG"] = &test_privmsg;
+            functions["PING"]    = &test_ping;
+            functions["TOPIC"]   = &test_topic;
+            functions["MOTD"]    = &test_motd;
+            functions["USER"]    = &test_user;
+            functions["BOT"]     = &test_bot;
+
+            // functions[av[1]](*s, &results);
+            std::string                                                    key(av[1]);
+            std::map<std::string, void (*)(Server&, t_results*)>::iterator it = functions.find(key);
+            if (it != functions.end())
+                it->second(*s2, &results);
+            else
+                std::cerr << "Commande inconnue : " << key << "\n";
+        } else {
+            test_nick(*s2, &results);
+            test_user(*s2, &results);
+            test_who(*s2, &results);
+            test_mode(*s2, &results);
+            test_join(*s2, &results);
+            test_pass(*s2, &results);
+            test_privmsg(*s2, &results);
+            test_kick(*s2, &results);
+            test_ping(*s2, &results);
+            test_topic(*s2, &results);
+            test_motd(*s2, &results);
+            test_bot(*s2, &results);
+        }
+        if (chmod(SERVER_CONF_FILE_FOR_TEST, PERM_644) != 0) {
+            throw std::runtime_error(TO_STRING("error changing rights ") + strerror(errno));
+        }
+        runner2.stop();
+        delete s2; // NOLINT(cppcoreguidelines-owning-memory)
 
         LOG_TEST.info("All tests completed, stopping server...");
 

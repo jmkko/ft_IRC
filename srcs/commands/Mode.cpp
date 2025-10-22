@@ -291,6 +291,8 @@ void Mode::execute(Server& server, Client& client)
         confirmationMsg += validNegativeModes;
     if (validModesParams.size() > 1)
         confirmationMsg += validModesParams;
-    if (confirmationMsg != channelName)
+    if (confirmationMsg != channelName) {
+        channel->broadcast(server, TRANSFER_MODE, confirmationMsg, &client, "");
         rh.process_response(client, TRANSFER_MODE, confirmationMsg);
+    }
 }
