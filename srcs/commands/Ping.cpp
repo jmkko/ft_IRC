@@ -3,14 +3,18 @@
 #include "LogManager.hpp"
 #include "ReplyHandler.hpp"
 #include "reply_codes.hpp"
-
+#include "Parser.hpp"
 #include <sstream>
 
 /************************************************************
  *		🥚 CONSTRUCTORS & DESTRUCTOR						*
  ************************************************************/
 
-Ping::Ping(const std::string& params) : _token(params) {}
+Ping::Ping(std::string& params) {
+	Parser parser;
+
+	_token = parser.format_parameter(params, NULL);
+}
 
 Ping::~Ping(void) {}
 
@@ -35,7 +39,11 @@ ReplyCode Ping::check_args(Server& server, Client& client, std::string& params)
 
 void Ping::execute(Server& server, Client& client)
 {
-    ReplyHandler& rh = ReplyHandler::get_instance(&server);
+	Parser p(server, client);
 
-    rh.process_response(client, MSG_PING, _token);
+    if (_token.empty()) {
+    	p.response(ERR_NOORIGIN);
+		return ;
+	}
+    p.response(MSG_PING, _token);
 }

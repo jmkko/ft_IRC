@@ -10,6 +10,14 @@
 #include "utils.hpp"
 
 #include <algorithm>
+
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <unistd.h>     // for close()
+#include <netdb.h>      // for getaddrinfo(), etc.
+
 #include <cerrno>
 #include <cstddef>
 #include <cstdlib>

@@ -1,4 +1,6 @@
 #include "Channel.hpp"
+
+#include "Parser.hpp"
 #include "Client.hpp"
 #include "Config.hpp"
 #include "ICommand.hpp"
@@ -33,6 +35,43 @@ bool Channel::is_valid_channel_name(const std::string& name)
     return (name.length() > 1 && name.length() <= ircConfig.get_chan_name_max_len());
 }
 
+void Channel::display_topic_to(Parser& p)
+{
+	if (get_topic().empty()) {
+		p.response(RPL_NOTOPIC, get_name());
+	} else {
+		p.response(RPL_TOPIC, get_name(), get_topic());
+	}
+}
+
+std::string Channel::get_modes_str(Client& client)
+{
+    std::string modeIsReply("");
+    std::string modeIsParams("");
+    std::string modeIsParamsVal("");
+
+    if (!(_mode & CHANMODE_INIT)) {
+        modeIsParams += '+';
+        if (_mode & CHANMODE_INVITE)
+            modeIsParams += "i";
+        if (_mode & CHANMODE_KEY) {
+            modeIsParams += "k";
+			if (is_operator(client))
+				modeIsParamsVal += " " + get_key();
+        }
+        if (_mode & CHANMODE_LIMIT) {
+            modeIsParams += "l";
+            modeIsParamsVal += " " + TO_STRING(get_user_limit());
+        }
+        if (_mode & CHANMODE_TOPIC)
+            modeIsParams += "t";
+    }
+    if (!modeIsParamsVal.empty())
+        modeIsReply += " " + modeIsParams + modeIsParamsVal;
+    else if (!modeIsParams.empty())
+        modeIsReply += " " + modeIsParams;
+    return modeIsReply;
+}
 /**
  * @brief check if the key is valid -- no commas or spaces allowed
  *

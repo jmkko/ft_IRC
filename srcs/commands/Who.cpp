@@ -1,6 +1,7 @@
 #include "Who.hpp"
 
 #include "LogManager.hpp"
+#include "Parser.hpp"
 #include "utils.hpp"
 
 #include <string>
@@ -31,7 +32,13 @@ ReplyCode Who::check_args(Server& server, Client& client, std::string& params)
  *		🥚 CONSTRUCTORS & DESTRUCTOR						*
  ************************************************************/
 
-Who::Who(const std::string& params) : _params(params) {}
+Who::Who(std::string& params)
+{
+    Parser parser;
+
+    _mask = parser.format_parameter(params, NULL);
+    _op   = parser.format_parameter(params, NULL);
+}
 
 Who::~Who() {}
 
@@ -41,41 +48,47 @@ Who::~Who() {}
 
 void Who::execute(Server& server, Client& client)
 {
-    std::string        mask;
-    std::string        op;
-    std::istringstream iss(_params);
-    ReplyHandler&      rh = ReplyHandler::get_instance(&server);
+    // std::string        mask;
+    // std::string        op;
+    // std::istringstream iss(_params);
+    // ReplyHandler&      rh = ReplyHandler::get_instance(&server);
+    Parser p(server, client);
 
-    iss >> mask;
-    iss >> op;
-    if (_params.empty())
-        mask = "*";
-    if (Channel::is_valid_channel_name(mask)) {
+    // iss >> mask;
+    // iss >> op;
+
+    if (!_op.empty() && _op != "o") {
+        LOG_CMD.warning(TO_STRING(ERR_NEEDMOREPARAMS) + " ERR_NEEDMOREPARAMS");
+        p.response(ERR_NEEDMOREPARAMS);
+        return;
+    }
+
+    if (_mask.empty())
+        _mask = "*";
+    if (Channel::is_valid_channel_name(_mask)) {
         std::map<std::string, Channel*>::iterator itChan = server.channels.begin();
         for (; itChan != server.channels.end(); itChan++) {
-            if (Utils::is_matching_pattern(mask, itChan->second->get_name())) {
+            if (Utils::is_matching_pattern(_mask, itChan->second->get_name())) {
                 std::set<Client*>                 clients  = itChan->second->get_members();
                 std::set<Client*>::const_iterator itClient = clients.begin();
                 for (; itClient != clients.end(); itClient++) {
-                    if (op.empty() || (op == "o" && itChan->second->is_operator(**itClient))) {
-                        rh.process_response(client,
-                                            RPL_WHOREPLY,
-                                            _who_msg(*itClient, itChan->second, server),
-                                            NULL,
-                                            std::string("0 ") + (*itClient)->get_real_name());
+                    if (_op.empty() || (_op == "o" && itChan->second->is_operator(**itClient))) {
+                        p.response(RPL_WHOREPLY,
+                                   _who_msg(*itClient, itChan->second, server),
+                                   std::string("0 ") + (*itClient)->get_real_name());
                     }
                 }
-                rh.process_response(client, RPL_ENDOFWHO, itChan->second->get_name());
+                p.response(RPL_ENDOFWHO, itChan->second->get_name());
             }
         }
     } else {
-        std::vector<Client*>           clients = server.find_clients_by_pattern(mask);
+        std::vector<Client*>           clients = server.find_clients_by_pattern(_mask);
         std::vector<Client*>::iterator it      = clients.begin();
-        for (; it != clients.end(); it++) {
-            rh.process_response(
-                client, RPL_WHOREPLY, _who_msg(*it, NULL, server), NULL, std::string("0 ") + (*it)->get_real_name());
+        for (; it != clients.end(); it++) { 
+            p.response(
+                RPL_WHOREPLY, _who_msg(*it, NULL, server), std::string("0 ") + (*it)->get_real_name());
         }
-        rh.process_response(client, RPL_ENDOFWHO, mask);
+        p.response(RPL_ENDOFWHO, _mask);
     }
 }
 

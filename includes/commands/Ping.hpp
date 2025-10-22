@@ -30,7 +30,7 @@ class Ping : public ICommand
      *
      * @param params
      */
-    Ping(const std::string& params);
+    Ping(std::string& params);
     virtual ~Ping();
     /**
      * @brief sends a PONG message with token provided by PING sender
