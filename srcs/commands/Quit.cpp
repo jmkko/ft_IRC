@@ -41,7 +41,6 @@ void Quit::execute(Server& server, Client& client)
     if (trailingMsg.empty())
         trailingMsg = ircCodes.trailing(TRANSFER_QUIT);
     client.broadcast_to_all_channels(server, TRANSFER_QUIT, "", trailingMsg);
-    // usleep(SLEEP_FOR_BROADCAST_MS);
     server.add_events_of(client, 0);
     server.cleanup_socket_and_client(pfdIndex);
 }

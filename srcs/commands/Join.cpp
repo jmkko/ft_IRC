@@ -52,14 +52,14 @@ Join::Join(std::string& params)
  * @param client [TODO:parameter]
  * @param channel [TODO:parameter]
  */
-void Join::send_list_of_names(ReplyHandler& rh, Client& client, Channel& channel)
+void Join::_send_list_of_names(Parser& p, Channel& channel)
 {
     std::vector<std::string> users = channel.get_members_list();
 
     for (size_t i = 0; i < users.size(); ++i) {
-        rh.process_response(client, RPL_NAMREPLY, "= " + channel.get_name(), NULL, users[i]);
+        p.response(RPL_NAMREPLY, "= " + channel.get_name(), users[i]);
     }
-    rh.process_response(client, RPL_ENDOFNAMES, channel.get_name());
+    p.response(RPL_ENDOFNAMES, channel.get_name());
 }
 
 /**
@@ -68,12 +68,12 @@ void Join::send_list_of_names(ReplyHandler& rh, Client& client, Channel& channel
  * @param client [TODO:parameter]
  * @param channel [TODO:parameter]
  */
-void Join::display_topic(ReplyHandler& rh, Client& client, Channel& channel)
+void Join::_display_topic(Parser& p, Channel& channel)
 {
     if (channel.get_topic().empty()) {
-        rh.process_response(client, RPL_NOTOPIC, channel.get_name());
+        p.response(RPL_NOTOPIC, channel.get_name());
     } else {
-        rh.process_response(client, RPL_TOPIC, channel.get_name(), NULL, channel.get_topic());
+        p.response(RPL_TOPIC, channel.get_name(), channel.get_topic());
     }
 }
 
@@ -131,8 +131,9 @@ void Join::execute(Server& server, Client& client)
                 // rh.process_response(client, TRANSFER_MODE, chanName + " +o " + client.get_nickname());  <-- merge changements
                 // ?? why ??
             }
-            send_list_of_names(*p.rh, client, *channel);
-            display_topic(*p.rh, client, *channel);
+            p.response(RPL_CHANNELMODEIS, chanName + " " + channel->get_modes_str(client));
+            _send_list_of_names(p, *channel);
+            _display_topic(p, *channel);
         } else {
             p.response(replyCode, chanName);
         }

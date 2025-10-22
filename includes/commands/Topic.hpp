@@ -17,6 +17,7 @@
 #include <iostream>
 
 class Channel;
+class Parser;
 
 /**
  * @class Topic
@@ -34,7 +35,7 @@ class Topic : public ICommand
      * @param server
      * @param params
      */
-    Topic(Server& server, std::string& params);
+    Topic(std::string& params);
 
     /**
      * @brief Destroy the Topic:: Topic object
@@ -69,10 +70,11 @@ class Topic : public ICommand
     static ReplyCode check_args(Server& server, Client& client, std::string& params);
 
   private:
+	std::string _chan;
     std::string _topic;
-    Channel*    _chan;
-    bool        _isTopicChange;
+    bool        _clearTopic;
 
+    void _display_topic(Parser& p, Channel& channel);
     Topic(void);
     Topic(const Topic& other);
     Topic& operator=(const Topic& other);

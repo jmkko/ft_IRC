@@ -15,7 +15,8 @@
 #include "Privmsg.hpp"
 #include "Quit.hpp"
 #include "Part.hpp"
-#include "ReplyHandler.hpp"
+#include "Parser.hpp"
+// #include "ReplyHandler.hpp"
 #include "Server.hpp"
 #include "Topic.hpp"
 #include "User.hpp"
@@ -53,7 +54,7 @@ bool CmdFactory::check_in(Client& client, std::string& command)
 
 ICommand* CmdFactory::make_command(Server& server, Client& client, std::string& params)
 {
-    ReplyHandler&      rh          = ReplyHandler::get_instance(&server);
+	Parser p(server, client);
     std::string        commandLine = "";
     std::istringstream iss(params); // NOLINT(clang-diagnostic-vexing-parse)
     std::string        available[NB_AVAILABLE_CMD]                                  = {"USER",
@@ -65,14 +66,14 @@ ICommand* CmdFactory::make_command(Server& server, Client& client, std::string& 
                                                                                        "JOIN",
                                                                                        "PART",
                                                                                        "MODE",
-                                                                                       "OPER",
                                                                                        "PRIVMSG",
                                                                                        "WHO",
                                                                                        "KICK",
                                                                                        "MOTD",
                                                                                        "BOT",
                                                                                        "PING"};
-    ICommand* (CmdFactory::* ptr[NB_AVAILABLE_CMD])(Server&, Client&, std::string&) = {&CmdFactory::user_cmd,
+
+    ICommand* (CmdFactory::* ptr[NB_AVAILABLE_CMD])(std::string&) = {&CmdFactory::user_cmd,
                                                                                        &CmdFactory::pass_cmd,
                                                                                        &CmdFactory::nick_cmd,
                                                                                        &CmdFactory::topic_cmd,
@@ -81,7 +82,6 @@ ICommand* CmdFactory::make_command(Server& server, Client& client, std::string& 
                                                                                        &CmdFactory::join_cmd,
                                                                                        &CmdFactory::part_cmd,
                                                                                        &CmdFactory::mode_cmd,
-                                                                                       &CmdFactory::oper_cmd,
                                                                                        &CmdFactory::privmsg_cmd,
                                                                                        &CmdFactory::who_cmd,
                                                                                        &CmdFactory::kick_cmd,
@@ -94,7 +94,7 @@ ICommand* CmdFactory::make_command(Server& server, Client& client, std::string& 
         if (commandLine == available[i]) {
             LOG_d_CMD(GREEN + commandLine + NC);
             if (!check_in(client, commandLine)) {
-                rh.process_response(client, ERR_NOTREGISTERED, commandLine);
+                p.response(ERR_NOTREGISTERED, commandLine);
                 return NULL;
             }
             std::string params;
@@ -103,237 +103,85 @@ ICommand* CmdFactory::make_command(Server& server, Client& client, std::string& 
             if (!params.empty() && params[0] == ' ') {
                 params = params.substr(1);
             }
-            return (this->*ptr[i])(server, client, params);
+            return (this->*ptr[i])(params);
         }
     }
-    rh.process_response(client, ERR_UNKNOWNCOMMAND, commandLine);
+    p.response(ERR_UNKNOWNCOMMAND, commandLine);
 
     return NULL;
 }
 
-// Return a NICK command object if the nickname is valid
-ICommand* CmdFactory::nick_cmd(Server& server, Client& client, std::string& params)
+ICommand* CmdFactory::nick_cmd(std::string& params)
 {
-    (void)server;
-    (void)client;
-    // ReplyHandler& rh        = ReplyHandler::get_instance(&server);
-    // ReplyCode     replyCode = Nick::check_args(server, client, params);
-    //
-    // if (replyCode == CORRECT_FORMAT)
-    //     return (new Nick(params));
-    // else {
-    //     rh.process_response(client, replyCode, params);
-    // }
-    //
-    // return NULL;
     return new Nick(params);
 }
 
-ICommand* CmdFactory::user_cmd(Server& server, Client& client, std::string& params)
+ICommand* CmdFactory::user_cmd(std::string& params)
 {
-	(void)server;
-	(void)client;
-    // std::string   username = "", realname = "";
-    // ReplyCode     replyCode = User::check_args(server, client, params);
-    // ReplyHandler& rh        = ReplyHandler::get_instance(&server);
-    //
-    // if (replyCode == CORRECT_FORMAT) {
-    //     std::istringstream iss(params);
-    //     iss >> username;
-    //     std::getline(iss, realname);
-    //     if (!realname.empty() && realname[0] == ' ') {
-    //         realname = realname.substr(1);
-    //     }
-    //     return (new User(username, realname));
-    // } else {
-    //     rh.process_response(client, replyCode, "USER");
-    // }
-    //
-    // return NULL;
 	return new User(params);
 };
 
-ICommand* CmdFactory::pass_cmd(Server& server, Client& client, std::string& params)
+ICommand* CmdFactory::pass_cmd(std::string& params)
 {
-    (void)server;
-    (void)client;
-    // ReplyHandler& rh        = ReplyHandler::get_instance(&server);
-    // ReplyCode     replyCode = Pass::check_args(server, client, params);
-    //
-    // if (replyCode == CORRECT_FORMAT) {
-    //     return new Pass();
-    // } else if (replyCode == PROCESSED_ERROR) {
-    //     return NULL;
-    // } else {
-    //     rh.process_response(client, replyCode, params);
-    // }
-    //
-    // return NULL;
     return new Pass(params);
 };
 
-ICommand* CmdFactory::kick_cmd(Server& server, Client& client, std::string& params)
+ICommand* CmdFactory::kick_cmd(std::string& params)
 {
-    (void)server;
-    (void)client;
-
     return new Kick(params);
 };
 
-ICommand* CmdFactory::quit_cmd(Server& server, Client& client, std::string& params)
+ICommand* CmdFactory::quit_cmd(std::string& params)
 {
-    ReplyHandler& rh = ReplyHandler::get_instance(&server);
-
-    ReplyCode replyCode = Quit::check_args(server, client, params);
-    if (replyCode == CORRECT_FORMAT) {
-        return new Quit(params);
-    } else {
-        rh.process_response(client, replyCode, params);
-    }
-    return NULL;
+	return new Quit(params);
 };
 
-ICommand* CmdFactory::join_cmd(Server& server, Client& client, std::string& params)
+ICommand* CmdFactory::join_cmd(std::string& params)
 {
-    (void)server;
-    (void)client;
-    // ReplyHandler& rh        = ReplyHandler::get_instance(&server);
-    // ReplyCode     replyCode = Join::check_args(server, client, params);
-    // if (replyCode == CORRECT_FORMAT) {
-    //     return new Join(params);
-    // } else if (replyCode == ERR_NEEDMOREPARAMS) {
-    //     rh.process_response(client, replyCode, "JOIN");
-    // } else {
-    //     rh.process_response(client, replyCode, params);
-    // }
-    // return NULL;
     return new Join(params);
 };
 
-ICommand* CmdFactory::mode_cmd(Server& server, Client& client, std::string& params)
+ICommand* CmdFactory::mode_cmd(std::string& params)
 {
-    ReplyHandler& rh = ReplyHandler::get_instance(&server);
-    // std::vector<std::string> vectorParams;
-    // std::istringstream       iss(params);
-    // std::string              token = "";
-    // while (std::getline(iss, token, ' ')) {
-    //     vectorParams.push_back(token);
-    // }
-    // ReplyCode replyCode = Mode::check_args(server, client, vectorParams);
-    ReplyCode replyCode = Mode::check_args(server, client, params);
-    if (replyCode == CORRECT_FORMAT) {
-        return new Mode(params);
-    } else {
-        rh.process_response(client, ERR_NEEDMOREPARAMS, "MODE");
-    }
-    return NULL;
+	return new Mode(params);
 };
 
-// NOT IMPLEMENTED YET
-
-ICommand* CmdFactory::part_cmd(Server& server, Client& client, std::string& params)
+ICommand* CmdFactory::part_cmd(std::string& params)
 {
-    (void)client;
-    (void)server;
 	return new Part(params);
 };
 
-ICommand* CmdFactory::oper_cmd(Server& server, Client& client, std::string& params)
+ICommand* CmdFactory::invite_cmd(std::string& params)
 {
-    (void)client;
-    (void)server;
-    (void)params;
-    LOG_CMD.debug("Build OPER (not implemented)");
-    return NULL;
-};
-
-ICommand* CmdFactory::invite_cmd(Server& server, Client& client, std::string& params)
-{
-    (void)client;
-    (void)server;
-    // ReplyHandler& rh        = ReplyHandler::get_instance(&server);
-    // ReplyCode     replyCode = Invite::check_args(server, client, params);
-    // if (replyCode != CORRECT_FORMAT) {
-    //     rh.process_response(client, replyCode, params);
-    //     return NULL;
-    // }
     return new Invite(params);
 };
 
-ICommand* CmdFactory::who_cmd(Server& server, Client& client, std::string& params)
+ICommand* CmdFactory::who_cmd(std::string& params)
 {
-    ReplyHandler& rh        = ReplyHandler::get_instance(&server);
-    ReplyCode     replyCode = Who::check_args(server, client, params);
-    if (replyCode == CORRECT_FORMAT) {
-        return new Who(params);
-    } else {
-        rh.process_response(client, replyCode, params);
-    }
-    return NULL;
+	return new Who(params);
 }
 
-ICommand* CmdFactory::privmsg_cmd(Server& server, Client& client, std::string& params)
+ICommand* CmdFactory::privmsg_cmd(std::string& params)
 {
-    (void)client;
-    (void)server;
-    // ReplyHandler rh   = ReplyHandler::get_instance(&server);
-    // ReplyCode    code = Privmsg::check_args(server, client, params);
-    // if (code == ERR_NOTEXTTOSEND) {
-    //     rh.process_response(client, code);
-    //     return (NULL);
-    // } else if (code == ERR_NEEDMOREPARAMS) {
-    //     rh.process_response(client, code, "PRIVMSG");
-    //     return (NULL);
-    // } else if (code != CORRECT_FORMAT) {
-    //     rh.process_response(client, code, params, NULL);
-    //     return (NULL);
-    // }
-    Privmsg* privmsg = new Privmsg(params);
-    return privmsg;
+    return new Privmsg(params);
 };
 
-ICommand* CmdFactory::ping_cmd(Server& server, Client& client, std::string& params)
+ICommand* CmdFactory::ping_cmd(std::string& params)
 {
-    (void)server;
-    (void)client;
-    ReplyHandler rh   = ReplyHandler::get_instance(&server);
-    ReplyCode    code = Ping::check_args(server, client, params);
-    if (code != CORRECT_FORMAT) {
-        rh.process_response(client, code, params);
-        return NULL;
-    }
-    Ping* cmd = new Ping(params);
-    return cmd;
+    return new Ping(params);
 };
 
-ICommand* CmdFactory::motd_cmd(Server& server, Client& client, std::string& params)
+ICommand* CmdFactory::motd_cmd(std::string& params)
 {
-    (void)server;
-    (void)client;
     return new Motd(params);
 };
 
-ICommand* CmdFactory::bot_cmd(Server& server, Client& client, std::string& params)
+ICommand* CmdFactory::bot_cmd(std::string& params)
 {
-    (void)server;
-    (void)client;
     return new Bot(params);
 };
 
-ICommand* CmdFactory::topic_cmd(Server& server, Client& client, std::string& params)
+ICommand* CmdFactory::topic_cmd(std::string& params)
 {
-    (void)server;
-    (void)client;
-    ReplyHandler rh   = ReplyHandler::get_instance(&server);
-    ReplyCode    code = Topic::check_args(server, client, params);
-    if (code == PROCESSED_ERROR) {
-        return NULL;
-    } else if (code == ERR_NEEDMOREPARAMS) {
-        rh.process_response(client, code, "TOPIC");
-        return NULL;
-    } else if (code != CORRECT_FORMAT) {
-        rh.process_response(client, code, params);
-        return NULL;
-    }
-    return new Topic(server, params);
+    return new Topic(params);
 };

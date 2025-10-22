@@ -22,7 +22,8 @@
 
 class Client;
 class Server;
-class ReplyHandler;
+class Parser;
+
 
 class Join : public ICommand
 {
@@ -31,11 +32,12 @@ class Join : public ICommand
     ~Join();
 
     void execute(Server& s, Client& c);
-    void send_list_of_names(ReplyHandler& rh, Client& client, Channel& channel);
-    void display_topic(ReplyHandler& rh, Client& client, Channel& channel);
 
   private:
     std::map<std::string, std::string> _chans;
+
+    void _send_list_of_names(Parser& p, Channel& channel);
+    void _display_topic(Parser& p, Channel& channel);
     Join();
     Join(const Join& other);
     Join& operator=(const Join& other);

@@ -162,8 +162,8 @@ static const std::string& validPrivmsgBlank             = "PRIVMSG #chan : \r\n"
 static const std::string& invalidPrivMsgSpaceAfterComma = "PRIVMSG roro, toto :hi\r\n";
 static const std::string& invalidPrivMsgInArg           = "PRIVMSG roro,toto hi\r\n";
 
-static const std::string& validTopic             = "TOPIC #chan new topic\r\n";
-static const std::string& validTopic2            = "TOPIC #chan new topic2\r\n";
+static const std::string& validTopic             = "TOPIC #chan :new topic\r\n";
+static const std::string& validTopic2            = "TOPIC #chan :new topic2\r\n";
 static const std::string& validTopicEmpty        = "TOPIC #chan\r\n";
 static const std::string& edgeTopicTrailing      = "TOPIC #chan :trailing\r\n";
 static const std::string& edgeTopicEmptyStr      = "TOPIC #chan :\r\n";

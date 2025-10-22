@@ -21,6 +21,7 @@
 #define MODE_LEN 5
 
 class Client;
+class Parser;
 
 /**
  * @class Channel
@@ -215,6 +216,8 @@ class Channel
      * @param mode
      */
     void add_mode(unsigned short mode);
+
+	void display_topic_to(Parser& p);
     /**
      * @brief deactivate a mode
      *
@@ -261,6 +264,7 @@ class Channel
                    Client*            sender   = NULL,
                    const std::string& trailing = "") const;
 
+	std::string get_modes_str(Client& client);
     /**
      * @brief transfer a bot reply to channel members
      * @see ReplyHandler::process_response

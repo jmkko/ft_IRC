@@ -40,7 +40,7 @@ class Who : public ICommand
      *
      * @param params
      */
-    Who(const std::string& params);
+    Who(std::string& params);
 
     /**
      * @brief Destroy the Who:: Who object
@@ -78,7 +78,8 @@ class Who : public ICommand
     static ReplyCode check_args(Server& server, Client& client, std::string& params);
 
   private:
-    std::string _params;
+	std::string _mask;
+	std::string _op;
     Who();
     Who(const Who& other);
     Who& operator=(const Who& other);
