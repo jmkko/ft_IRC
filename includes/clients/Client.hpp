@@ -236,6 +236,7 @@ class Client
      * @param msg
      */
     void append_to_send_buffer(const std::string& msg);
+
     /**
      * @brief add a message to the reading buffer
      *
@@ -252,6 +253,7 @@ class Client
      * @param trailing
      */
     void broadcast_to_all_channels(Server& server, ReplyCode code, const std::string& params, const std::string& trailing = "");
+
     /**
      * @brief Get the joined channel matching exactly the name
      *
@@ -259,6 +261,15 @@ class Client
      * @return Channel* or NULL if not found
      */
     Channel* get_channel(const std::string& name);
+
+    /**
+     * @brief Client leave all channels
+     * @remark utils for JOIN 0
+     *
+     * @param server
+     * @param client
+     */
+    void part_all_channels(Server& server, Client& client);
 
   private:
     Client(const Client& other);
