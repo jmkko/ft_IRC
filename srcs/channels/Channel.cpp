@@ -173,7 +173,7 @@ void Channel::broadcast(
         Client* recipient = *it;
         if (sender && recipient == sender)
             continue;
-        LOG_D_SERVER(recipient->get_nickname() + " received a broadcast from " + get_name(), ircCodes.str(replyCode));
+        LOG_D_SERVER(recipient->get_nickname() + " received a broadcast from " + get_name(), ircConfig.str(replyCode));
         rh.process_response(*recipient, replyCode, params, sender, trailing);
     }
 }
@@ -185,7 +185,7 @@ void Channel::broadcast_bot(
     LOG_DV_CMD(_members.size());
     for (std::set<Client*>::iterator it = _members.begin(); it != _members.end(); ++it) {
         Client* recipient = *it;
-        LOG_D_SERVER(recipient->get_nickname() + " received a broadcast from " + get_name(), ircCodes.str(replyCode));
+        LOG_D_SERVER(recipient->get_nickname() + " received a broadcast from " + get_name(), ircConfig.str(replyCode));
         rh.process_response(*recipient, replyCode, params, sender, trailing);
     }
 }

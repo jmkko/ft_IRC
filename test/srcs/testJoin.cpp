@@ -94,7 +94,7 @@ void valid_join_should_send_rpl_and_broadcast(Server& s)
         std::string reply = recv_lines(so);
         AssertReply ar(reply);
         ar.is_formatted_transfer(userNick, "JOIN #chan", "");
-        // ar.is_formatted(RPL_NAMREPLY, userNick, "= #chan", userNick + " @" + opNick);
+        ar.is_formatted(RPL_NAMREPLY, userNick, "= #chan", "@" + opNick + " " + userNick);
         ar.is_formatted(RPL_ENDOFNAMES, userNick, "#chan");
         ar.is_formatted(RPL_NOTOPIC, userNick, "#chan");
 
@@ -347,11 +347,38 @@ void creation_of_multiple_chan_with_key_should_transfer(Server& s)
     }
 }
 
+void join_0_multiple_chan_should_rpl_and_broadcast(Server& s)
+{
+    try {
+        TEST_SETUP(test, s, 2);
+        TcpSocket& sop = *sockets.at(0);
+        TcpSocket& so  = *sockets.at(1);
+        authenticate(sop);
+        do_cmd(sop, "JOIN #chan1,#chan2\r\n");
+        authenticate_second_user(so);
+        do_cmd(so, "JOIN #chan1,#chan2\r\n");
+
+        // test 1 - check that user is in channels
+        send_line(so, "JOIN 0\r\n");
+        std::string reply = recv_lines(sop);
+        AssertReply ar(reply);
+        ar.is_formatted_transfer(user2Nick, "PART #chan1");
+        ar.is_formatted_transfer(user2Nick, "PART #chan2");
+        std::string reply2 = recv_lines(so);
+        AssertReply ar2(reply2);
+        ar2.is_formatted_transfer(user2Nick, "PART #chan1");
+        ar2.is_formatted_transfer(user2Nick, "PART #chan2");
+    } catch (const std::runtime_error& e) {
+        LOG_TEST.error(e.what());
+    }
+}
+
 void test_join(Server& s, t_results* r)
 {
     print_test_series("command JOIN");
     print_test_series_part("common cases");
     run_test(r, [&] { valid_join_should_send_rpl_and_broadcast(s); }, "JOIN #chan");
+    run_test(r, [&] { join_0_multiple_chan_should_rpl_and_broadcast(s); }, "JOIN 0");
     print_test_series_part("common cases - modes");
     run_test(r, [&] { mode_plusi_with_invite_should_broadcast(s); }, "JOIN after MODE +i and being invited.");
     run_test(r, [&] { creation_of_multiple_chan_with_key_should_transfer(s); }, "JOIN multiple creation of channels with keys");

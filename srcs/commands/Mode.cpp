@@ -294,7 +294,7 @@ void Mode::execute(Server& server, Client& client)
                     p.response(ERR_NEEDMOREPARAMS, "MODE");
             }
         }
-    }
+	}
     std::string confirmationMsg = _channelName;
     if (validPositiveModes.size() > 2)
         confirmationMsg += validPositiveModes;
@@ -302,6 +302,8 @@ void Mode::execute(Server& server, Client& client)
         confirmationMsg += validNegativeModes;
     if (validModesParams.size() > 1)
         confirmationMsg += validModesParams;
-    if (confirmationMsg != _channelName)
+    if (confirmationMsg != _channelName) {
         p.response(TRANSFER_MODE, confirmationMsg);
+        channel->broadcast(server, TRANSFER_MODE, confirmationMsg, &client, "");
+    }
 }

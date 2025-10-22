@@ -108,6 +108,10 @@ void Join::execute(Server& server, Client& client)
         if (!p.correct_channel(chanName)) {
             continue;
         }
+        if (chanName.size() == 1 && chanName[0] == '0') {
+            client.part_all_channels(server, client);
+            continue;
+        }
         Channel* channel = server.find_channel_by_name(chanName);
         if (!channel) {
             if (!p.correct_key(chanKey))

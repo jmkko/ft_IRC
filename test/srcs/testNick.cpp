@@ -95,9 +95,9 @@ void valid_nick_after_user_should_notice(Server& s)
         // ar.has_code(RPL_YOURHOST).contains("roro");
         // ar.has_code(RPL_CREATED).contains("roro");
         // ar.has_code(RPL_MYINFO).contains("roro");
-        ar.matches_entirely(":" + s.get_name() + " 001 roro :" + ircCodes.trailing(RPL_WELCOME) + " roro!roro@localhost");
-        ar.matches_entirely(":" + s.get_name() + " 002 roro :" + ircCodes.trailing(RPL_YOURHOST) + " " + s.get_name());
-        ar.matches_entirely(":" + s.get_name() + " 003 roro :" + ircCodes.trailing(RPL_CREATED));
+        ar.matches_entirely(":" + s.get_name() + " 001 roro :" + ircConfig.trailing(RPL_WELCOME) + " roro!roro@localhost");
+        ar.matches_entirely(":" + s.get_name() + " 002 roro :" + ircConfig.trailing(RPL_YOURHOST) + " " + s.get_name());
+        ar.matches_entirely(":" + s.get_name() + " 003 roro :" + ircConfig.trailing(RPL_CREATED));
         ar.matches_entirely(":" + s.get_name() + " 004 roro :" + s.get_name() + " 1.0  0 0");
 
     } catch (const std::runtime_error& e) {

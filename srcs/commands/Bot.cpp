@@ -1,5 +1,4 @@
 #include "Bot.hpp"
-
 #include "Client.hpp"
 #include "Config.hpp"
 #include "LogManager.hpp"
@@ -104,11 +103,11 @@ void remove_invalid_prompt_char(char& c)
 static void send_ollama_request(const std::string& prompt, std::string& response)
 {
     // build curl request
-std::string command = "curl -X POST -H \"Content-Type: application/json\" -v localhost:11434/api/generate -d '";
-command += "{\"model\": \"gemma3:1b\",\"prompt\":\"";
-command += prompt;
-command += "\",\"options\": {\"temperature\": 0.99,\"top_p\": 0.8},\"stream\": false}";
-command += "'";
+    std::string command = "curl -X POST -H \"Content-Type: application/json\" -v localhost:11434/api/generate -d '";
+    command += "{\"model\": \"gemma3:1b\",\"prompt\":\"";
+    command += prompt;
+    command += "\",\"options\": {\"temperature\": 0.99,\"top_p\": 0.8},\"stream\": false}";
+    command += "'";
 
     // add_key_val(command, "model", "gemma3:1b");
     // add_key_val(command, "prompt", prompt);

@@ -26,10 +26,10 @@
 #include "testUtils.hpp"
 #include "utils.hpp"
 
+#include <chrono>
 #include <iostream>
 #include <stdexcept>
 #include <string>
-#include <chrono>
 #include <thread>
 
 /************************************************************
@@ -70,9 +70,9 @@ void valid_user_after_nick_should_rpl(Server& s)
         std::this_thread::sleep_for(std::chrono::milliseconds(SERVER_MOTD_WAIT_MS));
         std::string reply = recv_lines(so);
         AssertReply ar(reply);
-        ar.matches_entirely(":" + s.get_name() + " 001 mcpolo :" + ircCodes.trailing(RPL_WELCOME) + " mcpolo!Marco@localhost");
-        ar.matches_entirely(":" + s.get_name() + " 002 mcpolo :" + ircCodes.trailing(RPL_YOURHOST) + " " + s.get_name());
-        ar.matches_entirely(":" + s.get_name() + " 003 mcpolo :" + ircCodes.trailing(RPL_CREATED));
+        ar.matches_entirely(":" + s.get_name() + " 001 mcpolo :" + ircConfig.trailing(RPL_WELCOME) + " mcpolo!Marco@localhost");
+        ar.matches_entirely(":" + s.get_name() + " 002 mcpolo :" + ircConfig.trailing(RPL_YOURHOST) + " " + s.get_name());
+        ar.matches_entirely(":" + s.get_name() + " 003 mcpolo :" + ircConfig.trailing(RPL_CREATED));
         ar.matches_entirely(":" + s.get_name() + " 004 mcpolo :" + s.get_name() + " 1.0  0 0");
         // ar.has_code(RPL_WELCOME).contains("mcpolo");
         // ar.has_code(RPL_YOURHOST).contains("mcpolo");
