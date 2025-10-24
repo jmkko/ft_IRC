@@ -125,8 +125,7 @@ class Utils
      * - `?` : exactly ONE char
      * - `*` : ZERO or more char
      *
-     * Conformément à la RFC 2812, les wildcards servent pour les masks
-     * dans les commandes WHO, NAMES, LIST, etc.
+     * As per RFC 2812, wildcards are used for masks in WHO, NAMES, LIST, ... commands
      * @return true on success
      */
     static bool is_matching_pattern(const std::string& pattern, const std::string& str);
