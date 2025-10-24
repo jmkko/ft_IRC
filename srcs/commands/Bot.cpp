@@ -1,13 +1,10 @@
 #include "Bot.hpp"
 #include "Client.hpp"
-#include "Config.hpp"
 #include "LogManager.hpp"
 #include "Parser.hpp"
 #include "ReplyHandler.hpp"
 #include "TcpSocket.hpp"
-#include "consts.hpp"
 #include "reply_codes.hpp"
-#include "utils.hpp"
 
 #include <algorithm>
 
@@ -23,10 +20,8 @@
 #include <cstdlib>
 #include <cstring>
 #include <fstream>
-#include <iomanip>
 #include <iterator>
 #include <netinet/in.h>
-#include <sstream>
 #include <string>
 #include <sys/types.h>
 #include <unistd.h>
@@ -43,10 +38,6 @@ Bot::Bot(std::string& params) : _params(params), _targets(), _targetChannelName(
 }
 
 Bot::~Bot(void) {}
-
-/************************************************************
- *		➕ OPERATORS											*
- ************************************************************/
 
 /*************************************************************
  *		🛠️ FUNCTIONS											*
