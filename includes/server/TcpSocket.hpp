@@ -52,10 +52,10 @@ class TcpSocket
     void tcp_bind(unsigned short port);
 
     /**
-     * @brief wait a socket connection a socket that will be used to accept incoming
-     *        connection requests using accept(2)
-     *        SOMAXCONN system manage the value
-     *        AF_INET IPv4 familly
+     * @brief puts socket in a passive state
+     * @details prepare a socket that will be used to accept incoming connection requests using accept(2)
+     *  SOMAXCONN system manage the value
+     *  AF_INET IPv4 familly
      * @return 0 on success or -1 on error
      */
     void               tcp_listen();
