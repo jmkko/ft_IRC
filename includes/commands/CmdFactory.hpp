@@ -76,15 +76,7 @@ class CmdFactory
     ICommand* ping_cmd(std::string& params);
 
   private:
-    /**
-     * @brief Construct a new Cmd Factory object
-     *
-     * @remark not used
-     * @param server
-     * @param client
-     */
-    CmdFactory(Server& server, Client& client);
-    CmdFactory(const CmdFactory& other);
+
 };
 
 #endif

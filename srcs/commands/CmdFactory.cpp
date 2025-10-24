@@ -35,8 +35,6 @@
 
 CmdFactory::CmdFactory(void) {}
 
-CmdFactory::CmdFactory(const CmdFactory& other) { (void)other; }
-
 CmdFactory::~CmdFactory(void) {}
 
 /*************************************************************
