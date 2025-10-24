@@ -125,7 +125,7 @@ class Config
     void _parse_motd(const std::string& line);
 
     /**
-     * @brief select the correct method to load the data of the server
+     * @brief select the correct method to set configuration data of the server
      *
      * @param key var name
      * @param value
