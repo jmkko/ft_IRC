@@ -28,7 +28,7 @@ Diagnostics:
         readability-identifier-naming.MemberCase: camelBack
         readability-identifier-naming.FunctionCase: lower_case
   Suppress:
-    - unused-includes
+    # - unused-includes
     - missing-includes
 CompileFlags:
   Add:
@@ -43,6 +43,16 @@ CompileFlags:
     - -I../includes/channels
     - -I../includes/clients
     - -I../includes/commands
-    - -Iincludes/server
+    - -I../includes/parsing
+    - -I../includes/server
+    - -I../includes
+    - -I../../includes/channels
+    - -I../../includes/clients
+    - -I../../includes/commands
+    - -I../../includes/parsing
+    - -I../../includes/server
+    - -I../../includes
+    - -std=c++98
+ 
 InlayHints:
   Enabled: true

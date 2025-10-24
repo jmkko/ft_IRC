@@ -7,6 +7,10 @@
 #include <iomanip>
 #include <iostream>
 
+/************************************************************
+ *              🥚 CONSTRUCTORS & DESTRUCTOR                *
+ ************************************************************/
+
 Logger::Logger(const std::string& logName, const std::string& filename, LogLevel level) :
     _name(logName), _minLevel(level), _fileEnabled(false)
 {
@@ -26,6 +30,10 @@ Logger::~Logger()
         _logFile.close();
     }
 }
+
+/*************************************************************
+ *                      🛠️ FUNCTIONS                         *
+ *************************************************************/
 
 void Logger::log(LogLevel level, const std::string& message)
 {
@@ -52,6 +60,7 @@ void Logger::log(LogLevel level, const std::string& message)
         _logFile.flush();
     }
 }
+
 void Logger::receiving(const std::string& file, const std::string& function, const std::string& rawMessage, Client* client)
 {
 
