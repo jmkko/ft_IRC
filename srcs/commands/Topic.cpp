@@ -1,7 +1,6 @@
 #include "Topic.hpp"
 
 #include "Channel.hpp"
-#include "LogManager.hpp"
 #include "Parser.hpp"
 #include "ReplyHandler.hpp"
 #include "Server.hpp"

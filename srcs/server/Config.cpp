@@ -5,7 +5,6 @@
 #include "reply_codes.hpp"
 
 #include <fstream>
-#include <iostream>
 
 const Config ircConfig(SERVER_CONF_FILE);
 #ifdef TEST

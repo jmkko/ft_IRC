@@ -44,7 +44,7 @@ class Privmsg : public ICommand
      * - make syntaxic checks
      *   - trailing message (after `:`) should not be empty
      *   - at least one target (#Channel or #Client sender)
-     *   - at max MAX_TARGET (defined in @ref irc.conf)
+     *   - at max MAX_TARGET (defined in config)
      * - make other checks
      *   - targets should be existing nicks or channels
      *   - presence of sender on target channel

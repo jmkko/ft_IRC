@@ -1,6 +1,6 @@
 /**
  * @file Quit.hpp
- * @brief
+ * @brief Implements IRC QUIT command
  * @version 0.1
  * @date 2025-10-16
  *

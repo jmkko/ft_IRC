@@ -31,7 +31,7 @@ class Kick : public ICommand
      * @brief Construct a new Kick object
      * - one or many channels, comma separated
      * - one or many users, comma separated
-     * 
+     *
      * @param params should match `<channel> *( "," <channel> ) <user> *( "," <user> ) [<comment>]`
      */
     Kick(std::string& params);

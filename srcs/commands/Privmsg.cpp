@@ -4,7 +4,6 @@
 #include "Parser.hpp"
 #include "Server.hpp"
 #include "reply_codes.hpp"
-#include "utils.hpp"
 
 /************************************************************
  *		🥚 CONSTRUCTORS & DESTRUCTOR						*
@@ -22,7 +21,7 @@ Privmsg::Privmsg(std::string& params)
 Privmsg::~Privmsg(void) {}
 
 /*************************************************************
- *		🛠️ FUNCTIONS											*
+ *		🛠️ METHODS											*
  *************************************************************/
 
 void Privmsg::execute(Server& server, Client& client)

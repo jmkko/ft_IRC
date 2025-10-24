@@ -43,9 +43,9 @@ class Nick : public ICommand
     /**
      * @brief set nickname or change nickname
      *
-     * @remark If NICK and USER have been successfull, the server will sends Replies 001 to 004 to a user upon
+     * @remark If previous PASS and USER have been successfull, the server will sends Replies 001 to 004 to a user upon
      * successful registration, although standard order is PASS NICK USER
-     * @paragraph Example Example of reply sequence
+     * @section ExampleNick reply sequence
      * @code{.unparsed}
      *  - :irc.example.com 001 :Welcome to the Internet Relay Network <nick>!<user>@<host>
      *  - :irc.example.com 002 :Your host is <servername>, running version <ver>
@@ -67,7 +67,7 @@ class Nick : public ICommand
      * nickname   =  ( letter / special ) *8( letter / digit / special / "-" )
      * @return @ref ReplyCode
      */
-    static ReplyCode check_args(Server& s, Client& c, std::string& params);
+    static ReplyCode check_args(Server& server, Client& client, std::string& params);
 
   private:
     std::string _nickname;

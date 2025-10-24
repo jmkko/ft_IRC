@@ -48,14 +48,7 @@ Who::~Who() {}
 
 void Who::execute(Server& server, Client& client)
 {
-    // std::string        mask;
-    // std::string        op;
-    // std::istringstream iss(_params);
-    // ReplyHandler&      rh = ReplyHandler::get_instance(&server);
     Parser p(server, client);
-
-    // iss >> mask;
-    // iss >> op;
 
     if (!_op.empty() && _op != "o") {
         LOG_CMD.warning(TO_STRING(ERR_NEEDMOREPARAMS) + " ERR_NEEDMOREPARAMS");
