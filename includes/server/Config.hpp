@@ -19,7 +19,7 @@
 /**
  * @class Config
  * @brief load conf file which is formated in TOML style
- * there is three part
+ * there are three parts
  * - [irc.conf] -> if no data load default value
  * - [irc.motd] -> if no data don't send motd
  * - [irc.codes] -> if no data dont-t send trailing message
