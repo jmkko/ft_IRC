@@ -14,7 +14,6 @@
 #include "Client.hpp"
 #include "ICommand.hpp"
 #include "Server.hpp"
-#include "reply_codes.hpp"
 
 /**
  * @class Invite
@@ -31,6 +30,7 @@ class Invite : public ICommand
      * @param params
      */
     Invite(std::string& params);
+
     /**
      * @brief Destroy the Invite object
      *
@@ -38,7 +38,7 @@ class Invite : public ICommand
     ~Invite();
 
     /**
-     * @brief invite a client to a channel
+     * @brief invite a client to a channel and send RPL_INVITING
      * @details cf. [RFC specs](https://datatracker.ietf.org/doc/html/rfc2812#section-3.2.7) require
      * - one #Client to be invited
      * - one #Channel to be invited in
@@ -50,13 +50,14 @@ class Invite : public ICommand
      * then if successful sends RPL_INVITING and broadcast the message to channel members
      * @param s Server
      * @param c Client = the sender
-     * @warning in case of error send ERR_NOSUCHNICK, ERR_NOSUCHCHANNEL, ERR_NOTONCHANNEL, ERR_USERONCHANNEL, ERR_CHANOPRIVSNEEDED
+     * @warning in case of error send ERR_NEEDMOREPARAMS, ERR_NOSUCHNICK, ERR_NOSUCHCHANNEL, ERR_NOTONCHANNEL, ERR_USERONCHANNEL, ERR_CHANOPRIVSNEEDED
      */
     void execute(Server& server, Client& client);
 
   private:
     std::string _nickname;
     std::string _channelName;
+
     Invite();
     Invite(const Invite& other);
     Invite& operator=(const Invite& other);
