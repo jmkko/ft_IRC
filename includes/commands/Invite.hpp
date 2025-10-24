@@ -41,11 +41,13 @@ class Invite : public ICommand
      * @details cf. [RFC specs](https://datatracker.ietf.org/doc/html/rfc2812#section-3.2.7) require
      * - one #Client to be invited
      * - one #Channel to be invited in
+     *
      * check if:
      * - the client does exist, the channel does exist
      * - the sender is on channel
      * - the client is already on this channel
      * - the sender is operator if the channel is invite-only
+     *
      * then if successful sends RPL_INVITING and broadcast the message to channel members
      * @param server Server
      * @param client Client = the sender

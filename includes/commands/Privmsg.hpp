@@ -12,9 +12,7 @@
 #define PRIVMSG_HPP
 #include "Channel.hpp"
 #include "ICommand.hpp"
-#include "reply_codes.hpp"
 
-#include <iostream>
 #include <string>
 
 /**
@@ -30,7 +28,7 @@ class Privmsg : public ICommand
     /**
      * @brief Construct a new Privmsg:: Privmsg object
      *
-     * @param params
+     * @param params should match should match `<msgtarget> <text to be sent>`
      */
     Privmsg(std::string& params);
 
@@ -41,31 +39,22 @@ class Privmsg : public ICommand
     ~Privmsg();
 
     /**
-     * @brief check syntaxic validity of params
+     * @brief check validity and transfer message
      * @details should match [RFC specs](https://datatracker.ietf.org/doc/html/rfc2812#section-3.3.1)
-     * syntax rules:
-     * - trailing message (after `:`) should not be empty
-     * - at least one target (#Channel or #Client sender)
-     * - at max MAX_TARGET (defined in @ref irc.conf)
-     * other rules:
-     * - targets should be existing nicks or channels
+     * - make syntaxic checks
+     *   - trailing message (after `:`) should not be empty
+     *   - at least one target (#Channel or #Client sender)
+     *   - at max MAX_TARGET (defined in @ref irc.conf)
+     * - make other checks
+     *   - targets should be existing nicks or channels
+     *   - presence of sender on target channel
+     * - message is transferred to target #Client or broadcasted to #Channel for other members (sender excepted)
+     *
      * @param server @ref Server
      * @param client sender @ref Client
-     * @param params should match should match `<msgtarget> <text to be sent>`
-     * @return @ref ReplyCode corresponding to RFC ERR replies or CORRECT_FORMAT if syntax is correct
-     * @warning can return ERR_NEEDMOREPARAMS, ERR_NORECIPIENT, ERR_NOTEXTTOSEND or process directly replies ERR_TOOMANYTARGETS,
+     *
+     * @warning can send ERR_NEEDMOREPARAMS, ERR_NORECIPIENT, ERR_NOTEXTTOSEND, ERR_TOOMANYTARGETS,
      * ERR_NOSUCHCHANNEL, ERR_NOSUCHNICK
-     */
-    static ReplyCode check_args(Server& server, Client& client, std::string& params);
-
-    /**
-     * @brief proceed to extra checks (presence of sender on target channel) and to message transfer
-     * @details
-     * - message is transferred to target #Client
-     * - or broadcasted to #Channel for other members (sender excepted)
-     * @param server @ref Server
-     * @param client sender @ref Client
-     * @pre Privmsg::check_args should have returned CORRECT_FORMAT
      */
     void execute(Server& server, Client& client);
 

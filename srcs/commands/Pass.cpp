@@ -6,8 +6,6 @@
 #include "Server.hpp"
 #include "reply_codes.hpp"
 
-#include <iostream>
-
 /************************************************************
  *		🥚 CONSTRUCTORS & DESTRUCTOR						*
  ************************************************************/

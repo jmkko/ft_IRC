@@ -5,11 +5,7 @@
 #include "LogManager.hpp"
 #include "ReplyHandler.hpp"
 #include "Server.hpp"
-#include "consts.hpp"
 #include "reply_codes.hpp"
-#include "utils.hpp"
-
-#include <iostream>
 
 /************************************************************
  *		🥚 CONSTRUCTORS & DESTRUCTOR						*

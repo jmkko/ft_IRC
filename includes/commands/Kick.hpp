@@ -31,6 +31,7 @@ class Kick : public ICommand
      * @brief Construct a new Kick object
      * - one or many channels, comma separated
      * - one or many users, comma separated
+     * 
      * @param params should match `<channel> *( "," <channel> ) <user> *( "," <user> ) [<comment>]`
      */
     Kick(std::string& params);
@@ -52,6 +53,7 @@ class Kick : public ICommand
      *   - inner loop over channel members :
      *      - check for user presence -> ERR_USERNOTINCHANNEL
      *      - execute : remove - broadcast + direct notice
+     *
      * @param server
      * @param client
      * @warning can send ERR_NOSUCHCHANNEL, ERR_CHANOPRIVSNEEDED, ERR_USERNOTINCHANNEL, ERR_NEEDMOREPARAMS, ERR_BADCHANMASK,

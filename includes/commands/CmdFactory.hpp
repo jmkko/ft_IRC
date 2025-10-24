@@ -52,6 +52,7 @@ class CmdFactory
      * @brief main command in charge of
      * - checking command availability
      * - calling adequate helper command
+     *
      * @param server
      * @param client
      * @param params

@@ -47,9 +47,8 @@ class Join : public ICommand
      * @details check validity accordind to the RFC_2812
      * - should match pattern `( <channel> *( "," <channel> ) [ <key> *( "," <key> ) ] ) / "0"`
      * cf. [RFC specs](https://datatracker.ietf.org/doc/html/rfc2812#section-3.2.1)
-     * @section Example Reply Sequence
+     * @section Example of reply sequence
      * @code{.unparsed}
-     * example of reply sequence
      *	:user1!~username@host JOIN :#chan1 123
      *	:irc.example.com MODE #chan1 +o user1
      *	:irc.example.com MODE #chan1 +k 123
