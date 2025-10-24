@@ -11,16 +11,16 @@ const Config ircConfig(SERVER_CONF_FILE);
 const Config ircConfigTest(SERVER_CONF_FILE_FOR_TEST);
 #endif
 
-Config::Config() :
-    _name(SERVER_NAME),
-    _psswd(DEFAULT_PASSWORD),
-    _port(DEFAULT_PORT),
-    _maxJoinedChannels(MAX_JOINED_CHANNELS),
-    _chanNameMaxLen(CHAN_NAME_MAX_LEN),
-    _nicknameMaxLen(NICKNAME_MAX_LEN),
-    _targetLimit(TARGET_LIMIT)
-{
-}
+// Config::Config() :
+//     _name(SERVER_NAME),
+//     _psswd(DEFAULT_PASSWORD),
+//     _port(DEFAULT_PORT),
+//     _maxJoinedChannels(MAX_JOINED_CHANNELS),
+//     _chanNameMaxLen(CHAN_NAME_MAX_LEN),
+//     _nicknameMaxLen(NICKNAME_MAX_LEN),
+//     _targetLimit(TARGET_LIMIT)
+// {
+// }
 
 Config::Config(const std::string& fileName) :
     _name(SERVER_NAME),

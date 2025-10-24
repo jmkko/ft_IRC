@@ -17,8 +17,7 @@
 
 Client::Client(Socket socket, sockaddr_in addr) :
     _socket(socket), _addr(addr), _addrStr(TcpSocket::get_address(_addr)), _status(UNAUTHENTICATED)
-{
-}
+{}
 
 Client::~Client(void) {}
 
@@ -131,7 +130,6 @@ Channel* Client::get_channel(const std::string& name) {
 	return NULL;
 };
 
-// should not broadcast quit when still present
 void	Client::broadcast_to_all_channels(Server& server, ReplyCode code, const std::string& params, const std::string& trailing)
 {
     LOG_DT_CMD("nb joined channels", _joinedChannels.size());

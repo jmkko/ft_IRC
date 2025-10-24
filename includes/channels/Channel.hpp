@@ -1,6 +1,6 @@
 /**
  * @file Channel.hpp
- * @brief
+ * @brief Channel class
  * @version 0.1
  * @date 2025-10-16
  *
@@ -18,7 +18,11 @@
 #include <string>
 #include <vector>
 
-#define MODE_LEN 5
+/**
+ * @brief size of bitset used to display modes in binary form
+ * 
+ */
+#define MODE_LEN 4
 
 class Client;
 class Parser;
@@ -47,6 +51,7 @@ class Channel
      * @param name
      */
     Channel(const std::string& name, const std::string& key = "");
+
     /**
      * @brief Construct a new Channel object
      *
@@ -59,6 +64,7 @@ class Channel
      *
      */
     virtual ~Channel();
+
     /**
      * @brief overload of assign operator
      *
@@ -73,18 +79,21 @@ class Channel
      * @return const std::string&
      */
     const std::string& get_name() const;
+
     /**
      * @brief Get the topic object
      *
      * @return const std::string&
      */
     const std::string& get_topic() const;
+
     /**
      * @brief Get the key object
      *
      * @return const std::string&
      */
     const std::string& get_key() const;
+
     /**
      * @brief
      *
@@ -93,6 +102,7 @@ class Channel
      * @return false otherwise
      */
     bool is_member(Client& client) const;
+
     /**
      * @brief
      *
@@ -101,6 +111,7 @@ class Channel
      * @return false otherwise
      */
     bool is_operator(Client& client) const;
+
     /**
      * @brief
      *
@@ -109,6 +120,7 @@ class Channel
      * @return false otherwise
      */
     bool is_invited(Client& client) const;
+
     /**
      * @brief Get the user limit
      *
@@ -116,6 +128,7 @@ class Channel
      * @remark return -1 if mode is `-l`
      */
     int get_user_limit() const;
+
     /**
      * @brief
      *
@@ -123,6 +136,7 @@ class Channel
      * @return false otherwise
      */
     bool is_invite_only() const;
+
     /**
      * @brief
      *
@@ -130,8 +144,6 @@ class Channel
      * @return false otherwise
      */
     bool is_topic_change_restricted() const;
-
-    bool is_banned(Client& client) const;
 
     /**
      * @brief Set the channel name
@@ -141,6 +153,7 @@ class Channel
      * @warning returns ERR_BADCHANMASK if invalid name
      */
     ReplyCode set_name(const std::string& name);
+
     /**
      * @brief Set the topic object
      *
@@ -151,6 +164,14 @@ class Channel
      */
     ReplyCode set_topic(Client& client, const std::string& topic);
 
+    /**
+     * @brief removes a client from the list of invited clients
+     * @details generally occurs after the invited client joins channel
+     * 
+     * @param client 
+     * @return true 
+     * @return false 
+     */
     bool remove_from_invited_list(Client& client);
 
     /**
@@ -161,12 +182,14 @@ class Channel
      * @todo custom error for invalid key format
      */
     ReplyCode set_key(const std::string& key);
+
     /**
      * @brief Set the user limit object
      *
      * @param limit
      */
     void set_user_limit(int limit);
+
     /**
      * @brief add a client to the invite list
      *
@@ -174,6 +197,7 @@ class Channel
      * @pre caller function should have checked that client is not already a member
      */
     void invite_client(Client& client);
+
     /**
      * @brief add a client to the member list
      *
@@ -181,7 +205,6 @@ class Channel
      * @return ReplyCode
      * @warning returns ERR_CHANNELISFULL, ERR_INVITEONLYCHAN
      */
-
     ReplyCode add_member(Client& client);
 
     /**
@@ -192,7 +215,6 @@ class Channel
      */
     bool remove_member(Client& client);
 
-    ReplyCode ban_member(Client& client);
     /**
      * @brief grants op status to the client
      *
@@ -201,6 +223,7 @@ class Channel
      * @return ReplyCode
      */
     ReplyCode make_operator(Client& client);
+
     /**
      * @brief removes op status from client
      *
@@ -217,31 +240,41 @@ class Channel
      */
     void add_mode(unsigned short mode);
 
+    /**
+     * @brief uses #Parser to create a RPL_TOPIC / RPL_NOTOPIC reply
+     * 
+     * @param p parser
+     */
 	void display_topic_to(Parser& p);
+
     /**
      * @brief deactivate a mode
      *
      * @param mode
      */
     void remove_mode(unsigned short mode);
+
     /**
      * @brief Get the mode as a short value
      *
      * @return unsigned short
      */
     unsigned short get_mode() const;
+
     /**
      * @brief Get channel members nicknames
      *
      * @return std::vector<std::string>
      */
     std::vector<std::string> get_members_list() const;
+
     /**
      * @brief Get members numbers
      *
      * @return size_t
      */
     size_t get_nb_members() const;
+
     /**
      * @brief Get a list of #Client members
      *
@@ -251,6 +284,7 @@ class Channel
 
     /**
      * @brief transfer a message to channel members
+     * @remark doesn't transfer to sender
      * @see ReplyHandler::process_response
      * @param server
      * @param replyCode
@@ -264,7 +298,14 @@ class Channel
                    Client*            sender   = NULL,
                    const std::string& trailing = "") const;
 
+    /**
+     * @brief Get the channel modes in string format, ie '+ik key'
+     * 
+     * @param client 
+     * @return std::string 
+     */
 	std::string get_modes_str(Client& client);
+
     /**
      * @brief transfer a bot reply to channel members
      * @see ReplyHandler::process_response
@@ -285,10 +326,19 @@ class Channel
      * ` channel    =  ( "#" / "+" / ( "!" channelid ) / "&" ) chanstring [ ":" chanstring ]`
      * @param name
      * @return true is name is valid according to RFC grammar
-     * @return false
+     * @return false otherwise
      */
-
     static bool is_valid_channel_name(const std::string& name);
+        /**
+     * @brief
+     * @details cf [grammar](https://datatracker.ietf.org/doc/html/rfc2812#section-2.3.1)
+     * `key        =  1*23( %x01-05 / %x07-08 / %x0C / %x0E-1F / %x21-7F )
+                  ; any 7-bit US_ASCII character,
+                  ; except NUL, CR, LF, FF, h/v TABs, and " "`
+     * @param name
+     * @return true is name is valid according to RFC grammar
+     * @return false otherwise
+     */
     static bool is_valid_channel_key(const std::string& key);
 
   private:

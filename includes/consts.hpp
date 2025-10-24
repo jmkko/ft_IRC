@@ -6,7 +6,7 @@
 /*   By: fpetit <fpetit@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 23:38:52 by npolack           #+#    #+#             */
-/*   Updated: 2025/10/20 14:18:05 by fpetit           ###   ########.fr       */
+/*   Updated: 2025/10/24 14:06:17 by fpetit           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,11 +53,10 @@
 #define NB_AVAILABLE_BOT_SUBCMD  2
 #define USERS_PER_LINE           10
 #define CHANMODE_INIT            0b00000
-#define CHANMODE_OP              0b00001 // no use ?
-#define CHANMODE_TOPIC           0b00010
-#define CHANMODE_KEY             0b00100
-#define CHANMODE_INVITE          0b01000
-#define CHANMODE_LIMIT           0b10000
+#define CHANMODE_KEY             0b00001
+#define CHANMODE_INVITE          0b00010
+#define CHANMODE_LIMIT           0b00100
+#define CHANMODE_TOPIC           0b01000
 #define TARGET_LIMIT             5
 
 #include <string>

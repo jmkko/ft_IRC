@@ -72,12 +72,7 @@ std::string Channel::get_modes_str(Client& client)
         modeIsReply += " " + modeIsParams;
     return modeIsReply;
 }
-/**
- * @brief check if the key is valid -- no commas or spaces allowed
- *
- * @param key
- * @return true or false
- */
+
 bool Channel::is_valid_channel_key(const std::string& key)
 {
     if (key.empty()) {
@@ -257,8 +252,6 @@ ReplyCode Channel::add_member(Client& client)
     }
     if (ircConfig.get_max_joined_channels() != NO_LIMIT && client.get_nb_joined_channels() >= ircConfig.get_max_joined_channels())
         return ERR_CHANNELISFULL;
-    if (is_banned(client))
-        return ERR_BANNEDFROMCHAN;
     _members.insert(&client);
     client.add_joined_channel(*this);
     return CORRECT_FORMAT;
@@ -279,17 +272,6 @@ bool Channel::remove_member(Client& client)
 }
 
 void Channel::remove_operator(Client& client) { _operators.erase(&client); }
-
-ReplyCode Channel::ban_member(Client& client)
-{
-    if (is_member(client)) {
-        _banList.insert(&client);
-        return CORRECT_FORMAT;
-    }
-    return ERR_USERNOTINCHANNEL;
-}
-
-bool Channel::is_banned(Client& client) const { return _banList.find(&client) != _banList.end(); }
 
 ReplyCode Channel::make_operator(Client& client)
 {
