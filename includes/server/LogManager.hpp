@@ -24,7 +24,8 @@ class LogManager
      */
     static LogManager& get_instance();
     /**
-     * @brief If the Logger don't exist it create it
+     * @brief return a logger with specified name and level
+     * @detail if the Logger doesn't exist it is instanciated
      *
      * @param name of Logger
      * @param filename to store the Logger messages by Default LoggerName.log
