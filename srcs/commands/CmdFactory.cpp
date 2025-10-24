@@ -16,7 +16,6 @@
 #include "Quit.hpp"
 #include "Part.hpp"
 #include "Parser.hpp"
-// #include "ReplyHandler.hpp"
 #include "Server.hpp"
 #include "Topic.hpp"
 #include "User.hpp"
@@ -24,9 +23,7 @@
 #include "colors.hpp"
 #include "consts.hpp"
 #include "reply_codes.hpp"
-#include "utils.hpp"
 
-#include <iostream>
 #include <sstream>
 
 /************************************************************

@@ -10,7 +10,6 @@
 #ifndef CHANNEL_HPP
 #define CHANNEL_HPP
 
-#include "LogManager.hpp"
 #include "ReplyHandler.hpp"
 #include "reply_codes.hpp"
 

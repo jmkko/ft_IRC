@@ -27,9 +27,7 @@ Diagnostics:
         readability-identifier-naming.VariableCase: camelBack
         readability-identifier-naming.MemberCase: camelBack
         readability-identifier-naming.FunctionCase: lower_case
-  Suppress:
-    - unused-includes
-    - missing-includes
+
 CompileFlags:
   Add:
     - -Iincludes
@@ -40,9 +38,5 @@ CompileFlags:
     - -Iincludes/server
     - -Itest/include
     - -Iclients
-    - -I../includes/channels
-    - -I../includes/clients
-    - -I../includes/commands
-    - -Iincludes/server
 InlayHints:
   Enabled: true

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jhervoch <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: fpetit <fpetit@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/22 10:25:15 by jhervoch          #+#    #+#             */
-/*   Updated: 2025/10/22 10:25:17 by jhervoch         ###   ########.fr       */
+/*   Updated: 2025/10/24 16:15:32 by fpetit           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,8 @@
 #include "ReplyHandler.hpp"
 #include "Server.hpp"
 #include "consts.hpp"
-#include "parsing/Parser.hpp"
+#include "Parser.hpp"
+#include "LogManager.hpp"
 #include "reply_codes.hpp"
 #include "utils.hpp"
 

@@ -15,7 +15,6 @@
 #include "ICommand.hpp"
 #include "Server.hpp"
 #include "TcpSocket.hpp"
-#include "reply_codes.hpp"
 
 #include <string>
 

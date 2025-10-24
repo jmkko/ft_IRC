@@ -5,12 +5,10 @@
 #include "Config.hpp"
 #include "ICommand.hpp"
 #include "LogManager.hpp"
-#include "colors.hpp"
 #include "consts.hpp"
 #include "reply_codes.hpp"
 #include "utils.hpp"
 
-#include <algorithm>
 #include <bitset>
 #include <iostream>
 
