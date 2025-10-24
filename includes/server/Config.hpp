@@ -172,7 +172,7 @@ class Config
 
     /**
      * @brief set the _nicknameMaxLen
-     * @remark check if it meets the server conditions
+     * @detail value should be between 1 and 9 (maximum defined by RFC)
      *
      * @param value
      */
