@@ -7,9 +7,6 @@
 #include "Server.hpp"
 #include "consts.hpp"
 #include "reply_codes.hpp"
-#include "utils.hpp"
-
-#include <bitset>
 
 /******************************************************************************
  *                  CONSTRUCTOR AND DESTRUCTOR                                *
@@ -17,20 +14,7 @@
 
 Join::Join() {}
 Join::~Join() {}
-Join::Join(const Join& other) : ICommand(), _chans(other._chans) {}
-Join& Join::operator=(const Join& other)
-{
-    if (this != &other) {
-        _chans = other._chans;
-    }
-    return *this;
-}
 
-/**
- * @brief recreate the channels list. Each name of channel are mapped with their corresponding key.
- *
- * @param params
- */
 Join::Join(std::string& params)
 {
     Parser parser;
@@ -45,13 +29,6 @@ Join::Join(std::string& params)
  *                                 METHODS                                    *
  ******************************************************************************/
 
-/**
- * @brief send the users's list of a channel to the client
- *
- * @param rh [TODO:parameter]
- * @param client [TODO:parameter]
- * @param channel [TODO:parameter]
- */
 void Join::_send_list_of_names(Parser& p, Channel& channel)
 {
     std::vector<std::string> users = channel.get_members_list();
@@ -62,12 +39,6 @@ void Join::_send_list_of_names(Parser& p, Channel& channel)
     p.response(RPL_ENDOFNAMES, channel.get_name());
 }
 
-/**
- * @brief send the RPL_TOPIC or RPL_NOTOPIC of channel to the client *
- * @param rh [TODO:parameter]
- * @param client [TODO:parameter]
- * @param channel [TODO:parameter]
- */
 void Join::_display_topic(Parser& p, Channel& channel)
 {
     if (channel.get_topic().empty()) {
@@ -77,22 +48,6 @@ void Join::_display_topic(Parser& p, Channel& channel)
     }
 }
 
-/**
- * @brief Allows a client to join a channel or create it if it does not exist
- * after checking if the name of the channel is valid accordind to the RFC_2812
- *
- * @param server
- * @param client
- *
- * sending response sequence to client
- *	:user1!~username@host JOIN :#chan1 123
- *	:irc.example.com MODE #chan1 +o user1
- *	:irc.example.com MODE #chan1 +k 123
- *	:irc.example.com 331 user1 #chan1 :No topic is set
- *	:irc.example.com 353 user1 = #chan1 :@user1 user2 user3 user4 user5
- *	:irc.example.com 353 user1 = #chan1 :user6 @user1 user7 user8 user9
- *	:irc.example.com 366 user1 #chan1 :End of NAMES listV
- */
 void Join::execute(Server& server, Client& client)
 {
     Parser    p(server, client);
@@ -133,7 +88,6 @@ void Join::execute(Server& server, Client& client)
                 channel->make_operator(client);
                 p.response(RPL_CHANNELMODEIS, chanName + " +o ");
                 // rh.process_response(client, TRANSFER_MODE, chanName + " +o " + client.get_nickname());  <-- merge changements
-                // ?? why ??
             }
             p.response(RPL_CHANNELMODEIS, chanName + " " + channel->get_modes_str(client));
             _send_list_of_names(p, *channel);
