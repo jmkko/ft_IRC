@@ -33,30 +33,30 @@ struct BotState {
 };
 
 /**
-* @class Server
+ * @class Server
  * @brief Ser
  * @details responsabilities are
  * - initializing the server with provided arguments (port, password) + config file
  * - running the server loop, using `poll` to detect events on sockets, ie
-     - registering a new Client connection
-     - reading Client messages and processing them (through #CmdFactory and #ICommand implementations)
-     - sending messages back
-   - gracefully handling client disconnection and server termination (through signals)
+ *    - registering a new Client connection
+ *    - reading Client messages and processing them (through #CmdFactory and #ICommand implementations)
+ *    - sending messages back
+ *  - gracefully handling client disconnection and server termination (through signals)
  */
 class Server
 {
   public:
     /**
-    * @brief initialize server
-   *  @details
-     - assign a socket binding a port with an address
-     - put socket in listening state @see Server::_listen_to_socket
-    * @pre the `psswd` argument should have been checked with @ref Utils::check_password()
-    * @pre the `port`argument should have been checked with @ref Utils::check_port()
-    * @param port valid port number
-    * @param psswd valid password
-    * @todo delegate initialization to helper function, as `exit` is not authorized
-    */
+     *
+     * @details
+     * - assign a socket binding a port with an address
+     * - put socket in listening state @see Server::_listen_to_socket
+     * @pre the `psswd` argument should have been checked with @ref Utils::check_password()
+     * @pre the `port`argument should have been checked with @ref Utils::check_port()
+     * @param port valid port number
+     * @param psswd valid password
+     * @todo delegate initialization to helper function, as `exit` is not authorized
+     */
     Server(const unsigned short port, const std::string& password);
 
     /**
@@ -86,12 +86,14 @@ class Server
      * @return int
      */
     int get_socket_fd() const;
+
     /**
      * @brief Get the name object
      * @details also accessible through #Config
      * @return std::string
      */
     std::string get_name() const;
+
     /**
      * @brief runs the server loop, regularly checking activity through `poll()`
      * @details
@@ -104,10 +106,29 @@ class Server
       - clean data (clients, channels, sockets) once loop is ended
        @remark throughout the loop, orphan sockets are cleaned and signal are checked through a global variable
      */
-    void     start();
-    void     stop();
-    Client*  find_client_by_nickname(const std::string& nick);
+    void start();
+
+    /**
+     * @brief setting @ref globalSignal to SIGINT
+     * @remark the main infinite loop STOP and -> @see do _clean()
+     */
+    void stop();
+    /**
+     * @brief find a client by his nickname and return a Client*
+     *
+     * @param nick
+     * @return on succes the @ref CLient*
+     */
+    Client* find_client_by_nickname(const std::string& nick);
+
+    /**
+     * @brief find a channel by his name
+     *
+     * @param name
+     * @return @ref Channel*
+     */
     Channel* find_channel_by_name(const std::string& name);
+
     /**
      * @brief util function to get index of client in pfd array
      *
@@ -118,6 +139,7 @@ class Server
 
     void update_bot_state(
         Socket socketfd, Channel* targetChannel, const std::string& subCommand, const std::string& botReply, bool readyToSend);
+
     /**
      * @brief update events on socket the server is subscribed to
      *
@@ -126,6 +148,7 @@ class Server
      */
     void                 add_events_of(Client& client, int event);
     std::vector<Client*> find_clients_by_pattern(const std::string& pattern) const;
+
     /**
      * @brief remove #TcpSocket and #Client a pfd is associated with
      * @details
@@ -137,6 +160,7 @@ class Server
      * @param pfdIndex
      */
     void cleanup_socket_and_client(int pfdIndex);
+
     /**
      * @brief remove registered channels
      *
@@ -166,34 +190,53 @@ class Server
      * @details need to clean in reverse order (cf #Server::_cleanup_socket_and_client)
      */
     void _clean();
+
     /**
- @brief store new client socket, set it non blocking, and subscribe to new POLLIN events
- @param i index of the monitored fds
- */
+     * @brief store new client socket, set it non blocking, and subscribe to new POLLIN events
+     * @param i index of the monitored fds
+     */
     void _handle_new_connection(int pfdIndex);
+
     /**
- @brief removes client
- @param pfdIndex
-*/
+     * @brief removes client
+     * @param pfdIndex
+     */
     void _remove_client(Socket s);
-    void _handle_client_disconnection(int pfdIndex);
+
     /**
- * @brief attempt receiving bytes from client, parse into a command and execute it
- enable write notification on client socket if a response has to be sent
- in case of partial reception (message not ending with \r\n), add to receive buffer
- * @param pfdIndex index of monitored fd
- */
+     * @brief handles if a client is disconnected
+     * @remark check if the client has closed the connection
+     * and @see cleanup_socket_and_client
+     *
+     * @param pfdIndex socket fd of the Client
+     */
+    void _handle_client_disconnection(int pfdIndex);
+
+    /**
+     * @brief attempt receiving bytes from client, parse into a command and execute it
+     * enable write notification on client socket if a response has to be sent
+     * in case of partial reception (message not ending with \r\n), add to receive buffer
+     * @param pfdIndex index of monitored fd
+     */
     void _handle_client_input(int pfdIndex);
 
     void _handle_bot_input(int pfdIndex, Client* botClient, BotState& state);
+
     /**
- *@brief attempt sending the queued messages
- if a message is partially sent, updates send buffer accordingly
- if a message is completely sent, disable write notification for the client fd
- in case of send error, either retry or disconnect the client
- @param pfdIndex monitored fd for client
-*/
+     * @brief attempt sending the queued messages
+     * if a message is partially sent, updates send buffer accordingly
+     * if a message is completely sent, disable write notification for the client fd
+     * in case of send error, either retry or disconnect the client
+     * @param pfdIndex monitored fd for client
+     */
     void _handle_client_output(int pfdIndex);
+    /**
+     * @brief listen a socket by adding him to the list of fd to listen
+     * _pfds vector of pollfd
+     *
+     * @param toListen Socket to listen
+     * @param flags like POLLIN
+     */
     void _listen_to_socket(Socket toListen, uint32_t flags);
     /**
      * @brief return a command through #CmdFactory::make_command

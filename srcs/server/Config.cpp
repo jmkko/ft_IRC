@@ -1,15 +1,19 @@
 #include "Config.hpp"
+
 #include "LogManager.hpp"
 #include "consts.hpp"
 #include "reply_codes.hpp"
 
 #include <fstream>
-#include <iostream>
 
 const Config ircConfig(SERVER_CONF_FILE);
 #ifdef TEST
 const Config ircConfigTest(SERVER_CONF_FILE_FOR_TEST);
 #endif
+
+/************************************************************
+ *		🥚 CONSTRUCTORS & DESTRUCTOR                *
+ ************************************************************/
 
 Config::Config() :
     _name(SERVER_NAME),
@@ -55,6 +59,10 @@ Config::Config(const std::string& fileName) :
     }
 }
 Config::~Config() {}
+
+/*************************************************************
+ *                      🛠️ FUNCTIONS                         *
+ *************************************************************/
 
 static std::string trim(const std::string& s)
 {

@@ -1,3 +1,11 @@
+/**
+ * @file LogManager.hpp
+ * @brief LogManager class
+ * @version 0.1
+ * @date 2025-10-24
+ *
+ * @copyright Copyright (c) 2025
+ */
 #ifndef LOGMANAGER
 #define LOGMANAGER
 
@@ -8,9 +16,29 @@ class LogManager
   public:
     ~LogManager();
 
+    /**
+     * @brief Singleton pattern, this function allows you to have
+     * only one instance of this class
+     *
+     * @return the only one instance of LogManager
+     */
     static LogManager& get_instance();
-    Logger&            get_logger(const std::string& name, const std::string& filename, LogLevel level);
-    void               set_global_level(LogLevel level);
+    /**
+     * @brief return a logger with specified name and level
+     * @detail if the Logger doesn't exist it is instanciated
+     *
+     * @param name of Logger
+     * @param filename to store the Logger messages by Default LoggerName.log
+     * @param level minlevel
+     * @return the Logger
+     */
+    Logger& get_logger(const std::string& name, const std::string& filename, LogLevel level);
+    /**
+     * @brief set the minlevel allowed
+     *
+     * @param level (DETAIL, DEBUG, INFO, WARN, ERROR)
+     */
+    void set_global_level(LogLevel level);
 
   private:
     LogManager();
@@ -22,7 +50,10 @@ class LogManager
     LogLevel                       _globalLevel;
 };
 
-// Macros for easy usage
+/**
+ * @details
+ * macro for easy usage of each Logger
+ */
 #define LOG_SOCKET LogManager::get_instance().get_logger("SOCKET", "", DEBUG)
 #define LOG_SERVER LogManager::get_instance().get_logger("SERVER", "", DEBUG)
 #define LOG_CONN   LogManager::get_instance().get_logger("CONNECTION", "", DEBUG)

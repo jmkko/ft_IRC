@@ -19,7 +19,6 @@
 #include <cerrno>
 #include <cstring>
 #include <fcntl.h>
-#include <iostream>
 #include <netinet/in.h>
 #include <sstream>
 #include <stdexcept>
@@ -27,15 +26,9 @@
 #include <unistd.h> // close
 
 /************************************************************
- *		🥚 CONSTRUCTORS & DESTRUCTOR						*
+ *             🥚 CONSTRUCTORS & DESTRUCTOR                 *
  ************************************************************/
 
-/**
- * @brief create a socket
- * AF_INET IPv4 familly
- * SOCK_STREAM tcp type
- * IPPROTO_TCP tcp protocol
- */
 TcpSocket::TcpSocket() : _sckt(socket(AF_INET, SOCK_STREAM, IPPROTO_TCP))
 {
     if (_sckt == -1) {
@@ -45,10 +38,6 @@ TcpSocket::TcpSocket() : _sckt(socket(AF_INET, SOCK_STREAM, IPPROTO_TCP))
     }
 }
 
-/**
- * @brief create a socket
- * @param socketFd
- */
 TcpSocket::TcpSocket(Socket socketFd) : _sckt(socketFd) {}
 
 TcpSocket::TcpSocket(const TcpSocket& inst) : _sckt(inst._sckt) {}
@@ -58,7 +47,7 @@ TcpSocket::~TcpSocket() { close(_sckt); }
 Socket TcpSocket::get_socket() const { return _sckt; }
 
 /************************************************************
- *		➕ OPERATORS											*
+ *                    ➕ OPERATORS                          *
  ************************************************************/
 
 TcpSocket& TcpSocket::operator=(const TcpSocket& inst)
@@ -70,17 +59,9 @@ TcpSocket& TcpSocket::operator=(const TcpSocket& inst)
 }
 
 /*************************************************************
- *		🛠️ FUNCTIONS											*
+ *                      🛠️ FUNCTIONS                         *
  *************************************************************/
 
-/**
- * @brief Connect a socket to a server
- * AF_INET IPv4 familly
- *
- * @param ipaddress like "127.0.0.1"
- * @param port
- * @return true
- */
 bool TcpSocket::tcp_connect(const std::string& ipaddress, unsigned short port)
 {
     sockaddr_in addr = {};
@@ -91,13 +72,6 @@ bool TcpSocket::tcp_connect(const std::string& ipaddress, unsigned short port)
     return connect(_sckt, reinterpret_cast<const sockaddr*>(&addr), sizeof(addr)) == 0;
 }
 
-/**
- * @brief assign a local address to a socket
- * INADDR_ANY = all sources
- * AF_INET = IPV4
- * @param port port to bind
- * @throw exception if bind error
- */
 void TcpSocket::tcp_bind(unsigned short port)
 {
     sockaddr_in addr = {};
@@ -117,13 +91,6 @@ void TcpSocket::tcp_bind(unsigned short port)
     }
 }
 
-/**
- * @brief wait a socket connection a socket that will be used to accept incoming
- *        connection requests using accept(2)
- *        SOMAXCONN system manage the value
- *        AF_INET IPv4 familly
- * @return 0 on success or -1 on error
- */
 void TcpSocket::tcp_listen()
 {
 
@@ -141,54 +108,9 @@ std::string TcpSocket::get_address(const sockaddr_in& addr) { return inet_ntoa(a
 
 int TcpSocket::set_non_blocking_socket() { return fcntl(_sckt, F_SETFL, O_NONBLOCK); }
 
-/**
- * @brief first send data size
- *        second send the data@
- *
- * @param data
- * @param len
- * @return
- */
 int TcpSocket::do_send(const unsigned char* data, unsigned short len)
 {
     unsigned short networkLen = htons(len);
     return send(_sckt, reinterpret_cast<const char*>(&networkLen), sizeof(networkLen), 0) == sizeof(networkLen)
            && send(_sckt, reinterpret_cast<const char*>(data), len, 0) == len;
-}
-
-/*****************************************************************************
- * first read data size
- * second read data
- ******************************************************************************/
-/**
- * @brief first read data size
- *        second read the data@
- *
- * @param buffer
- * @return
- */
-int TcpSocket::do_receive(std::vector<unsigned char>& buffer)
-{
-    unsigned short expectedSize = 0;
-    size_t         pending      = recv(_sckt, reinterpret_cast<char*>(&expectedSize), sizeof(expectedSize), 0);
-    if (pending <= 0 || pending != sizeof(unsigned short)) {
-        //!< Erreur
-        return false;
-    }
-
-    expectedSize = ntohs(expectedSize);
-    buffer.resize(expectedSize);
-    ssize_t bytesRead = 0;
-    do { // NOLINT
-        ssize_t ret
-            = recv(_sckt, reinterpret_cast<char*>(&buffer[bytesRead]), (expectedSize - bytesRead) * sizeof(unsigned char), 0);
-        if (ret <= 0) {
-            //!< Erreur
-            buffer.clear();
-            return false;
-        } else {
-            bytesRead += ret;
-        }
-    } while (bytesRead < expectedSize);
-    return true;
 }

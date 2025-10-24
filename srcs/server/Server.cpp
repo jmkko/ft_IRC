@@ -29,7 +29,7 @@
 #include <unistd.h> // close
 
 /************************************************************
- *		🥚 CONSTRUCTORS & DESTRUCTOR*
+ *		🥚 CONSTRUCTORS & DESTRUCTOR                *
  ************************************************************/
 
 Server::Server(const unsigned short port, const std::string& password) :
@@ -51,7 +51,7 @@ Server::Server(const unsigned short port, const std::string& password) :
 Server::~Server() { _clean(); }
 
 /*************************************************************
- *		👁️‍ GETTERS and SETTERS	                     *
+ *               👁️‍ GETTERS and SETTERS	                     *
  *************************************************************/
 
 std::string Server::get_password() const { return _psswd; }
@@ -60,7 +60,7 @@ int         Server::get_port() const { return _port; }
 int         Server::get_socket_fd() const { return _serverSocket.get_socket(); }
 
 /*************************************************************
- *		🛠️ FUNCTIONS                                 *
+ *                      🛠️ FUNCTIONS                         *
  *************************************************************/
 
 void Server::start()
