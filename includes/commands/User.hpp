@@ -22,8 +22,8 @@ class User : public ICommand
 
   private:
     std::string _username;
-	std::string _mode;
-	std::string _unused;
+    std::string _mode;
+    std::string _unused;
     std::string _realname;
     User(const User& other);
     User(void);

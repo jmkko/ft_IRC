@@ -49,16 +49,16 @@ Topic::Topic(std::string& params) : _clearTopic(false)
 {
     Parser parser;
 
-    _chan  = parser.format_parameter(params, NULL);
-	std::istringstream iss(params);
-	std::string token;
-	iss >> token;
-	if (token == ":") {
-		_clearTopic = true;
-		_topic = "";
-	} else {
-		_topic = parser.format_parameter(params, NULL);
-	}
+    _chan = parser.format_parameter(params, NULL);
+    std::istringstream iss(params);
+    std::string        token;
+    iss >> token;
+    if (token == ":") {
+        _clearTopic = true;
+        _topic      = "";
+    } else {
+        _topic = parser.format_parameter(params, NULL);
+    }
 }
 
 Topic::~Topic(void) {}
@@ -78,14 +78,14 @@ void Topic::_display_topic(Parser& p, Channel& channel)
 
 void Topic::execute(Server& server, Client& client)
 {
-    std::string  topicTrailing = _topic;
+    std::string topicTrailing = _topic;
 
     Parser p(server, client);
-	
-	if (_chan.empty()) {
+
+    if (_chan.empty()) {
         p.response(ERR_NEEDMOREPARAMS, "TOPIC");
-		return;
-	}
+        return;
+    }
     Channel* channel = server.find_channel_by_name(_chan);
     if (!channel) {
         p.response(ERR_NOSUCHCHANNEL, _chan);
@@ -98,7 +98,7 @@ void Topic::execute(Server& server, Client& client)
         if (code == CORRECT_FORMAT) {
             if (_topic.empty()) {
                 topicTrailing = " ";
-			}
+            }
             channel->broadcast(server, TRANSFER_TOPIC, channel->get_name(), &client, topicTrailing);
             p.response(TRANSFER_TOPIC, channel->get_name(), topicTrailing);
         } else {

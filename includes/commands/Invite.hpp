@@ -49,7 +49,8 @@ class Invite : public ICommand
      * then if successful sends RPL_INVITING and broadcast the message to channel members
      * @param server Server
      * @param client Client = the sender
-     * @warning in case of error send ERR_NEEDMOREPARAMS, ERR_NOSUCHNICK, ERR_NOSUCHCHANNEL, ERR_NOTONCHANNEL, ERR_USERONCHANNEL, ERR_CHANOPRIVSNEEDED
+     * @warning in case of error send ERR_NEEDMOREPARAMS, ERR_NOSUCHNICK, ERR_NOSUCHCHANNEL, ERR_NOTONCHANNEL, ERR_USERONCHANNEL,
+     * ERR_CHANOPRIVSNEEDED
      */
     void execute(Server& server, Client& client);
 

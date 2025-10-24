@@ -1,11 +1,12 @@
 #ifndef PART_HPP
 #define PART_HPP
-#include <iostream>
 #include "ICommand.hpp"
+
+#include <iostream>
 class Server;
 class Client;
 
-class Part: public ICommand
+class Part : public ICommand
 {
   public:
     ~Part();
@@ -16,7 +17,7 @@ class Part: public ICommand
   private:
     std::vector<std::string> _chanNames;
     std::string              _message;
-	
+
     Part(void);
     Part(const Part& other);
     Part& operator=(const Part& other);

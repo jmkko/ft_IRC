@@ -40,7 +40,7 @@ void Part::execute(Server& server, Client& client)
 
     if (_chanNames.size() == 0) {
         p.response(ERR_NEEDMOREPARAMS, "PART");
-		return ;
+        return;
     }
     for (size_t i = 0; i < _chanNames.size(); i++) {
         Channel* channel = server.find_channel_by_name(_chanNames[i]);

@@ -70,7 +70,7 @@ class Topic : public ICommand
     static ReplyCode check_args(Server& server, Client& client, std::string& params);
 
   private:
-	std::string _chan;
+    std::string _chan;
     std::string _topic;
     bool        _clearTopic;
 

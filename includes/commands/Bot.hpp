@@ -3,9 +3,9 @@
  * @brief Bot class
  * @version 0.1
  * @date 2025-10-24
- * 
+ *
  * @copyright Copyright (c) 2025
- * 
+ *
  */
 #ifndef BOT_HPP
 #define BOT_HPP
@@ -21,7 +21,7 @@
 /**
  * @def BOT_PROCESS_TIME_MS
  * @brief time to process API calls
- * 
+ *
  */
 #define BOT_PROCESS_TIME_MS 200
 
@@ -41,13 +41,13 @@ class Bot : public ICommand
 
     /**
      * @brief Construct a new Bot object
-     * 
-     * @param params 
+     *
+     * @param params
      */
     Bot(std::string& params);
     /**
      * @brief Destroy the Bot object
-     * 
+     *
      */
     ~Bot();
 
@@ -62,8 +62,8 @@ class Bot : public ICommand
      * - transfer original prompt to channel
      * - broadcast bot response to channel as a privmsg
      * @warning case of an invite-only channel is not handled yet
-     * @param s 
-     * @param c 
+     * @param s
+     * @param c
      */
     void execute(Server& s, Client& c);
 
@@ -91,8 +91,8 @@ class Bot : public ICommand
      * and makes validity checks
      * - channel should exist
      * - sender should be a channel member
-     * @param s 
-     * @param c 
+     * @param s
+     * @param c
      * @return true if args are valid
      * @return false otherwise
      * @warning can send ERR_NEEDMOREPARAMS, ERR_NOSUCHCHANNEL, ERR_NOTONCHANNEL, CUSTOMERR_WRONG_FORMAT
@@ -102,9 +102,9 @@ class Bot : public ICommand
     /**
      * @brief connects a socket to the server
      * @details make socket non blocking, reusable before connecting to the server
-     * uses select to monitor the socket 
-     * @param s 
-     * @param so 
+     * uses select to monitor the socket
+     * @param s
+     * @param so
      * @return true if successfull
      * @return false otherwise
      */

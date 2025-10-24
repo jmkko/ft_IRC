@@ -3,9 +3,9 @@
  * @brief Logger class
  * @version 0.1
  * @date 2025-10-24
- * 
+ *
  * @copyright Copyright (c) 2025
- * 
+ *
  */
 #ifndef LOGGER_HPP
 #define LOGGER_HPP
@@ -22,12 +22,12 @@
  * @brief severity levels for logging
  * @enum LogLevel
  */
-enum LogLevel { 
+enum LogLevel {
     DETAIL = 0, /** detail log level. For extra debugging */
-    DEBUG = 1, /** debug  log level. For dev purpose */
-    INFO = 2, /** info log level. For common behaviors that need to draw attention upon  */
-    WARN = 3, /** warning log level. For uncommon behaviors not threatening program execution */
-    ERROR = 4 /** error log level. For fatal behaviors */
+    DEBUG  = 1, /** debug  log level. For dev purpose */
+    INFO   = 2, /** info log level. For common behaviors that need to draw attention upon  */
+    WARN   = 3, /** warning log level. For uncommon behaviors not threatening program execution */
+    ERROR  = 4  /** error log level. For fatal behaviors */
 };
 
 // NOLINTNEXTLINE(cppcoreguidelines-macro-to-enum)
@@ -35,9 +35,9 @@ enum LogLevel {
 #define RESET            NC
 
 /**
- * @brief implements a Logger 
+ * @brief implements a Logger
  * @details has a main @ref log function with overloads
- * reponsabilities : 
+ * reponsabilities :
  * - log with different levels
  * - handle optional file output
  * @class Logger
@@ -45,37 +45,37 @@ enum LogLevel {
 class Logger
 {
   public:
-  /**
-   * @brief Construct a new Logger object
-   * 
-   * @param logName 
-   * @param filename 
-   * @param level 
-   */
+    /**
+     * @brief Construct a new Logger object
+     *
+     * @param logName
+     * @param filename
+     * @param level
+     */
     Logger(const std::string& logName, const std::string& filename = "irc_server.log", LogLevel level = INFO);
 
     /**
      * @brief Destroy the Logger object
-     * 
+     *
      */
     ~Logger();
 
     /**
      * @brief base logging function
      * @remark not to be used directly
-     * @param level 
-     * @param message 
+     * @param level
+     * @param message
      */
-    void                       log(LogLevel level, const std::string& message);
+    void log(LogLevel level, const std::string& message);
 
     /**
      * @brief simple logging : logs an object (string. IRC object...)
-     * @pre object T should have an ouput operator `<<` overload 
+     * @pre object T should have an ouput operator `<<` overload
      * @tparam T object to log
-     * @param level 
-     * @param file 
-     * @param function 
-     * @param message 
+     * @param level
+     * @param file
+     * @param function
+     * @param message
      */
     template <typename T> void log(LogLevel level, const std::string& file, const std::string& function, const T& message)
     {
@@ -87,13 +87,13 @@ class Logger
 
     /**
      * @brief variable value debugging : logs a variable name and its value
-     * @pre object T should have an ouput operator `<<` overload 
-     * @tparam T 
-     * @param level 
-     * @param file 
-     * @param function 
-     * @param varName 
-     * @param varVal 
+     * @pre object T should have an ouput operator `<<` overload
+     * @tparam T
+     * @param level
+     * @param file
+     * @param function
+     * @param varName
+     * @param varVal
      */
     template <typename T>
     void log(LogLevel level, const std::string& file, const std::string& function, const std::string& varName, const T& varVal)
@@ -106,10 +106,10 @@ class Logger
 
     /**
      * @brief context debugging : logs a context message -> and object value
-     * @pre object T should have an ouput operator `<<` overload 
-     * @tparam T 
-     * @param context 
-     * @param t 
+     * @pre object T should have an ouput operator `<<` overload
+     * @tparam T
+     * @param context
+     * @param t
      */
     template <typename T> void log(const std::string& context, const T& t)
     {
@@ -122,8 +122,8 @@ class Logger
     /**
      * @brief simple logging : only one string message
      * @deprecated as it doesn't display file and function
-     * @tparam T 
-     * @param t 
+     * @tparam T
+     * @param t
      */
     template <typename T> void log(const T& t)
     {
@@ -135,8 +135,8 @@ class Logger
 
     /**
      * @brief helper function for logging at detail level
-     * @tparam T 
-     * @param t 
+     * @tparam T
+     * @param t
      */
     template <typename T> void detail(const std::string& file, const std::string& function, const T& t)
     {
@@ -146,22 +146,22 @@ class Logger
     /**
      * @brief log at debug level
      * @deprecated as it does not log file and function
-     * @param message 
+     * @param message
      */
-    void                       debug(const std::string& message);
+    void debug(const std::string& message);
 
     /**
      * @brief log at debug level
      * @deprecated as it does not log file and function
      * @param desc description
-     * @param message 
+     * @param message
      */
-    void                       debug(const std::string& desc, const std::string& message);
+    void debug(const std::string& desc, const std::string& message);
 
     /**
      * @brief helper function for logging at debug level
-     * @tparam T 
-     * @param t 
+     * @tparam T
+     * @param t
      */
     template <typename T> void debug(const std::string& file, const std::string& function, const T& t)
     {
@@ -170,36 +170,36 @@ class Logger
 
     /**
      * @brief helper function with specific format for logging received messages by server
-     * 
-     * @param file 
-     * @param function 
-     * @param rawMessage 
-     * @param client 
+     *
+     * @param file
+     * @param function
+     * @param rawMessage
+     * @param client
      */
     void receiving(const std::string& file, const std::string& function, const std::string& rawMessage, Client* client);
-    
+
     /**
      * @brief helper function with specific format for logging sent messages by server
-     * 
-     * @param file 
-     * @param function 
-     * @param rawMessage 
-     * @param client 
+     *
+     * @param file
+     * @param function
+     * @param rawMessage
+     * @param client
      */
     void sending(const std::string& file, const std::string& function, const std::string& rawMessage, Client* client);
-    
+
     /**
      * @brief log at info level
      * @deprecated as it does not log file and function
-     * 
-     * @param message 
+     *
+     * @param message
      */
     void info(const std::string& message);
 
     /**
      * @brief helper function for logging at info level
-     * @tparam T 
-     * @param t 
+     * @tparam T
+     * @param t
      */
     template <typename T> void info(const std::string& file, const std::string& function, const T& t)
     {
@@ -209,25 +209,25 @@ class Logger
     /**
      * @brief log at warning level
      * @deprecated as it does not log file and function
-     * @param message 
+     * @param message
      */
-    void                       warning(const std::string& message);
+    void warning(const std::string& message);
 
     /**
      * @brief helper function for logging at warning level
-     * @tparam T 
-     * @param t 
+     * @tparam T
+     * @param t
      */
     template <typename T> void warning(const std::string& file, const std::string& function, const T& t)
     {
         log(INFO, file, function, t);
     }
 
-    void                       error(const std::string& message);
+    void error(const std::string& message);
     /**
      * @brief helper function for logging at error level
-     * @tparam T 
-     * @param t 
+     * @tparam T
+     * @param t
      */
     template <typename T> void error(const std::string& file, const std::string& function, const T& t)
     {
@@ -236,15 +236,15 @@ class Logger
 
     /**
      * @brief Set the min level from which logs will be visible
-     * 
-     * @param level 
+     *
+     * @param level
      */
-    void        set_min_level(LogLevel level);
+    void set_min_level(LogLevel level);
 
     /**
      * @brief Get the logger name
-     * 
-     * @return std::string 
+     *
+     * @return std::string
      */
     std::string get_name() const;
 
@@ -261,24 +261,24 @@ class Logger
 
     /**
      * @brief display current timestamp
-     * 
-     * @return std::string 
+     *
+     * @return std::string
      */
     std::string _get_current_time();
 
     /**
      * @brief gets level of loving as a string
-     * 
-     * @param level 
-     * @return std::string 
+     *
+     * @param level
+     * @return std::string
      */
     std::string _level_to_string(LogLevel level);
 
     /**
      * @brief get adequqte color for level
-     * 
-     * @param level 
-     * @return std::string 
+     *
+     * @param level
+     * @return std::string
      */
     std::string _get_color_for_level(LogLevel level);
 };

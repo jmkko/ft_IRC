@@ -13,10 +13,10 @@
 #include "ICommand.hpp"
 #include "reply_codes.hpp"
 
+#include <queue>
 #include <set>
 #include <string>
 #include <vector>
-#include <queue>
 
 class Client;
 class Server;
@@ -70,7 +70,6 @@ class Mode : public ICommand
      ERR_USERNOTINCHANNEL
      */
     void execute(Server& server, Client& client);
-	
 
     /**
  * @brief check syntaxic validity of args
@@ -84,11 +83,10 @@ class Mode : public ICommand
     static ReplyCode check_args(Server& server, Client& client, std::string& params);
 
   private:
-	std::string _channelName;
-	std::queue<std::string> _modeQueue;
-	std::queue<std::string> _paramsQueue;
-    std::string _params;
-	
+    std::string             _channelName;
+    std::queue<std::string> _modeQueue;
+    std::queue<std::string> _paramsQueue;
+    std::string             _params;
 
     Mode();
     Mode(const Mode& other);

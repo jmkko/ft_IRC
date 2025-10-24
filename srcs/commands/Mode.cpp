@@ -1,11 +1,11 @@
 #include "Mode.hpp"
 
-#include "Parser.hpp"
 #include "Channel.hpp"
 #include "Client.hpp"
 #include "Config.hpp"
 #include "LogManager.hpp"
 #include "Logger.hpp"
+#include "Parser.hpp"
 #include "ReplyHandler.hpp"
 #include "Server.hpp"
 #include "consts.hpp"
@@ -24,8 +24,7 @@
  *		🛠️ UTIL FUNCTIONS											*
  *************************************************************/
 
-static void
-parse_params(std::string& params, std::queue<std::string>* modeQueue, std::queue<std::string>* paramsQueue)
+static void parse_params(std::string& params, std::queue<std::string>* modeQueue, std::queue<std::string>* paramsQueue)
 {
     std::string        args;
     std::istringstream iss(params);
@@ -121,7 +120,7 @@ ReplyCode Mode::check_args(Server& server, Client& client, std::string& params)
     std::istringstream iss(params);
     iss >> channel;
 
-	std::cout << "CHECK ARGS\n";
+    std::cout << "CHECK ARGS\n";
     LOG_DV_CMD(channel);
     if (channel.empty()) {
         return PROCESSED_ERROR;
@@ -136,10 +135,10 @@ ReplyCode Mode::check_args(Server& server, Client& client, std::string& params)
 Mode::Mode() {}
 Mode::Mode(std::string& params)
 {
-	Parser parser;
+    Parser parser;
 
-	_channelName = parser.format_parameter(params, NULL);
-	parse_params(params, &_modeQueue, &_paramsQueue);
+    _channelName = parser.format_parameter(params, NULL);
+    parse_params(params, &_modeQueue, &_paramsQueue);
 }
 Mode::~Mode() {}
 
@@ -149,10 +148,10 @@ Mode::~Mode() {}
 
 void Mode::execute(Server& server, Client& client)
 {
-	Parser p(server, client);
+    Parser p(server, client);
 
     // ReplyHandler&           rh = ReplyHandler::get_instance(&server);
-    Channel*                channel = NULL;
+    Channel* channel = NULL;
     // std::queue<std::string> modeQueue;
     // std::queue<std::string> paramsQueue;
 
@@ -163,7 +162,7 @@ void Mode::execute(Server& server, Client& client)
     if (Channel::is_valid_channel_name(_channelName)) {
         std::map<std::string, Channel*>::iterator it = server.channels.find(_channelName);
         if (it == server.channels.end()) {
-			p.response(ERR_NOSUCHCHANNEL, _channelName);
+            p.response(ERR_NOSUCHCHANNEL, _channelName);
             return;
         } else {
             channel = it->second;
@@ -294,7 +293,7 @@ void Mode::execute(Server& server, Client& client)
                     p.response(ERR_NEEDMOREPARAMS, "MODE");
             }
         }
-	}
+    }
     std::string confirmationMsg = _channelName;
     if (validPositiveModes.size() > 2)
         confirmationMsg += validPositiveModes;

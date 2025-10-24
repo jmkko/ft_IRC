@@ -1,10 +1,10 @@
 #include "Channel.hpp"
 
-#include "Parser.hpp"
 #include "Client.hpp"
 #include "Config.hpp"
 #include "ICommand.hpp"
 #include "LogManager.hpp"
+#include "Parser.hpp"
 #include "consts.hpp"
 #include "reply_codes.hpp"
 #include "utils.hpp"
@@ -35,11 +35,11 @@ bool Channel::is_valid_channel_name(const std::string& name)
 
 void Channel::display_topic_to(Parser& p)
 {
-	if (get_topic().empty()) {
-		p.response(RPL_NOTOPIC, get_name());
-	} else {
-		p.response(RPL_TOPIC, get_name(), get_topic());
-	}
+    if (get_topic().empty()) {
+        p.response(RPL_NOTOPIC, get_name());
+    } else {
+        p.response(RPL_TOPIC, get_name(), get_topic());
+    }
 }
 
 std::string Channel::get_modes_str(Client& client)
@@ -54,8 +54,8 @@ std::string Channel::get_modes_str(Client& client)
             modeIsParams += "i";
         if (_mode & CHANMODE_KEY) {
             modeIsParams += "k";
-			if (is_operator(client))
-				modeIsParamsVal += " " + get_key();
+            if (is_operator(client))
+                modeIsParamsVal += " " + get_key();
         }
         if (_mode & CHANMODE_LIMIT) {
             modeIsParams += "l";

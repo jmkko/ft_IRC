@@ -54,7 +54,8 @@ class Kick : public ICommand
      *      - execute : remove - broadcast + direct notice
      * @param server
      * @param client
-     * @warning can send ERR_NOSUCHCHANNEL, ERR_CHANOPRIVSNEEDED, ERR_USERNOTINCHANNEL, ERR_NEEDMOREPARAMS, ERR_BADCHANMASK, ERR_NOSUCHNICK
+     * @warning can send ERR_NOSUCHCHANNEL, ERR_CHANOPRIVSNEEDED, ERR_USERNOTINCHANNEL, ERR_NEEDMOREPARAMS, ERR_BADCHANMASK,
+     * ERR_NOSUCHNICK
      */
     void execute(Server& server, Client& client);
 
@@ -69,12 +70,12 @@ class Kick : public ICommand
 
     /**
      * @brief removes specified users from channel
-     * 
-     * @param chanName 
-     * @param usersNames 
-     * @param p 
+     *
+     * @param chanName
+     * @param usersNames
+     * @param p
      */
-	void _kick_users_from_chan(std::string& chanName, std::vector<std::string>& usersNames, Parser& p);
+    void _kick_users_from_chan(std::string& chanName, std::vector<std::string>& usersNames, Parser& p);
 };
 
 #endif

@@ -13,11 +13,11 @@
 #include "Parser.hpp"
 
 #include "Config.hpp"
+#include "LogManager.hpp"
+#include "Parser.hpp"
 #include "ReplyHandler.hpp"
 #include "Server.hpp"
 #include "consts.hpp"
-#include "Parser.hpp"
-#include "LogManager.hpp"
 #include "reply_codes.hpp"
 #include "utils.hpp"
 

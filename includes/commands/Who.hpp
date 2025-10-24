@@ -78,8 +78,8 @@ class Who : public ICommand
     static ReplyCode check_args(Server& server, Client& client, std::string& params);
 
   private:
-	std::string _mask;
-	std::string _op;
+    std::string _mask;
+    std::string _op;
     Who();
     Who(const Who& other);
     Who& operator=(const Who& other);

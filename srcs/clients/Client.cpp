@@ -15,7 +15,8 @@
 
 Client::Client(Socket socket, sockaddr_in addr) :
     _socket(socket), _addr(addr), _addrStr(TcpSocket::get_address(_addr)), _status(UNAUTHENTICATED)
-{}
+{
+}
 
 Client::~Client(void) {}
 

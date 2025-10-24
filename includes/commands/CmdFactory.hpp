@@ -76,7 +76,6 @@ class CmdFactory
     ICommand* ping_cmd(std::string& params);
 
   private:
-
 };
 
 #endif

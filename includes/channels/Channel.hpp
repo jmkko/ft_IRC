@@ -19,7 +19,7 @@
 
 /**
  * @brief size of bitset used to display modes in binary form
- * 
+ *
  */
 #define MODE_LEN 4
 
@@ -46,9 +46,9 @@ class Channel
   public:
     /**
      * @brief Construct a new Channel object
-     * 
-     * @param name 
-     * @param key 
+     *
+     * @param name
+     * @param key
      */
     Channel(const std::string& name, const std::string& key = "");
 
@@ -167,10 +167,10 @@ class Channel
     /**
      * @brief removes a client from the list of invited clients
      * @details generally occurs after the invited client joins channel
-     * 
-     * @param client 
-     * @return true 
-     * @return false 
+     *
+     * @param client
+     * @return true
+     * @return false
      */
     bool remove_from_invited_list(Client& client);
 
@@ -242,10 +242,10 @@ class Channel
 
     /**
      * @brief uses #Parser to create a RPL_TOPIC / RPL_NOTOPIC reply
-     * 
+     *
      * @param p parser
      */
-	void display_topic_to(Parser& p);
+    void display_topic_to(Parser& p);
 
     /**
      * @brief deactivate a mode
@@ -300,11 +300,11 @@ class Channel
 
     /**
      * @brief Get the channel modes in string format, ie '+ik key'
-     * 
-     * @param client 
-     * @return std::string 
+     *
+     * @param client
+     * @return std::string
      */
-	std::string get_modes_str(Client& client);
+    std::string get_modes_str(Client& client);
 
     /**
      * @brief transfer a bot reply to channel members
@@ -329,16 +329,16 @@ class Channel
      * @return false otherwise
      */
     static bool is_valid_channel_name(const std::string& name);
-        /**
-     * @brief
-     * @details cf [grammar](https://datatracker.ietf.org/doc/html/rfc2812#section-2.3.1)
-     * `key        =  1*23( %x01-05 / %x07-08 / %x0C / %x0E-1F / %x21-7F )
-                  ; any 7-bit US_ASCII character,
-                  ; except NUL, CR, LF, FF, h/v TABs, and " "`
-     * @param key
-     * @return true is key is valid according to RFC grammar
-     * @return false otherwise
-     */
+    /**
+ * @brief
+ * @details cf [grammar](https://datatracker.ietf.org/doc/html/rfc2812#section-2.3.1)
+ * `key        =  1*23( %x01-05 / %x07-08 / %x0C / %x0E-1F / %x21-7F )
+              ; any 7-bit US_ASCII character,
+              ; except NUL, CR, LF, FF, h/v TABs, and " "`
+ * @param key
+ * @return true is key is valid according to RFC grammar
+ * @return false otherwise
+ */
     static bool is_valid_channel_key(const std::string& key);
 
   private:

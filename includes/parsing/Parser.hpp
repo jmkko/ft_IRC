@@ -4,11 +4,11 @@
 #include "ReplyHandler.hpp"
 #include "reply_codes.hpp"
 
+#include <algorithm>
 #include <cstddef>
 #include <iostream>
 #include <map>
 #include <vector>
-#include <algorithm>
 
 class Server;
 class Client;
@@ -23,10 +23,10 @@ class Parser
     ~Parser();
     Parser(Server& server, Client& client);
 
-	Server* get_server();
-	Client* get_client();
+    Server* get_server();
+    Client* get_client();
 
-	typedef bool (Parser::*Checker)(std::string&);
+    typedef bool (Parser::*Checker)(std::string&);
     std::string format_parameter(std::string& params, Checker function);
     std::string from_arg(std::string& params);
     std::string from_trailing(std::string& params);
@@ -48,7 +48,7 @@ class Parser
     Parser& is_valid_bot_subcommand(const std::string& subcommand, const std::string& cmdName, bool failCommandIfFalse = true);
     Parser& is_not_empty_arg(const std::string& arg, const std::string& commandName, bool failCommandIfFalse = true);
 
-	size_t count_params(const std::string& argument);
+    size_t count_params(const std::string& argument);
     bool   response(ReplyCode code, const std::string& params = "", const std::string& trailing = "");
     bool   response(Client* dest, ReplyCode code, const std::string& params = "", const std::string& trailing = "");
     bool response(Client* dest, Client* author, ReplyCode code, const std::string& params = "", const std::string& trailing = "");

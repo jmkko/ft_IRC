@@ -86,8 +86,8 @@ class Client
 
     /**
      * @brief Get the tcp socket object associated with the client
-     * 
-     * @return TcpSocket& 
+     *
+     * @return TcpSocket&
      */
     TcpSocket& get_tcp_socket();
 
@@ -320,10 +320,10 @@ class Client
 /**
  * @brief displays Client info
  * @details overload of output operator
- * 
- * @param os 
- * @param c 
- * @return std::ostream& 
+ *
+ * @param os
+ * @param c
+ * @return std::ostream&
  */
 std::ostream& operator<<(std::ostream& os, const Client& c);
 

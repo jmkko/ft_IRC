@@ -5,7 +5,7 @@
 enum ReplyCode {
 
     ////////////////////// NON RFC
-    TRANSFER_INVITE                 = 202,
+    TRANSFER_INVITE     = 202,
     TRANSFER_JOIN       = 203,
     TRANSFER_NICK       = 204,
     TRANSFER_KICK       = 205,
@@ -18,60 +18,60 @@ enum ReplyCode {
     TRANSFER_PROMPT_BOT = 118,
     TRANSFER_REPLY_BOT  = 218,
     //////////////////////  internal logic
-    CORRECT_FORMAT                  = 0,
+    CORRECT_FORMAT  = 0,
     PROCESSED_ERROR = 806,
     //////////////////////  numerical custom replies
-    CUSTOMRPL_BOT                   = 600,
+    CUSTOMRPL_BOT = 600,
     //////////////////////  numerical custom errors
-    CUSTOMERR_WRONG_FORMAT          = 705,
+    CUSTOMERR_WRONG_FORMAT = 705,
 
     ////////////////////// RFC REPLIES (with code defined by RFC)
-    RPL_NONE                        = 300, // no answer
-    RPL_WELCOME             = 001, // after registering (PASS NICK USER)
-    RPL_YOURHOST = 002,
-    RPL_CREATED  = 003,
-    RPL_MYINFO   = 004,
+    RPL_NONE            = 300, // no answer
+    RPL_WELCOME         = 001, // after registering (PASS NICK USER)
+    RPL_YOURHOST        = 002,
+    RPL_CREATED         = 003,
+    RPL_MYINFO          = 004,
     RPL_ISUPPORT        = 005, // Supported features by server
-    RPL_LISTSTART     = 321,            // LIST
-    RPL_LIST          = 322, // LIST
-    RPL_LISTEND       = 323, // LIST
-    RPL_CHANNELMODEIS = 324, // MODE
-    RPL_NOTOPIC       = 331, // TOPIC (no topic)
-    RPL_TOPIC         = 332, // TOPIC
-    RPL_TOPICWHOTIME  = 333, // TOPIC (who and when
-    RPL_INVITING      = 341, // INVITE
+    RPL_LISTSTART       = 321, // LIST
+    RPL_LIST            = 322, // LIST
+    RPL_LISTEND         = 323, // LIST
+    RPL_CHANNELMODEIS   = 324, // MODE
+    RPL_NOTOPIC         = 331, // TOPIC (no topic)
+    RPL_TOPIC           = 332, // TOPIC
+    RPL_TOPICWHOTIME    = 333, // TOPIC (who and when
+    RPL_INVITING        = 341, // INVITE
     RPL_INVITELIST      = 346, // MODE +I
     RPL_ENDOFINVITELIST = 347, // MODE +I
     RPL_EXCEPTLIST      = 348, // MODE +e
     RPL_ENDOFEXCEPTLIST = 349, // MODE +e
-    RPL_WHOREPLY   = 352,               // WHO
-    RPL_ENDOFWHO   = 315, // WHO
-    RPL_NAMREPLY   = 353, // NAMES, WHO
-    RPL_ENDOFNAMES = 366, // NAMES
-    RPL_BANLIST      = 367, // MODE +b
-    RPL_ENDOFBANLIST = 368, // MODE +b
-    RPL_INFO         = 371, // INFO
-    RPL_ENDOFINFO    = 374, // INFO
-    RPL_MOTDSTART    = 375, // MOTD
-    RPL_MOTD         = 372, // MOTD
-    RPL_ENDOFMOTD    = 376, // MOTD
-    RPL_YOUREOPER    = 381, // OPER
-    RPL_YOURSERVICE = 383, // SERVICE (obsolte)
-    RPL_TIME        = 391, // TIME
+    RPL_WHOREPLY        = 352, // WHO
+    RPL_ENDOFWHO        = 315, // WHO
+    RPL_NAMREPLY        = 353, // NAMES, WHO
+    RPL_ENDOFNAMES      = 366, // NAMES
+    RPL_BANLIST         = 367, // MODE +b
+    RPL_ENDOFBANLIST    = 368, // MODE +b
+    RPL_INFO            = 371, // INFO
+    RPL_ENDOFINFO       = 374, // INFO
+    RPL_MOTDSTART       = 375, // MOTD
+    RPL_MOTD            = 372, // MOTD
+    RPL_ENDOFMOTD       = 376, // MOTD
+    RPL_YOUREOPER       = 381, // OPER
+    RPL_YOURSERVICE     = 383, // SERVICE (obsolte)
+    RPL_TIME            = 391, // TIME
 
     ////////////////////// RFC ERRORS
-    ERR_NOSUCHNICK          = 401, // NICK, PRIVMSG, WHOIS, etc.
+    ERR_NOSUCHNICK       = 401, // NICK, PRIVMSG, WHOIS, etc.
     ERR_NOSUCHCHANNEL    = 403, // JOIN, PRIVMSG, MODE, TOPIC, etc.
     ERR_CANNOTSENDTOCHAN = 404, // PRIVMSG
     ERR_TOOMANYCHANNELS  = 405, // JOIN
-    ERR_TOOMANYTARGETS = 407, // PRIVMSG
-    ERR_NOORIGIN       = 409, // PING, PONG
-    ERR_NORECIPIENT    = 411, // PRIVMSG, NOTICE
-    ERR_NOTEXTTOSEND   = 412, // PRIVMSG, NOTICE
-    ERR_NOTOPLEVEL     = 413, // PRIVMSG, NOTICE
-    ERR_WILDTOPLEVEL   = 414, // PRIVMSG, NOTICE
-    ERR_UNKNOWNCOMMAND = 421,
-    ERR_NOMOTD         = 422, // MOTD
+    ERR_TOOMANYTARGETS   = 407, // PRIVMSG
+    ERR_NOORIGIN         = 409, // PING, PONG
+    ERR_NORECIPIENT      = 411, // PRIVMSG, NOTICE
+    ERR_NOTEXTTOSEND     = 412, // PRIVMSG, NOTICE
+    ERR_NOTOPLEVEL       = 413, // PRIVMSG, NOTICE
+    ERR_WILDTOPLEVEL     = 414, // PRIVMSG, NOTICE
+    ERR_UNKNOWNCOMMAND   = 421,
+    ERR_NOMOTD           = 422, // MOTD
     ERR_FILEERROR        = 424, // All if file processing
     ERR_NONICKNAMEGIVEN  = 431, // NICK
     ERR_ERRONEUSNICKNAME = 432, // NICK
@@ -96,7 +96,7 @@ enum ReplyCode {
     ERR_BADCHANMASK      = 476, // JOIN
     ERR_NOPRIVILEGES     = 481, // MODE, KICK, etc.
     ERR_CHANOPRIVSNEEDED = 482, // MODE, KICK, etc.
-    ERR_UMODEUNKNOWNFLAG = 501 // MODE (unknown user mode)
+    ERR_UMODEUNKNOWNFLAG = 501  // MODE (unknown user mode)
 };
 
 #endif
