@@ -33,7 +33,7 @@ class Config
     ~Config();
 
     /**
-     * @brief convert a @see Replycode to his corresponding string
+     * @brief convert a @see Replycode to its corresponding string
      * ex: 001 -> RPL_WELCOME
      *
      * @param code @see Replycode
