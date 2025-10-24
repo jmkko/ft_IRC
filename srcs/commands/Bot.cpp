@@ -102,36 +102,26 @@ void remove_invalid_prompt_char(char& c)
 
 static void send_ollama_request(const std::string& prompt, std::string& response)
 {
-    // build curl request
     std::string command = "curl -X POST -H \"Content-Type: application/json\" -v localhost:11434/api/generate -d '";
     command += "{\"model\": \"gemma3:1b\",\"prompt\":\"";
     command += prompt;
     command += "\",\"options\": {\"temperature\": 0.99,\"top_p\": 0.8},\"stream\": false}";
     command += "'";
-
-    // add_key_val(command, "model", "gemma3:1b");
-    // add_key_val(command, "prompt", prompt);
-    // command += std::string("\"options\":{\"temperature\":0.1,\"top_p\":0.2},");
-    // add_key_val_bool(command, "stream", false);
-    // command[command.length() - 1] = '}';
     command += " | jq \'.response\' ";
-    // command += "' | jq \'.response\' ";
     command += " > llama_response.txt";
     LOG_d_CMD(command);
 
-    // system call
     int code = ::system(command.c_str());
     if (code == -1) {
         LOG_E_SERVER("error sending API LLama request", command);
     }
 
     ::usleep(BOT_PROCESS_TIME_MS);
-    // read json file
     std::ifstream file("llama_response.txt");
     response.assign((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
 }
 
-bool connect_to_server(Server& s, TcpSocket& so)
+bool Bot::_connect_to_server(Server& s, TcpSocket& so)
 {
     if (so.set_non_blocking_socket() == -1) {
         LOG_W_CMD("set non blocking error", strerror(errno));
@@ -144,7 +134,6 @@ bool connect_to_server(Server& s, TcpSocket& so)
         LOG_TEST.debug("tcp connect error", strerror(errno));
     }
 
-    // wait for connection to complete - and bot socket be able to write
     fd_set writefds;
     FD_ZERO(&writefds);
     FD_SET(so.get_socket(), &writefds);
@@ -162,7 +151,7 @@ bool connect_to_server(Server& s, TcpSocket& so)
     return true;
 }
 
-bool send_full_msg(int fd, const std::string& msg)
+static bool send_full_msg(int fd, const std::string& msg)
 {
     size_t sentBytes      = 0;
     size_t totalSentBytes = 0;
@@ -175,7 +164,7 @@ bool send_full_msg(int fd, const std::string& msg)
     return true;
 }
 
-bool register_bot(Server& s, TcpSocket& so)
+bool Bot::_register_bot(Server& s, TcpSocket& so)
 {
     std::string passMsg = std::string("PASS ") + s.get_password() + "\r\n";
     std::string nickMsg = std::string("NICK bot") + "\r\n";
@@ -207,8 +196,6 @@ void Bot::execute(Server& s, Client& c)
     prompt += "No markdown or any other formatting : do not use bold, italic, code blocks or any other markdown. ";
     prompt += "No meta-commentary Do not reference instruction, your role or user prompt. Just answer directly. ";
     prompt += "You send direct and concise replies without preamble and with no hints about former meta instructions. ";
-    // prompt += "When asked about who you are just tell that your purpose here is to be a multi-purpose bot accessible through an
-    // IRC server made by 3 students from school 42 campus in Angouleme. ";
     prompt += "Now answer the user question. ";
     if (_subcommand == "!reply")
         prompt += "Please reply to this message : ";
@@ -218,17 +205,14 @@ void Bot::execute(Server& s, Client& c)
     std::for_each(prompt.begin(), prompt.end(), remove_invalid_prompt_char);
     LOG_DV_CMD(prompt);
 
-    // send request
     std::string response = "\"\"";
     send_ollama_request(prompt, response);
 
-    // connect bot as client
-    if (!connect_to_server(s, _socket))
+    if (!_connect_to_server(s, _socket))
         return;
-    if (!register_bot(s, _socket))
+    if (!_register_bot(s, _socket))
         return;
 
-    // transfer reply, trimming quotes
     ReplyHandler& rh            = ReplyHandler::get_instance(&s);
     unsigned long firstQuoteIdx = response.find_first_of('"');
     unsigned long lastQuoteIdx  = response.find_last_of('"');
