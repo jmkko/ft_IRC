@@ -163,14 +163,14 @@ class Client
     std::string get_real_name() const;
 
     /**
-     * @brief Get the userhost formatted like <user>@<host>
+     * @brief Get the userhost formatted like `<user>@<host>`
      *
      * @return std::string
      */
     std::string get_userhost() const;
 
     /**
-     * @brief Get the full userhost formatted like <nick>!<user>@<host>
+     * @brief Get the full userhost formatted like `<nick>!<user>@<host>`
      *
      * @return std::string
      */

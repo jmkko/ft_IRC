@@ -6,7 +6,7 @@
 /*   By: fpetit <fpetit@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 23:38:52 by npolack           #+#    #+#             */
-/*   Updated: 2025/10/24 14:06:17 by fpetit           ###   ########.fr       */
+/*   Updated: 2025/10/24 17:01:10 by fpetit           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,10 +26,6 @@
 #define SERVER_NAME               "hazardous.irc.serv"
 #define SERVER_CONF_FILE          "irc.conf"
 #define SERVER_CONF_FILE_FOR_TEST "../irc.conf"
-// #define CODES_CONF_FILE           "codes.conf"
-// #define CODES_CONF_FILE_FOR_TEST  "../codes.conf"
-// #define MOTD_FILE                 "motd.conf"
-// #define MOTD_FILE_FOR_TEST        "../motd.conf"
 #define DEFAULT_PASSWORD         "password"
 #define DEFAULT_PORT             6667
 #define MAX_PORT                 9999
@@ -37,9 +33,9 @@
 #define MAX_JOINED_CHANNELS      NO_LIMIT
 #define CHAN_NAME_MAX_LEN        50
 #define FORBIDEN_CHAR_BOT_PROMPT "|;"
-#define FORBIDEN_CHAR_CHAN_NAME  "\x00\x07\x0D\x0A\x20\x2C\x3A"
-#define FORBIDEN_CHAR_CHAN_KEY   "\x00\x09\x0A\x0B\x0C\x0D\x20"
-#define FORBIDEN_CHAR_USER       "\x00\x0A\x0D\x20\x40"
+#define FORBIDEN_CHAR_CHAN_NAME  "\x00\x07\x0D\x0A\x20\x2C\x3A" // NOLINT(clang-diagnostic-null-character)
+#define FORBIDEN_CHAR_CHAN_KEY   "\x00\x09\x0A\x0B\x0C\x0D\x20" // NOLINT(clang-diagnostic-null-character)
+#define FORBIDEN_CHAR_USER       "\x00\x0A\x0D\x20\x40"         // NOLINT(clang-diagnostic-null-character)
 #define VALID_CHAN_MODE_NOPARAM  "\x69\x74"
 #define VALID_CHAN_MODE_PARAM    "\x6B\x6C\x6F"
 #define MODE_OPERATOR            "+-"

@@ -39,7 +39,7 @@ class CmdFactory
     /**
      * @brief checks client status against detected command
      * @details when client is ..
-     - #UNAUTHENTICATED only #Pass and #Quitcan be handled
+     - #UNAUTHENTICATED only #Pass and #Quit can be handled
      - #AUTHENTICATED only #Pass, #Quit, #Nick and #User can be handled
      - #REGISTERED all commands can be handled
      * @param client

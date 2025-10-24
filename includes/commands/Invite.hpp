@@ -27,7 +27,6 @@ class Invite : public ICommand
     /**
      * @brief Construct a new Invite object
      * @param params should match `<nickname> <channel>`
-     * @param params
      */
     Invite(std::string& params);
 
@@ -48,8 +47,8 @@ class Invite : public ICommand
      * - the client is already on this channel
      * - the sender is operator if the channel is invite-only
      * then if successful sends RPL_INVITING and broadcast the message to channel members
-     * @param s Server
-     * @param c Client = the sender
+     * @param server Server
+     * @param client Client = the sender
      * @warning in case of error send ERR_NEEDMOREPARAMS, ERR_NOSUCHNICK, ERR_NOSUCHCHANNEL, ERR_NOTONCHANNEL, ERR_USERONCHANNEL, ERR_CHANOPRIVSNEEDED
      */
     void execute(Server& server, Client& client);

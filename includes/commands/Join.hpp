@@ -47,6 +47,8 @@ class Join : public ICommand
     * @details check validity accordind to the RFC_2812
     * - should match pattern `( <channel> *( "," <channel> ) [ <key> *( "," <key> ) ] ) / "0"`
     * cf. [RFC specs](https://datatracker.ietf.org/doc/html/rfc2812#section-3.2.1)
+    * @section Example Reply Sequence
+    * @code{.unparsed}
     * example of reply sequence
     *	:user1!~username@host JOIN :#chan1 123
     *	:irc.example.com MODE #chan1 +o user1
@@ -55,11 +57,12 @@ class Join : public ICommand
     *	:irc.example.com 353 user1 = #chan1 :@user1 user2 user3 user4 user5
     *	:irc.example.com 353 user1 = #chan1 :user6 @user1 user7 user8 user9
     *	:irc.example.com 366 user1 #chan1 :End of NAMES listV
+    * @endcode
     * @param server
     * @param client
     * @warning can send ERR_NEEDMOREPARAMS, ERR_BADCHANMASK, ERR_BADCHANNELKEY
     */
-    void execute(Server& s, Client& c);
+    void execute(Server& server, Client& client);
 
   private:
     std::map<std::string, std::string> _chans;

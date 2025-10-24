@@ -46,8 +46,9 @@ class Channel
   public:
     /**
      * @brief Construct a new Channel object
-     *
-     * @param name
+     * 
+     * @param name 
+     * @param key 
      */
     Channel(const std::string& name, const std::string& key = "");
 
@@ -334,8 +335,8 @@ class Channel
      * `key        =  1*23( %x01-05 / %x07-08 / %x0C / %x0E-1F / %x21-7F )
                   ; any 7-bit US_ASCII character,
                   ; except NUL, CR, LF, FF, h/v TABs, and " "`
-     * @param name
-     * @return true is name is valid according to RFC grammar
+     * @param key
+     * @return true is key is valid according to RFC grammar
      * @return false otherwise
      */
     static bool is_valid_channel_key(const std::string& key);

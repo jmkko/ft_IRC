@@ -1,5 +1,6 @@
 PROJECT_NAME = "hazardous irc"
 PROJECT_BRIEF = "Back to the future ... a basic IRC server (school 42 project)"
+PROJECT_VERSION = 0.1.0
 PROJECT_LOGO = docs/hazirc.jpg
 PROJECT_NUMBER = 0.1.0
 OUTPUT_DIRECTORY = docs
