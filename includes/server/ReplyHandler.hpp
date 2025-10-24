@@ -22,44 +22,20 @@ class Client;
 
 /*
  * @brief **ReplyHandler** class for To facilitate client responses
- *
- * @remark
- * <message>  ::= [':' <prefix> <SPACE> ] <command> <params> <crlf>
- * <prefix>   ::= <servername> | <nick> [ '!' <user> ] [ '@' <host> ]
- * <command>  ::= <letter> { <letter> } | <number> <number> <number>
- * <SPACE>    ::= ' ' { ' ' }
- * <params>   ::= <SPACE> [ ':' <trailing> | <middle> <params> ]
- *
- * <middle>   ::= <Any *non-empty* sequence of octets not including SPACE
- *                or NUL or CR or LF, the first of which may not be ':'>
- * <trailing> ::= <Any, possibly *empty*, sequence of octets not including
- *                  NUL or CR or LF>
- *
- * <crlf>     ::= CR LF
- *
- *   1.    <SPACE> is consists only of SPACE character(s) (0x20).
- *         Specially notice that TABULATION, and all other control
- *         characters are considered NON-WHITE-SPACE.
- *
- *   2.    After extracting the parameter list, all parameters are equal,
- *         whether matched by <middle> or <trailing>. <Trailing> is just
- *         a syntactic trick to allow SPACE within parameter.
- *
- *   3.    The fact that CR and LF cannot appear in parameter strings is
- *         just artifact of the message framing. This might change later.
- *
- *   4.    The NUL character is not special in message framing, and
- *         basically could end up inside a parameter, but as it would
- *         cause extra complexities in normal C string handling. Therefore
- *         NUL is not allowed within messages.
- *
- *   5.    The last parameter may be an empty string.
- *
- *   6.    Use of the extended prefix (['!' <user> ] ['@' <host> ]) must
- *         not be used in server to server communications and is only
- *         intended for server to client messages in order to provide
- *         clients with more useful information about who a message is
- *         from without the need for additional queries.
+ * @details responses should match [RFC specs](https://datatracker.ietf.org/doc/html/rfc2812#section-2.3.1) 
+ *  * grammar of message is  `<message>  ::= [':' <prefix> <SPACE> ] <command> <params> <crlf>`
+ * meaning that a message is made of
+ * - for numerical responses
+ *   - prefix, usually the server nama
+ *   - numeric code
+ *   - args
+ *   - trailing message (optional)
+ * - for other responses
+ *   - prefix, usually the full userhost of the sender
+ *   - command name
+ *   - args
+ *   - trailing message (optional)
+ *  
  */
 class ReplyHandler
 {
