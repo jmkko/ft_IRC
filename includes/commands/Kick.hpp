@@ -11,7 +11,6 @@
 #define KICK_HPP
 
 #include "ICommand.hpp"
-#include "reply_codes.hpp"
 
 #include <string>
 #include <vector>
@@ -35,6 +34,7 @@ class Kick : public ICommand
      * @param args should match `<channel> *( "," <channel> ) <user> *( "," <user> ) [<comment>]`
      */
     Kick(std::string& params);
+
     /**
      * @brief Destroy the Kick object
      *
@@ -54,8 +54,7 @@ class Kick : public ICommand
      *      - execute : remove - broadcast + direct notice
      * @param server
      * @param client
-     * @warning can send ERR_NOSUCHCHANNEL, ERR_CHANOPRIVSNEEDED, ERR_USERNOTINCHANNEL
-     * @warning can send ERR_NEEDMOREPARAMS, ERR_BADCHANMASK, ERR_NOSUCHNICK
+     * @warning can send ERR_NOSUCHCHANNEL, ERR_CHANOPRIVSNEEDED, ERR_USERNOTINCHANNEL, ERR_NEEDMOREPARAMS, ERR_BADCHANMASK, ERR_NOSUCHNICK
      */
     void execute(Server& server, Client& client);
 
@@ -67,7 +66,15 @@ class Kick : public ICommand
     Kick();
     Kick(const Kick& other);
     Kick& operator=(const Kick& other);
-	void _kick_all_users_from(std::string& chanName, std::vector<std::string>& usersNames, Parser& p);
+
+    /**
+     * @brief removes specified users from channel
+     * 
+     * @param chanName 
+     * @param usersNames 
+     * @param p 
+     */
+	void _kick_users_from_chan(std::string& chanName, std::vector<std::string>& usersNames, Parser& p);
 };
 
 #endif
