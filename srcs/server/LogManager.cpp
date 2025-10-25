@@ -13,6 +13,10 @@ LogManager& LogManager::get_instance()
     return instance;
 }
 
+/************************************************************
+ *            🥚 CONSTRUCTORS & DESTRUCTOR                  *
+ ************************************************************/
+
 LogManager::LogManager() : _globalLevel(DEBUG) {}
 
 LogManager::~LogManager()
@@ -22,6 +26,10 @@ LogManager::~LogManager()
         delete it->second;
     }
 }
+
+/*************************************************************
+ *                      🛠️ FUNCTIONS                         *
+ *************************************************************/
 
 Logger& LogManager::get_logger(const std::string& name, const std::string& filename, LogLevel level)
 {

@@ -86,23 +86,7 @@ std::string Utils::event_to_str(int event)
         return ("undefined");
     }
 }
-/**
- * @brief test if the string matching a wildcard with * pattern
- *
- * @param pattern string like *abc or abc* or *abc**df** etc..
- * @param str string to test
- * @return true if the string match the wildcard pattern
- *
- * key point
- * wildcard pattern begin with *
- * wildcard pattern end with *
- * multiple * wildcard pattern
- * - `?` : exactly ONE char
- * - `*` : ZERO or more char
- *
- * Conformément à la RFC 2812, les wildcards servent pour les masks
- * dans les commandes WHO, NAMES, LIST, etc.
- */
+
 bool Utils::is_matching_pattern(const std::string& pattern, const std::string& str)
 {
     if (pattern.empty() || str.empty())
@@ -141,6 +125,6 @@ bool Utils::MatchPattern::operator()(const Client* c) const
 
 bool Utils::is_not_alpha_or_specialbnf(char c) { return (!std::isalpha(c) && !Utils::is_special_abnf(c)); }
 bool Utils::is_invalid_char_nick(char c) { return (!std::isalnum(c) && !is_special_abnf(c)); }
-bool Utils::is_invalid_char_user(char c) { return (is_char_of(c, std::string(FORBIDEN_CHAR_USER, 5))); }
-bool Utils::is_invalid_char_key(char c) { return (is_char_of(c, std::string(FORBIDEN_CHAR_CHAN_KEY, 7))); }
+bool Utils::is_invalid_char_user(char c) { return (is_char_of(c, std::string(FORBIDEN_CHAR_USER, NUMBER_FORB_CCU))); }
+bool Utils::is_invalid_char_key(char c) { return (is_char_of(c, std::string(FORBIDEN_CHAR_CHAN_KEY, NUMBER_FORB_CCNK))); }
 bool Utils::is_not_digit(char c) { return (!std::isdigit(c)); }

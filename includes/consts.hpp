@@ -6,7 +6,7 @@
 /*   By: fpetit <fpetit@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 23:38:52 by npolack           #+#    #+#             */
-/*   Updated: 2025/10/24 17:01:10 by fpetit           ###   ########.fr       */
+/*   Updated: 2025/10/25 11:12:39 by fpetit           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@
 #define SERVER_CONF_FILE_FOR_TEST "../irc.conf"
 #define DEFAULT_PASSWORD          "password"
 #define DEFAULT_PORT              6667
-#define MAX_PORT                  9999
+#define MAX_PORT                  49152
 #define MAX_CODE_NUMBER           999
 #define MAX_JOINED_CHANNELS       NO_LIMIT
 #define CHAN_NAME_MAX_LEN         50
@@ -36,6 +36,8 @@
 #define FORBIDEN_CHAR_CHAN_NAME   "\x00\x07\x0D\x0A\x20\x2C\x3A" // NOLINT(clang-diagnostic-null-character)
 #define FORBIDEN_CHAR_CHAN_KEY    "\x00\x09\x0A\x0B\x0C\x0D\x20" // NOLINT(clang-diagnostic-null-character)
 #define FORBIDEN_CHAR_USER        "\x00\x0A\x0D\x20\x40"         // NOLINT(clang-diagnostic-null-character)
+#define NUMBER_FORB_CCNK          7
+#define NUMBER_FORB_CCU           5
 #define VALID_CHAN_MODE_NOPARAM   "\x69\x74"
 #define VALID_CHAN_MODE_PARAM     "\x6B\x6C\x6F"
 #define MODE_OPERATOR             "+-"
