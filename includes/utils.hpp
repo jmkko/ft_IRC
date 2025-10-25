@@ -97,8 +97,8 @@ class Utils
     /**
      * @brief return a value of an array in a secure way avoid out of bound
      *
+     * @tparam N
      * @param arr
-     * @param N
      * @param index
      *
      * @return arr

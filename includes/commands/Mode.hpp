@@ -40,7 +40,7 @@ class Mode : public ICommand
     /**
      * @brief Construct a new Mode object
      *
-     * @param args
+     * @param params
      */
     Mode(std::string& params);
     /**
@@ -77,7 +77,7 @@ class Mode : public ICommand
  and [RFC specs for Channel modes](https://datatracker.ietf.org/doc/html/rfc2812#section-3.2.3)
  * @param server not used
  * @param client not used
- * @param args should match pattern `<channel> *( ( "-" / "+" ) *<modes> *<modeparams>`
+ * @param params should match pattern `<channel> *( ( "-" / "+" ) *<modes> *<modeparams>`
  * @return ReplyCode
  */
     static ReplyCode check_args(Server& server, Client& client, std::string& params);

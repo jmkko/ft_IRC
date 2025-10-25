@@ -41,10 +41,9 @@ class ReplyHandler
 {
   public:
     /**
-     * @brief return client identifier formatted as nick!username@hostname
+     * @brief return client identifier formatted as `nick!username@hostname`
      *
      * @param client
-     * @param nickname
      * @return formatted identifier
      */
     std::string get_user_id_of(Client& client);

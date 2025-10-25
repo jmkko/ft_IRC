@@ -34,14 +34,16 @@ struct BotState {
 
 /**
  * @class Server
- * @brief Ser
+ * @brief Represents an IRC server
  * @details responsabilities are
+ *
  * - initializing the server with provided arguments (port, password) + config file
  * - running the server loop, using `poll` to detect events on sockets, ie
- *    - registering a new Client connection
- *    - reading Client messages and processing them (through #CmdFactory and #ICommand implementations)
- *    - sending messages back
- *  - gracefully handling client disconnection and server termination (through signals)
+ *   - registering a new Client connection
+ *   - reading Client messages and processing them (through #CmdFactory and #ICommand implementations)
+ *   - sending messages back
+ * - gracefully handling client disconnection and server termination (through signals)
+ *
  */
 class Server
 {
@@ -54,7 +56,7 @@ class Server
      * @pre the `psswd` argument should have been checked with @ref Utils::check_password()
      * @pre the `port`argument should have been checked with @ref Utils::check_port()
      * @param port valid port number
-     * @param psswd valid password
+     * @param password valid password
      * @todo delegate initialization to helper function, as `exit` is not authorized
      */
     Server(const unsigned short port, const std::string& password);
@@ -97,13 +99,15 @@ class Server
     /**
      * @brief runs the server loop, regularly checking activity through `poll()`
      * @details
+    
      - update list of sockets (in struct pfd) having events the server subscribed at
      - loop through them and
        - if read event on server client socket -> @see Server::_handle_new_connection
        - if read event on client socket -> @see Server::_handle_client_input
        - if send event on client socket -> @see Server::_handle_client_output
        - if error events on client socket -> @see Server::_handle_client_disconnection
-      - clean data (clients, channels, sockets) once loop is ended
+     - clean data (clients, channels, sockets) once loop is ended
+     
        @remark throughout the loop, orphan sockets are cleaned and signal are checked through a global variable
      */
     void start();
@@ -114,10 +118,10 @@ class Server
      */
     void stop();
     /**
-     * @brief find a client by his nickname and return a Client*
+     * @brief find a client by his nickname and return a #Client
      *
      * @param nick
-     * @return on succes the @ref CLient*
+     * @return on succes the @ref Client
      */
     Client* find_client_by_nickname(const std::string& nick);
 
