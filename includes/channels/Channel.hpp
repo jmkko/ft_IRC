@@ -23,6 +23,8 @@
  */
 #define MODE_LEN 4
 
+struct CompareClientsByName;
+
 class Client;
 class Parser;
 

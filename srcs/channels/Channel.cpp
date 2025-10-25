@@ -287,21 +287,29 @@ unsigned short Channel::get_mode() const { return _mode; }
 size_t            Channel::get_nb_members() const { return _members.size(); }
 std::set<Client*> Channel::get_members() const { return _members; }
 
+struct CompareClientsByName {
+    bool operator()(const Client* lhs, const Client* rhs) {
+        return lhs->get_nickname() < rhs->get_nickname();
+    }
+};
+
 std::vector<std::string> Channel::get_members_list() const
 {
     std::vector<std::string>          list;
-    std::set<Client*>::const_iterator it = _members.begin();
+    std::vector<Client*>              members(_members.begin(), _members.end());
     std::string                       users;
     int                               nbUserPerLine = USERS_PER_LINE;
     int                               count         = 0;
-
-    while (it != _members.end()) {
+    std::sort(members.begin(), members.end(), CompareClientsByName());
+    
+    std::vector<Client*>::const_iterator it = members.begin();
+    while (it != members.end()) {
         Client* c = *it;
         if (is_operator(*c))
             users.append("@");
         users.append(c->get_nickname());
         ++it;
-        if (it != _members.end())
+        if (it != members.end())
             users.append(" ");
         ++count;
         if (count % nbUserPerLine == 0) {

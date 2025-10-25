@@ -86,6 +86,7 @@ void valid_join_should_send_rpl_and_broadcast(Server& s)
         TEST_SETUP(test, s, 2);
         TcpSocket& soOp = *sockets.at(0);
         make_op(soOp);
+        std::this_thread::sleep_for(std::chrono::milliseconds(SERVER_SEND_WAIT_MS));
         TcpSocket& so = *sockets.at(1);
         authenticate(so);
 
