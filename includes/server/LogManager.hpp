@@ -51,19 +51,20 @@ class LogManager
 };
 
 /**
-* @section Macros macros naming
-* @subsection Original original macros
-* original macro names follow the pattern `LOG_<logger>`
-* they can be called this way `LOG_CMD.debug("message")`
-* @subsection Extra extra macros
-* other macro names follow the pattern `LOG_<level><extra>_<logger>`
-* - those macro make a call to 
-* - level being the first letter of DEBUG, INFO, WARNING, ERROR - and DT for DETAIL. If letter is lowercase, then it will log a single message.
-* - extra V is for variable display : accepts one arg and prints variable name and its value
-* 
-* they generate file name and function.
-* they can be called this way `LOG_d_CMD("message")`
-*/
+ * @section Macros macros naming
+ * @subsection Original original macros
+ * original macro names follow the pattern `LOG_<logger>`
+ * they can be called this way `LOG_CMD.debug("message")`
+ * @subsection Extra extra macros
+ * other macro names follow the pattern `LOG_<level><extra>_<logger>`
+ * - those macro make a call to
+ * - level being the first letter of DEBUG, INFO, WARNING, ERROR - and DT for DETAIL. If letter is lowercase, then it will log a
+ * single message.
+ * - extra V is for variable display : accepts one arg and prints variable name and its value
+ *
+ * they generate file name and function.
+ * they can be called this way `LOG_d_CMD("message")`
+ */
 #define LOG_SOCKET LogManager::get_instance().get_logger("SOCKET", "", DEBUG)
 #define LOG_SERVER LogManager::get_instance().get_logger("SERVER", "", DEBUG)
 #define LOG_CONN   LogManager::get_instance().get_logger("CONNECTION", "", DEBUG)

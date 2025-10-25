@@ -99,7 +99,7 @@ class Server
     /**
      * @brief runs the server loop, regularly checking activity through `poll()`
      * @details
-    
+
      - update list of sockets (in struct pfd) having events the server subscribed at
      - loop through them and
        - if read event on server client socket -> @see Server::_handle_new_connection
@@ -107,7 +107,7 @@ class Server
        - if send event on client socket -> @see Server::_handle_client_output
        - if error events on client socket -> @see Server::_handle_client_disconnection
      - clean data (clients, channels, sockets) once loop is ended
-     
+
        @remark throughout the loop, orphan sockets are cleaned and signal are checked through a global variable
      */
     void start();

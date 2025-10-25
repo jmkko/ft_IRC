@@ -135,11 +135,11 @@ class Logger
 
     /**
      * @brief helper function to log at detail level
-     * 
-     * @tparam T 
-     * @param file 
-     * @param function 
-     * @param t 
+     *
+     * @tparam T
+     * @param file
+     * @param function
+     * @param t
      */
     template <typename T> void detail(const std::string& file, const std::string& function, const T& t)
     {
@@ -163,11 +163,11 @@ class Logger
 
     /**
      * @brief helper function to log at debug level
-     * 
-     * @tparam T 
-     * @param file 
-     * @param function 
-     * @param t 
+     *
+     * @tparam T
+     * @param file
+     * @param function
+     * @param t
      */
     template <typename T> void debug(const std::string& file, const std::string& function, const T& t)
     {
@@ -204,11 +204,11 @@ class Logger
 
     /**
      * @brief helper function for logging at info level
-     * 
-     * @tparam T 
-     * @param file 
-     * @param function 
-     * @param t 
+     *
+     * @tparam T
+     * @param file
+     * @param function
+     * @param t
      */
     template <typename T> void info(const std::string& file, const std::string& function, const T& t)
     {
@@ -222,14 +222,14 @@ class Logger
      */
     void warning(const std::string& message);
 
-/**
- * @brief helper function to log at warning level
- * 
- * @tparam T 
- * @param file 
- * @param function 
- * @param t 
- */
+    /**
+     * @brief helper function to log at warning level
+     *
+     * @tparam T
+     * @param file
+     * @param function
+     * @param t
+     */
     template <typename T> void warning(const std::string& file, const std::string& function, const T& t)
     {
         log(INFO, file, function, t);
@@ -238,17 +238,17 @@ class Logger
     /**
      * @brief log at error level
      * @deprecated as it does not log file and function
-     * @param message 
+     * @param message
      */
     void error(const std::string& message);
 
     /**
      * @brief helper function to log at error level
-     * 
-     * @tparam T 
-     * @param file 
-     * @param function 
-     * @param t 
+     *
+     * @tparam T
+     * @param file
+     * @param function
+     * @param t
      */
     template <typename T> void error(const std::string& file, const std::string& function, const T& t)
     {

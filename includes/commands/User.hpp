@@ -3,9 +3,9 @@
  * @brief Implementats IRC USER command
  * @version 0.1
  * @date 2025-10-24
- * 
+ *
  * @copyright Copyright (c) 2025
- * 
+ *
  */
 #ifndef USER_HPP
 #define USER_HPP
