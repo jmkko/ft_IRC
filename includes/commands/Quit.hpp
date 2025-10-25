@@ -1,6 +1,6 @@
 /**
  * @file Quit.hpp
- * @brief
+ * @brief Implements IRC QUIT command
  * @version 0.1
  * @date 2025-10-16
  *
@@ -44,17 +44,17 @@ class Quit : public ICommand
      * @param server
      * @param client sender
      */
-    void execute(Server& s, Client& c);
+    void execute(Server& server, Client& client);
 
     /**
      * @brief no particular checks
      *
-     * @param s
-     * @param c
+     * @param server
+     * @param client
      * @param params
      * @return ReplyCode
      */
-    static ReplyCode check_args(Server& s, Client& c, std::string& params);
+    static ReplyCode check_args(Server& server, Client& client, std::string& params);
 
   private:
     std::string _quitMsg;

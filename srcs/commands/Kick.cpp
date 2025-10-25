@@ -2,17 +2,13 @@
 
 #include "Channel.hpp"
 #include "Client.hpp"
-#include "Config.hpp"
 #include "LogManager.hpp"
 #include "Parser.hpp"
 #include "ReplyHandler.hpp"
 #include "Server.hpp"
-#include "consts.hpp"
 #include "reply_codes.hpp"
-#include "utils.hpp"
 
 #include <cstddef>
-#include <sstream>
 #include <string>
 
 /************************************************************
@@ -32,30 +28,13 @@ Kick::Kick(std::string& params) : ICommand()
     _usersNames    = parser.to_vector(users);
 }
 
-Kick::Kick(void) : _channelsNames(), _usersNames(), _msg() {}
-Kick::Kick(const Kick& other) : ICommand(), _channelsNames(other._channelsNames), _usersNames(other._usersNames), _msg("") {}
-
 Kick::~Kick() {}
-
-/************************************************************
- *		➕ OPERATORS											*
- ************************************************************/
-
-Kick& Kick::operator=(const Kick& other)
-{
-    if (this != &other) {
-        _channelsNames = other._channelsNames;
-        _usersNames    = other._usersNames;
-        _msg           = other._msg;
-    }
-    return *this;
-}
 
 /*************************************************************
  *		🛠️ FUNCTIONS											*
  *************************************************************/
 
-void Kick::_kick_all_users_from(std::string& chanName, std::vector<std::string>& usersNames, Parser& p)
+void Kick::_kick_users_from_chan(std::string& chanName, std::vector<std::string>& usersNames, Parser& p)
 {
     Server*  server  = p.get_server();
     Channel* channel = server->find_channel_by_name(chanName);
@@ -89,7 +68,7 @@ void Kick::execute(Server& server, Client& client)
         return;
     } else if (chanNb == 1) {
         if (p.correct_channel(_channelsNames[0]))
-            _kick_all_users_from(_channelsNames[0], _usersNames, p);
+            _kick_users_from_chan(_channelsNames[0], _usersNames, p);
         return;
     }
     for (size_t i = 0; i < chanNb; ++i) {

@@ -6,8 +6,10 @@
 #include "Server.hpp"
 #include "reply_codes.hpp"
 
-// Default constructor
-Part::Part(void) {}
+/************************************************************
+ *		🥚 CONSTRUCTORS & DESTRUCTOR						*
+ ************************************************************/
+
 Part::Part(std::string& params)
 {
     Parser parser;
@@ -18,21 +20,11 @@ Part::Part(std::string& params)
     _message   = parser.format_parameter(params, NULL);
 }
 
-// Copy constructor
-Part::Part(const Part& other) : _chanNames(other._chanNames), _message(other._message) {}
-
-// Assignment operator overload
-Part& Part::operator=(const Part& other)
-{
-    if (this != &other) {
-        _chanNames = other._chanNames;
-        _message   = other._message;
-    }
-    return (*this);
-}
-
-// Destructor
 Part::~Part(void) {}
+
+/*************************************************************
+ *		🛠️ METHODS											*
+ *************************************************************/
 
 void Part::execute(Server& server, Client& client)
 {
@@ -40,7 +32,7 @@ void Part::execute(Server& server, Client& client)
 
     if (_chanNames.size() == 0) {
         p.response(ERR_NEEDMOREPARAMS, "PART");
-		return ;
+        return;
     }
     for (size_t i = 0; i < _chanNames.size(); i++) {
         Channel* channel = server.find_channel_by_name(_chanNames[i]);

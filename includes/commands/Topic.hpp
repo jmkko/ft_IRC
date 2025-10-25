@@ -14,7 +14,7 @@
 #include "ICommand.hpp"
 #include "reply_codes.hpp"
 
-#include <iostream>
+#include <string>
 
 class Channel;
 class Parser;
@@ -32,7 +32,6 @@ class Topic : public ICommand
     /**
      * @brief Construct a new Topic:: Topic object
      *
-     * @param server
      * @param params
      */
     Topic(std::string& params);
@@ -48,6 +47,7 @@ class Topic : public ICommand
      * @details
      * - if no topic arg returns RPL_TOPIC (or RPL_NOTOPIC if empty)
      * - if topic arg, tries updating channel topic
+     *
      * @param server
      * @param client sender
      * @pre Topic::check_args should have returned CORRECT_FORMAT
@@ -61,6 +61,7 @@ class Topic : public ICommand
      * perform other validity checks
      * - #Channel does exist
      * - #Client does exist
+     *
      * @param server
      * @param client sender
      * @param params should match pattern `<channel> [ <topic> ]`
@@ -70,10 +71,17 @@ class Topic : public ICommand
     static ReplyCode check_args(Server& server, Client& client, std::string& params);
 
   private:
-	std::string _chan;
+    std::string _chan;
     std::string _topic;
     bool        _clearTopic;
 
+    /**
+     * @brief send RPL_TOPIC or RPL_NOTOPIC
+     * @details through #Parser
+     *
+     * @param p
+     * @param channel
+     */
     void _display_topic(Parser& p, Channel& channel);
     Topic(void);
     Topic(const Topic& other);

@@ -213,12 +213,11 @@ AssertReply& AssertReply::matches_entirely(const std::string& message)
 }
 void AssertReply::print_target_and_messages(const std::string& target)
 {
-    std::cout << "Looking for: " << target << "\nin:\n";
+    LOG_DT_TEST("Looking for ", target);
     for (std::vector<Message>::iterator it = _messages.begin(); it != _messages.end(); ++it) {
         for (std::vector<std::string>::iterator itstring = it->args.begin(); itstring != it->args.end(); itstring++) {
-            std::cout << *itstring;
+            LOG_DTV_TEST(*itstring);
         }
-        std::cout << "\n";
     }
 }
 AssertReply& AssertReply::is_empty()

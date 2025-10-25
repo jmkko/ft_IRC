@@ -19,7 +19,7 @@
 /**
  * @class Config
  * @brief load conf file which is formated in TOML style
- * there are three parts
+ * @details there are three parts
  * - [irc.conf] -> if no data load default value
  * - [irc.motd] -> if no data don't send motd
  * - [irc.codes] -> if no data dont-t send trailing message
@@ -28,8 +28,17 @@
 class Config
 {
   public:
-    Config();
+    /**
+     * @brief Construct a new Config object from filename
+     *
+     * @param fileName
+     */
     Config(const std::string& fileName);
+
+    /**
+     * @brief Destroy the Config object
+     *
+     */
     ~Config();
 
     /**
@@ -40,6 +49,7 @@ class Config
      * @return
      */
     const std::string& str(ReplyCode code) const;
+
     /**
      * @brief get the trailing message of a @see Replycode
      * ex: 001 ->Welcome to the IRC HazADoU& SerVerRrrr
@@ -90,6 +100,11 @@ class Config
     std::map<int, std::string> _codes;
     std::map<int, std::string> _trailings;
     std::vector<std::string>   _motd;
+    /**
+     * @brief Construct a new Config object
+     *
+     */
+    Config();
 
     Config(const Config& config);
 
@@ -187,6 +202,11 @@ class Config
     void _set_target_limit(std::string& value);
 };
 extern const Config ircConfig;
+/**
+ * @def ircConfigTest
+ * @brief creates a configuration with correct configuration file relative path
+ *
+ */
 extern const Config ircConfigTest;
 
 #endif

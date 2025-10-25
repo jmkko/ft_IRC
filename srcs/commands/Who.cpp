@@ -48,14 +48,7 @@ Who::~Who() {}
 
 void Who::execute(Server& server, Client& client)
 {
-    // std::string        mask;
-    // std::string        op;
-    // std::istringstream iss(_params);
-    // ReplyHandler&      rh = ReplyHandler::get_instance(&server);
     Parser p(server, client);
-
-    // iss >> mask;
-    // iss >> op;
 
     if (!_op.empty() && _op != "o") {
         LOG_CMD.warning(TO_STRING(ERR_NEEDMOREPARAMS) + " ERR_NEEDMOREPARAMS");
@@ -84,9 +77,8 @@ void Who::execute(Server& server, Client& client)
     } else {
         std::vector<Client*>           clients = server.find_clients_by_pattern(_mask);
         std::vector<Client*>::iterator it      = clients.begin();
-        for (; it != clients.end(); it++) { 
-            p.response(
-                RPL_WHOREPLY, _who_msg(*it, NULL, server), std::string("0 ") + (*it)->get_real_name());
+        for (; it != clients.end(); it++) {
+            p.response(RPL_WHOREPLY, _who_msg(*it, NULL, server), std::string("0 ") + (*it)->get_real_name());
         }
         p.response(RPL_ENDOFWHO, _mask);
     }

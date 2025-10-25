@@ -17,6 +17,7 @@ class Client;
 /**
  * @class ICommand
  * @brief Interface providing an `execute` behavior for all commands
+ * @remark protected constructor prevents direct instanciation
  *
  */
 class ICommand
@@ -39,8 +40,6 @@ class ICommand
     ICommand() {}
 
   private:
-    ICommand(const ICommand& inst);
-    ICommand& operator=(const ICommand& inst);
 };
 
 #endif

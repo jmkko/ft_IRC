@@ -13,10 +13,10 @@
 #include "ICommand.hpp"
 #include "reply_codes.hpp"
 
+#include <queue>
 #include <set>
 #include <string>
 #include <vector>
-#include <queue>
 
 class Client;
 class Server;
@@ -28,7 +28,7 @@ class Server;
 
 /**
  * @class Mode
- * @brief Mode Handler for IRC MODE
+ * @brief Handler for IRC MODE
  * @details This command is used
  * - to modify a few channel modes (kilt) and user mode (o) only among those specified by RFCs.
  * - to check a channel modes
@@ -40,7 +40,7 @@ class Mode : public ICommand
     /**
      * @brief Construct a new Mode object
      *
-     * @param args
+     * @param params
      */
     Mode(std::string& params);
     /**
@@ -70,7 +70,6 @@ class Mode : public ICommand
      ERR_USERNOTINCHANNEL
      */
     void execute(Server& server, Client& client);
-	
 
     /**
  * @brief check syntaxic validity of args
@@ -78,17 +77,16 @@ class Mode : public ICommand
  and [RFC specs for Channel modes](https://datatracker.ietf.org/doc/html/rfc2812#section-3.2.3)
  * @param server not used
  * @param client not used
- * @param args should match pattern `<channel> *( ( "-" / "+" ) *<modes> *<modeparams>`
+ * @param params should match pattern `<channel> *( ( "-" / "+" ) *<modes> *<modeparams>`
  * @return ReplyCode
  */
     static ReplyCode check_args(Server& server, Client& client, std::string& params);
 
   private:
-	std::string _channelName;
-	std::queue<std::string> _modeQueue;
-	std::queue<std::string> _paramsQueue;
-    std::string _params;
-	
+    std::string             _channelName;
+    std::queue<std::string> _modeQueue;
+    std::queue<std::string> _paramsQueue;
+    std::string             _params;
 
     Mode();
     Mode(const Mode& other);

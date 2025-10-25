@@ -1,3 +1,12 @@
+/**
+ * @file colors.hpp
+ * @brief ANSI color codes
+ * @version 0.1
+ * @date 2025-10-25
+ * 
+ * @copyright Copyright (c) 2025
+ * 
+ */
 #ifndef COLORS_H
 #define COLORS_H
 

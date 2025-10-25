@@ -11,6 +11,14 @@
 
 #include "Logger.hpp"
 
+/**
+ * @brief Logger management
+ * @class LogManager
+ * @details responsabilities
+ * - single instanciation of each logger
+ * - provide helper macros
+ * 
+ */
 class LogManager
 {
   public:
@@ -25,7 +33,7 @@ class LogManager
     static LogManager& get_instance();
     /**
      * @brief return a logger with specified name and level
-     * @detail if the Logger doesn't exist it is instanciated
+     * @details if the Logger doesn't exist it is instanciated
      *
      * @param name of Logger
      * @param filename to store the Logger messages by Default LoggerName.log
@@ -51,8 +59,19 @@ class LogManager
 };
 
 /**
- * @details
- * macro for easy usage of each Logger
+ * @section Macros macros naming
+ * @subsection Original original macros
+ * original macro names follow the pattern `LOG_<logger>`
+ * they can be called this way `LOG_CMD.debug("message")`
+ * @subsection Extra extra macros
+ * other macro names follow the pattern `LOG_<level><extra>_<logger>`
+ * - those macro make a call to
+ * - level being the first letter of DEBUG, INFO, WARNING, ERROR - and DT for DETAIL. If letter is lowercase, then it will log a
+ * single message.
+ * - extra V is for variable display : accepts one arg and prints variable name and its value
+ *
+ * they generate file name and function.
+ * they can be called this way `LOG_d_CMD("message")`
  */
 #define LOG_SOCKET LogManager::get_instance().get_logger("SOCKET", "", DEBUG)
 #define LOG_SERVER LogManager::get_instance().get_logger("SERVER", "", DEBUG)
@@ -61,13 +80,6 @@ class LogManager
 #define LOG_ERR    LogManager::get_instance().get_logger("ERROR", "", ERROR)
 #define LOG_TEST   LogManager::get_instance().get_logger("TEST", "", DEBUG)
 
-/**
- * @details
- * macro name follows the pattern LOG <level><extra> <logger>
- * level being the first letter of DEBUG, INFO, WARNING, ERROR - and DT for DETAIL
- * extra V is for variable display : accepts one arg and prints variable name and its value
- * lowercase is for simple messages
- */
 #define LOG_DT_SERVER(message, data)                                                                                             \
     LogManager::get_instance().get_logger("SERVER", "", DEBUG).log(DETAIL, __FILE_NAME__, __FUNCTION__, message, data)
 #define LOG_DTV_SERVER(data)                                                                                                     \

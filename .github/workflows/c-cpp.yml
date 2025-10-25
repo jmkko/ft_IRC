@@ -2,7 +2,7 @@ name: C/C++ CI
 
 on:
   push:
-    branches: [ "main" , "dev" ]
+    branches: [ "main" , "dev", "doc" ]
   pull_request:
     branches: [ "main" , "dev"]
 
@@ -31,6 +31,8 @@ jobs:
    - name: Install dependencies
      run: sudo apt-get update && sudo apt-get install -y clang-12 make
    - name: build
-     run: make -C test github-test
+     working-directory: ./test
+     run: make
    - name: test
-     run: ./test/test
+     working-directory: ./test
+     run: ./test

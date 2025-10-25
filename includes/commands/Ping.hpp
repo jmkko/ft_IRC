@@ -20,7 +20,7 @@ class Client;
 
 /**
  * @class Ping
- * @brief Handler for PING
+ * @brief Handler for IRC PING
  */
 class Ping : public ICommand
 {
@@ -35,8 +35,8 @@ class Ping : public ICommand
     /**
      * @brief sends a PONG message with token provided by PING sender
      *
-     * @param s server
-     * @param c client
+     * @param server server
+     * @param client client
      */
     void execute(Server& server, Client& client);
     /**

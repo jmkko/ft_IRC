@@ -6,7 +6,6 @@ logs/*
 
 # doxygen
 doxygen-warnings.log
-docs/*
 
 # analysis
 .cache

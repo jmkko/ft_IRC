@@ -5,14 +5,12 @@
 #include "LogManager.hpp"
 #include "Nick.hpp"
 #include "Parser.hpp"
-// #include "ReplyHandler.hpp"
 #include "Server.hpp"
 #include "reply_codes.hpp"
 #include "utils.hpp"
 
 #include <algorithm>
 #include <cctype>
-#include <iostream>
 
 Nick::Nick(std::string& params)
 {
