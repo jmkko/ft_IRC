@@ -1,27 +1,24 @@
 #include "User.hpp"
 
 #include "Client.hpp"
-#include "Config.hpp"
 #include "LogManager.hpp"
 #include "Motd.hpp"
-//#include "ReplyHandler.hpp"
 #include "Parser.hpp"
 #include "Server.hpp"
 #include "reply_codes.hpp"
-
-#include <algorithm>
-#include <iostream>
+#include "utils.hpp"
 
 // Default constructor
 User::User(void) {}
 
-User::User(std::string& params) {
-	Parser parser;
+User::User(std::string& params)
+{
+    Parser parser;
 
-	_username = parser.format_parameter(params, NULL);
-	_mode = parser.format_parameter(params, NULL);
-	_unused = parser.format_parameter(params, NULL);
-	_realname = parser.format_parameter(params, NULL);
+    _username = parser.format_parameter(params, NULL);
+    _mode     = parser.format_parameter(params, NULL);
+    _unused   = parser.format_parameter(params, NULL);
+    _realname = parser.format_parameter(params, NULL);
 }
 // Copy constructor
 User::User(const User& other) : ICommand() { (void)other; }
@@ -59,29 +56,29 @@ User::~User(void) {}
  */
 void User::execute(Server& server, Client& client)
 {
-	Parser p(server, client);
+    Parser p(server, client);
 
-	if (_realname.empty()) {
-		p.response(ERR_NEEDMOREPARAMS, "USER");
+    if (_realname.empty()) {
+        p.response(ERR_NEEDMOREPARAMS, "USER");
         return;
-	}
-	if (std::count_if(_username.begin(), _username.end(), Utils::is_invalid_char_user)) {
-		p.response(ERR_NEEDMOREPARAMS, "USER");
-		return ;
-	}
+    }
+    if (std::count_if(_username.begin(), _username.end(), Utils::is_invalid_char_user)) {
+        p.response(ERR_NEEDMOREPARAMS, "USER");
+        return;
+    }
     // trim white space around realname; return 461 if only space in realname
     size_t start = _realname.find_first_not_of(WHITE_SPACE);
     if (start == std::string::npos) {
-		p.response(ERR_NEEDMOREPARAMS, "USER");
-        return ;
+        p.response(ERR_NEEDMOREPARAMS, "USER");
+        return;
     }
     size_t end = _realname.find_last_not_of(WHITE_SPACE);
-    _realname   = _realname.substr(start, end - start + 1);
+    _realname  = _realname.substr(start, end - start + 1);
     if (!client.get_user_name().empty() && !client.get_nickname().empty() && client.is_registered()) {
-		p.response(ERR_ALREADYREGISTRED);
-        return ;
+        p.response(ERR_ALREADYREGISTRED);
+        return;
     }
-	
+
     client.set_user_name(_username);
     client.set_real_name(_realname);
     LOG_DV_CMD(_realname);

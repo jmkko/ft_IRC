@@ -1,6 +1,7 @@
+#include "Motd.hpp"
+
 #include "Config.hpp"
 #include "LogManager.hpp"
-#include "Motd.hpp"
 #include "Parser.hpp"
 // #include "ReplyHandler.hpp"
 #include "consts.hpp"
@@ -9,7 +10,6 @@
 #include <cstdlib>
 #include <cstring>
 #include <ctime>
-#include <fstream>
 #include <iomanip>
 #include <iostream>
 #include <limits.h>
@@ -19,14 +19,14 @@
 #include <vector>
 
 /************************************************************
- *		🥚 CONSTRUCTORS & DESTRUCTOR						*
+ *          🥚 CONSTRUCTORS & DESTRUCTOR                    *
  ************************************************************/
 
 Motd::Motd(const std::string& params) : _params(params) {}
 Motd::~Motd() {}
 
 /*************************************************************
- *		🛠️ FUNCTIONS											*
+ *                     🛠️ FUNCTIONS                          *
  *************************************************************/
 
 void Motd::execute(Server& server, Client& client)
