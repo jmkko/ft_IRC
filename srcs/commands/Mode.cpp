@@ -70,9 +70,8 @@ static unsigned short char_to_mode(char c)
 }
 
 /************************************************************
- *          🥚 CONSTRUCTORS & DESTRUCTOR                    *
+ *		📁 CLASS METHODS									*
  ************************************************************/
-
 Mode::Mode() {}
 Mode::Mode(std::string& params)
 {

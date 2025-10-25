@@ -1,0 +1,31 @@
+<map id="LogManager.hpp" name="LogManager.hpp">
+<area shape="rect" id="Node000001" title="LogManager class." alt="" coords="554,5,682,33"/>
+<area shape="rect" id="Node000002" href="$d9/d11/Logger_8hpp.html" title="Logger class." alt="" coords="572,81,664,109"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="620,34,620,65,615,65,615,34"/>
+<area shape="rect" id="Node000003" href="$d3/d8e/Client_8hpp.html" title="Client class." alt="" coords="362,157,449,184"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="581,112,459,154,457,149,579,107"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="190,384,248,411"/>
+<area shape="poly" id="edge16_Node000002_Node000006" title=" " alt="" coords="617,110,593,190,576,233,558,262,525,291,488,316,448,337,407,354,329,379,264,392,263,387,327,374,405,349,446,332,485,312,522,287,554,258,571,231,588,188,612,108"/>
+<area shape="rect" id="Node000010" title=" " alt="" coords="494,232,544,260"/>
+<area shape="poly" id="edge14_Node000002_Node000010" title=" " alt="" coords="606,111,565,158,533,219,528,216,561,155,602,107"/>
+<area shape="rect" id="Node000011" title=" " alt="" coords="619,157,691,184"/>
+<area shape="poly" id="edge12_Node000002_Node000011" title=" " alt="" coords="627,108,644,142,639,144,622,110"/>
+<area shape="rect" id="Node000012" title=" " alt="" coords="715,157,790,184"/>
+<area shape="poly" id="edge13_Node000002_Node000012" title=" " alt="" coords="643,107,717,147,714,152,640,112"/>
+<area shape="rect" id="Node000013" title=" " alt="" coords="814,157,888,184"/>
+<area shape="poly" id="edge15_Node000002_Node000013" title=" " alt="" coords="660,107,800,150,799,156,659,112"/>
+<area shape="rect" id="Node000004" href="$da/d81/TcpSocket_8hpp.html" title="TcpSocket class." alt="" coords="116,232,229,260"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="365,187,229,230,227,225,363,182"/>
+<area shape="poly" id="edge11_Node000003_Node000006" title=" " alt="" coords="386,187,358,208,332,234,315,261,306,284,297,309,281,337,247,375,243,372,277,334,292,306,301,282,310,258,328,231,355,203,383,183"/>
+<area shape="rect" id="Node000009" href="$d8/d9c/reply__codes_8hpp.html" title="Numerical reply codes." alt="" coords="342,232,469,260"/>
+<area shape="poly" id="edge9_Node000003_Node000009" title=" " alt="" coords="408,185,408,217,403,217,403,185"/>
+<area shape="poly" id="edge10_Node000003_Node000010" title=" " alt="" coords="427,183,488,222,485,226,424,187"/>
+<area shape="rect" id="Node000005" href="$df/dd7/consts_8hpp.html" title="constants used throughout IRC server program" alt="" coords="5,308,97,336"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="152,263,87,302,84,298,149,258"/>
+<area shape="poly" id="edge8_Node000004_Node000006" title=" " alt="" coords="169,261,159,296,157,316,161,335,174,355,190,372,186,376,169,358,157,337,152,316,153,295,164,260"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="171,308,267,336"/>
+<area shape="poly" id="edge7_Node000004_Node000008" title=" " alt="" coords="183,259,205,294,200,296,178,262"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="82,334,177,375,174,380,80,339"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="20,384,82,411"/>
+<area shape="poly" id="edge6_Node000005_Node000007" title=" " alt="" coords="54,336,54,368,48,368,48,336"/>
+</map>

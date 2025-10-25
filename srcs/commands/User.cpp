@@ -8,8 +8,11 @@
 #include "reply_codes.hpp"
 #include "utils.hpp"
 
-// Default constructor
-User::User(void) {}
+#include <algorithm>
+
+/************************************************************
+ *		🥚 CONSTRUCTORS & DESTRUCTOR						*
+ ************************************************************/
 
 User::User(std::string& params)
 {
@@ -20,40 +23,13 @@ User::User(std::string& params)
     _unused   = parser.format_parameter(params, NULL);
     _realname = parser.format_parameter(params, NULL);
 }
-// Copy constructor
-User::User(const User& other) : ICommand() { (void)other; }
 
-// Assignment operator overload
-User& User::operator=(const User& other)
-{
-    (void)other;
-    return (*this);
-}
-
-// Destructor
 User::~User(void) {}
 
-/**
- * @brief set _username and _realname
- *
- * @if this command is done after NICK send welcome message to client
- * 001    RPL_WELCOME
- *          "Welcome to the Internet Relay Network
- *          <nick>!<user>@<host>"
- * 002    RPL_YOURHOST
- *          "Your host is <servername>, running version <ver>"
- * 003    RPL_CREATED
- *          "This server was created <date>"
- * 004    RPL_MYINFO
- *          "<servername> <version> <available user modes>
- *          <available channel modes>"
- *        - The server sends Replies 001 to 004 to a user upon
- *          successful registration.
- *
- * @param server not used
- * @param client
- *
- */
+/*************************************************************
+ *		🛠️ METHODS											*
+ *************************************************************/
+
 void User::execute(Server& server, Client& client)
 {
     Parser p(server, client);
@@ -66,7 +42,6 @@ void User::execute(Server& server, Client& client)
         p.response(ERR_NEEDMOREPARAMS, "USER");
         return;
     }
-    // trim white space around realname; return 461 if only space in realname
     size_t start = _realname.find_first_not_of(WHITE_SPACE);
     if (start == std::string::npos) {
         p.response(ERR_NEEDMOREPARAMS, "USER");
@@ -96,19 +71,6 @@ void User::execute(Server& server, Client& client)
     }
 }
 
-/**
- * @brief Check User commands args
- *
- * @param server not used
- * @param client
- * @param params should mathc `<user> <mode> <unused> <realname>`
- * @remark mode and unused are always 0 * for this project
- * @remark grammar rule
- * user       =  1*( %x01-09 / %x0B-0C / %x0E-1F / %x21-3F / %x41-FF )
- *                 ; any octet except NUL, CR, LF, " " and "@"
- *
- * @return @ref ReplyCode
- */
 ReplyCode User::check_args(Server& server, Client& client, std::string& params)
 {
     (void)server;
@@ -134,7 +96,6 @@ ReplyCode User::check_args(Server& server, Client& client, std::string& params)
         return (ERR_NEEDMOREPARAMS);
     }
 
-    // trim white space around realname; return 461 if only space in realname
     size_t start = realname.find_first_not_of(WHITE_SPACE);
     if (start == std::string::npos) {
         return (ERR_NEEDMOREPARAMS);

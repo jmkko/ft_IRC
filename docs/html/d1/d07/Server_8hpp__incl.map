@@ -1,0 +1,20 @@
+<map id="Server.hpp" name="Server.hpp">
+<area shape="rect" id="Node000001" title="Server class." alt="" coords="275,5,365,33"/>
+<area shape="rect" id="Node000002" href="$da/d81/TcpSocket_8hpp.html" title="TcpSocket class." alt="" coords="115,81,228,109"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="295,36,213,76,210,71,292,31"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="5,232,64,260"/>
+<area shape="poly" id="edge9_Node000001_Node000004" title=" " alt="" coords="275,28,191,45,146,61,104,83,81,99,65,114,54,132,42,158,35,187,34,217,29,217,30,187,37,156,49,130,61,111,78,95,101,79,144,56,190,40,274,23"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="187,232,250,260"/>
+<area shape="poly" id="edge10_Node000001_Node000005" title=" " alt="" coords="324,34,322,101,314,145,297,186,279,208,258,226,254,221,275,204,292,183,308,143,317,101,318,33"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="357,81,408,109"/>
+<area shape="poly" id="edge7_Node000001_Node000007" title=" " alt="" coords="333,32,364,67,360,71,329,35"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="431,81,488,109"/>
+<area shape="poly" id="edge8_Node000001_Node000008" title=" " alt="" coords="346,31,423,71,420,76,344,36"/>
+<area shape="rect" id="Node000003" href="$df/dd7/consts_8hpp.html" title="constants used throughout IRC server program" alt="" coords="72,157,163,184"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="164,111,138,146,134,142,160,108"/>
+<area shape="poly" id="edge6_Node000002_Node000004" title=" " alt="" coords="132,112,95,130,62,158,47,187,39,218,34,217,42,185,58,155,92,126,130,107"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="187,157,282,184"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="185,107,216,143,212,147,181,111"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="104,187,62,224,59,220,101,183"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="137,183,190,221,187,225,134,187"/>
+</map>

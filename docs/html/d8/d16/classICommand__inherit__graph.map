@@ -1,0 +1,33 @@
+<map id="ICommand" name="ICommand">
+<area shape="rect" id="Node000001" title="Interface providing an execute behavior for all commands." alt="" coords="822,5,941,122"/>
+<area shape="rect" id="Node000002" href="$db/d6d/classBot.html" title="Implement non RFC Bot command." alt="" coords="5,182,99,298"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="807,71,644,82,441,101,340,115,247,131,169,150,112,173,97,184,94,179,110,168,167,145,246,126,339,109,440,96,644,76,807,66"/>
+<area shape="rect" id="Node000003" href="$dc/db9/classInvite.html" title="Handler for IRC INVITE." alt="" coords="123,182,211,298"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="807,73,666,86,496,106,335,135,271,153,224,173,209,184,206,180,222,168,269,148,334,130,495,101,666,80,807,68"/>
+<area shape="rect" id="Node000004" href="$d4/dd2/classJoin.html" title="Handler for IRC JOIN." alt="" coords="235,182,323,298"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="808,76,690,91,552,112,424,140,374,156,336,173,322,184,318,179,334,168,372,151,423,135,551,107,689,85,807,71"/>
+<area shape="rect" id="Node000005" href="$de/dcb/classKick.html" title="Handler for IRC KICK." alt="" coords="347,182,435,298"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="807,72,729,81,636,99,539,128,492,148,448,173,434,184,431,180,446,168,490,144,537,123,634,93,728,75,807,66"/>
+<area shape="rect" id="Node000006" href="$d9/d03/classMode.html" title="Handler for IRC MODE." alt="" coords="459,170,569,310"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="809,83,698,117,638,142,582,173,570,181,567,177,579,168,636,137,696,112,807,78"/>
+<area shape="rect" id="Node000007" href="$d1/d48/classMotd.html" title="Handler for IRC MOTD." alt="" coords="592,182,680,298"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="810,100,751,132,694,172,682,183,678,180,691,168,748,128,807,95"/>
+<area shape="rect" id="Node000008" href="$d1/d47/classNick.html" title="Handler for IRC NICK." alt="" coords="704,170,814,310"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="835,136,809,172,805,169,831,133"/>
+<area shape="rect" id="Node000009" href="$d8/d2d/classPart.html" title="Handler for IRC PART." alt="" coords="838,182,926,298"/>
+<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="884,137,884,182,879,182,879,137"/>
+<area shape="rect" id="Node000010" href="$d5/d01/classPass.html" title="Handler for IRC PASS." alt="" coords="950,170,1038,310"/>
+<area shape="poly" id="edge9_Node000001_Node000010" title=" " alt="" coords="929,133,952,169,948,172,924,136"/>
+<area shape="rect" id="Node000011" href="$d1/d7c/classPing.html" title="Handler for IRC PING." alt="" coords="1061,170,1171,310"/>
+<area shape="poly" id="edge10_Node000001_Node000011" title=" " alt="" coords="956,103,1004,134,1051,168,1063,179,1060,183,1048,172,1001,138,953,108"/>
+<area shape="rect" id="Node000012" href="$d2/dbb/classPrivmsg.html" title="Handler for IRC PRIVMSG." alt="" coords="1195,182,1296,298"/>
+<area shape="poly" id="edge11_Node000001_Node000012" title=" " alt="" coords="957,78,1068,111,1128,137,1184,168,1199,180,1196,184,1182,173,1126,141,1066,116,955,83"/>
+<area shape="rect" id="Node000013" href="$db/dd5/classQuit.html" title="Handler for IRC QUIT." alt="" coords="1320,170,1430,310"/>
+<area shape="poly" id="edge12_Node000001_Node000013" title=" " alt="" coords="956,68,1033,79,1124,98,1219,127,1266,146,1310,168,1322,176,1319,180,1307,173,1263,150,1217,132,1123,103,1032,84,955,74"/>
+<area shape="rect" id="Node000014" href="$d8/d71/classTopic.html" title="Handler for IRC TOPIC." alt="" coords="1455,170,1565,310"/>
+<area shape="poly" id="edge13_Node000001_Node000014" title=" " alt="" coords="956,63,1057,69,1182,85,1248,98,1315,116,1381,139,1443,168,1456,176,1454,181,1440,173,1379,144,1314,122,1247,104,1181,90,1057,74,956,68"/>
+<area shape="rect" id="Node000015" href="$d9/dc0/classUser.html" title="Handler for IRC USER." alt="" coords="1589,170,1699,310"/>
+<area shape="poly" id="edge14_Node000001_Node000015" title=" " alt="" coords="956,68,1103,81,1284,102,1456,131,1526,148,1578,168,1591,176,1588,181,1575,173,1524,153,1455,136,1284,107,1103,86,955,73"/>
+<area shape="rect" id="Node000016" href="$dc/d08/classWho.html" title="Handler for IRC WHO query." alt="" coords="1724,170,1834,310"/>
+<area shape="poly" id="edge15_Node000001_Node000016" title=" " alt="" coords="956,66,1130,76,1351,96,1461,109,1563,126,1649,145,1712,168,1725,176,1723,180,1710,173,1647,150,1562,131,1460,114,1350,101,1130,82,956,71"/>
+</map>

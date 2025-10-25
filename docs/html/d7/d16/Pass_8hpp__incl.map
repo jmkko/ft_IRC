@@ -1,0 +1,21 @@
+<map id="Pass.hpp" name="Pass.hpp">
+<area shape="rect" id="Node000001" title="Implements IRC PASS command." alt="" coords="328,5,407,33"/>
+<area shape="rect" id="Node000002" href="$d7/d42/Channel_8hpp.html" title="Channel class." alt="" coords="180,81,283,109"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="345,36,270,76,268,71,342,31"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="204,232,262,260"/>
+<area shape="poly" id="edge11_Node000001_Node000005" title=" " alt="" coords="394,31,421,51,442,80,446,95,445,112,434,145,412,186,381,209,346,225,310,236,278,243,277,238,309,231,344,220,378,205,408,183,429,143,439,111,440,95,437,82,417,55,391,36"/>
+<area shape="rect" id="Node000008" href="$de/dd6/ICommand_8hpp.html" title="command interface" alt="" coords="308,81,428,109"/>
+<area shape="poly" id="edge9_Node000001_Node000008" title=" " alt="" coords="370,34,370,65,365,65,365,34"/>
+<area shape="rect" id="Node000003" href="$da/dcb/ReplyHandler_8hpp.html" title="ReplyHandler class." alt="" coords="60,157,196,184"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="215,111,160,150,157,146,212,107"/>
+<area shape="rect" id="Node000004" href="$d8/d9c/reply__codes_8hpp.html" title="Numerical reply codes." alt="" coords="5,232,133,260"/>
+<area shape="poly" id="edge5_Node000002_Node000004" title=" " alt="" coords="180,100,146,105,110,116,76,133,50,158,44,172,44,187,55,218,50,220,39,188,39,171,45,155,73,128,108,111,145,100,180,95"/>
+<area shape="poly" id="edge7_Node000002_Node000005" title=" " alt="" coords="234,109,235,216,230,216,229,109"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="271,157,312,184"/>
+<area shape="poly" id="edge6_Node000002_Node000006" title=" " alt="" coords="244,108,273,143,269,146,240,111"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="336,157,399,184"/>
+<area shape="poly" id="edge8_Node000002_Node000007" title=" " alt="" coords="257,107,331,147,329,151,255,112"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="119,187,91,222,87,218,115,183"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="148,183,204,221,201,226,145,187"/>
+<area shape="poly" id="edge10_Node000008_Node000007" title=" " alt="" coords="370,109,370,141,365,141,365,109"/>
+</map>

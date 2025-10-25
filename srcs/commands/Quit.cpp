@@ -1,14 +1,11 @@
+#include "Quit.hpp"
+
 #include "Client.hpp"
 #include "Config.hpp"
 #include "LogManager.hpp"
-#include "Quit.hpp"
 #include "ReplyHandler.hpp"
 #include "Server.hpp"
-#include "consts.hpp"
 #include "reply_codes.hpp"
-#include "utils.hpp"
-
-#include <iostream>
 
 /************************************************************
  *		🥚 CONSTRUCTORS & DESTRUCTOR						*

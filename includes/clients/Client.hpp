@@ -1,6 +1,6 @@
 /**
  * @file Client.hpp
- * @brief
+ * @brief Client class
  * @version 0.1
  * @date 2025-10-16
  *
@@ -30,6 +30,7 @@ typedef unsigned short ClientStatus;
  * - Value: `0b00000` (binary 00000, decimal 0)
  */
 #define UNAUTHENTICATED 0b00000 // NOLINT
+
 /**
  * @def AUTHENTICATED
  * @brief Represents the authenticated state of a client.
@@ -40,6 +41,7 @@ typedef unsigned short ClientStatus;
  * - Value: `0b00000` (binary 00001, decimal 1)
  */
 #define AUTHENTICATED 0b00001 // NOLINT
+
 /**
  * @def REGISTERED
  * @brief Represents the registered state of a client.
@@ -68,6 +70,7 @@ class Client
      * @param addr
      */
     Client(Socket socket, sockaddr_in addr);
+
     /**
      * @brief Destroy the Client object
      *
@@ -75,49 +78,61 @@ class Client
     virtual ~Client();
 
     /**
-     * @brief Get the socket object
+     * @brief Get the fd of socket associated with the client
      *
      * @return Socket (an int reprenting socket file descriptor)
      */
     Socket get_socket() const;
 
+    /**
+     * @brief Get the tcp socket object associated with the client
+     *
+     * @return TcpSocket&
+     */
     TcpSocket& get_tcp_socket();
+
     /**
      * @brief Get the address object
      *
      * @return const std::string&
      */
     const std::string& get_address() const;
+
     /**
      * @brief Get the port object
      *
      * @return unsigned short
      */
     unsigned short get_port() const;
+
     /**
      * @brief Get the send buffer object
      *
      * @return std::string
      */
     std::string get_send_buffer() const;
+
     /**
      * @brief Get the send buffer object
      *
      * @return std::string&
      */
     std::string& get_send_buffer();
+
     /**
      * @brief Get the read buffer object as a reference
      *
      * @return std::string&
      */
     std::string& get_read_buffer();
+
     /**
      * @brief Get the read buffer object
      *
      * @return std::string
      */
     std::string get_read_buffer() const;
+
     /**
      * @brief
      *
@@ -132,30 +147,35 @@ class Client
      * @return std::string
      */
     std::string get_nickname() const;
+
     /**
      * @brief Get the user name, created with #User command
      *
      * @return std::string
      */
     std::string get_user_name() const;
+
     /**
      * @brief Get the real name, created with #User command
      *
      * @return std::string
      */
     std::string get_real_name() const;
+
     /**
-     * @brief Get the userhost formatted like <user>@<host>
+     * @brief Get the userhost formatted like `<user>@<host>`
      *
      * @return std::string
      */
     std::string get_userhost() const;
+
     /**
-     * @brief Get the full userhost formatted like <nick>!<user>@<host>
+     * @brief Get the full userhost formatted like `<nick>!<user>@<host>`
      *
      * @return std::string
      */
     std::string get_full_userhost() const;
+
     /**
      * @brief Get the authentication and registration status
      *
@@ -165,71 +185,82 @@ class Client
 
     /**
      * @brief
-     * #see #REGISTERED
+     * @see REGISTERED
      * @return true if client is registered
      * @return false otherwise
      */
     bool is_registered() const;
+
     /**
      * @brief
-     * @see #AUTHENTICATED
+     * @see AUTHENTICATED
      * @return true if client is authenticated
      * @return false otherwise
      */
     bool is_authenticated() const;
+
     /**
      * @brief Get the number of joined channels
      *
      * @return int
      */
     int get_nb_joined_channels() const;
+
     /**
      * @brief Set the nickname
      *
      * @param nick
      */
     void set_nickname(const std::string& nick);
+
     /**
      * @brief Set the user name
      *
      * @param userName
      */
     void set_user_name(const std::string& userName);
+
     /**
      * @brief Set the real name
      *
      * @param realName
      */
     void set_real_name(const std::string& realName);
+
     /**
      * @brief Set the status
      *
      * @param status
      */
     void set_status(ClientStatus status);
+
     /**
      * @brief store a trace of new joined channel
      *
      * @param channel
      */
     void add_joined_channel(Channel& channel);
+
     /**
      * @brief remove a channel from joined channels
      *
      * @param channel
      */
     void remove_joined_channel(Channel& channel);
+
     /**
      * @brief remove all joined channels
      *
      */
     void remove_from_all_channels();
+
     /**
      * @brief Set the send buffer object to a value
      *
      * @param buffer
      */
     void set_send_buffer(const std::string& buffer);
+
     /**
      * @brief add a message to the sending buffer
      *
@@ -286,6 +317,14 @@ class Client
     std::map<std::string, Channel*> _joinedChannels;
 };
 
+/**
+ * @brief displays Client info
+ * @details overload of output operator
+ *
+ * @param os
+ * @param c
+ * @return std::ostream&
+ */
 std::ostream& operator<<(std::ostream& os, const Client& c);
 
 #endif

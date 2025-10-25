@@ -6,9 +6,7 @@
 #include "Part.hpp"
 #include "TcpSocket.hpp"
 #include "consts.hpp"
-#include "utils.hpp"
 
-#include <algorithm>
 #include <iostream>
 
 /************************************************************
@@ -131,7 +129,6 @@ Channel* Client::get_channel(const std::string& name) {
 	return NULL;
 };
 
-// should not broadcast quit when still present
 void	Client::broadcast_to_all_channels(Server& server, ReplyCode code, const std::string& params, const std::string& trailing)
 {
     LOG_DT_CMD("nb joined channels", _joinedChannels.size());

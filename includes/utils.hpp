@@ -18,6 +18,10 @@
 #define TO_STRING    Utils::to_string
 #define EVENT_TO_STR Utils::event_to_str
 
+/**
+* @class Utils
+* @brief Utility class for conversion, argument validation
+ */
 class Utils
 {
   public:
@@ -97,8 +101,8 @@ class Utils
     /**
      * @brief return a value of an array in a secure way avoid out of bound
      *
+     * @tparam N
      * @param arr
-     * @param N
      * @param index
      *
      * @return arr

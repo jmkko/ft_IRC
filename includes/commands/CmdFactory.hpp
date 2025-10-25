@@ -39,7 +39,7 @@ class CmdFactory
     /**
      * @brief checks client status against detected command
      * @details when client is ..
-     - #UNAUTHENTICATED only #Pass and #Quitcan be handled
+     - #UNAUTHENTICATED only #Pass and #Quit can be handled
      - #AUTHENTICATED only #Pass, #Quit, #Nick and #User can be handled
      - #REGISTERED all commands can be handled
      * @param client
@@ -52,6 +52,7 @@ class CmdFactory
      * @brief main command in charge of
      * - checking command availability
      * - calling adequate helper command
+     *
      * @param server
      * @param client
      * @param params
@@ -76,15 +77,6 @@ class CmdFactory
     ICommand* ping_cmd(std::string& params);
 
   private:
-    /**
-     * @brief Construct a new Cmd Factory object
-     *
-     * @remark not used
-     * @param server
-     * @param client
-     */
-    CmdFactory(Server& server, Client& client);
-    CmdFactory(const CmdFactory& other);
 };
 
 #endif

@@ -1,6 +1,6 @@
 /**
  * @file Pass.hpp
- * @brief Implements IRC PASS
+ * @brief Implements IRC PASS command
  * @version 0.1
  * @date 2025-10-17
  *
@@ -12,7 +12,6 @@
 
 #include "Channel.hpp"
 #include "ICommand.hpp"
-#include "reply_codes.hpp"
 
 #include <string>
 
@@ -40,23 +39,16 @@ class Pass : public ICommand
     ~Pass();
     /**
      * @brief updates client status to #AUTHENTICATED
-     *
-     * checks validity of params
      * @details perform syntaxic check
      * - one password is given
+     *
      * performs other checks
      * - client is not already REGISTERED
      * - password is correct
+     *
      * @param server
      * @param client
-     * @param params
-     * @return ReplyCode
      * @warning can return ERR_NEEDMOREPARAMS, ERR_ALREADYREGISTRED, ERR_PASSWDMISMATCH
-
-     *
-     *
-     * @param server
-     * @param client
      */
     void execute(Server& server, Client& client);
 

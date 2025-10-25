@@ -3,23 +3,9 @@
 #include "Parser.hpp"
 #include "reply_codes.hpp"
 
-#include <sstream>
-
 /******************************************************************************
  *                  CONSTRUCTOR AND DESTRUCTOR                                *
  ******************************************************************************/
-
-Invite::Invite() : _nickname(), _channelName() {}
-Invite::Invite(const Invite& other) : _nickname(other._nickname), _channelName(other._channelName) {}
-Invite::~Invite() {}
-Invite& Invite::operator=(const Invite& other)
-{
-    if (this != &other) {
-        _nickname    = other._nickname;
-        _channelName = other._channelName;
-    }
-    return (*this);
-}
 
 Invite::Invite(std::string& params)
 {
@@ -30,23 +16,12 @@ Invite::Invite(std::string& params)
     _channelName = parser.format_parameter(params, NULL);
 }
 
+Invite::~Invite() {}
+
 /******************************************************************************
  *                                 METHODS                                    *
  ******************************************************************************/
 
-/**
- * @brief invite a client to a channel
- * check if:
- *   the client exist, the channel exist
- *   the sender is on channel
- *   the client is already on this channel
- *   the sender is operator if the channel is invite-only
- *
- * @param server Server
- * @param client Client = the sender
- * @warning in case of error, can send ERR_NEEDMOREPARAMS, ERR_NOSUCHCHANNEL, ERR_NOSUCHNICK, ERR_CHANOPRIVSNEEDED, ERR_USERONCHANNEL, ERR_NOTONCHANNE
-     ERR_USERNOTINCHANNEL
- */
 void Invite::execute(Server& server, Client& client)
 {
     Parser p(server, client);

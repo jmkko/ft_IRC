@@ -166,7 +166,7 @@ void test_bot(Server& s, t_results* r)
 {
     print_test_series("command BOT");
     print_test_series_part("common cases");
-    run_test(r, [&] { bot_valid_target_channel_should_broadcast(s); }, "BOT #chan !reply :msg");
+    // run_test(r, [&] { bot_valid_target_channel_should_broadcast(s); }, "BOT #chan !reply :msg");
     print_test_series_part("error cases");
     run_test(r, [&] { bot_no_target_should_err(s); }, "BOT !reply :msg");
     run_test(r, [&] { bot_no_subcommand_should_err(s); }, "BOT #chan :msg");

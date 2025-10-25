@@ -1,16 +1,14 @@
 #include "Channel.hpp"
 
-#include "Parser.hpp"
 #include "Client.hpp"
 #include "Config.hpp"
 #include "ICommand.hpp"
 #include "LogManager.hpp"
-#include "colors.hpp"
+#include "Parser.hpp"
 #include "consts.hpp"
 #include "reply_codes.hpp"
 #include "utils.hpp"
 
-#include <algorithm>
 #include <bitset>
 #include <iostream>
 
@@ -37,11 +35,11 @@ bool Channel::is_valid_channel_name(const std::string& name)
 
 void Channel::display_topic_to(Parser& p)
 {
-	if (get_topic().empty()) {
-		p.response(RPL_NOTOPIC, get_name());
-	} else {
-		p.response(RPL_TOPIC, get_name(), get_topic());
-	}
+    if (get_topic().empty()) {
+        p.response(RPL_NOTOPIC, get_name());
+    } else {
+        p.response(RPL_TOPIC, get_name(), get_topic());
+    }
 }
 
 std::string Channel::get_modes_str(Client& client)
@@ -56,8 +54,8 @@ std::string Channel::get_modes_str(Client& client)
             modeIsParams += "i";
         if (_mode & CHANMODE_KEY) {
             modeIsParams += "k";
-			if (is_operator(client))
-				modeIsParamsVal += " " + get_key();
+            if (is_operator(client))
+                modeIsParamsVal += " " + get_key();
         }
         if (_mode & CHANMODE_LIMIT) {
             modeIsParams += "l";
@@ -72,12 +70,7 @@ std::string Channel::get_modes_str(Client& client)
         modeIsReply += " " + modeIsParams;
     return modeIsReply;
 }
-/**
- * @brief check if the key is valid -- no commas or spaces allowed
- *
- * @param key
- * @return true or false
- */
+
 bool Channel::is_valid_channel_key(const std::string& key)
 {
     if (key.empty()) {
@@ -257,8 +250,6 @@ ReplyCode Channel::add_member(Client& client)
     }
     if (ircConfig.get_max_joined_channels() != NO_LIMIT && client.get_nb_joined_channels() >= ircConfig.get_max_joined_channels())
         return ERR_CHANNELISFULL;
-    if (is_banned(client))
-        return ERR_BANNEDFROMCHAN;
     _members.insert(&client);
     client.add_joined_channel(*this);
     return CORRECT_FORMAT;
@@ -280,17 +271,6 @@ bool Channel::remove_member(Client& client)
 
 void Channel::remove_operator(Client& client) { _operators.erase(&client); }
 
-ReplyCode Channel::ban_member(Client& client)
-{
-    if (is_member(client)) {
-        _banList.insert(&client);
-        return CORRECT_FORMAT;
-    }
-    return ERR_USERNOTINCHANNEL;
-}
-
-bool Channel::is_banned(Client& client) const { return _banList.find(&client) != _banList.end(); }
-
 ReplyCode Channel::make_operator(Client& client)
 {
     if (is_member(client)) {
@@ -307,21 +287,29 @@ unsigned short Channel::get_mode() const { return _mode; }
 size_t            Channel::get_nb_members() const { return _members.size(); }
 std::set<Client*> Channel::get_members() const { return _members; }
 
+struct CompareClientsByName {
+    bool operator()(const Client* lhs, const Client* rhs) {
+        return lhs->get_nickname() < rhs->get_nickname();
+    }
+};
+
 std::vector<std::string> Channel::get_members_list() const
 {
     std::vector<std::string>          list;
-    std::set<Client*>::const_iterator it = _members.begin();
+    std::vector<Client*>              members(_members.begin(), _members.end());
     std::string                       users;
     int                               nbUserPerLine = USERS_PER_LINE;
     int                               count         = 0;
-
-    while (it != _members.end()) {
+    std::sort(members.begin(), members.end(), CompareClientsByName());
+    
+    std::vector<Client*>::const_iterator it = members.begin();
+    while (it != members.end()) {
         Client* c = *it;
         if (is_operator(*c))
             users.append("@");
         users.append(c->get_nickname());
         ++it;
-        if (it != _members.end())
+        if (it != members.end())
             users.append(" ");
         ++count;
         if (count % nbUserPerLine == 0) {

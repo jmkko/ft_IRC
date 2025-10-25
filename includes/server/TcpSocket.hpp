@@ -14,6 +14,11 @@
 #include <netinet/in.h> // sockaddr_in, IPPROTO_TCP
 #include <string>
 
+/**
+ * @brief Encapsulate socket actions
+ * @details handle bind, listen, connect
+ * @class TcpSocket
+ */
 class TcpSocket
 {
   public:
@@ -56,7 +61,6 @@ class TcpSocket
      * @details prepare a socket that will be used to accept incoming connection requests using accept(2)
      *  SOMAXCONN system manage the value
      *  AF_INET IPv4 familly
-     * @return 0 on success or -1 on error
      */
     void               tcp_listen();
     bool               is_valid() const;
