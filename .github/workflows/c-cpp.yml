@@ -34,4 +34,5 @@ jobs:
      working-directory: ./test
      run: make
    - name: test
-     run: ./test/test
+     working-directory: ./test
+     run: ./test
