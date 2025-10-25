@@ -1,15 +1,12 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   consts.hpp                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: fpetit <fpetit@student.42.fr>              +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/18 23:38:52 by npolack           #+#    #+#             */
-/*   Updated: 2025/10/25 11:12:39 by fpetit           ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
+/**
+ * @file consts.hpp
+ * @brief constants used throughout IRC server program
+ * @version 0.1
+ * @date 2025-10-25
+ * 
+ * @copyright Copyright (c) 2025
+ * 
+ */
 #ifndef CONSTS_HPP
 #define CONSTS_HPP
 

@@ -11,6 +11,14 @@
 
 #include "Logger.hpp"
 
+/**
+ * @brief Logger management
+ * @class LogManager
+ * @details responsabilities
+ * - single instanciation of each logger
+ * - provide helper macros
+ * 
+ */
 class LogManager
 {
   public:

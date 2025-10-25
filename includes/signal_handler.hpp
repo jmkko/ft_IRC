@@ -1,6 +1,6 @@
 /**
  * @file signal_handler.hpp
- * @brief signal_handler class
+ * @brief utility methods for signal handling
  * @version 0.1
  * @date 2025-10-24
  *

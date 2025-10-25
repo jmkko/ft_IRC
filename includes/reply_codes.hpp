@@ -1,7 +1,20 @@
+/**
+ * @file reply_codes.hpp
+ * @brief Numerical reply codes
+ * @version 0.1
+ * @date 2025-10-25
+ * 
+ * @copyright Copyright (c) 2025
+ * 
+ */
 #ifndef REPLY_CODES_HPP
 #define REPLY_CODES_HPP
 
-/// @brief https://datatracker.ietf.org/doc/html/rfc2812#section-5
+/**
+ * @brief custom and RFC codes for server replies
+ * @details [RFC specs](https://datatracker.ietf.org/doc/html/rfc2812#section-5)
+ * @enum ReplyCode
+ */
 enum ReplyCode {
 
     ////////////////////// NON RFC

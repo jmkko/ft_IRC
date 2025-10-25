@@ -1,0 +1,25 @@
+<map id="Join.hpp" name="Join.hpp">
+<area shape="rect" id="Node000001" title="Implement IRC JOIN Command." alt="" coords="114,5,188,33"/>
+<area shape="rect" id="Node000002" href="$d3/d8e/Client_8hpp.html" title="Client class." alt="" coords="107,81,195,109"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="154,34,154,65,148,65,148,34"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="16,308,75,336"/>
+<area shape="poly" id="edge13_Node000001_Node000005" title=" " alt="" coords="133,36,105,56,74,84,43,118,20,158,11,185,8,207,17,259,32,294,27,296,12,261,3,208,5,184,15,156,39,115,70,80,102,52,129,31"/>
+<area shape="rect" id="Node000010" href="$de/dd6/ICommand_8hpp.html" title="command interface" alt="" coords="315,81,435,109"/>
+<area shape="poly" id="edge11_Node000001_Node000010" title=" " alt="" coords="189,30,321,73,320,78,187,35"/>
+<area shape="rect" id="Node000003" href="$da/d81/TcpSocket_8hpp.html" title="TcpSocket class." alt="" coords="46,157,160,184"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="145,111,122,145,117,142,140,108"/>
+<area shape="poly" id="edge10_Node000002_Node000005" title=" " alt="" coords="108,109,68,127,50,141,36,158,24,191,23,228,28,263,37,292,32,294,23,264,17,228,19,190,31,155,46,137,65,123,106,104"/>
+<area shape="rect" id="Node000008" href="$d8/d9c/reply__codes_8hpp.html" title="Numerical reply codes." alt="" coords="183,157,311,184"/>
+<area shape="poly" id="edge8_Node000002_Node000008" title=" " alt="" coords="170,107,219,145,216,149,166,111"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="335,157,385,184"/>
+<area shape="poly" id="edge9_Node000002_Node000009" title=" " alt="" coords="189,107,322,153,320,158,187,112"/>
+<area shape="rect" id="Node000004" href="$df/dd7/consts_8hpp.html" title="constants used throughout IRC server program" alt="" coords="96,232,187,260"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="112,184,130,217,125,220,107,186"/>
+<area shape="poly" id="edge7_Node000003_Node000005" title=" " alt="" coords="101,185,59,294,54,292,96,184"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="211,232,307,260"/>
+<area shape="poly" id="edge6_Node000003_Node000007" title=" " alt="" coords="132,182,219,223,216,228,130,187"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="126,263,76,300,73,296,123,258"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="122,308,185,336"/>
+<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="146,260,152,292,146,293,141,261"/>
+<area shape="poly" id="edge12_Node000010_Node000006" title=" " alt="" coords="386,108,401,143,404,164,400,185,384,213,363,237,338,258,310,275,253,300,201,315,199,309,251,295,308,270,335,253,359,234,380,210,395,183,399,164,396,144,381,110"/>
+</map>

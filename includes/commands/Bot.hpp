@@ -1,6 +1,6 @@
 /**
  * @file Bot.hpp
- * @brief Bot class
+ * @brief Implements BOT Command (non RFC)
  * @version 0.1
  * @date 2025-10-24
  *

@@ -22,6 +22,13 @@ class TcpSocket;
 class Client;
 class Channel;
 
+/**
+ * @struct BotState
+ * @brief Represents the state of a bot in the IRC server.
+ *
+ * This struct holds the necessary information to manage the bot's connection,
+ * target channel, pending commands, and communication status.
+ */
 struct BotState {
     // Client* client;
     int         socketfd;

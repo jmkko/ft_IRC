@@ -28,7 +28,7 @@ class Server;
 
 /**
  * @class Mode
- * @brief Mode Handler for IRC MODE
+ * @brief Handler for IRC MODE
  * @details This command is used
  * - to modify a few channel modes (kilt) and user mode (o) only among those specified by RFCs.
  * - to check a channel modes

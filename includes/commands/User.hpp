@@ -1,6 +1,6 @@
 /**
  * @file User.hpp
- * @brief Implementats IRC USER command
+ * @brief Implements IRC USER command
  * @version 0.1
  * @date 2025-10-24
  *
@@ -19,7 +19,7 @@ class Server;
 class Client;
 
 /**
- * @brief Handler for IRC USER command
+ * @brief Handler for IRC USER
  * @class User
  */
 class User : public ICommand

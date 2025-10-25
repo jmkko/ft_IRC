@@ -14,6 +14,11 @@
 #include <netinet/in.h> // sockaddr_in, IPPROTO_TCP
 #include <string>
 
+/**
+ * @brief Encapsulate socket actions
+ * @details handle bind, listen, connect
+ * @class TcpSocket
+ */
 class TcpSocket
 {
   public:
