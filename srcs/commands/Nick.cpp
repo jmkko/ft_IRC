@@ -12,6 +12,10 @@
 #include <algorithm>
 #include <cctype>
 
+/************************************************************
+ *            🥚 CONSTRUCTORS & DESTRUCTOR                  *
+ ************************************************************/
+
 Nick::Nick(std::string& params)
 {
     Parser parser;
@@ -20,6 +24,9 @@ Nick::Nick(std::string& params)
 
 Nick::~Nick(void) {}
 
+/*************************************************************
+ *                      🛠️ METHODS                           *
+ *************************************************************/
 void Nick::execute(Server& server, Client& client)
 {
     (void)server;
@@ -39,28 +46,4 @@ void Nick::execute(Server& server, Client& client)
         client.broadcast_to_all_channels(server, TRANSFER_NICK, "", _nickname); // ! \\ ;
     }
     client.set_nickname(_nickname);
-}
-
-ReplyCode Nick::check_args(Server& server, Client& client, std::string& params)
-{
-    (void)client;
-    std::istringstream iss(params);
-    std::string        nickname;
-    size_t             invalidChar = 0;
-
-    iss >> nickname;
-    LOG_DTV_CMD(nickname);
-    if (nickname.empty())
-        return (ERR_NONICKNAMEGIVEN);
-    invalidChar = std::count_if(nickname.begin(), nickname.end(), Utils::is_invalid_char_nick);
-    if (invalidChar || std::isdigit(nickname[0])) {
-        return (ERR_ERRONEUSNICKNAME);
-    } else if (nickname.length() > ircConfig.get_nickname_max_len()) {
-        nickname = nickname.substr(0, ircConfig.get_nickname_max_len());
-    }
-    if (server.find_client_by_nickname(nickname)) {
-        return (ERR_NICKNAMEINUSE);
-    }
-    params = nickname;
-    return (CORRECT_FORMAT);
 }

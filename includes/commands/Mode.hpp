@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Mode.hpp                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jhervoch <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/10/26 19:29:07 by jhervoch          #+#    #+#             */
+/*   Updated: 2025/10/26 19:35:35 by jhervoch         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 /**
  * @file Mode.hpp
  * @brief Implements IRC MODE command
@@ -10,6 +22,8 @@
 #ifndef MODE_HPP
 #define MODE_HPP
 
+#include "Channel.hpp"
+#include "Client.hpp"
 #include "ICommand.hpp"
 
 #include <queue>
@@ -66,6 +80,96 @@ class Mode : public ICommand
     void execute(Server& server, Client& client);
 
   private:
+    /**
+     * @brief do simple check
+     * - with no params
+     * - with no matching chan
+     * - with only channel params
+     *
+     * @param server
+     * @param client
+     * @param channel
+     * @param p the parser
+     * @return true if just this case , other false
+     */
+    bool _simple_args(Server& server, Client& client, Channel*& channel, Parser& p);
+    /**
+     * @brief use case of mode with flag which have no params
+     * like + or - `i`,`t`
+     * build mode is + mode args
+     * we build the response with validNegativeModes and validNegativeModes
+     *
+     * @param channel
+     * @param currentMode
+     * @param validPositiveModes
+     * @param validNegativeModes
+     */
+    void _mode_with_noparams(Channel*     channel,
+                             std::string& currentMode,
+                             std::string& validPositiveModes,
+                             std::string& validNegativeModes);
+    /**
+     * @brief use case of +k mode
+     * build mode is + mode args
+     * we build the response with validNegativeModes and validNegativeModes
+     * and validModesParams
+     * check if key has no invalid char
+     * on success add k mode and set the key
+     *
+     * @param channel
+     * @param p
+     * @param currentMode
+     * @param validPositiveModes
+     * @param validModesParams
+     */
+    void _mode_k(Channel*     channel,
+                 Parser&      p,
+                 std::string& currentMode,
+                 std::string& currentParam,
+                 std::string& validPositiveModes,
+                 std::string& validModesParams);
+    /**
+     * @brief use case of +l mode
+     * build mode is + mode args
+     * we build the response with validNegativeModes and validNegativeModes
+     * and validModesParams
+     *
+     * @param channel
+     * @param p
+     * @param currentMode
+     * @param validPositiveModes
+     * @param validModesParams
+     */
+    void _mode_l(Channel*     channel,
+                 Parser&      p,
+                 std::string& currentMode,
+                 std::string& currentParam,
+                 std::string& validPositiveModes,
+                 std::string& validModesParams);
+    /**
+     * @brief use case of +o mode
+     * we build the response with validNegativeModes and validNegativeModes
+     * and validModesParams
+     * on success add l mode and set the limit
+     * chek if the user exist and is in channel
+     *
+     * @param server
+     * @param channel
+     * @param p
+     * @param currentMode
+     * @param currentParam
+     * @param validPositiveModes
+     * @param validNegativeModes
+     * @param validModesParams
+     */
+    void                    _mode_o(Server&      server,
+                                    Channel*     channel,
+                                    Parser&      p,
+                                    std::string& currentMode,
+                                    std::string& currentParam,
+                                    std::string& validPositiveModes,
+                                    std::string& validNegativeModes,
+                                    std::string& validModesParams);
     std::string             _channelName;
     std::queue<std::string> _modeQueue;
     std::queue<std::string> _paramsQueue;

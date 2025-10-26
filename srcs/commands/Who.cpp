@@ -7,29 +7,7 @@
 #include <string>
 
 /************************************************************
- *		📁 CLASS METHODS									*
- ************************************************************/
-
-ReplyCode Who::check_args(Server& server, Client& client, std::string& params)
-{
-    std::string        mask;
-    std::string        op;
-    std::istringstream iss(params);
-    (void)server;
-    (void)client;
-
-    iss >> mask;
-    iss >> op;
-
-    if (!op.empty() && op != "o" && !iss.eof()) {
-        LOG_CMD.warning(TO_STRING(ERR_NEEDMOREPARAMS) + " ERR_NEEDMOREPARAMS");
-        return (ERR_NEEDMOREPARAMS);
-    }
-    return (CORRECT_FORMAT);
-}
-
-/************************************************************
- *		🥚 CONSTRUCTORS & DESTRUCTOR						*
+ *            🥚 CONSTRUCTORS & DESTRUCTOR                  *
  ************************************************************/
 
 Who::Who(std::string& params)
@@ -43,7 +21,7 @@ Who::Who(std::string& params)
 Who::~Who() {}
 
 /*************************************************************
- *		🛠️ FUNCTIONS											*
+ *                     🛠️ FUNCTIONS                          *
  *************************************************************/
 
 void Who::execute(Server& server, Client& client)

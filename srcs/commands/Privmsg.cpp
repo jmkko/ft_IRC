@@ -6,7 +6,7 @@
 #include "reply_codes.hpp"
 
 /************************************************************
- *		🥚 CONSTRUCTORS & DESTRUCTOR						*
+ *             🥚 CONSTRUCTORS & DESTRUCTOR                 *
  ************************************************************/
 
 Privmsg::Privmsg(std::string& params)
@@ -21,7 +21,7 @@ Privmsg::Privmsg(std::string& params)
 Privmsg::~Privmsg(void) {}
 
 /*************************************************************
- *		🛠️ METHODS											*
+ *                     🛠️ METHODS                            *
  *************************************************************/
 
 void Privmsg::execute(Server& server, Client& client)
