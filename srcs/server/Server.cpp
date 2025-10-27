@@ -317,6 +317,9 @@ bool Server::_handle_commands(int pfdIndex)
     while ((pos = client->get_read_buffer().find("\r\n")) != std::string::npos) {
         std::string line = client->get_read_buffer().substr(0, pos);
         client->get_read_buffer().erase(0, pos + 2);
+		if (line.empty()) {
+			continue;
+		}
         ICommand* cmd = _parse_command(*client, line);
         if (cmd) {
             cmd->execute(*this, *client);
