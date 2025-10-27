@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Mode.hpp                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jhervoch <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/10/26 19:29:07 by jhervoch          #+#    #+#             */
+/*   Updated: 2025/10/26 19:35:35 by jhervoch         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 /**
  * @file Mode.hpp
  * @brief Implements IRC MODE command
@@ -10,8 +22,9 @@
 #ifndef MODE_HPP
 #define MODE_HPP
 
+#include "Channel.hpp"
+#include "Client.hpp"
 #include "ICommand.hpp"
-#include "reply_codes.hpp"
 
 #include <queue>
 #include <set>
@@ -20,11 +33,6 @@
 
 class Client;
 class Server;
-
-// static const std::string& authorizedModes   = "kilot";
-// static const std::string& modesRequiringArg = "klo";
-// static const std::string& authorizedOps     = "+-";
-// static const std::string& digits            = "0123456789";
 
 /**
  * @class Mode
@@ -52,37 +60,116 @@ class Mode : public ICommand
     /**
      * @brief check business validity of args before adjusting modes
      * @details
-     * - supported modes are channel modes
-        - `k` key
-        - `i` invite-only
-        - `l` member limit
-        - `t` restrict usage of TOPIC to operators
-        and user mode `o` : make operator
+     * - supported modes are channel modes :
+     *  | MODE|  Description                       |
+     *  |-----|------------------------------------|
+     *  |`k`  | key                                |
+     *  | `i` |invite-only                         |
+     *  | `l` |member limit                        |
+     *  | `t` |restrict usage of TOPIC to operators|
+     * - and user mode `o` : make operator
      * - supported operations are `+` and `-`
      * - modes requiring arguments are `k` (valid key), `l` (int from -1 to INT_MAX) abd `o` (valid username)
+     * we can use this command like this: MODE #chan +oo user1 user2 -it +kl pass 10
      * sends a RPL_CHANNELMODEIS in case it is successful - and RPL_YOUREOPER (for +o)
-     * @remark parsing is less flexible than RFC suggests : if a mode requires a value, it should be provided after the modes at
-     the corresponding index. In other words, `+kl key 10` is accepted but `+k key +l 10` is rejected
-     * @remark If duplicate modes are present (as in `+kk key1 key2`) the last one prevails
      * @param server
      * @param client
      * @warning in case of error, can send ERR_NOSUCHCHANNEL, ERR_CHANOPRIVSNEEDED, ERR_KEYSET, ERR_NOSUCHNICK,
-     ERR_USERNOTINCHANNEL
+     * ERR_USERNOTINCHANNEL
      */
     void execute(Server& server, Client& client);
 
-    /**
- * @brief check syntaxic validity of args
- * @details cf. [RFC specs for User mode](https://datatracker.ietf.org/doc/html/rfc2812#section-3.1.5)
- and [RFC specs for Channel modes](https://datatracker.ietf.org/doc/html/rfc2812#section-3.2.3)
- * @param server not used
- * @param client not used
- * @param params should match pattern `<channel> *( ( "-" / "+" ) *<modes> *<modeparams>`
- * @return ReplyCode
- */
-    static ReplyCode check_args(Server& server, Client& client, std::string& params);
-
   private:
+    /**
+     * @brief do simple check
+     * - with no params
+     * - with no matching chan
+     * - with only channel params
+     *
+     * @param server
+     * @param client
+     * @param channel
+     * @param p the parser
+     * @return true if just this case , other false
+     */
+    bool _simple_args(Server& server, Client& client, Channel*& channel, Parser& p);
+    /**
+     * @brief use case of mode with flag which have no params
+     * like + or - `i`,`t`
+     * build mode is + mode args
+     * we build the response with validNegativeModes and validNegativeModes
+     *
+     * @param channel
+     * @param currentMode
+     * @param validPositiveModes
+     * @param validNegativeModes
+     */
+    void _mode_with_noparams(Channel*     channel,
+                             std::string& currentMode,
+                             std::string& validPositiveModes,
+                             std::string& validNegativeModes);
+    /**
+     * @brief use case of +k mode
+     * build mode is + mode args
+     * we build the response with validNegativeModes and validNegativeModes
+     * and validModesParams
+     * check if key has no invalid char
+     * on success add k mode and set the key
+     *
+     * @param channel
+     * @param p
+     * @param currentMode
+     * @param validPositiveModes
+     * @param validModesParams
+     */
+    void _mode_k(Channel*     channel,
+                 Parser&      p,
+                 std::string& currentMode,
+                 std::string& currentParam,
+                 std::string& validPositiveModes,
+                 std::string& validModesParams);
+    /**
+     * @brief use case of +l mode
+     * build mode is + mode args
+     * we build the response with validNegativeModes and validNegativeModes
+     * and validModesParams
+     *
+     * @param channel
+     * @param p
+     * @param currentMode
+     * @param validPositiveModes
+     * @param validModesParams
+     */
+    void _mode_l(Channel*     channel,
+                 Parser&      p,
+                 std::string& currentMode,
+                 std::string& currentParam,
+                 std::string& validPositiveModes,
+                 std::string& validModesParams);
+    /**
+     * @brief use case of +o mode
+     * we build the response with validNegativeModes and validNegativeModes
+     * and validModesParams
+     * on success add l mode and set the limit
+     * chek if the user exist and is in channel
+     *
+     * @param server
+     * @param channel
+     * @param p
+     * @param currentMode
+     * @param currentParam
+     * @param validPositiveModes
+     * @param validNegativeModes
+     * @param validModesParams
+     */
+    void                    _mode_o(Server&      server,
+                                    Channel*     channel,
+                                    Parser&      p,
+                                    std::string& currentMode,
+                                    std::string& currentParam,
+                                    std::string& validPositiveModes,
+                                    std::string& validNegativeModes,
+                                    std::string& validModesParams);
     std::string             _channelName;
     std::queue<std::string> _modeQueue;
     std::queue<std::string> _paramsQueue;

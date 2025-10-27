@@ -8,7 +8,7 @@
 #include <sstream>
 
 /************************************************************
- *		🥚 CONSTRUCTORS & DESTRUCTOR						*
+ *             🥚 CONSTRUCTORS & DESTRUCTOR                 *
  ************************************************************/
 
 Ping::Ping(std::string& params)
@@ -21,23 +21,8 @@ Ping::Ping(std::string& params)
 Ping::~Ping(void) {}
 
 /*************************************************************
- *		🛠️ FUNCTIONS											*
+ *                    🛠️ FUNCTIONS                           *
  *************************************************************/
-
-ReplyCode Ping::check_args(Server& server, Client& client, std::string& params)
-{
-    (void)server;
-    (void)client;
-
-    std::string        token;
-    std::istringstream iss(params);
-    iss >> token;
-
-    if (token.empty())
-        return ERR_NOORIGIN;
-    params = token;
-    return CORRECT_FORMAT;
-}
 
 void Ping::execute(Server& server, Client& client)
 {

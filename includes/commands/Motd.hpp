@@ -12,15 +12,9 @@
 
 #include "Client.hpp"
 #include "ICommand.hpp"
-#include "LogManager.hpp"
 #include "Server.hpp"
-#include "reply_codes.hpp"
-#include "utils.hpp"
 
 #include <ctime>
-#include <fstream>
-#include <iomanip>
-#include <sstream>
 #include <string>
 
 class Client;

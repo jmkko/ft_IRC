@@ -7,7 +7,7 @@
 #include "reply_codes.hpp"
 
 /************************************************************
- *		🥚 CONSTRUCTORS & DESTRUCTOR						*
+ *             🥚 CONSTRUCTORS & DESTRUCTOR                 *
  ************************************************************/
 
 Pass::Pass(void) {}
@@ -20,7 +20,7 @@ Pass::Pass(std::string& params)
 Pass::~Pass(void) {}
 
 /*************************************************************
- *		🛠️ FUNCTIONS											*
+ *                   🛠️ FUNCTIONS                            *
  *************************************************************/
 
 void Pass::execute(Server& server, Client& client)

@@ -7,7 +7,7 @@
 #include "reply_codes.hpp"
 
 /************************************************************
- *		🥚 CONSTRUCTORS & DESTRUCTOR						*
+ *            🥚 CONSTRUCTORS & DESTRUCTOR                  *
  ************************************************************/
 
 Part::Part(std::string& params)
@@ -23,7 +23,7 @@ Part::Part(std::string& params)
 Part::~Part(void) {}
 
 /*************************************************************
- *		🛠️ METHODS											*
+ *                      🛠️ METHODS                           *
  *************************************************************/
 
 void Part::execute(Server& server, Client& client)

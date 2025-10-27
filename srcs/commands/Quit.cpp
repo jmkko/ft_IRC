@@ -8,7 +8,7 @@
 #include "reply_codes.hpp"
 
 /************************************************************
- *		🥚 CONSTRUCTORS & DESTRUCTOR						*
+ *             🥚 CONSTRUCTORS & DESTRUCTOR                 *
  ************************************************************/
 
 Quit::Quit(void) {}
@@ -18,7 +18,7 @@ Quit::Quit(const std::string& params) : _quitMsg(params) {}
 Quit::~Quit(void) {}
 
 /*************************************************************
- *		🛠️ FUNCTIONS											*
+ *                      🛠️ FUNCTIONS                         *
  *************************************************************/
 
 ReplyCode Quit::check_args(Server& server, Client& client, std::string& params)

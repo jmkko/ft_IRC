@@ -6,11 +6,12 @@
 #include "Parser.hpp"
 #include "Server.hpp"
 #include "reply_codes.hpp"
+#include "utils.hpp"
 
 #include <algorithm>
 
 /************************************************************
- *		🥚 CONSTRUCTORS & DESTRUCTOR						*
+ *              🥚 CONSTRUCTORS & DESTRUCTOR                *
  ************************************************************/
 
 User::User(std::string& params)
@@ -26,7 +27,7 @@ User::User(std::string& params)
 User::~User(void) {}
 
 /*************************************************************
- *		🛠️ METHODS											*
+ *                     🛠️ METHODS                            *
  *************************************************************/
 
 void User::execute(Server& server, Client& client)
@@ -68,44 +69,4 @@ void User::execute(Server& server, Client& client)
     } else {
         LOG_CMD.info("202 RPL_USER");
     }
-}
-
-ReplyCode User::check_args(Server& server, Client& client, std::string& params)
-{
-    (void)server;
-    std::istringstream iss(params);
-    std::string        username, modearg, unusedarg, realname;
-    size_t             invalidChar = 0;
-
-    iss >> username;
-    invalidChar = std::count_if(username.begin(), username.end(), Utils::is_invalid_char_user);
-    if (username.empty() || invalidChar) {
-        return (ERR_NEEDMOREPARAMS);
-    }
-    iss >> modearg;
-    if (modearg.empty()) {
-        return (ERR_NEEDMOREPARAMS);
-    }
-    iss >> unusedarg;
-    if (unusedarg.empty()) {
-        return (ERR_NEEDMOREPARAMS);
-    }
-    iss >> realname;
-    if (realname.empty() || realname[0] != ':' || realname.length() < 2) {
-        return (ERR_NEEDMOREPARAMS);
-    }
-
-    size_t start = realname.find_first_not_of(WHITE_SPACE);
-    if (start == std::string::npos) {
-        return (ERR_NEEDMOREPARAMS);
-    }
-    size_t end = realname.find_last_not_of(WHITE_SPACE);
-    realname   = realname.substr(start, end - start + 1);
-
-    if (!client.get_user_name().empty() && !client.get_nickname().empty() && client.is_registered()) {
-        params = "";
-        return (ERR_ALREADYREGISTRED);
-    }
-    params = username + " " + realname;
-    return (CORRECT_FORMAT);
 }

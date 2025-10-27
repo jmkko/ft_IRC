@@ -1,5 +1,6 @@
-#include "AssertFail.hpp"
 #include "AssertReply.hpp"
+
+#include "AssertFail.hpp"
 #include "Config.hpp"
 #include "LogManager.hpp"
 #include "consts.hpp"
@@ -7,6 +8,7 @@
 #include "utils.hpp"
 
 #include <algorithm>
+#include <iostream>
 #include <sstream>
 #include <string>
 #include <vector>

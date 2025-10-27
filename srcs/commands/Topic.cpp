@@ -9,39 +9,7 @@
 #include <sstream>
 
 /************************************************************
- *		📁 CLASS METHODS									*
- ************************************************************/
-
-ReplyCode Topic::check_args(Server& server, Client& client, std::string& params)
-{
-    std::istringstream iss(params);
-    std::string        token;
-    Channel*           chan = NULL;
-    ReplyHandler       rh   = ReplyHandler::get_instance(&server);
-
-    if (!(iss >> token))
-        return ERR_NEEDMOREPARAMS;
-
-    chan = server.find_channel_by_name(token);
-    if (!chan) {
-        rh.process_response(client, ERR_NOSUCHCHANNEL, token);
-        return PROCESSED_ERROR;
-    }
-
-    if (!chan->is_member(client)) {
-        rh.process_response(client, ERR_NOTONCHANNEL, token);
-        return PROCESSED_ERROR;
-    }
-
-    std::string next;
-    if (!(iss >> next))
-        return CORRECT_FORMAT;
-
-    return CORRECT_FORMAT;
-}
-
-/************************************************************
- *		🥚 CONSTRUCTORS & DESTRUCTOR						*
+ *          🥚 CONSTRUCTORS & DESTRUCTOR                    *
  ************************************************************/
 
 Topic::Topic(std::string& params) : _clearTopic(false)
@@ -63,7 +31,7 @@ Topic::Topic(std::string& params) : _clearTopic(false)
 Topic::~Topic(void) {}
 
 /*************************************************************
- *		🛠️ FUNCTIONS											*
+ *                   🛠️ FUNCTIONS                            *
  *************************************************************/
 
 void Topic::_display_topic(Parser& p, Channel& channel)
