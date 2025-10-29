@@ -11,7 +11,7 @@
 ```
 Internet Relay Chat project at 42 (a text-based communication protocol on the Internet)<br />
 
-![42](https://img.shields.io/badge/-42-black?style=for-the-badge&logoColor=white) ![Static Badge](https://img.shields.io/badge/Language-C%2B%2B-blue) ![Static Badge](https://img.shields.io/badge/Protocole-IRC-blue) ![Static Badge](https://img.shields.io/badge/Doc-Doxygen-blue)
+![ft_IRC](https://img.shields.io/badge/-42-black?style=for-the-badge&logo=42&logoColor=white) ![Static Badge](https://img.shields.io/badge/Language-C%2B%2B-blue) ![Static Badge](https://img.shields.io/badge/Protocole-IRC-blue) ![Static Badge](https://img.shields.io/badge/Doc-Doxygen-blue)
 
 ---
 
