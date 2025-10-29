@@ -343,15 +343,16 @@ classDiagram
 
 This project is a capstone for the 42 common core curriculum, allowing us to collaborate as a team and apply all the skills we’ve acquired throughout the program.
 
-Skill/Tool,Description
-,Object-oriented programming on a full-scale project
-,TCP, Sockets, poll for event-driven I/O
-,Message syntax and server-client communication
-,Implemented Singleton and Factory patterns
-,Code quality and naming conventions
-,Full GitHub workflow: Forks, Actions, Rules, Projects, Wiki, and Pages
-,Automatic documentation from code comments
-,Structured documentation with embedded diagrams using Mermaid
+| Skill/Tool               | Description                                                                 |
+|--------------------------|-----------------------------------------------------------------------------|
+| ![C++](https://img.shields.io/badge/-C++-00599C?logo=c%2B%2B&logoColor=white) | Object-oriented programming on a full-scale project                        |
+| ![Networking](https://img.shields.io/badge/-Networking-0078D4?logo=network&logoColor=white) | TCP, Sockets, `poll` for event-driven I/O                                   |
+| ![IRC Protocol](https://img.shields.io/badge/-IRC%20Protocol-4EAA25?logo=irc&logoColor=white) | Message syntax and server-client communication                             |
+| ![Design Patterns](https://img.shields.io/badge/-Design%20Patterns-9370DB?logo=design&logoColor=white) | Implemented `Singleton` and `Factory` patterns                              |
+| ![Clang-Tidy](https://img.shields.io/badge/-Clang--Tidy-21759B?logo=llvm&logoColor=white) | Code quality and naming conventions                                         |
+| ![GitHub](https://img.shields.io/badge/-GitHub-181717?logo=github&logoColor=white) | Full GitHub workflow: Forks, Actions, Rules, Projects, Wiki, and Pages      |
+| ![Doxygen](https://img.shields.io/badge/-Doxygen-1E88E5?logo=doxygen&logoColor=white) | Automatic documentation from code comments                                  |
+| ![Markdown](https://img.shields.io/badge/-Markdown-000000?logo=markdown&logoColor=white) | Structured documentation with embedded diagrams using `Mermaid`            |
 
 ---
 
