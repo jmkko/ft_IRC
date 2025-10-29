@@ -162,7 +162,238 @@ If possible, we will try to add a Github Action workflow in order to check at ea
 ## 📐ft_IRC — Stucture
 
 ```mermaid
-
+---
+title: Hazardous IRC Server
+config:
+  theme: 'forest'
+  themeVariables:
+    noteTextColor: '#BB2528'
+    primaryColor: '#BB2528'
+    primaryTextColor: '#fff'
+    primaryBorderColor: '#7C0000'
+    lineColor: '#F8B229'
+    secondaryColor: '#006100'
+    tertiaryColor: '#fff'
+---
+classDiagram
+    note for Server "Channel operators commands\nfor channel\nKICK, INVITE,TOPIC,MODE(i:invite-only, t:TOPIC restriction,k: channel key; o:operator privilege, l:user limit)"
+    class Server
+    Server *-- TcpSocket
+    Server *-- Client
+    note for Server "can handling multiple client\ncan be non blocking\ncan have only one poll()\ncan have TCP/IP communication"
+    Server *-- Channel
+    Server *-- Config
+    Server *-- LogManager
+    Server : -TcpSocket _serverSocket
+    Server : -vector~pollfd~ _pfds
+    Server : -map~Socket,Client*~ _clients
+    Server : -map~Socket,BotState~ _bots
+	  Server : -map~string,Client*~ _clientsByNick
+	  Server : -string _psswd
+    Server : -string _name
+    Server : -unsigned short _port
+    Server : +map~string,Channel*~ channels
+    Server: +start()
+    Server: +stop()
+    
+    class Config{
+        -string _name
+        -string _passwd
+        -int _port
+        ...
+        +get_...()
+        +set_...()
+    }
+    Client *--Channel
+    note for Client "messageQueue for incompleted message"
+    class Client{
+        -TcpSocket _socket
+        -sockaddr_in _addr
+        -string _addrStr
+        -string _nickName
+        -string _userName
+        -string _realName
+        -Clientstatus _status
+        -string _sendBuffer
+        -string _readBuffer
+        -map~string, Channel*~ _joinedChannels
+        +string messageQueue
+        +string nickName
+        +string userName
+        +string realName
+        +bool isRegistered
+        +map~string~ joinedChannels
+        +set...()
+        +get...()
+        ...()
+    }
+    
+    note for TcpSocket "no copy possible"
+    class TcpSocket{
+        -SOCKET _sckt
+        -TcpSocket(const TcpSocket&)
+        -TcpSocket& operator=(const TcpSocket&)
+        +getSocket() SOCKET
+        +connect(const string ipadrress, unsigned short port)bool
+        +getAddress(const sockaddr_in &addr) static string
+		    +setNonBlockingSocket(void) int
+		    +Send(const unsigned char *data, unsigned short len) int
+		    +Receive(vector~unsigned char~ &buffer) int
+    }
+    
+    class CmdFactory{
+    }
+    CmdFactory *-- ICommand
+    ICommand *-- Server
+    ICommand *-- Client
+    ICommand *-- ReplyHandler
+    class ICommand{
+	    -virtual ~Icommand()
+	    -virtual bool execute(Server& server, Client& client) = 0
+		}
+		ICommand <|-- Invite
+		ICommand <|-- Join
+		ICommand <|-- Kick
+		ICommand <|-- Mode
+		ICommand <|-- Motd
+		ICommand <|-- Nick
+		ICommand <|-- Part
+		ICommand <|-- Pass
+		ICommand <|-- Ping
+		ICommand <|-- Privmsg
+		ICommand <|-- Quit
+		ICommand <|-- Topic
+		ICommand <|-- User
+		ICommand <|-- Who
+		class Invite{
+    +execute()
+    -string _nickname
+    -string _channelName
+		}	
+		class Join{
+    +execute()
+    -...()
+    -map~string,string~ _chans
+		}	
+		class Kick{
+    +execute()
+    -...()
+    -vector~string~ _channelsNames
+    -vector~string~ _usersNames
+    -string _msg
+		}
+		class Mode{
+    +execute()
+    -...()
+    -string _channelName
+    -queue~string~ _modeQueue
+    -queue~string~ _paramsQueue
+    -string _params
+		}
+		class Motd{
+    +execute()
+    -...()
+    -string _params
+		}
+		class Nick{
+    +execute()
+    -string _nickname
+		}
+		class Part{
+    +execute()
+    -vector~string~ _chanNames
+    -string _message
+		}
+		class Pass{
+    +execute()
+    -string _pass
+		}
+		class Ping{
+    +execute()
+    -string _token
+		}
+		Privmsg *-- Channel
+		class Privmsg{
+    +execute()
+    -...()
+    -vector~string~ _targets
+    -string _message
+    -string _params
+    -string _msg
+    -vector~Channel*~ _chans
+    -vector~Client*~ _dests
+		}
+		class Quit{
+    +execute()
+    -string _quitMsg
+		}
+		class Topic{
+    +execute()
+    -...()
+    -string _chan
+    -string _topic
+    -bool _clearTopic
+		}
+		class User{
+		+execite()
+		-string _username
+		-string _mode
+		-string _unused
+		-string _realname
+		}
+		class Who{
+    +execute()
+    -...()
+    -string _mask
+    -string _op
+		}
+	  Channel *-- Client
+	  class Channel{
+    -string _name
+    -string _topic
+    -string _key
+    -unsigned short _mode
+	  -int _userLimit
+	  -set~Client*~ _members
+	  -set~Client*~ _invites
+	  -set~Client*~ _operator
+	  -set~Client*~ _banList
+	  -static _isValidChannelName(string name) bool   
+    +get...()
+    +is...();
+    +addMember(Client& client)
+    +removeMember(Client& client)
+    +makeOperator(Client& client)
+    +broadcast(const string& message, Client* sender = NULL)
+    ...()
+		}
+		
+		class Logger {
+    +enum LogLevel(DEBUG = 0 INFO = 1 WARNING = 2 ERROR = 3)
+    -ofstream logFile
+    -LogLevel currentLevel
+    +Logger(const std::string& filename, LogLevel level = INFO);
+    +~Logger()
+    +log(LogLevel level, const std::string& message);
+    +debug(const std::string& msg);
+    +info(const std::string& msg);
+    +warning(const std::string& msg);
+    +error(const std::string& msg);
+    -getCurrentTime() string
+    -levelToString(LogLevel level) string
+		}
+		Parser *--Server
+		Parser *--Client
+		class Parser{
+		-Server _server
+		-Cleint _client
+		-bool _isValidCommand
+		}
+		note for ReplyHandler "to be used by Command execute#execute::execu"
+		class ReplyHandler{
+		+sendReply(int clientInint clientIndex,Server) void
+		+sendErrorNeedMoreParam()
+		}
 ```
 
 ---

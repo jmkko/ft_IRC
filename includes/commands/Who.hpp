@@ -63,18 +63,6 @@ class Who : public ICommand
     */
     void execute(Server& server, Client& client);
 
-    /**
-     * @brief Check syntaxic validity of params
-     * @details should match [RFC specs](https://datatracker.ietf.org/doc/html/rfc2812#section-3.6.1)
-     * ie `[ <mask> [ "o" ] ]`
-     * @param server
-     * @param client
-     * @param params
-     * @return @ref ReplyCode
-     * @warning can return ERR_NEEDMOREPARAMS
-     */
-    static ReplyCode check_args(Server& server, Client& client, std::string& params);
-
   private:
     std::string _mask;
     std::string _op;

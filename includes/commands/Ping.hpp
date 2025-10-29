@@ -39,17 +39,6 @@ class Ping : public ICommand
      * @param client client
      */
     void execute(Server& server, Client& client);
-    /**
-     * @brief checks that there is an origin token
-     *
-     * @details cf. [RFC specs](https://datatracker.ietf.org/doc/html/rfc2812#section-3.7.2)
-     * @param server
-     * @param client
-     * @param params
-     * @return ReplyCode
-     * @warning return ERR_NOORIGIN if no token provided
-     */
-    static ReplyCode check_args(Server& server, Client& client, std::string& params);
 
   private:
     Ping();

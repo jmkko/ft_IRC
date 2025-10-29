@@ -46,16 +46,6 @@ class Quit : public ICommand
      */
     void execute(Server& server, Client& client);
 
-    /**
-     * @brief no particular checks
-     *
-     * @param server
-     * @param client
-     * @param params
-     * @return ReplyCode
-     */
-    static ReplyCode check_args(Server& server, Client& client, std::string& params);
-
   private:
     std::string _quitMsg;
 

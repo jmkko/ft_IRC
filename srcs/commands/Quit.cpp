@@ -21,14 +21,6 @@ Quit::~Quit(void) {}
  *                      🛠️ FUNCTIONS                         *
  *************************************************************/
 
-ReplyCode Quit::check_args(Server& server, Client& client, std::string& params)
-{
-    (void)server;
-    (void)client;
-    (void)params;
-    return CORRECT_FORMAT;
-}
-
 void Quit::execute(Server& server, Client& client)
 {
     int pfdIndex = server.index_of(client);
