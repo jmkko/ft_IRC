@@ -10,9 +10,13 @@
  ░░░░░        ░░░░░  ░░░░░░░░░ ░░░░░ ░░░░░   ░░░░░   ░░░░░░░░░
 ```
 Internet Relay Chat project at 42 (a text-based communication protocol on the Internet)
+<h3 style="text-align:center;">
+![42](https://img.shields.io/badge/-42-black?style=for-the-badge&logo=42&logoColor=white) ![Static Badge](https://img.shields.io/badge/Language-C%2B%2B-blue) ![Static Badge](https://img.shields.io/badge/Protocole-IRC-blue) ![Static Badge](https://img.shields.io/badge/Doc-Doxygen-blue)
+</h3>
 
 ---
-## 📋 ft_IRC - Sujet
+
+## 📋 ft_IRC - Subjet
 
 This project is about creating your own IRC server.
 You are required to develop an IRC server using the C++ 98 standard.
@@ -40,6 +44,7 @@ Your executable will be run as follows: `./ircserv <port> <password>`
 - Handle file transfer.
 - bot.
 ---
+
 ## 🛰️ ft_IRC — Workflow de collaboration
 
 Ce dépôt est le dépôt principal du projet ft_IRC (école 42).
@@ -154,3 +159,145 @@ If possible, we will try to add a Github Action workflow in order to check at ea
 
 ✨ Important : toujours synchroniser `main` avant de créer une branche de feature.
 ---
+
+## 📐ft_IRC — Stucture
+
+```mermaid
+
+```
+
+---
+
+## ft_IRC - Compétences acquises
+
+Ce projet est un projet synthèse du tronc commun de 42 qui nous a permis de mener
+un travail en groupe et d'utiliser toutes les compétences apprises.
+
+- Projet en `C++` - Programmation orientée objet sur un projet complet
+- Projet réseau - TCP , Socket , poll
+- Protocol `IRC` - Syntaxe des messages
+- Les `design pattern` - Nous avons utiliser `Singleton` et `Fabric`
+- `Clang tidy` - Respect de règles de nommage et de qualité du code
+- `Github` - Nous avons utiliser toutes les services disponibles
+  - `Fork` - Un repo principale + deux autres repos  
+  - `Actions - Lancement Compilation du projet, puis d'un testeur
+  - `Rules` - Obligation d'avoir deux validation pour merge sur la main
+  - `Projet` - Roadmap, Issue (avec branch pour chacune)
+  - `Wiki`
+  - `Pages` - pour notre Documentation `Doxygen`
+- `Doxygen` - Documentation automatique grace à des commentaires dans notre code
+- `Mardown` et `Mermaid` - pour notre README
+
+---
+
+## ft_IRC - Principales fonctions réseaux
+
+```c++
+/*
+Crée un socket avec les paramètres passés. 
+-family définit la famille du socket. Les valeurs principales sont AF_INET pour un socket IPv4, AF_INET6 pour un support IPv6. 
+-type spécifie le type de socket. Les valeurs principales utilisées sont SOCK_STREAM pour TCP, SOCK_DGRAM pour UDP. 
+-protocol définit le protocole à utiliser. Il sera dépendant du type de socket et de sa famille. Les valeurs principales sont IPPROTO_TCP pour un socket TCP, IPPROTO_UDP pour un socket UDP.
+*/
+ int socket(int family, int type, int protocol);
+ 
+ //close socket
+ int close(int socket);
+//Les fonctions de cette forme sont les fonctions Host/Home to Network .
+//Elles servent à convertir les données numériques de la machine en données
+//« réseau ».
+short htons(short value);
+long htonl(long value);
+//Il s’agit des fonctions inverses des hton*.
+short ntohs(short value);
+long ntohl(long value);
+ /*
+ _socket est le socket à connecter. 
+server la structure représentant le serveur auquel se connecter. 
+serverlen est la taille de la structure server. socklen_t est un type spécifique aux plateformes UNIX et peut être un int ou unsigned int . Généralement un sizeof(server).
+ 
+ L’appel à cette fonction est bloquant tant que la connexion n’a pas été effectuée. Autrement dit : si cette fonction retourne, c’est que votre connexion a été effectuée et acceptée par l’ordinateur distant. Sauf si elle retourne une erreur bien sûr.
+
+ */
+ int connect(int _socket, const struct sockaddr* server, socklen_t serverlen); 
+ 
+//ex:
+sockaddr_in server;
+server.sin_addr.s_addr = inet_addr(const char* ipaddress);
+server.sin_family = AF_INET;
+server.sin_port = htons(int port);
+/*
+socket est le socket auquel envoyer les données. 
+datas les données à envoyer. 
+len est la taille maximale des données à envoyer en octets. 
+flags un masque d'options. Généralement 0.
+*/
+int send(int socket, const void* datas, size_t len, int flags);
+int recv(int socket, void* buffer, size_t len, int flags);
+/*
+La fonction bind est utilisée pour assigner une adresse locale à un socket.  
+
+sckt est le socket auquel est assigné l'adresse.  
+name est la structure à assigner au socket.  
+namelen est la taille de cette structure -> sizeof.
+Retourne SOCKET_ERROR -1 en cas d'erreur, 0 sinon.
+*/
+int bind(SOCKET sckt, const struct addr* name, int namelen);
+//ex
+sockaddr_in addr;
+addr.sin_addr.s_addr = INADDR_ANY; // indique que toutes les sources seront acceptées
+addr.sin_port = htons(port); // toujours penser à traduire le port en réseau
+addr.sin_family = AF_INET; // notre socket est TCP
+/*
+sckt est le socket auquel les clients vont se connecter.
+backlog est le nombre de connexions en attente qui peuvent être gérées. La valeur SOMAXCONN peut être utilisée pour laisser le système choisir une valeur correcte selon sa configuration.
+*/
+int listen(SOCKET sckt, int backlog) ;
+/*
+Accepte une connexion entrante. 
+
+sckt est le socket serveur qui attend les connexions. 
+addr recevra l'adresse du socket qui se connecte. 
+addrlen est la taille de la structure pointée par addr.
+*/
+SOCKET accept(SOCKET sckt, struct sockaddr* addr, int* addrlen);
+/*
+Permet de récupérer l'adresse IP d'un socket, IPv4 ou IPv6, sous forme lisible. 
+
+family est la famille du socket. 
+src le pointeur vers l'adresse du socket. 
+dst un pointeur vers un tampon où stocker l'adresse sous forme lisible. 
+size la taille maximale du tampon.
+*/
+const char* inet_ntop(int family, const void* src, char* dst, socklen_t size);
+
+/*poll() permet de surveiller plusieurs file descriptors (sockets, fichiers, etc.)
+pour détecter quand ils sont prêts pour certaines opérations (lecture, écriture, erreur)
+sans bloquer. */
+#include <poll.h>
+int poll(struct pollfd *fds, nfds_t nfds, int timeout);
+
+struct pollfd {
+    int fd;         // File descriptor à surveiller
+    short events;   // Événements à surveiller (INPUT)
+    short revents;  // Événements qui se sont produits (OUTPUT)
+};
+
+
+```
+
+---
+
+## ft_IRC - Source - Documentation
+
+[RFC-2812]
+[Server TCP](https://bousk.developpez.com/cours/reseau-c++/TCP/01-premiers-pas/)
+[Poll](https://devarea.com/linux-io-multiplexing-select-vs-poll-vs-epoll/)
+[Network programing](https://beej.us/guide/bgnet/html/)
+[Serveur IRC](https://www.cs.cmu.edu/~srini/15-441/S10/project1/pj1_description.pdf)
+[Projet IRC](http://chi.cs.uchicago.edu/chirc/index.html)
+[Design Pattern](https://refactoring.guru/fr/design-patterns/singleton)
+[Mermaid](https://mermaid.js.org/syntax/classDiagram.html)
+
+
+
