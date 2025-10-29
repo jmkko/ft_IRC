@@ -10,9 +10,7 @@
  ░░░░░        ░░░░░  ░░░░░░░░░ ░░░░░ ░░░░░   ░░░░░   ░░░░░░░░░
 ```
 Internet Relay Chat project at 42 (a text-based communication protocol on the Internet)
-<h3 style="text-align:center;">
 ![42](https://img.shields.io/badge/-42-black?style=for-the-badge&logo=42&logoColor=white) ![Static Badge](https://img.shields.io/badge/Language-C%2B%2B-blue) ![Static Badge](https://img.shields.io/badge/Protocole-IRC-blue) ![Static Badge](https://img.shields.io/badge/Doc-Doxygen-blue)
-</h3>
 
 ---
 
@@ -290,7 +288,7 @@ struct pollfd {
 
 ## ft_IRC - Source - Documentation
 
-[RFC-2812]
+[RFC-2812](https://www.rfc-editor.org/rfc/rfc2812)
 [Server TCP](https://bousk.developpez.com/cours/reseau-c++/TCP/01-premiers-pas/)
 [Poll](https://devarea.com/linux-io-multiplexing-select-vs-poll-vs-epoll/)
 [Network programing](https://beej.us/guide/bgnet/html/)
