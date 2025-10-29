@@ -37,6 +37,13 @@ bool Utils::check_password(const std::string& s)
         LOG_SERVER.warning(std::string("password must be ") + TO_STRING(MIN_PASSWORD_LEN) + " long at least");
         return false;
     }
+    for (std::string::const_iterator it = s.begin(); it != s.end(); ++it)
+    {
+        if (Utils::is_invalid_char_key(*it)) {
+            LOG_w_SERVER("password must contain only ASCII chars in range A-Z, a-z, 0-9, !@#$%^&*(), \%x01-05, \%x07-08, \%x0C, and \%x0E-1F");
+            return false;
+        }
+    }
     return true;
 }
 
@@ -127,4 +134,5 @@ bool Utils::is_not_alpha_or_specialbnf(char c) { return (!std::isalpha(c) && !Ut
 bool Utils::is_invalid_char_nick(char c) { return (!std::isalnum(c) && !is_special_abnf(c)); }
 bool Utils::is_invalid_char_user(char c) { return (is_char_of(c, std::string(FORBIDEN_CHAR_USER, NUMBER_FORB_CCU))); }
 bool Utils::is_invalid_char_key(char c) { return (is_char_of(c, std::string(FORBIDEN_CHAR_CHAN_KEY, NUMBER_FORB_CCNK))); }
+bool Utils::is_invalid_char_serverkey(char c) { return (is_char_of(c, std::string(FORBIDDEN_CHAR_SERVER_KEY, NUMBER_FORB_CSK))); }
 bool Utils::is_not_digit(char c) { return (!std::isdigit(c)); }

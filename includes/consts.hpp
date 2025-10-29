@@ -32,8 +32,10 @@
 #define FORBIDEN_CHAR_BOT_PROMPT  "|;"
 #define FORBIDEN_CHAR_CHAN_NAME   "\x00\x07\x0D\x0A\x20\x2C\x3A" // NOLINT(clang-diagnostic-null-character)
 #define FORBIDEN_CHAR_CHAN_KEY    "\x00\x09\x0A\x0B\x0C\x0D\x20" // NOLINT(clang-diagnostic-null-character)
+#define FORBIDDEN_CHAR_SERVER_KEY "\x00\x09\x0A\x0B\x0D\x20"     // NOLINT(clang-diagnostic-null-character) NUL, HT, LF, VT, CR, space
 #define FORBIDEN_CHAR_USER        "\x00\x0A\x0D\x20\x40"         // NOLINT(clang-diagnostic-null-character)
 #define NUMBER_FORB_CCNK          7
+#define NUMBER_FORB_CSK           6
 #define NUMBER_FORB_CCU           5
 #define VALID_CHAN_MODE_NOPARAM   "\x69\x74"
 #define VALID_CHAN_MODE_PARAM     "\x6B\x6C\x6F"
