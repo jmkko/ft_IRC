@@ -28,7 +28,7 @@ bool Channel::is_valid_channel_name(const std::string& name)
             return false;
         }
     }
-    if (!Utils::is_char_of(static_cast<unsigned char>(name[0]), "#&!"))
+    if (!Utils::is_char_of(static_cast<unsigned char>(name[0]), "#&"))
         return false;
     return (name.length() > 1 && name.length() <= ircConfig.get_chan_name_max_len());
 }
@@ -288,20 +288,18 @@ size_t            Channel::get_nb_members() const { return _members.size(); }
 std::set<Client*> Channel::get_members() const { return _members; }
 
 struct CompareClientsByName {
-    bool operator()(const Client* lhs, const Client* rhs) {
-        return lhs->get_nickname() < rhs->get_nickname();
-    }
+    bool operator()(const Client* lhs, const Client* rhs) { return lhs->get_nickname() < rhs->get_nickname(); }
 };
 
 std::vector<std::string> Channel::get_members_list() const
 {
-    std::vector<std::string>          list;
-    std::vector<Client*>              members(_members.begin(), _members.end());
-    std::string                       users;
-    int                               nbUserPerLine = USERS_PER_LINE;
-    int                               count         = 0;
+    std::vector<std::string> list;
+    std::vector<Client*>     members(_members.begin(), _members.end());
+    std::string              users;
+    int                      nbUserPerLine = USERS_PER_LINE;
+    int                      count         = 0;
     std::sort(members.begin(), members.end(), CompareClientsByName());
-    
+
     std::vector<Client*>::const_iterator it = members.begin();
     while (it != members.end()) {
         Client* c = *it;
