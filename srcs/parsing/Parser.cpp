@@ -294,6 +294,7 @@ std::map<std::string, std::string> Parser::to_map(std::string& keys, std::string
     while (std::getline(issKeys, key, ',')) {
         std::getline(issValues, value, ',');
         result[key] = value;
+        value.clear();
     }
     return (result);
 }

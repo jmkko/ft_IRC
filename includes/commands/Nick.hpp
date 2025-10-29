@@ -57,18 +57,6 @@ class Nick : public ICommand
      */
     void execute(Server& server, Client& client);
 
-    /**
-     * @brief check the args of command NICK
-     * @details
-     * cf. [RFC specs](https://datatracker.ietf.org/doc/html/rfc2812#section-3.1.2)
-     * @param server
-     * @param client not used
-     * @param params should match grammar rule
-     * nickname   =  ( letter / special ) *8( letter / digit / special / "-" )
-     * @return @ref ReplyCode
-     */
-    static ReplyCode check_args(Server& server, Client& client, std::string& params);
-
   private:
     std::string _nickname;
 

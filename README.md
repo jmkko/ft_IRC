@@ -9,20 +9,24 @@
   █████      ░░█████  █████████ █████ █████   █████ ░░█████████ 
  ░░░░░        ░░░░░  ░░░░░░░░░ ░░░░░ ░░░░░   ░░░░░   ░░░░░░░░░
 ```
-Internet Relay Chat project at 42 (a text-based communication protocol on the Internet)
+Internet Relay Chat project at 42 (a text-based communication protocol on the Internet)<br />
+
+![Static Badge](https://img.shields.io/badge/-ft__IRC-blue?logo=42&logoColor=white) ![Static Badge](https://img.shields.io/badge/Language-C%2B%2B-blue) ![Static Badge](https://img.shields.io/badge/Protocole-IRC-blue) ![Static Badge](https://img.shields.io/badge/Doc-Doxygen-blue) ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/jmkko/ft_IRC/c-cpp.yml)
+
 
 ---
-## 📋 ft_IRC - Sujet
+
+## ft_IRC - Subjet
 
 This project is about creating your own IRC server.
 You are required to develop an IRC server using the C++ 98 standard.
 Your executable will be run as follows: `./ircserv <port> <password>`
-### ⚙️ Requirements
+### Requirements
 - The server must be capable of handling multiple clients simultaneously without hanging.
 - Only 1 poll() (or equivalent) can be used for handling all these operations (read, write, but also listen, and so forth).
 - Several IRC clients exist. You have to choose one of them as a reference. Your reference client will be used during the evaluation process.
 - Communication between client and server has to be done via TCP/IP (v4 or v6).
-### 🤖 Features
+### Features
 - authenticate, set a nickname, a username, join a channel, send and receive private messages using your reference client.
 - All the messages sent from one client to a channel have to be forwarded to every other client that joined the channel.
 - You must have operators and regular users.
@@ -36,22 +40,23 @@ Your executable will be run as follows: `./ircserv <port> <password>`
     - k: Set/remove the channel key (password)
     - o: Give/take channel operator privilege
     - l: Set/remove the user limit to channel
-### 💪 Bonus   
+### Bonus   
 - Handle file transfer.
 - bot.
 ---
-## 🛰️ ft_IRC — Workflow de collaboration
+
+## ft_IRC — Workflow de collaboration
 
 Ce dépôt est le dépôt principal du projet ft_IRC (école 42).
 Nous travaillons en équipe de 3 étudiants, chacun sur un fork personnel de ce dépôt.
 Toutes les contributions passent par des Pull Requests (PR) vers ce dépôt principal.
 
-### 🧩 Organisation générale
+### Organisation générale
 
 - `main` — branche stable, propre, toujours fonctionnelle.
 - `feature/...` — branches créées dans chaque fork pour développer une fonctionnalité.
 
-### ⚙️ Mise en place du dépôt local (une seule fois)
+### Mise en place du dépôt local (une seule fois)
 
 1. Forker le dépôt principal
 2. Cloner son fork personnel :
@@ -68,7 +73,7 @@ git remote add upstream https://github.com/TON-USERNAME/ft_IRC.git
 git remote -v
 # doit montrer origin -> votre fork, et upstream -> dépôt principal
 ```
-### 🚀 Workflow de développement
+### Workflow de développement
 #### Créer une nouvelle fonctionnalité
 ```bash
 # Se mettre à jour avant tout
@@ -95,7 +100,7 @@ git push origin feature/ma_fonction
 	- compare : `MON-USERNAME/ft_IRC` → `feature/ma_fonction`
 4. Créer la PR
 
-### ♻️ Mettre à jour votre fork
+### Mettre à jour votre fork
 
 Avant de commencer une nouvelle fonctionnalité, synchronisez votre main local et votre fork :
 ```bash
@@ -103,7 +108,7 @@ git checkout main
 git pull upstream main
 git push origin main
 ````
-### 📏 Conventions de code
+### Conventions de code
 
 - Commits clairs et concis (présent)  
 	✅ Ajoute la gestion du JOIN  
@@ -112,7 +117,7 @@ git push origin main
 - Jamais coder sur main
 - Faire des PR petites et régulières
 
-### 🧪 Tests
+### Tests
 
 We will strive to make different tests to prevent regressions while shipping new features.
 This part of the project is not meant to be evaluated.
@@ -136,7 +141,7 @@ If possible, we will try to add a Github Action workflow in order to check at ea
 - the norm is respected (using a linter based on [LLVM code rules](https://llvm.org/docs/CodingStandards.html))
 - the codebase doesn't have potential bugs (using [CPPcheck](https://github.com/danmar/cppcheck), a static analysis checker)
 
-### 🧠 Résumé visuel
+### Résumé visuel
 ```bash
           +-----------+
           | upstream  |
@@ -154,3 +159,366 @@ If possible, we will try to add a Github Action workflow in order to check at ea
 
 ✨ Important : toujours synchroniser `main` avant de créer une branche de feature.
 ---
+
+## ft_IRC — Stucture
+
+```mermaid
+---
+title: Hazardous IRC Server
+---
+classDiagram
+    note for Server "Channel operators commands\nfor channel\nKICK, INVITE,TOPIC,MODE(i:invite-only, t:TOPIC restriction,k: channel key; o:operator privilege, l:user limit)"
+    class Server
+    Server *-- TcpSocket
+    Server *-- Client
+    note for Server "can handling multiple client\ncan be non blocking\ncan have only one poll()\ncan have TCP/IP communication"
+    Server *-- Channel
+    Server *-- Config
+    Server *-- LogManager
+    Server : -TcpSocket _serverSocket
+    Server : -vector~pollfd~ _pfds
+    Server : -map~Socket,Client*~ _clients
+    Server : -map~Socket,BotState~ _bots
+	  Server : -map~string,Client*~ _clientsByNick
+	  Server : -string _psswd
+    Server : -string _name
+    Server : -unsigned short _port
+    Server : +map~string,Channel*~ channels
+    Server: +start()
+    Server: +stop()
+    
+    class Config{
+        -string _name
+        -string _passwd
+        -int _port
+        ...
+        +get_...()
+        +set_...()
+    }
+    Client *--Channel
+    note for Client "messageQueue for incompleted message"
+    class Client{
+        -TcpSocket _socket
+        -sockaddr_in _addr
+        -string _addrStr
+        -string _nickName
+        -string _userName
+        -string _realName
+        -Clientstatus _status
+        -string _sendBuffer
+        -string _readBuffer
+        -map~string, Channel*~ _joinedChannels
+        +string messageQueue
+        +string nickName
+        +string userName
+        +string realName
+        +bool isRegistered
+        +map~string~ joinedChannels
+        +set...()
+        +get...()
+        ...()
+    }
+    
+    note for TcpSocket "no copy possible"
+    class TcpSocket{
+        -SOCKET _sckt
+        -TcpSocket(const TcpSocket&)
+        -TcpSocket& operator=(const TcpSocket&)
+        +getSocket() SOCKET
+        +connect(const string ipadrress, unsigned short port)bool
+        +getAddress(const sockaddr_in &addr) static string
+		    +setNonBlockingSocket(void) int
+		    +Send(const unsigned char *data, unsigned short len) int
+		    +Receive(vector~unsigned char~ &buffer) int
+    }
+    
+    class CmdFactory{
+    }
+    CmdFactory *-- ICommand
+    ICommand *-- Server
+    ICommand *-- Client
+    ICommand *-- ReplyHandler
+    class ICommand{
+	    -virtual ~Icommand()
+	    -virtual bool execute(Server& server, Client& client) = 0
+		}
+		ICommand <|-- Invite
+		ICommand <|-- Join
+		ICommand <|-- Kick
+		ICommand <|-- Mode
+		ICommand <|-- Motd
+		ICommand <|-- Nick
+		ICommand <|-- Part
+		ICommand <|-- Pass
+		ICommand <|-- Ping
+		ICommand <|-- Privmsg
+		ICommand <|-- Quit
+		ICommand <|-- Topic
+		ICommand <|-- User
+		ICommand <|-- Who
+		class Invite{
+    +execute()
+    -string _nickname
+    -string _channelName
+		}	
+		class Join{
+    +execute()
+    -...()
+    -map~string,string~ _chans
+		}	
+		class Kick{
+    +execute()
+    -...()
+    -vector~string~ _channelsNames
+    -vector~string~ _usersNames
+    -string _msg
+		}
+		class Mode{
+    +execute()
+    -...()
+    -string _channelName
+    -queue~string~ _modeQueue
+    -queue~string~ _paramsQueue
+    -string _params
+		}
+		class Motd{
+    +execute()
+    -...()
+    -string _params
+		}
+		class Nick{
+    +execute()
+    -string _nickname
+		}
+		class Part{
+    +execute()
+    -vector~string~ _chanNames
+    -string _message
+		}
+		class Pass{
+    +execute()
+    -string _pass
+		}
+		class Ping{
+    +execute()
+    -string _token
+		}
+		Privmsg *-- Channel
+		class Privmsg{
+    +execute()
+    -...()
+    -vector~string~ _targets
+    -string _message
+    -string _params
+    -string _msg
+    -vector~Channel*~ _chans
+    -vector~Client*~ _dests
+		}
+		class Quit{
+    +execute()
+    -string _quitMsg
+		}
+		class Topic{
+    +execute()
+    -...()
+    -string _chan
+    -string _topic
+    -bool _clearTopic
+		}
+		class User{
+		+execite()
+		-string _username
+		-string _mode
+		-string _unused
+		-string _realname
+		}
+		class Who{
+    +execute()
+    -...()
+    -string _mask
+    -string _op
+		}
+	  Channel *-- Client
+	  class Channel{
+    -string _name
+    -string _topic
+    -string _key
+    -unsigned short _mode
+	  -int _userLimit
+	  -set~Client*~ _members
+	  -set~Client*~ _invites
+	  -set~Client*~ _operator
+	  -set~Client*~ _banList
+	  -static _isValidChannelName(string name) bool   
+    +get...()
+    +is...();
+    +addMember(Client& client)
+    +removeMember(Client& client)
+    +makeOperator(Client& client)
+    +broadcast(const string& message, Client* sender = NULL)
+    ...()
+		}
+		
+		class Logger {
+    +enum LogLevel(DEBUG = 0 INFO = 1 WARNING = 2 ERROR = 3)
+    -ofstream logFile
+    -LogLevel currentLevel
+    +Logger(const std::string& filename, LogLevel level = INFO);
+    +~Logger()
+    +log(LogLevel level, const std::string& message);
+    +debug(const std::string& msg);
+    +info(const std::string& msg);
+    +warning(const std::string& msg);
+    +error(const std::string& msg);
+    -getCurrentTime() string
+    -levelToString(LogLevel level) string
+		}
+		Parser *--Server
+		Parser *--Client
+		class Parser{
+		-Server _server
+		-Cleint _client
+		-bool _isValidCommand
+		}
+		note for ReplyHandler "to be used by Command execute#execute::execu"
+		class ReplyHandler{
+		+sendReply(int clientInint clientIndex,Server) void
+		+sendErrorNeedMoreParam()
+		}
+```
+
+---
+
+## ft_IRC - Compétences acquises
+
+Ce projet est un projet synthèse du tronc commun de 42 qui nous a permis de mener
+un travail en groupe et d'utiliser toutes les compétences apprises.
+
+- Projet en `C++` - Programmation orientée objet sur un projet complet
+- Projet réseau - TCP , Socket , poll
+- Protocol `IRC` - Syntaxe des messages
+- Les `design pattern` - Nous avons utiliser `Singleton` et `Fabric`
+- `Clang tidy` - Respect de règles de nommage et de qualité du code
+- `Github` - Nous avons utiliser toutes les services disponibles
+  - `Fork` - Un repo principale + deux autres repos  
+  - `Actions - Lancement Compilation du projet, puis d'un testeur
+  - `Rules` - Obligation d'avoir deux validation pour merge sur la main
+  - `Projet` - Roadmap, Issue (avec branch pour chacune)
+  - `Wiki`
+  - `Pages` - pour notre Documentation `Doxygen`
+- `Doxygen` - Documentation automatique grace à des commentaires dans notre code
+- `Mardown` et `Mermaid` - pour notre README
+
+---
+
+## ft_IRC - Principales fonctions réseaux
+
+```c++
+/*
+Crée un socket avec les paramètres passés. 
+-family définit la famille du socket. Les valeurs principales sont AF_INET pour un socket IPv4, AF_INET6 pour un support IPv6. 
+-type spécifie le type de socket. Les valeurs principales utilisées sont SOCK_STREAM pour TCP, SOCK_DGRAM pour UDP. 
+-protocol définit le protocole à utiliser. Il sera dépendant du type de socket et de sa famille. Les valeurs principales sont IPPROTO_TCP pour un socket TCP, IPPROTO_UDP pour un socket UDP.
+*/
+ int socket(int family, int type, int protocol);
+ 
+ //close socket
+ int close(int socket);
+//Les fonctions de cette forme sont les fonctions Host/Home to Network .
+//Elles servent à convertir les données numériques de la machine en données
+//« réseau ».
+short htons(short value);
+long htonl(long value);
+//Il s’agit des fonctions inverses des hton*.
+short ntohs(short value);
+long ntohl(long value);
+ /*
+ _socket est le socket à connecter. 
+server la structure représentant le serveur auquel se connecter. 
+serverlen est la taille de la structure server. socklen_t est un type spécifique aux plateformes UNIX et peut être un int ou unsigned int . Généralement un sizeof(server).
+ 
+ L’appel à cette fonction est bloquant tant que la connexion n’a pas été effectuée. Autrement dit : si cette fonction retourne, c’est que votre connexion a été effectuée et acceptée par l’ordinateur distant. Sauf si elle retourne une erreur bien sûr.
+
+ */
+ int connect(int _socket, const struct sockaddr* server, socklen_t serverlen); 
+ 
+//ex:
+sockaddr_in server;
+server.sin_addr.s_addr = inet_addr(const char* ipaddress);
+server.sin_family = AF_INET;
+server.sin_port = htons(int port);
+/*
+socket est le socket auquel envoyer les données. 
+datas les données à envoyer. 
+len est la taille maximale des données à envoyer en octets. 
+flags un masque d'options. Généralement 0.
+*/
+int send(int socket, const void* datas, size_t len, int flags);
+int recv(int socket, void* buffer, size_t len, int flags);
+/*
+La fonction bind est utilisée pour assigner une adresse locale à un socket.  
+
+sckt est le socket auquel est assigné l'adresse.  
+name est la structure à assigner au socket.  
+namelen est la taille de cette structure -> sizeof.
+Retourne SOCKET_ERROR -1 en cas d'erreur, 0 sinon.
+*/
+int bind(SOCKET sckt, const struct addr* name, int namelen);
+//ex
+sockaddr_in addr;
+addr.sin_addr.s_addr = INADDR_ANY; // indique que toutes les sources seront acceptées
+addr.sin_port = htons(port); // toujours penser à traduire le port en réseau<br />
+addr.sin_family = AF_INET; // notre socket est TCP
+/*
+sckt est le socket auquel les clients vont se connecter.
+backlog est le nombre de connexions en attente qui peuvent être gérées. La valeur SOMAXCONN peut être utilisée pour laisser le système choisir une valeur correcte selon sa configuration.
+*/
+int listen(SOCKET sckt, int backlog) ;
+/*
+Accepte une connexion entrante. 
+
+sckt est le socket serveur qui attend les connexions. 
+addr recevra l'adresse du socket qui se connecte. 
+addrlen est la taille de la structure pointée par addr.
+*/
+SOCKET accept(SOCKET sckt, struct sockaddr* addr, int* addrlen);
+/*
+Permet de récupérer l'adresse IP d'un socket, IPv4 ou IPv6, sous forme lisible. 
+
+family est la famille du socket. 
+src le pointeur vers l'adresse du socket. 
+dst un pointeur vers un tampon où stocker l'adresse sous forme lisible. 
+size la taille maximale du tampon.
+*/
+const char* inet_ntop(int family, const void* src, char* dst, socklen_t size);
+
+/*poll() permet de surveiller plusieurs file descriptors (sockets, fichiers, etc.)
+pour détecter quand ils sont prêts pour certaines opérations (lecture, écriture, erreur)
+sans bloquer. */
+#include <poll.h>
+int poll(struct pollfd *fds, nfds_t nfds, int timeout);
+
+struct pollfd {
+    int fd;         // File descriptor à surveiller
+    short events;   // Événements à surveiller (INPUT)
+    short revents;  // Événements qui se sont produits (OUTPUT)
+};
+
+
+```
+
+---
+
+## ft_IRC - Source - Documentation
+
+[RFC-2812](https://www.rfc-editor.org/rfc/rfc2812)<br />
+[Server TCP](https://bousk.developpez.com/cours/reseau-c++/TCP/01-premiers-pas/)<br />
+[Poll](https://devarea.com/linux-io-multiplexing-select-vs-poll-vs-epoll/)<br />
+[Network programing](https://beej.us/guide/bgnet/html/)<br />
+[Serveur IRC](https://www.cs.cmu.edu/~srini/15-441/S10/project1/pj1_description.pdf)<br />
+[Projet IRC](http://chi.cs.uchicago.edu/chirc/index.html)<br />
+[Design Pattern](https://refactoring.guru/fr/design-patterns/singleton)<br />
+[Mermaid](https://mermaid.js.org/syntax/classDiagram.html)<br />
+
+
+
