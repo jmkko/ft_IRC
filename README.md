@@ -164,16 +164,6 @@ If possible, we will try to add a Github Action workflow in order to check at ea
 ```mermaid
 ---
 title: Hazardous IRC Server
-config:
-  theme: 'forest'
-  themeVariables:
-    noteTextColor: '#BB2528'
-    primaryColor: '#BB2528'
-    primaryTextColor: '#fff'
-    primaryBorderColor: '#7C0000'
-    lineColor: '#F8B229'
-    secondaryColor: '#006100'
-    tertiaryColor: '#fff'
 ---
 classDiagram
     note for Server "Channel operators commands\nfor channel\nKICK, INVITE,TOPIC,MODE(i:invite-only, t:TOPIC restriction,k: channel key; o:operator privilege, l:user limit)"
