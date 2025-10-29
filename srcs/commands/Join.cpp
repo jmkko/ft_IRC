@@ -60,7 +60,7 @@ void Join::execute(Server& server, Client& client)
     for (std::map<std::string, std::string>::iterator it = _chans.begin(); it != _chans.end(); ++it) {
         std::string chanName = it->first;
         std::string chanKey  = it->second;
-        if (!p.correct_channel(chanName)) {
+        if (!p.correct_channel(chanName) && chanName != "0") {
             continue;
         }
         if (chanName.size() == 1 && chanName[0] == '0') {

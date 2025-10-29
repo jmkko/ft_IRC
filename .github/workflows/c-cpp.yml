@@ -18,8 +18,6 @@ jobs:
         clang-tidy-12 --version
         pip install scan-build
         which scan-build
-    - name: debug
-      run: ./debugci.sh
     - name: format
       run: make formator
     - name: static checks

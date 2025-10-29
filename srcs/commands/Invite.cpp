@@ -27,7 +27,7 @@ void Invite::execute(Server& server, Client& client)
     Parser p(server, client);
 
     if (_channelName.empty() || _nickname.empty()) {
-        p.response(ERR_NEEDMOREPARAMS, "JOIN");
+        p.response(ERR_NEEDMOREPARAMS, "INVITE");
         return;
     }
     Client*  target  = server.find_client_by_nickname(_nickname);

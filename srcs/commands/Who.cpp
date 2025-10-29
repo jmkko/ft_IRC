@@ -30,7 +30,7 @@ void Who::execute(Server& server, Client& client)
 
     if (!_op.empty() && _op != "o") {
         LOG_CMD.warning(TO_STRING(ERR_NEEDMOREPARAMS) + " ERR_NEEDMOREPARAMS");
-        p.response(ERR_NEEDMOREPARAMS);
+        p.response(ERR_NEEDMOREPARAMS, "WHO");
         return;
     }
 
