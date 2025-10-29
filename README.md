@@ -9,8 +9,9 @@
   █████      ░░█████  █████████ █████ █████   █████ ░░█████████ 
  ░░░░░        ░░░░░  ░░░░░░░░░ ░░░░░ ░░░░░   ░░░░░   ░░░░░░░░░
 ```
-Internet Relay Chat project at 42 (a text-based communication protocol on the Internet)
-![42](https://img.shields.io/badge/-42-black?style=for-the-badge&logo=42&logoColor=white) ![Static Badge](https://img.shields.io/badge/Language-C%2B%2B-blue) ![Static Badge](https://img.shields.io/badge/Protocole-IRC-blue) ![Static Badge](https://img.shields.io/badge/Doc-Doxygen-blue)
+Internet Relay Chat project at 42 (a text-based communication protocol on the Internet)<br />
+
+![42](https://img.shields.io/badge/-42-black?style=for-the-badge&logoColor=white) ![Static Badge](https://img.shields.io/badge/Language-C%2B%2B-blue) ![Static Badge](https://img.shields.io/badge/Protocole-IRC-blue) ![Static Badge](https://img.shields.io/badge/Doc-Doxygen-blue)
 
 ---
 
@@ -244,7 +245,7 @@ int bind(SOCKET sckt, const struct addr* name, int namelen);
 //ex
 sockaddr_in addr;
 addr.sin_addr.s_addr = INADDR_ANY; // indique que toutes les sources seront acceptées
-addr.sin_port = htons(port); // toujours penser à traduire le port en réseau
+addr.sin_port = htons(port); // toujours penser à traduire le port en réseau<br />
 addr.sin_family = AF_INET; // notre socket est TCP
 /*
 sckt est le socket auquel les clients vont se connecter.
@@ -288,14 +289,14 @@ struct pollfd {
 
 ## ft_IRC - Source - Documentation
 
-[RFC-2812](https://www.rfc-editor.org/rfc/rfc2812)
-[Server TCP](https://bousk.developpez.com/cours/reseau-c++/TCP/01-premiers-pas/)
-[Poll](https://devarea.com/linux-io-multiplexing-select-vs-poll-vs-epoll/)
-[Network programing](https://beej.us/guide/bgnet/html/)
-[Serveur IRC](https://www.cs.cmu.edu/~srini/15-441/S10/project1/pj1_description.pdf)
-[Projet IRC](http://chi.cs.uchicago.edu/chirc/index.html)
-[Design Pattern](https://refactoring.guru/fr/design-patterns/singleton)
-[Mermaid](https://mermaid.js.org/syntax/classDiagram.html)
+[RFC-2812](https://www.rfc-editor.org/rfc/rfc2812)<br />
+[Server TCP](https://bousk.developpez.com/cours/reseau-c++/TCP/01-premiers-pas/)<br />
+[Poll](https://devarea.com/linux-io-multiplexing-select-vs-poll-vs-epoll/)<br />
+[Network programing](https://beej.us/guide/bgnet/html/)<br />
+[Serveur IRC](https://www.cs.cmu.edu/~srini/15-441/S10/project1/pj1_description.pdf)<br />
+[Projet IRC](http://chi.cs.uchicago.edu/chirc/index.html)<br />
+[Design Pattern](https://refactoring.guru/fr/design-patterns/singleton)<br />
+[Mermaid](https://mermaid.js.org/syntax/classDiagram.html)<br />
 
 
 
