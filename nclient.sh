@@ -33,5 +33,5 @@ echo ""
     fi
     # Garder la connexion ouverte pour interaction
     cat
-} | nc localhost 9999
+} | nc -C localhost 9999
 

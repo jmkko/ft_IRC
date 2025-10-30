@@ -15,6 +15,7 @@
 #include <arpa/inet.h> // hton*, ntoh*, inet_addr
 #include <csignal>
 #include <cstddef>
+#include <cstdlib>
 #include <cstring>
 #include <exception>
 #include <fcntl.h>
@@ -35,13 +36,8 @@
 Server::Server(const unsigned short port, const std::string& password) :
     _psswd(password), _name(ircConfig.get_name()), _port(port)
 {
-    try {
-        _serverSocket.tcp_bind(port);
-        _serverSocket.tcp_listen();
-    } catch (std::exception& e) {
-        std::cout << e.what();
-        exit(1);
-    }
+    _serverSocket.tcp_bind(port);
+    _serverSocket.tcp_listen();
     LOG_SERVER.info("Server " + _name + " start at port :" + Utils::to_string(port));
     std::cout << "\n";
 
@@ -317,9 +313,9 @@ bool Server::_handle_commands(int pfdIndex)
     while ((pos = client->get_read_buffer().find("\r\n")) != std::string::npos) {
         std::string line = client->get_read_buffer().substr(0, pos);
         client->get_read_buffer().erase(0, pos + 2);
-		if (line.empty()) {
-			continue;
-		}
+        if (line.empty()) {
+            continue;
+        }
         ICommand* cmd = _parse_command(*client, line);
         if (cmd) {
             cmd->execute(*this, *client);

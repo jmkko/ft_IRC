@@ -122,7 +122,6 @@ bool Config::_parse_config_file(const std::string& fileName)
         else if (currentSection == "irc.motd")
             _parse_motd(line);
     }
-
     file.close();
     return true;
 }

@@ -88,7 +88,7 @@ void remove_invalid_prompt_char(char& c)
         c = ' ';
 }
 
-static void send_ollama_request(const std::string& prompt, std::string& response)
+static bool send_ollama_request(const std::string& prompt, std::string& response)
 {
     std::string command = "curl -X POST -H \"Content-Type: application/json\" -v localhost:11434/api/generate -d '";
     command += "{\"model\": \"gemma3:1b\",\"prompt\":\"";
@@ -100,13 +100,16 @@ static void send_ollama_request(const std::string& prompt, std::string& response
     LOG_d_CMD(command);
 
     int code = ::system(command.c_str());
-    if (code == -1) {
+    LOG_w_CMD(code);
+    if (code != 0) {
         LOG_E_SERVER("error sending API LLama request", command);
+        return false;
     }
 
     ::usleep(BOT_PROCESS_TIME_MS);
     std::ifstream file("llama_response.txt");
     response.assign((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+    return true;
 }
 
 bool Bot::_connect_to_server(Server& s, TcpSocket& so)
@@ -194,7 +197,8 @@ void Bot::execute(Server& s, Client& c)
     LOG_DV_CMD(prompt);
 
     std::string response = "\"\"";
-    send_ollama_request(prompt, response);
+    if (!send_ollama_request(prompt, response))
+        response = "\"Bot is under maintenance\"";
 
     if (!_connect_to_server(s, _socket))
         return;
