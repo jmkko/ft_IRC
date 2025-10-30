@@ -1,5 +1,0 @@
-<map id="Motd" name="Motd">
-<area shape="rect" id="Node000001" title="Handler for IRC MOTD." alt="" coords="21,170,109,287"/>
-<area shape="rect" id="Node000002" href="$db/da2/classICommand.html" title="Interface providing an execute behavior for all commands." alt="" coords="5,5,124,122"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="68,137,68,170,62,170,62,137"/>
-</map>

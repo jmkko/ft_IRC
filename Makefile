@@ -1,4 +1,10 @@
-include	colors.mk
+NOC			= \e[0m
+BOLD		= \e[1m
+
+BLACK		= \e[1;30m
+RED			= \e[1m\e[38;5;196m
+GREEN		= \e[1m\e[38;5;76m
+YELLOW		= \e[1m\e[38;5;220m
 
 NAME			:=	ircserv
 OS 				:= $(shell uname)
@@ -139,6 +145,7 @@ clean :
 
 fclean : clean
 	@rm -rf $(NAME)
+	@rm -rf llama_response.txt
 	@rm -rf logs
 	@echo "$(BOLD)=== Fully cleaned ===$(NC)"
 

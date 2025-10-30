@@ -90,7 +90,8 @@ void remove_invalid_prompt_char(char& c)
 
 static bool send_ollama_request(const std::string& prompt, std::string& response)
 {
-    std::string command = "curl -X POST -H \"Content-Type: application/json\" -v localhost:11434/api/generate -d '";
+    std::string command
+        = "bash -c 'set -o pipefail; curl -X POST -H \"Content-Type: application/json\" -v localhost:11434/api/generate -d '";
     command += "{\"model\": \"gemma3:1b\",\"prompt\":\"";
     command += prompt;
     command += "\",\"options\": {\"temperature\": 0.99,\"top_p\": 0.8},\"stream\": false}";
@@ -101,6 +102,7 @@ static bool send_ollama_request(const std::string& prompt, std::string& response
 
     int code = ::system(command.c_str());
     LOG_w_CMD(code);
+    LOG_w_CMD(WEXITSTATUS(code));
     if (code != 0) {
         LOG_E_SERVER("error sending API LLama request", command);
         return false;
@@ -212,7 +214,8 @@ void Bot::execute(Server& s, Client& c)
         response = response.substr(firstQuoteIdx + 1, lastQuoteIdx - 1);
     else {
         LOG_W_CMD("empty response", response);
-        return;
+        response = "\"Bot is under maintenance\"";
+        // return;
     }
 
     if (!_targetChannels.empty()) {
