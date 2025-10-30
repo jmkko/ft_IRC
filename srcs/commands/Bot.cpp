@@ -215,7 +215,6 @@ void Bot::execute(Server& s, Client& c)
     else {
         LOG_W_CMD("empty response", response);
         response = "\"Bot is under maintenance\"";
-        // return;
     }
 
     if (!_targetChannels.empty()) {
