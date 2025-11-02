@@ -42,7 +42,9 @@ TcpSocket::TcpSocket(Socket socketFd) : _sckt(socketFd) {}
 
 TcpSocket::TcpSocket(const TcpSocket& inst) : _sckt(inst._sckt) {}
 
-TcpSocket::~TcpSocket() { close(_sckt); }
+TcpSocket::~TcpSocket() {
+	// close(_sckt);
+}
 
 Socket TcpSocket::get_socket() const { return _sckt; }
 
