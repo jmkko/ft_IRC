@@ -2,7 +2,7 @@
 llama_response.txt
 
 # logger
-logs/*
+# logs/*
 
 # doxygen
 doxygen-warnings.log
