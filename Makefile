@@ -61,18 +61,6 @@ OBJS			:=	$(SRCS:%.cpp=$(OBJS_DIR)/%.o)
 DEPS			:=	$(OBJS:%.o=%.d)
 OBJ_DIRS		:=	$(sort $(dir $(OBJS)))
 
-################	LINTERS
-
-# Paths for clang-format / clang-tidy-12 / intercept-build if manually installed
-export PATH 	:=	$(PATH):$(HOME)/local/bin:/usr/bin/:/usr/share/clang/scan-build-py-12/bin/
-
-HEADERS			:=	$(wildcard includes/*/*.hpp) $(wildcard includes/*.hpp)
-FILES_TO_FORMAT	:=	$(SRCS) $(HEADERS)
-
-TIDYFLAGS_CPL	:=	-p .
-
-TIDYFLAGS		:=	--use-color --config-file=.clang-tidy --header-filter=.*
-
 ################	LOADER
 
 NB_COMP			:=	1
@@ -118,26 +106,6 @@ $(OBJ_DIRS) :
 
 asan : all
 	@echo"ASAN_OPTIONS=detect_leaks=1:log_path=logs/asan.log:atexit_print_stats=true ./ircserv 9999 password"
-
-forminette:
-	@echo "$(YELLOW)=== Checking code format ===$(NOC)"
-	@clang-format --dry-run --Werror -style=file:./.clang-format $(FILES_TO_FORMAT)
-
-formator:
-	@echo "$(YELLOW)=== Formatting code ===$(NOC)"
-	@clang-format -style=file:./.clang-format -i $(FILES_TO_FORMAT)
-
-comp-data:
-	@intercept-build make re
-
-tidy: comp-data
-	@echo "$(YELLOW)=== Code analysis ===$(NOC)"
-	@clang-tidy-12 $(FILES_TO_FORMAT) $(TIDYFLAGS) $(TIDYFLAGS_CPL)
-
-debug-files:
-	@echo "SRCS: $(SRCS)"
-	@echo "HEADERS: $(HEADERS)"
-	@echo "FILES_TO_FORMAT: $(FILES_TO_FORMAT)"
 
 clean :
 	@rm -rf $(OBJS_DIR)
