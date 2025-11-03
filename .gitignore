@@ -1,6 +1,9 @@
 # bot
 llama_response.txt
 
+# static
+.clangd
+
 # logger
 logs/*
 
