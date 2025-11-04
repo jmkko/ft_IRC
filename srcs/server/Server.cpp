@@ -33,21 +33,16 @@
  *		🥚 CONSTRUCTORS & DESTRUCTOR                *
  ************************************************************/
 
-Server::Server(const unsigned short port, const std::string& password) :
-    _psswd(password), _name(ircConfig.get_name()), _port(port)
-{
+Server::Server(const unsigned short port, const std::string &password)
+    : _psswd(password), _name(ircConfig.get_name()), _port(port) {
     _serverSocket.tcp_bind(port);
     _serverSocket.tcp_listen();
     LOG_SERVER.info("Server " + _name + " start at port :" + Utils::to_string(port));
     std::cout << "\n";
-
     _listen_to_socket(_serverSocket.get_socket(), POLLIN);
 }
 
-Server::~Server() {
-	_clean();
-	close(_serverSocket.get_socket());
-}
+Server::~Server() { _clean(); }
 
 /*************************************************************
  *               👁️‍ GETTERS and SETTERS	                     *
@@ -55,15 +50,14 @@ Server::~Server() {
 
 std::string Server::get_password() const { return _psswd; }
 std::string Server::get_name() const { return _name; }
-int         Server::get_port() const { return _port; }
-int         Server::get_socket_fd() const { return _serverSocket.get_socket(); }
+int Server::get_port() const { return _port; }
+int Server::get_socket_fd() const { return _serverSocket.get_socket(); }
 
 /*************************************************************
  *                      🛠️ FUNCTIONS                         *
  *************************************************************/
 
-void Server::start()
-{
+void Server::start() {
     while (globalSignal != SIGINT && globalSignal != SIGABRT) {
         int pollResult = poll(_pfds.data(), _pfds.size(), POLL_TIMEOUT); // Timeout 1 second
         if (pollResult == -1) {
@@ -86,23 +80,24 @@ void Server::start()
                 _pfds[i].revents = 0; // Reset events
                 _handle_new_connection(i);
             } else if (i > 0) {
-                std::map<Socket, Client*>::iterator clientIt = _clients.find(_pfds[i].fd);
+                std::map<Socket, Client *>::iterator clientIt = _clients.find(_pfds[i].fd);
                 if (clientIt == _clients.end()) {
                     cleanup_socket_and_client(i--);
                     continue;
                 }
 
                 // Store revents before processing and reset it
-                short events     = _pfds[i].revents;
+                short events = _pfds[i].revents;
                 _pfds[i].revents = 0;
 
                 if (events & (POLLHUP | POLLNVAL | POLLERR)) {
                     _handle_client_disconnection(i--);
                 } else if (events & POLLIN) {
                     Socket originalSocket = _pfds[i].fd;
-                    size_t originalSize   = _pfds.size();
+                    size_t originalSize = _pfds.size();
                     _handle_client_input(i);
-                    if (_pfds.size() < originalSize || i >= static_cast<int>(_pfds.size()) || _pfds[i].fd != originalSocket) {
+                    if (_pfds.size() < originalSize || i >= static_cast<int>(_pfds.size()) ||
+                        _pfds[i].fd != originalSocket) {
                         i--; // Client was removed, adjust index
                     }
                 } else if (events & POLLOUT) {
@@ -114,20 +109,18 @@ void Server::start()
     _clean();
 }
 
-void Server::update_bot_state(
-    Socket socketfd, Channel* targetChannel, const std::string& subCommand, const std::string& botReply, bool readyToSend)
-{
+void Server::update_bot_state(Socket socketfd, Channel *targetChannel, const std::string &subCommand,
+                              const std::string &botReply, bool readyToSend) {
     BotState state;
-    state.socketfd      = socketfd;
+    state.socketfd = socketfd;
     state.targetChannel = targetChannel;
-    state.subCommand    = subCommand;
-    state.pendingMsg    = botReply;
-    state.readyToSend   = readyToSend;
-    _bots[socketfd]     = state;
+    state.subCommand = subCommand;
+    state.pendingMsg = botReply;
+    state.readyToSend = readyToSend;
+    _bots[socketfd] = state;
 }
 
-void Server::_handle_new_connection(int pfdIndex)
-{
+void Server::_handle_new_connection(int pfdIndex) {
     std::string pollEvent;
     if (_pfds[pfdIndex].revents & POLLIN)
         pollEvent.append("POLLIN ");
@@ -142,7 +135,7 @@ void Server::_handle_new_connection(int pfdIndex)
     sockaddr_in clientAddr = {};
     memset(&clientAddr, 0, sizeof(clientAddr));
     socklen_t addrLen = sizeof(clientAddr);
-    Socket    socket  = accept(_serverSocket.get_socket(), reinterpret_cast<sockaddr*>(&clientAddr), &addrLen);
+    Socket socket = accept(_serverSocket.get_socket(), reinterpret_cast<sockaddr *>(&clientAddr), &addrLen);
 
     if (socket != -1) {
         if (fcntl(socket, F_SETFL, O_NONBLOCK) == -1) {
@@ -150,9 +143,9 @@ void Server::_handle_new_connection(int pfdIndex)
             LOG_SOCKET.error(std::string("Error while setting a non blocking client socket") + strerror(errno));
             close(socket);
         } else {
-            Client* newClient = new Client(socket, clientAddr); // NOLINT
-            LOG_CONN.info(std::string("New connection accepted on socket ") + Utils::to_string(socket) + " => "
-                          + Utils::to_string(*newClient));
+            Client *newClient = new Client(socket, clientAddr); // NOLINT
+            LOG_CONN.info(std::string("New connection accepted on socket ") + Utils::to_string(socket) + " => " +
+                          Utils::to_string(*newClient));
             _clients[socket] = newClient;
 
             _listen_to_socket(socket, POLLIN);
@@ -160,18 +153,17 @@ void Server::_handle_new_connection(int pfdIndex)
     }
 }
 
-void Server::_handle_client_disconnection(int pfdIndex)
-{
-    Socket  socket = _pfds[pfdIndex].fd;
-    Client* client = _clients[socket];
+void Server::_handle_client_disconnection(int pfdIndex) {
+    Socket socket = _pfds[pfdIndex].fd;
+    Client *client = _clients[socket];
     if (!client) {
         LOG_SERVER.error("client not found");
         return;
     }
 
-    socklen_t err     = 0;
+    socklen_t err = 0;
     socklen_t errsize = sizeof(err);
-    if (getsockopt(socket, SOL_SOCKET, SO_ERROR, reinterpret_cast<char*>(&err), &errsize) == 0) {
+    if (getsockopt(socket, SOL_SOCKET, SO_ERROR, reinterpret_cast<char *>(&err), &errsize) == 0) {
         if (err == 0) {
             LOG_SERVER.debug("connection has been closed by client");
         } else {
@@ -179,20 +171,19 @@ void Server::_handle_client_disconnection(int pfdIndex)
             LOG_SOCKET.warning(std::string("socket error : ") + strerror(static_cast<int>(err)));
         }
     }
-    LOG_CONN.info(std::string("Client at ") + client->get_address() + ":" + Utils::to_string(client->get_port())
-                  + " disconnected");
+    LOG_CONN.info(std::string("Client at ") + client->get_address() + ":" + Utils::to_string(client->get_port()) +
+                  " disconnected");
     cleanup_socket_and_client(pfdIndex);
 }
 
 void Server::cleanup_bot(Socket so) { _bots.erase(so); }
 
-void Server::_handle_bot_input(int pfdIndex, Client* botClient, BotState& state)
-{
+void Server::_handle_bot_input(int pfdIndex, Client *botClient, BotState &state) {
     LOG_D_SERVER("state", state.pendingMsg);
     char buffer[CLIENT_READ_BUFFER_SIZE];
-    memset(static_cast<char*>(buffer), 0, CLIENT_READ_BUFFER_SIZE);
-    ssize_t bytesRead = recv(botClient->get_socket(), static_cast<char*>(buffer), CLIENT_READ_BUFFER_SIZE - 1, 0);
-    Socket  so        = botClient->get_socket();
+    memset(static_cast<char *>(buffer), 0, CLIENT_READ_BUFFER_SIZE);
+    ssize_t bytesRead = recv(botClient->get_socket(), static_cast<char *>(buffer), CLIENT_READ_BUFFER_SIZE - 1, 0);
+    Socket so = botClient->get_socket();
     if (bytesRead == 0) {
         LOG_CONN.warning("Bot connection closed properly");
         cleanup_bot(so);
@@ -209,15 +200,15 @@ void Server::_handle_bot_input(int pfdIndex, Client* botClient, BotState& state)
         if (Utils::safe_at(buffer, bytesRead))
             Utils::safe_at(buffer, bytesRead) = '\0';
         LOG_D_SERVER("bot received", buffer);
-        botClient->append_to_read_buffer(std::string(static_cast<char*>(buffer)));
-        std::string  response(botClient->get_read_buffer());
+        botClient->append_to_read_buffer(std::string(static_cast<char *>(buffer)));
+        std::string response(botClient->get_read_buffer());
         ReplyHandler rh = ReplyHandler::get_instance(this);
 
         if (response.find("JOIN") != std::string::npos) {
             LOG_DV_SERVER(response);
             _handle_commands(pfdIndex);
-            state.targetChannel->broadcast_bot(
-                *this, TRANSFER_PRIVMSG, state.targetChannel->get_name(), botClient, state.pendingMsg);
+            state.targetChannel->broadcast_bot(*this, TRANSFER_PRIVMSG, state.targetChannel->get_name(), botClient,
+                                               state.pendingMsg);
             rh.process_response(*botClient, TRANSFER_PRIVMSG, state.targetChannel->get_name());
             state.readyToSend = true;
             return;
@@ -231,11 +222,10 @@ void Server::_handle_bot_input(int pfdIndex, Client* botClient, BotState& state)
     }
 }
 
-void Server::_handle_client_input(int pfdIndex)
-{
+void Server::_handle_client_input(int pfdIndex) {
     LOG_dt_SERVER("");
-    Socket  socket = _pfds[pfdIndex].fd;
-    Client* client = _clients[socket];
+    Socket socket = _pfds[pfdIndex].fd;
+    Client *client = _clients[socket];
     if (!client) {
         return;
     }
@@ -246,8 +236,8 @@ void Server::_handle_client_input(int pfdIndex)
     }
 
     char buffer[CLIENT_READ_BUFFER_SIZE];
-    memset(static_cast<char*>(buffer), 0, CLIENT_READ_BUFFER_SIZE);
-    ssize_t bytesRead = recv(socket, static_cast<char*>(buffer), CLIENT_READ_BUFFER_SIZE - 1, 0);
+    memset(static_cast<char *>(buffer), 0, CLIENT_READ_BUFFER_SIZE);
+    ssize_t bytesRead = recv(socket, static_cast<char *>(buffer), CLIENT_READ_BUFFER_SIZE - 1, 0);
 
     if (bytesRead == 0) {
         LOG_CONN.warning("Connection closed properly");
@@ -262,7 +252,7 @@ void Server::_handle_client_input(int pfdIndex)
     } else {
         if (Utils::safe_at(buffer, bytesRead))
             Utils::safe_at(buffer, bytesRead) = '\0';
-        client->append_to_read_buffer(std::string(static_cast<char*>(buffer)));
+        client->append_to_read_buffer(std::string(static_cast<char *>(buffer)));
         bool clientDisconnected = this->_handle_commands(pfdIndex);
         if (clientDisconnected) {
             return;
@@ -270,10 +260,9 @@ void Server::_handle_client_input(int pfdIndex)
     }
 }
 
-void Server::_handle_client_output(int pfdIndex)
-{
-    Socket  socket = _pfds[pfdIndex].fd;
-    Client* client = _clients[socket];
+void Server::_handle_client_output(int pfdIndex) {
+    Socket socket = _pfds[pfdIndex].fd;
+    Client *client = _clients[socket];
     if (!client) {
         LOG_SERVER.error("client not found");
         return;
@@ -293,8 +282,8 @@ void Server::_handle_client_output(int pfdIndex)
                 _handle_client_disconnection(pfdIndex);
             }
         } else if (static_cast<size_t>(bytesSent) < sendBuffer.length()) {
-            LOG_SERVER.warning(std::string("Queue has been partially sent (") + Utils::to_string(bytesSent) + "/"
-                               + Utils::to_string(sendBuffer.length()) + ")");
+            LOG_SERVER.warning(std::string("Queue has been partially sent (") + Utils::to_string(bytesSent) + "/" +
+                               Utils::to_string(sendBuffer.length()) + ")");
             client->set_send_buffer(sendBuffer.substr(bytesSent));
         } else {
             client->get_send_buffer().clear();
@@ -306,11 +295,10 @@ void Server::_handle_client_output(int pfdIndex)
     }
 }
 
-bool Server::_handle_commands(int pfdIndex)
-{
-    Socket      socket = _pfds[pfdIndex].fd;
-    Client*     client = _clients[socket];
-    size_t      pos    = std::string::npos;
+bool Server::_handle_commands(int pfdIndex) {
+    Socket socket = _pfds[pfdIndex].fd;
+    Client *client = _clients[socket];
+    size_t pos = std::string::npos;
     std::string cmdName;
 
     while ((pos = client->get_read_buffer().find("\r\n")) != std::string::npos) {
@@ -319,7 +307,7 @@ bool Server::_handle_commands(int pfdIndex)
         if (line.empty()) {
             continue;
         }
-        ICommand* cmd = _parse_command(*client, line);
+        ICommand *cmd = _parse_command(*client, line);
         if (cmd) {
             cmd->execute(*this, *client);
             delete cmd;
@@ -332,26 +320,23 @@ bool Server::_handle_commands(int pfdIndex)
     return false;
 }
 
-ICommand* Server::_parse_command(Client& client, std::string line)
-{
+ICommand *Server::_parse_command(Client &client, std::string line) {
     LOG_CMD.receiving(__FILE_NAME__, __FUNCTION__, line, &client);
     CmdFactory commandBuilder;
-    ICommand*  cmd = commandBuilder.make_command(*this, client, line);
+    ICommand *cmd = commandBuilder.make_command(*this, client, line);
 
     return cmd;
 }
 
-Client* Server::find_client_by_nickname(const std::string& nickname)
-{
-    for (std::map<Socket, Client*>::iterator it = _clients.begin(); it != _clients.end(); it++) {
+Client *Server::find_client_by_nickname(const std::string &nickname) {
+    for (std::map<Socket, Client *>::iterator it = _clients.begin(); it != _clients.end(); it++) {
         if (nickname == it->second->get_nickname())
             return it->second;
     }
     return NULL;
 }
 
-int Server::index_of(Client& client)
-{
+int Server::index_of(Client &client) {
     Socket socket = client.get_socket();
 
     if (socket == -1)
@@ -363,8 +348,7 @@ int Server::index_of(Client& client)
     return -1;
 }
 
-void Server::add_events_of(Client& client, int event)
-{
+void Server::add_events_of(Client &client, int event) {
     int index = index_of(client);
     LOG_dt_SERVER("Server::add_envents_of --> " + EVENT_TO_STR(event) + " on index: " + TO_STRING(index));
     if (index >= 0) {
@@ -372,14 +356,12 @@ void Server::add_events_of(Client& client, int event)
     }
 }
 
-void Server::_listen_to_socket(Socket toListen, uint32_t flags)
-{
+void Server::_listen_to_socket(Socket toListen, uint32_t flags) {
     pollfd newPollFd = {.fd = toListen, .events = static_cast<short>(flags), .revents = 0};
     _pfds.push_back(newPollFd);
 }
 
-void Server::_clean()
-{
+void Server::_clean() {
     LOG_SERVER.debug(std::string("cleaning ") + TO_STRING(_clients.size()) + " clients");
 
     for (int i = static_cast<int>(_pfds.size()) - 1; i >= 1; --i) {
@@ -392,15 +374,13 @@ void Server::_clean()
     LOG_SERVER.debug("Server cleaned and ready for reuse");
 }
 
-void Server::stop()
-{
+void Server::stop() {
     LOG_SERVER.debug("Server stop requested");
     globalSignal = SIGINT;
 }
 
-void Server::cleanup_socket_and_client(int pfdIndex)
-{
-    Client* c = _clients[_pfds[pfdIndex].fd];
+void Server::cleanup_socket_and_client(int pfdIndex) {
+    Client *c = _clients[_pfds[pfdIndex].fd];
     close(_pfds[pfdIndex].fd);
     _clients.erase(_pfds[pfdIndex].fd);
     if (c) {
@@ -413,19 +393,17 @@ void Server::cleanup_socket_and_client(int pfdIndex)
     _pfds.erase(_pfds.begin() + pfdIndex);
 }
 
-void Server::cleanup_channels()
-{
+void Server::cleanup_channels() {
     LOG_dt_SERVER(std::string("cleaning ") + TO_STRING(channels.size()) + " channels");
-    for (std::map<std::string, Channel*>::iterator it = channels.begin(); it != channels.end(); ++it) {
+    for (std::map<std::string, Channel *>::iterator it = channels.begin(); it != channels.end(); ++it) {
         delete it->second; // NOLINT
     }
     channels.clear();
 }
 
-std::vector<Client*> Server::find_clients_by_pattern(const std::string& pattern) const
-{
-    std::vector<Client*> result;
-    for (std::map<Socket, Client*>::const_iterator it = _clients.begin(); it != _clients.end(); it++) {
+std::vector<Client *> Server::find_clients_by_pattern(const std::string &pattern) const {
+    std::vector<Client *> result;
+    for (std::map<Socket, Client *>::const_iterator it = _clients.begin(); it != _clients.end(); it++) {
         if (Utils::MatchPattern(pattern)(it->second)) {
             LOG_D_CMD("pattern " + pattern + " matched", it->second->get_nickname());
             result.push_back(it->second);
@@ -434,9 +412,8 @@ std::vector<Client*> Server::find_clients_by_pattern(const std::string& pattern)
     return result;
 }
 
-Channel* Server::find_channel_by_name(const std::string& name)
-{
-    std::map<std::string, Channel*>::iterator chan = channels.find(name);
+Channel *Server::find_channel_by_name(const std::string &name) {
+    std::map<std::string, Channel *>::iterator chan = channels.find(name);
     if (chan != channels.end()) {
         return chan->second;
     }

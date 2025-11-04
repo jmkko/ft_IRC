@@ -11,14 +11,7 @@ OS 				:= $(shell uname)
 
 CXX				:=	clang++
 CXXFLAGS		:=	-Wall -Wextra -Werror -std=c++98 -g -MMD 
-LDFLAGS			:=	
 MAKEFLAGS		:=	--no-print-directory
-ASANFLAGS		:=	-fsanitize=address -O0 -g
-
-ifeq ($(MAKECMDGOALS),asan)
-CXXFLAGS += $(ASANFLAGS)
-LDFLAGS += $(ASANFLAGS)
-endif
 
 INCLUDES		:=	-Iincludes\
 					-Iincludes/channels\
@@ -79,7 +72,7 @@ all : $(NAME)
 
 $(NAME) : $(OBJS)
 	@echo "\n$(BOLD)=== Linkage ... generating binaries ===$(NOC)"
-	@$(CXX) $(LDFLAGS) $(INCLUDES) $^ -o $@
+	@$(CXX) $(INCLUDES) $^ -o $@
 
 $(OBJS) :$(OBJS_DIR)/%.o : %.cpp | $(OBJ_DIRS)
 ifeq ($(OS), Linux)
@@ -103,9 +96,6 @@ endif
 $(OBJ_DIRS) :
 	@mkdir -p $@
 	@mkdir -p logs
-
-asan : all
-	@echo"ASAN_OPTIONS=detect_leaks=1:log_path=logs/asan.log:atexit_print_stats=true ./ircserv 9999 password"
 
 clean :
 	@rm -rf $(OBJS_DIR)

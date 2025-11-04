@@ -23,15 +23,14 @@
 #include <unistd.h> // for close()
 #include <unistd.h>
 
-const std::string& cmdName = "BOT";
+const std::string &cmdName = "BOT";
 
 /************************************************************
  *		🥚 CONSTRUCTORS & DESTRUCTOR						*
  ************************************************************/
 
-Bot::Bot(std::string& params) : _params(params), _targets(), _targetChannelName(), _targetChannels(), _targetClients(), _socket()
-{
-}
+Bot::Bot(std::string &params)
+    : _params(params), _targets(), _targetChannelName(), _targetChannels(), _targetClients(), _socket() {}
 
 Bot::~Bot(void) {}
 
@@ -40,13 +39,12 @@ Bot::~Bot(void) {}
  *************************************************************/
 
 // expected BOT #chan !subcommand :prompt
-bool Bot::_check_args(Server& s, Client& c)
-{
+bool Bot::_check_args(Server &s, Client &c) {
     Parser parser(s, c);
 
     _targetChannelName = parser.from_arg(_params);
-    _subcommand        = parser.from_arg(_params);
-    _prompt            = parser.from_trailing(_params);
+    _subcommand = parser.from_arg(_params);
+    _prompt = parser.from_trailing(_params);
 
     LOG_DV_CMD(_targetChannelName);
     LOG_DV_CMD(_subcommand);
@@ -70,16 +68,14 @@ bool Bot::_check_args(Server& s, Client& c)
     return true;
 }
 
-void remove_invalid_prompt_char(char& c)
-{
+void remove_invalid_prompt_char(char &c) {
     if (c == '\'' || c == '"' || c == '*' || c == ';' || c == '|' || c == '(' || c == ')')
         c = ' ';
 }
 
-static bool send_ollama_request(const std::string& subcommand, const std::string& prompt, std::string& response)
-{
-    std::string command
-        = "bash -c 'set -o pipefail; curl -X POST -H \"Content-Type: application/json\" -v localhost:11434/api/generate -d \"";
+static bool send_ollama_request(const std::string &subcommand, const std::string &prompt, std::string &response) {
+    std::string command = "bash -c 'set -o pipefail; curl -X POST -H \"Content-Type: application/json\" -v "
+                          "localhost:11434/api/generate -d \"";
     command += "{\\\"model\\\": \\\"gemma3:1b\\\",\\\"stream\\\":false,\\\"prompt\\\":\\\"";
     command += prompt;
     if (subcommand == "!reply")
@@ -91,8 +87,6 @@ static bool send_ollama_request(const std::string& subcommand, const std::string
     LOG_d_CMD(command);
 
     int code = ::system(command.c_str());
-    LOG_w_CMD(code);
-    LOG_w_CMD(WEXITSTATUS(code));
     if (code != 0) {
         LOG_E_SERVER("error sending API LLama request", command);
         return false;
@@ -104,8 +98,7 @@ static bool send_ollama_request(const std::string& subcommand, const std::string
     return true;
 }
 
-bool Bot::_connect_to_server(Server& s, TcpSocket& so)
-{
+bool Bot::_connect_to_server(Server &s, TcpSocket &so) {
     if (so.set_non_blocking_socket() == -1) {
         LOG_W_CMD("set non blocking error", strerror(errno));
     }
@@ -121,9 +114,9 @@ bool Bot::_connect_to_server(Server& s, TcpSocket& so)
     FD_ZERO(&writefds);
     FD_SET(so.get_socket(), &writefds);
     struct timeval timeout = {};
-    timeout.tv_sec         = 4;
-    timeout.tv_usec        = 0;
-    int ret                = select(so.get_socket() + 1, NULL, &writefds, NULL, &timeout);
+    timeout.tv_sec = 4;
+    timeout.tv_usec = 0;
+    int ret = select(so.get_socket() + 1, NULL, &writefds, NULL, &timeout);
     if (ret == -1) {
         LOG_W_CMD("select error", strerror(errno));
         return false;
@@ -134,9 +127,8 @@ bool Bot::_connect_to_server(Server& s, TcpSocket& so)
     return true;
 }
 
-static bool send_full_msg(int fd, const std::string& msg)
-{
-    size_t sentBytes      = 0;
+static bool send_full_msg(int fd, const std::string &msg) {
+    size_t sentBytes = 0;
     size_t totalSentBytes = 0;
     while (totalSentBytes < msg.size()) {
         sentBytes = send(fd, msg.c_str() + totalSentBytes, msg.size() - totalSentBytes, 0);
@@ -147,8 +139,7 @@ static bool send_full_msg(int fd, const std::string& msg)
     return true;
 }
 
-bool Bot::_register_bot(Server& s, TcpSocket& so)
-{
+bool Bot::_register_bot(Server &s, TcpSocket &so) {
     std::string passMsg = std::string("PASS ") + s.get_password() + "\r\n";
     std::string nickMsg = std::string("NICK bot") + "\r\n";
     std::string userMsg = std::string("USER bot 0 * :realbot") + "\r\n";
@@ -168,14 +159,14 @@ bool Bot::_register_bot(Server& s, TcpSocket& so)
     return true;
 }
 
-void Bot::execute(Server& s, Client& c)
-{
+void Bot::execute(Server &s, Client &c) {
     if (_check_args(s, c) == false)
         return;
 
     std::string prompt = "Your responses must strictly follow these rules: ";
     prompt += "Keep your response under 500 characters. ";
-    prompt += "No special characters. No newline character, line break. Keep the response as a single, continuous line of text. ";
+    prompt += "No special characters. No newline character, line break. Keep the response as a single, continuous line "
+              "of text. ";
     prompt += "No markdown or any other formatting : do not use bold, italic, code blocks or any other markdown. ";
     prompt += "No meta-commentary Do not reference instruction, your role or user prompt. Just answer directly. ";
     prompt += "You send direct and concise replies without preamble and with no hints about former meta instructions. ";
@@ -199,9 +190,9 @@ void Bot::execute(Server& s, Client& c)
     if (!_register_bot(s, _socket))
         return;
 
-    ReplyHandler& rh            = ReplyHandler::get_instance(&s);
+    ReplyHandler &rh = ReplyHandler::get_instance(&s);
     unsigned long firstQuoteIdx = response.find_first_of('"');
-    unsigned long lastQuoteIdx  = response.find_last_of('"');
+    unsigned long lastQuoteIdx = response.find_last_of('"');
     if (firstQuoteIdx != std::string::npos && lastQuoteIdx != std::string::npos)
         response = response.substr(firstQuoteIdx + 1, lastQuoteIdx - 1);
     else {
@@ -212,8 +203,8 @@ void Bot::execute(Server& s, Client& c)
     LOG_DV_CMD(response);
 
     if (!_targetChannels.empty()) {
-        _targetChannels[0]->broadcast_bot(
-            s, TRANSFER_PROMPT_BOT, _targetChannels[0]->get_name(), NULL, _subcommand.substr(1) + " " + _prompt);
+        _targetChannels[0]->broadcast_bot(s, TRANSFER_PROMPT_BOT, _targetChannels[0]->get_name(), NULL,
+                                          _subcommand.substr(1) + " " + _prompt);
         s.update_bot_state(_socket.get_socket(), _targetChannels[0], _subcommand, response, false);
         std::string joinMsg = "JOIN " + _targetChannels[0]->get_name() + "\r\n";
         if (!send_full_msg(_socket.get_socket(), joinMsg)) {
@@ -226,7 +217,7 @@ void Bot::execute(Server& s, Client& c)
         std::string quit = "QUIT :bot has spoken. Ugh\r\n";
         send_full_msg(_socket.get_socket(), quit);
     } else {
-        for (std::vector<Client*>::iterator it = _targetClients.begin(); it != _targetClients.end(); ++it) {
+        for (std::vector<Client *>::iterator it = _targetClients.begin(); it != _targetClients.end(); ++it) {
             rh.process_response(**it, TRANSFER_REPLY_BOT, (*it)->get_nickname(), NULL, response);
         }
     }
