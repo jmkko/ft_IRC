@@ -193,6 +193,11 @@ void Bot::execute(Server &s, Client &c) {
     prompt += "Please reply to this message : ";
   else if (_subcommand == "!check")
     prompt += "Please fact-check this affirmation : ";
+  else if (_subcommand == "!brief")
+  {
+    prompt += "Please sump up those messages :" ;
+    
+  }
   prompt += _prompt;
   std::for_each(prompt.begin(), prompt.end(), remove_invalid_prompt_char);
   LOG_DV_CMD(prompt);

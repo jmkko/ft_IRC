@@ -47,7 +47,8 @@
 #define DYNAMIC_PORT_MIN          49152
 #define NICKNAME_MAX_LEN          9
 #define NB_AVAILABLE_CMD          15
-#define NB_AVAILABLE_BOT_SUBCMD   2
+#define MAX_MESSAGES_HISTORY      10
+#define NB_AVAILABLE_BOT_SUBCMD   3
 #define USERS_PER_LINE            10
 #define CHANMODE_INIT             0b00000
 #define CHANMODE_KEY              0b00001

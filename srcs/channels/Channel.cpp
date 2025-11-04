@@ -93,7 +93,7 @@ bool Channel::is_valid_channel_key(const std::string& key)
  ************************************************************/
 
 Channel::Channel(const std::string& name, const std::string& key) :
-    _topic(""), _key(key), _mode(CHANMODE_INIT), _userLimit(NO_LIMIT), _members(), _invites(), _operators()
+    _topic(""), _key(key), _mode(CHANMODE_INIT), _userLimit(NO_LIMIT), _members(), _invites(), _operators(), _lastMessages()
 
 {
     if (!key.empty()) {
@@ -110,12 +110,13 @@ Channel::Channel(const Channel& other) :
     _userLimit(other._userLimit),
     _members(other._members),
     _invites(other._invites),
-    _operators(other._operators)
+    _operators(other._operators),
+    _lastMessages(other._lastMessages)
 {
 }
 
 Channel::Channel(void) :
-    _name(""), _topic(""), _key(""), _mode(CHANMODE_INIT), _userLimit(NO_LIMIT), _members(), _invites(), _operators()
+    _name(""), _topic(""), _key(""), _mode(CHANMODE_INIT), _userLimit(NO_LIMIT), _members(), _invites(), _operators(), _lastMessages()
 {
 }
 
@@ -290,6 +291,18 @@ std::set<Client*> Channel::get_members() const { return _members; }
 struct CompareClientsByName {
     bool operator()(const Client* lhs, const Client* rhs) { return lhs->get_nickname() < rhs->get_nickname(); }
 };
+
+const std::queue<std::string> Channel::get_history() const
+{
+    return _lastMessages;
+}
+
+void Channel::add_message_to_history(const std::string& message)
+{
+    if (_lastMessages.size() >= MAX_MESSAGES_HISTORY)
+        _lastMessages.pop();
+    _lastMessages.push(message);
+}
 
 std::vector<std::string> Channel::get_members_list() const
 {
