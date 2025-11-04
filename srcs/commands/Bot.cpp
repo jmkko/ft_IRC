@@ -232,11 +232,11 @@ void Bot::execute(Server &s, Client &c) {
       s.cleanup_bot(_socket.get_socket());
       return;
     }
-    std::string priv =
-        "PRIVMSG " + _targetChannels[0]->get_name() + " :" + response + "\r\n";
-    send_full_msg(_socket.get_socket(), priv);
-    std::string quit = "QUIT :bot has spoken. Ugh\r\n";
-    send_full_msg(_socket.get_socket(), quit);
+    // std::string priv =
+    //     "PRIVMSG " + _targetChannels[0]->get_name() + " :" + response + "\r\n";
+    // send_full_msg(_socket.get_socket(), priv);
+    // std::string quit = "QUIT :bot has spoken. Ugh\r\n";
+    // send_full_msg(_socket.get_socket(), quit);
   } else {
     for (std::vector<Client *>::iterator it = _targetClients.begin();
          it != _targetClients.end(); ++it) {
