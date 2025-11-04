@@ -23,7 +23,7 @@ class Client;
 /**
  * @brief Harmonize responses to client
  * @class ReplyHandler
- * @details 
+ * @details
  * ensure that responses match [RFC specs](https://datatracker.ietf.org/doc/html/rfc2812#section-2.3.1)
  *  * grammar of message is  `<message>  ::= [':' <prefix> <SPACE> ] <command> <params> <crlf>`
  * meaning that a message is made of

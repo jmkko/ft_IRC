@@ -7,22 +7,21 @@
 #include "TcpSocket.hpp"
 #include "reply_codes.hpp"
 
-#include <algorithm>
 #include <arpa/inet.h>
 #include <cerrno>
 #include <cstddef>
 #include <cstdlib>
+#include <cstdio>
 #include <cstring>
 #include <fstream>
-#include <iterator>
 #include <netdb.h> // for getaddrinfo(), etc.
 #include <netinet/in.h>
+#include <sstream>
 #include <string>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h> // for close()
 #include <unistd.h>
-#include <vector>
 
 const std::string& cmdName = "BOT";
 
@@ -71,33 +70,24 @@ bool Bot::_check_args(Server& s, Client& c)
     return true;
 }
 
-void add_key_val_bool(std::string& command, const std::string& key, bool value)
-{
-    std::string boolVal = value ? "true" : "false";
-    command += '"' + key + "\": " + boolVal + ",";
-}
-
-void add_key_val(std::string& command, const std::string& key, const std::string& value)
-{
-    command += '"' + key + "\": " + '"' + value + "\",";
-}
-
 void remove_invalid_prompt_char(char& c)
 {
-    if (c == '\'' || c == '"' || c == '*' || c == ';' || c == '|')
+    if (c == '\'' || c == '"' || c == '*' || c == ';' || c == '|' || c == '(' || c == ')')
         c = ' ';
 }
 
-static bool send_ollama_request(const std::string& prompt, std::string& response)
+static bool send_ollama_request(const std::string& subcommand, const std::string& prompt, std::string& response)
 {
     std::string command
-        = "bash -c 'set -o pipefail; curl -X POST -H \"Content-Type: application/json\" -v localhost:11434/api/generate -d '";
-    command += "{\"model\": \"gemma3:1b\",\"prompt\":\"";
+        = "bash -c 'set -o pipefail; curl -X POST -H \"Content-Type: application/json\" -v localhost:11434/api/generate -d \"";
+    command += "{\\\"model\\\": \\\"gemma3:1b\\\",\\\"stream\\\":false,\\\"prompt\\\":\\\"";
     command += prompt;
-    command += "\",\"options\": {\"temperature\": 0.99,\"top_p\": 0.8},\"stream\": false}";
-    command += "'";
-    command += " | jq \'.response\' ";
-    command += " > llama_response.txt";
+    if (subcommand == "!reply")
+        command += "\\\",\\\"options\\\": {\\\"temperature\\\": 0.99,\\\"top_p\\\": 0.9}}\"";
+    else
+        command += "\\\",\\\"options\\\": {\\\"temperature\\\": 0.2,\\\"top_p\\\": 0.3}}\"";
+    command += " | jq \".response\" ";
+    command += " > llama_response.txt \'";
     LOG_d_CMD(command);
 
     int code = ::system(command.c_str());
@@ -199,8 +189,10 @@ void Bot::execute(Server& s, Client& c)
     LOG_DV_CMD(prompt);
 
     std::string response = "\"\"";
-    if (!send_ollama_request(prompt, response))
+    if (send_ollama_request(_subcommand, prompt, response) == false)
         response = "\"Bot is under maintenance\"";
+
+    LOG_DV_CMD(response);
 
     if (!_connect_to_server(s, _socket))
         return;
@@ -215,8 +207,9 @@ void Bot::execute(Server& s, Client& c)
     else {
         LOG_W_CMD("empty response", response);
         response = "\"Bot is under maintenance\"";
-        // return;
     }
+
+    LOG_DV_CMD(response);
 
     if (!_targetChannels.empty()) {
         _targetChannels[0]->broadcast_bot(
@@ -228,6 +221,10 @@ void Bot::execute(Server& s, Client& c)
             s.cleanup_bot(_socket.get_socket());
             return;
         }
+        std::string priv = "PRIVMSG " + _targetChannels[0]->get_name() + " :" + response + "\r\n";
+        send_full_msg(_socket.get_socket(), priv);
+        std::string quit = "QUIT :bot has spoken. Ugh\r\n";
+        send_full_msg(_socket.get_socket(), quit);
     } else {
         for (std::vector<Client*>::iterator it = _targetClients.begin(); it != _targetClients.end(); ++it) {
             rh.process_response(**it, TRANSFER_REPLY_BOT, (*it)->get_nickname(), NULL, response);

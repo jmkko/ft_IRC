@@ -44,7 +44,10 @@ Server::Server(const unsigned short port, const std::string& password) :
     _listen_to_socket(_serverSocket.get_socket(), POLLIN);
 }
 
-Server::~Server() { _clean(); }
+Server::~Server() {
+	_clean();
+	close(_serverSocket.get_socket());
+}
 
 /*************************************************************
  *               👁️‍ GETTERS and SETTERS	                     *
@@ -385,7 +388,6 @@ void Server::_clean()
     _bots.erase(_bots.begin(), _bots.end());
     _bots.clear();
     cleanup_channels();
-
     globalSignal = 0;
     LOG_SERVER.debug("Server cleaned and ready for reuse");
 }

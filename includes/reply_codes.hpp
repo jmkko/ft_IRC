@@ -3,9 +3,9 @@
  * @brief Numerical reply codes
  * @version 0.1
  * @date 2025-10-25
- * 
+ *
  * @copyright Copyright (c) 2025
- * 
+ *
  */
 #ifndef REPLY_CODES_HPP
 #define REPLY_CODES_HPP
