@@ -223,7 +223,7 @@ void Mode::execute(Server &server, Client &client) {
         if (currentMode.size() > 2 || currentMode.size() == 1 ||
             !Utils::is_char_of(currentMode[0], std::string(MODE_OPERATOR))) {
             p.response(ERR_NEEDMOREPARAMS, "MODE");
-            return;
+            continue;
         }
         // case not a valid mode
         if (!Utils::is_char_of(currentMode[1], std::string(VALID_CHAN_MODE_NOPARAM)) &&

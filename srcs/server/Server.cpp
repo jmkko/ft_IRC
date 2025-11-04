@@ -211,14 +211,18 @@ void Server::_handle_bot_input(int pfdIndex, Client *botClient, BotState &state)
                                                state.pendingMsg);
             rh.process_response(*botClient, TRANSFER_PRIVMSG, state.targetChannel->get_name());
             state.readyToSend = true;
-            return;
-        }
-        if (response.find("PRIVMSG") != std::string::npos && state.readyToSend == true) {
             LOG_DV_SERVER(state.pendingMsg);
             _handle_commands(pfdIndex);
             cleanup_bot(so);
             cleanup_socket_and_client(pfdIndex);
+            return;
         }
+        // if (response.find("PRIVMSG") != std::string::npos && state.readyToSend == true) {
+        //     LOG_DV_SERVER(state.pendingMsg);
+        //     _handle_commands(pfdIndex);
+        //     cleanup_bot(so);
+        //     cleanup_socket_and_client(pfdIndex);
+        // }
     }
 }
 
