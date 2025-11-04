@@ -284,7 +284,7 @@ class Channel
      * 
      * @return const std::queue<std::string> 
      */
-    const std::queue<std::string> get_history() const;
+    const std::deque<std::string> get_history() const;
 
     /**
      * @brief adds a message to channel history
@@ -369,7 +369,7 @@ class Channel
     std::set<Client*>       _invites;
     std::set<Client*>       _operators;
     std::set<Client*>       _banList;
-    std::queue<std::string> _lastMessages;
+    std::deque<std::string> _lastMessages;
 
     Channel();
 };

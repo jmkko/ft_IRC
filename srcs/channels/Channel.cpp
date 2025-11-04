@@ -292,7 +292,7 @@ struct CompareClientsByName {
     bool operator()(const Client* lhs, const Client* rhs) { return lhs->get_nickname() < rhs->get_nickname(); }
 };
 
-const std::queue<std::string> Channel::get_history() const
+const std::deque<std::string> Channel::get_history() const
 {
     return _lastMessages;
 }
@@ -300,8 +300,8 @@ const std::queue<std::string> Channel::get_history() const
 void Channel::add_message_to_history(const std::string& message)
 {
     if (_lastMessages.size() >= MAX_MESSAGES_HISTORY)
-        _lastMessages.pop();
-    _lastMessages.push(message);
+        _lastMessages.pop_front();
+    _lastMessages.push_back(message);
 }
 
 std::vector<std::string> Channel::get_members_list() const

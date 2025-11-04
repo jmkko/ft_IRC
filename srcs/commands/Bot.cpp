@@ -13,10 +13,10 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <deque>
 #include <fstream>
 #include <netdb.h> // for getaddrinfo(), etc.
 #include <netinet/in.h>
-#include <sstream>
 #include <string>
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -27,7 +27,6 @@ const std::string &cmdName = "BOT";
 
 /************************************************************
  *		🥚 CONSTRUCTORS & DESTRUCTOR
- **
  ************************************************************/
 
 Bot::Bot(std::string &params)
@@ -66,7 +65,17 @@ bool Bot::_check_args(Server &s, Client &c) {
     return false;
   }
 
-  _targetChannels.push_back(s.find_channel_by_name(_targetChannelName));
+  Channel* channel = s.find_channel_by_name(_targetChannelName);
+  _targetChannels.push_back(channel);
+  _channelHistory = "";
+  std::deque<std::string> history = channel->get_history();
+  if (!history.empty())
+  {
+    for (std::deque<std::string>::const_iterator it = history.begin(); it != history.end(); ++it)
+    {
+        _channelHistory.append(*it + "./");
+    }
+  }
 
   return true;
 }
@@ -195,8 +204,8 @@ void Bot::execute(Server &s, Client &c) {
     prompt += "Please fact-check this affirmation : ";
   else if (_subcommand == "!brief")
   {
-    prompt += "Please sump up those messages :" ;
-    
+    prompt += "Please sum up this meeting in a corporate tone, summing which user (introduced by name: before each sentence) had which positions :" + _channelHistory;
+    prompt += "And pay extra attention to following instructions (if any) : ";
   }
   prompt += _prompt;
   std::for_each(prompt.begin(), prompt.end(), remove_invalid_prompt_char);
