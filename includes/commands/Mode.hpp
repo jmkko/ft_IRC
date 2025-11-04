@@ -42,15 +42,14 @@ class Server;
  * - to check a channel modes
  * @remark modifying requires channel operator privilege
  */
-class Mode : public ICommand
-{
-  public:
+class Mode : public ICommand {
+public:
     /**
      * @brief Construct a new Mode object
      *
      * @param params
      */
-    Mode(std::string& params);
+    Mode(std::string &params);
     /**
      * @brief Destroy the Mode object
      *
@@ -77,9 +76,9 @@ class Mode : public ICommand
      * @warning in case of error, can send ERR_NOSUCHCHANNEL, ERR_CHANOPRIVSNEEDED, ERR_KEYSET, ERR_NOSUCHNICK,
      * ERR_USERNOTINCHANNEL
      */
-    void execute(Server& server, Client& client);
+    void execute(Server &server, Client &client);
 
-  private:
+private:
     /**
      * @brief do simple check
      * - with no params
@@ -92,7 +91,7 @@ class Mode : public ICommand
      * @param p the parser
      * @return true if just this case , other false
      */
-    bool _simple_args(Server& server, Client& client, Channel*& channel, Parser& p);
+    bool _simple_args(Server &server, Client &client, Channel *&channel, Parser &p);
     /**
      * @brief use case of mode with flag which have no params
      * like + or - `i`,`t`
@@ -104,10 +103,7 @@ class Mode : public ICommand
      * @param validPositiveModes
      * @param validNegativeModes
      */
-    void _mode_with_noparams(Channel*     channel,
-                             std::string& currentMode,
-                             std::string& validPositiveModes,
-                             std::string& validNegativeModes);
+    void _mode_with_noparams(Channel *channel, std::string &currentMode, std::string &validModes);
     /**
      * @brief use case of +k mode
      * build mode is + mode args
@@ -122,12 +118,8 @@ class Mode : public ICommand
      * @param validPositiveModes
      * @param validModesParams
      */
-    void _mode_k(Channel*     channel,
-                 Parser&      p,
-                 std::string& currentMode,
-                 std::string& currentParam,
-                 std::string& validPositiveModes,
-                 std::string& validModesParams);
+    void _mode_k(Channel *channel, Parser &p, std::string &currentMode, std::string &currentParam,
+                 std::string &validModes, std::string &validModesParams);
     /**
      * @brief use case of +l mode
      * build mode is + mode args
@@ -140,12 +132,8 @@ class Mode : public ICommand
      * @param validPositiveModes
      * @param validModesParams
      */
-    void _mode_l(Channel*     channel,
-                 Parser&      p,
-                 std::string& currentMode,
-                 std::string& currentParam,
-                 std::string& validPositiveModes,
-                 std::string& validModesParams);
+    void _mode_l(Channel *channel, Parser &p, std::string &currentMode, std::string &currentParam,
+                 std::string &validModes, std::string &validModesParams);
     /**
      * @brief use case of +o mode
      * we build the response with validNegativeModes and validNegativeModes
@@ -162,22 +150,16 @@ class Mode : public ICommand
      * @param validNegativeModes
      * @param validModesParams
      */
-    void                    _mode_o(Server&      server,
-                                    Channel*     channel,
-                                    Parser&      p,
-                                    std::string& currentMode,
-                                    std::string& currentParam,
-                                    std::string& validPositiveModes,
-                                    std::string& validNegativeModes,
-                                    std::string& validModesParams);
-    std::string             _channelName;
+    void _mode_o(Server &server, Channel *channel, Parser &p, std::string &currentMode, std::string &currentParam,
+                 std::string &validModes, std::string &validModesParams);
+    std::string _channelName;
     std::queue<std::string> _modeQueue;
     std::queue<std::string> _paramsQueue;
-    std::string             _params;
+    std::string _params;
 
     Mode();
-    Mode(const Mode& other);
-    Mode& operator=(const Mode& other);
+    Mode(const Mode &other);
+    Mode &operator=(const Mode &other);
 };
 
 #endif
