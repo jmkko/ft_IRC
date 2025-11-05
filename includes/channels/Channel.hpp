@@ -13,6 +13,8 @@
 #include "ReplyHandler.hpp"
 #include "reply_codes.hpp"
 
+#include <cstddef>
+#include <queue>
 #include <set>
 #include <string>
 #include <vector>
@@ -278,6 +280,20 @@ class Channel
     size_t get_nb_members() const;
 
     /**
+     * @brief Get the message history
+     * 
+     * @return const std::queue<std::string> 
+     */
+    const std::deque<std::string> get_history() const;
+
+    /**
+     * @brief adds a message to channel history
+     * @details if message number reaches MAX_MESSAGES_HISTORY, the oldest one is removed
+     * @param message 
+     */
+    void    add_message_to_history(const std::string& message);
+
+    /**
      * @brief Get a list of #Client members
      *
      * @return std::set<Client*>
@@ -344,15 +360,16 @@ class Channel
     static bool is_valid_channel_key(const std::string& key);
 
   private:
-    std::string       _name;
-    std::string       _topic;
-    std::string       _key;
-    unsigned short    _mode;
-    int               _userLimit; // -1 if -l not set
-    std::set<Client*> _members;
-    std::set<Client*> _invites;
-    std::set<Client*> _operators;
-    std::set<Client*> _banList;
+    std::string             _name;
+    std::string             _topic;
+    std::string             _key;
+    unsigned short          _mode;
+    int                     _userLimit; // -1 if -l not set
+    std::set<Client*>       _members;
+    std::set<Client*>       _invites;
+    std::set<Client*>       _operators;
+    std::set<Client*>       _banList;
+    std::deque<std::string> _lastMessages;
 
     Channel();
 };

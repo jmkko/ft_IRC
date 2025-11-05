@@ -3,6 +3,7 @@
 #include "Client.hpp"
 #include "Parser.hpp"
 #include "Server.hpp"
+#include "consts.hpp"
 #include "reply_codes.hpp"
 
 /************************************************************
@@ -45,6 +46,7 @@ void Privmsg::execute(Server& server, Client& client)
         if (silent.correct_channel(*it)) {
             Channel* chan = server.find_channel_by_name(*it);
             if (chan && chan->is_member(client)) {
+                chan->add_message_to_history(client.get_nickname() + ":" +_message);
                 chan->broadcast(server, TRANSFER_PRIVMSG, *it, &client, _message);
             } else if (chan) {
                 p.response(ERR_NOTONCHANNEL, *it);

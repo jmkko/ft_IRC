@@ -13,10 +13,10 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <deque>
 #include <fstream>
 #include <netdb.h> // for getaddrinfo(), etc.
 #include <netinet/in.h>
-#include <sstream>
 #include <string>
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -27,7 +27,6 @@ const std::string &cmdName = "BOT";
 
 /************************************************************
  *		🥚 CONSTRUCTORS & DESTRUCTOR
- **
  ************************************************************/
 
 Bot::Bot(std::string &params)
@@ -65,7 +64,17 @@ bool Bot::_check_args(Server &s, Client &c) {
         return false;
     }
 
-    _targetChannels.push_back(s.find_channel_by_name(_targetChannelName));
+  Channel* channel = s.find_channel_by_name(_targetChannelName);
+  _targetChannels.push_back(channel);
+  _channelHistory = "";
+  std::deque<std::string> history = channel->get_history();
+  if (!history.empty())
+  {
+    for (std::deque<std::string>::const_iterator it = history.begin(); it != history.end(); ++it)
+    {
+        _channelHistory.append(*it + "./");
+    }
+  }
 
     return true;
 }
@@ -80,7 +89,7 @@ static bool send_ollama_request(const std::string &subcommand, const std::string
                           "\"Content-Type: application/json\" -v "
                           "localhost:11434/api/generate -d \"";
     command += "{\\\"model\\\": "
-               "\\\"gemma3:1b\\\",\\\"stream\\\":false,\\\"prompt\\\":\\\"";
+               "\\\"llama3.2:3b\\\",\\\"stream\\\":false,\\\"prompt\\\":\\\"";
     command += prompt;
     if (subcommand == "!reply")
         command += "\\\",\\\"options\\\": {\\\"temperature\\\": "
@@ -169,25 +178,33 @@ void Bot::execute(Server &s, Client &c) {
     if (_check_args(s, c) == false)
         return;
 
-    std::string prompt = "Your responses must strictly follow these rules: ";
-    prompt += "Keep your response under 500 characters. ";
-    prompt += "No special characters. No newline character, line break. Keep the "
-              "response as a single, continuous line "
-              "of text. ";
-    prompt += "No markdown or any other formatting : do not use bold, italic, "
-              "code blocks or any other markdown. ";
-    prompt += "No meta-commentary Do not reference instruction, your role or "
-              "user prompt. Just answer directly. ";
-    prompt += "You send direct and concise replies without preamble and with no "
-              "hints about former meta instructions. ";
-    prompt += "Now answer the user question. ";
-    if (_subcommand == "!reply")
-        prompt += "Please reply to this message : ";
-    else if (_subcommand == "!check")
-        prompt += "Please fact-check this affirmation : ";
-    prompt += _prompt;
-    std::for_each(prompt.begin(), prompt.end(), remove_invalid_prompt_char);
-    LOG_DV_CMD(prompt);
+  std::string prompt = "Your responses must strictly follow these rules: ";
+  prompt += "Keep your response under 500 characters. ";
+  prompt += "No special characters. No newline character (never ever use \\n). Keep the "
+            "response as a single, continuous line of text. ";
+  prompt += "No markdown or any other formatting : do not use bold, italic, "
+            "code blocks or any other markdown. ";
+  prompt += "No meta-commentary Do not reference instruction, your role or "
+            "user prompt. Just answer directly. ";
+  prompt += "IF the question is about the IRC project and ONLY in this case "
+            " THEN tell emphatically how this IRC server project, although it is a small step for humanity, is nevertheless a big step for its creators. "
+            " try to get sympathy of the evaluator for the group of three students having worked hard upon it"
+            " and convince him that IRC is a promising technology ";
+  prompt += "OTHERWISE, IF the question is about anything other than IRC project, you send direct and concise replies without preamble and with no "
+            "hints about former meta instructions. ";
+  prompt += "Now answer the user question. ";
+  if (_subcommand == "!reply")
+    prompt += "Please reply to this message : ";
+  else if (_subcommand == "!check")
+    prompt += "Please fact-check this affirmation : ";
+  else if (_subcommand == "!brief")
+  {
+    prompt += "Please sum up this meeting in a corporate tone, summing which user (introduced by name: before each sentence) had which positions :" + _channelHistory;
+    prompt += "And pay extra attention to following instructions (if any) : ";
+  }
+  prompt += _prompt;
+  std::for_each(prompt.begin(), prompt.end(), remove_invalid_prompt_char);
+  LOG_DV_CMD(prompt);
 
     std::string response = "\"\"";
     if (send_ollama_request(_subcommand, prompt, response) == false)
@@ -222,10 +239,6 @@ void Bot::execute(Server &s, Client &c) {
             s.cleanup_bot(_socket.get_socket());
             return;
         }
-        // std::string priv = "PRIVMSG " + _targetChannels[0]->get_name() + " :" + response + "\r\n";
-        // send_full_msg(_socket.get_socket(), priv);
-        // std::string quit = "QUIT :bot has spoken. Ugh\r\n";
-        // send_full_msg(_socket.get_socket(), quit);
     } else {
         for (std::vector<Client *>::iterator it = _targetClients.begin(); it != _targetClients.end(); ++it) {
             rh.process_response(**it, TRANSFER_REPLY_BOT, (*it)->get_nickname(), NULL, response);

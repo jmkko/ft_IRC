@@ -1,0 +1,342 @@
+*{
+	background: none;
+	color: rgb(24, 30, 115);
+	font-size: 16pt;
+    background: transparent;
+	padding: 0;
+  	margin: 0; /* reset spacing instead of forcing center */
+}
+
+html, body {  
+  height: auto;
+  min-height: 100vh;
+  position: relative;
+  border-top: 1px solid transparent; /* Prevents margin collapse */
+}
+
+h1 {
+	padding: 1rem 0; 
+	font-size: 2.2rem;
+	font-weight:bolder;
+	text-decoration: underline overline;
+}
+h2 {
+	font-size: 1.8rem;
+	font-weight:bolder;
+	text-decoration: underline;
+}
+
+p {
+	font-size: 1.2rem;;
+	padding: 0 0 0.5rem 0;
+}
+
+h3 {
+	font-size: 1.5rem;
+	text-decoration: underline;
+}
+main {
+  position: relative;
+  margin: 0 auto 0 auto;
+  background-image: url('images/wrinkled-paper-white.jpg');
+  z-index: 1;  /* in front */
+  padding: 150px 0;
+  max-width: 1500px;
+}
+
+article {
+	padding: 1rem;
+	text-align: center;
+	background-color: transparent;
+}
+
+article #paypal-button-container {
+  margin: 1rem auto;
+  display: inline-block;
+}
+
+section {
+/*	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6); */
+	display: flex;
+	width: 100%;
+	margin: 40px 0;
+	overflow: hidden;
+	align-items: flex-start;
+	align-items: stretch; /* <--- ensures image fills full height */
+}
+
+.left .text {
+  text-align: left; /* override center alignment */
+  padding-right: 1rem;
+}
+
+.right .text {
+  text-align: right; /* override center alignment */
+  padding-left: 1rem;
+}
+
+section img {
+	width: 90%;
+	mix-blend-mode: multiply;
+}
+
+section .image {
+  width: 33.33%;
+  border: 5px;
+  border-image: url('images/wrinkled-paper-white.jpg');
+  background-size: cover;      /* zoom & crop */
+  background-position: center; /* center image */
+  background-repeat: no-repeat;
+}
+
+section .p5cnv {
+	width: 33.33%;
+	height: auto;
+	display: flex;
+	align-items: stretch;
+}
+
+section .text{
+  width: 66%;
+  padding: 0 1rem;
+}
+
+section .text a {
+  display: block;
+  width: fit-content;
+  margin: 0 auto 0 auto; /* top margin + horizontal centering */
+}
+
+#header {
+	mix-blend-mode: multiply;
+    position: relative; /* This is crucial for z-index to work */
+	z-index: 4;
+}
+
+#header img {
+    display: block; /* Removes any spacing issues */
+	width: 100%;
+}
+
+#nav::before {
+    content: '';
+    position: absolute;
+    top: -580px;		/* Overflow upward */
+    left: 0; 			/* Overflow leftward */
+    right: 0; 			/* Overflow rightward */
+    bottom: -150px; 	/* Overflow downward */
+    background-image: url('images/header_web.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: -1; /* Behind the nav content */
+}
+
+#nav {
+	display: flex;
+	position: -webkit-sticky;
+	position: sticky;
+	top: 0; 
+	height: 50px;
+	color: white;
+	width:100%;
+	justify-content: center;
+	align-items: center;
+	overflow: visible;
+	z-index:3;
+}
+
+#nav ul {
+	width: 100%;
+	display: flex;
+/*	flex-wrap: wrap;             /* allow wrapping */
+    list-style: none; /* optional: removes bullet points */
+	align-items: center;
+	/*justify-content: center; /* centers items horizontally */
+	justify-content: space-evenly; 
+    /*gap: 2rem; /* optional spacing between items */
+	box-sizing: border-box;
+  overflow: visible;
+}
+
+#background {
+  position: absolute;
+  top: 0; left: 0;
+  min-height: 100vh;
+  z-index: -1; /* optional: puts it behind other elements */
+  width: 100%;
+  height: 100%;
+  background-image: url('images/wrinkled-paper-white.jpg');
+  background-size: cover;      /* zoom & crop */
+  background-position: center; /* center image */
+  background-repeat: no-repeat;
+}
+
+#sketch-container {
+    display: flex;           /* Enable flexbox */
+    justify-content: center; /* Center horizontally */
+    align-items: center;     /* Center vertically */
+    width: 200px;
+    height: 100vh;           /* Full viewport height */
+    padding: 0;              /* Remove padding (auto isn't valid) */
+	margin: 0 auto;
+}
+
+#deskboard {
+	padding: 0;
+	margin: 0; 
+	overflow: hidden;
+}
+
+
+
+.collection-menu {
+  display: flex;
+  justify-content: space-evenly;
+  list-style: none;
+  background: #f9f9f9;
+  border-top: 1px solid #ddd;
+  align-items: stretch;
+}
+
+.collection-menu li {
+	display:flex;
+	cursor: pointer;        /* show hand on hover */
+	padding: 10px;
+	flex-direction: column;       /* Stack text vertically */
+	align-items: center;          /* Vertical alignment */
+	justify-content: center;      /* Horizontal alignment */
+	flex: 1;
+	background: rgba(255, 255, 255, 0.1);
+	transition: background 0.3s, transform 0.2s;
+}
+
+.collection-menu li:hover {
+  background: rgba(0, 0, 0, 0.3);
+  transform: scale(1.05);
+}
+
+.gallery {
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+	display: grid;
+	z-index: 1;
+	grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+	gap: 0.2rem 0.2rem;
+	background-color: rgba(255,255,255,0.9);
+	  background-image: url('images/wrinkled-paper-white.jpg');
+}
+
+.item {
+  position: relative; /* Add this - creates positioning context */
+  display: block; /* ensure block-level */
+  overflow: hidden; /* prevents any overflow */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+}
+
+/* Iamage and p5 canvas inside items */
+.item .p5cnv {
+  aspect-ratio: 1 / 1.414; /* A4 aspect ratio */
+  width: 100%;
+  object-fit: cover;
+  /*border-radius: 10px;*/
+  /*box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);*/
+  transition: transform 0.3s;
+  overflow: hidden;
+}
+
+.item img {
+  aspect-ratio: 1 / 1.4142; /* A4 aspect ratio */
+  width: 100%;
+  height: 100%; /* Add this to fill full height */
+  object-fit: cover;
+  transition: transform 0.3s;
+}
+.item .caption {
+	display: none;
+}
+/*
+.item .caption {
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 14px;
+  z-index: 0; 
+  opacity: 0;
+  top: 50%; left: 50%; transform: translate(-50%, -50%);
+}*/
+
+.item img:hover {
+  transform: scale(1.20);
+}
+
+.lightbox {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.lightbox.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.lightbox-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 90%;
+  max-height: 90%;
+}
+
+.lightbox-content img {
+  max-width: 100%;
+  max-height: 80vh;
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.5);
+  border: 4px solid white;
+}
+
+.lightbox-content .caption {
+  margin-top: 0.5rem;
+  color: #fff;
+  font-size: 1rem;
+  text-align: center;
+  max-width: 100%;
+}
+
+.lightbox-close {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  font-size: 2rem;
+  background: none;
+  color: white;
+  border: none;
+  cursor: pointer;
+  z-index: 99;
+}
+.uneven-borderBis {
+  clip-path: polygon(
+    0% 0%,  /* Top-left */
+    10% 0%,  /* Top */
+    90% 5%,  /* Top-right */
+    100% 15%, 
+    95% 100%, /* Bottom-right */
+    5% 90%   /* Bottom-left */
+  );
+  filter: drop-shadow(0 0 5px rgba(0,0,0,0.5));
+  box-shadow:2px solid black;
+  border: 2px solid black;
+}

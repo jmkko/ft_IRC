@@ -6,7 +6,7 @@
 /*   By: fpetit <fpetit@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/22 10:25:15 by jhervoch          #+#    #+#             */
-/*   Updated: 2025/10/24 16:15:32 by fpetit           ###   ########.fr       */
+/*   Updated: 2025/11/04 15:29:30 by fpetit           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -241,7 +241,7 @@ Parser& Parser::is_valid_bot_subcommand(const std::string& subcommand, const std
     bool passedCheck = false;
     if (_isValidCommand) {
         this->is_not_empty_arg(subcommand, cmdName);
-        std::string availableSubcommands[NB_AVAILABLE_BOT_SUBCMD] = {"!reply", "!check"};
+        std::string availableSubcommands[NB_AVAILABLE_BOT_SUBCMD] = {"!reply", "!check", "!brief"};
         for (int i = 0; i < NB_AVAILABLE_BOT_SUBCMD; ++i) {
             if (availableSubcommands[i] == subcommand)
                 passedCheck = true;
