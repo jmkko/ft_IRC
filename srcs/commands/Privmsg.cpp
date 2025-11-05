@@ -1,6 +1,7 @@
 #include "Privmsg.hpp"
 
 #include "Client.hpp"
+#include "LogManager.hpp"
 #include "Parser.hpp"
 #include "Server.hpp"
 #include "consts.hpp"
@@ -16,7 +17,13 @@ Privmsg::Privmsg(std::string& params)
 
     std::string targetList = parser.format_parameter(params, NULL);
     _targets               = parser.to_vector(targetList);
-    _message               = parser.format_parameter(params, NULL);
+    _message               = parser.from_remaining_args(params);
+    LOG_DV_CMD(_message);
+    if (!_message.empty() && _message[0] == ':')
+    {
+        _message.replace(0, 1, "");
+    }
+    LOG_DV_CMD(_message);
 }
 
 Privmsg::~Privmsg(void) {}

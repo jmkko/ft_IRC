@@ -231,7 +231,7 @@ void Bot::execute(Server &s, Client &c) {
 
     if (!_targetChannels.empty()) {
         _targetChannels[0]->broadcast_bot(s, TRANSFER_PROMPT_BOT, _targetChannels[0]->get_name(), NULL,
-                                          _subcommand.substr(1) + " " + _prompt);
+                                          "(" + _subcommand.substr(1) + ") " + _prompt);
         s.update_bot_state(_socket.get_socket(), _targetChannels[0], _subcommand, response, false);
         std::string joinMsg = "JOIN " + _targetChannels[0]->get_name() + "\r\n";
         if (!send_full_msg(_socket.get_socket(), joinMsg)) {

@@ -75,6 +75,14 @@ class Parser
     std::string from_trailing(std::string& params);
 
     /**
+     * @brief get remaining args as a string
+     * 
+     * @param params 
+     * @return std::string 
+     */
+    std::string from_remaining_args(std::string& params);
+
+    /**
      * @brief converts args to a vector of string
      *
      * @param params
