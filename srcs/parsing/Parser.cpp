@@ -6,7 +6,7 @@
 /*   By: fpetit <fpetit@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/22 10:25:15 by jhervoch          #+#    #+#             */
-/*   Updated: 2025/11/04 15:29:30 by fpetit           ###   ########.fr       */
+/*   Updated: 2025/11/05 14:27:26 by fpetit           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -337,6 +337,24 @@ std::string Parser::from_arg(std::string& params)
 
     return argument;
 }
+
+std::string Parser::from_remaining_args(std::string& params)
+{
+    std::string    words;
+    std::string    word;
+    std::istringstream iss(params);
+
+    LOG_DV_CMD(params);
+    while (iss >> word)
+    {
+        words += word;
+        words += " ";
+    }
+    words.erase(words.size() - 1, words.size());
+    params.erase(0, params.size());
+    return words;
+}
+
 
 std::string Parser::from_trailing(std::string& params)
 {
