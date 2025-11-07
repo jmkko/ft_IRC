@@ -42,7 +42,6 @@ void Part::execute(Server &server, Client &client) {
             channel->broadcast(server, TRANSFER_PART, _chanNames[i], &client, _message);
             p.response(TRANSFER_PART, _chanNames[i], _message);
             channel->remove_member(client);
-            channel->remove_operator(client);
         }
     }
 }

@@ -175,6 +175,8 @@ class Channel
      * @param client
      * @return true
      * @return false
+     * @pre return from erase is ignored in case client is not invited, so it safe to use in that case. 
+     * Yet still better if the caller function has checked that client is invited
      */
     bool remove_from_invited_list(Client& client);
 
@@ -216,6 +218,8 @@ class Channel
      *
      * @param client
      * @return false if member was not in the channel
+     * @pre return from erase is ignored in case client is not an member, so it safe to use in that case. 
+     * Yet still better if the caller function has checked that client is member
      */
     bool remove_member(Client& client);
 
@@ -232,7 +236,8 @@ class Channel
      * @brief removes op status from client
      *
      * @param client
-     * @pre caller function should have checked that client is operator
+     * @pre return from erase is ignored in case client is not an operator, so it safe to use in that case. 
+     * Yet still better if the caller function has checked that client is operator
      */
     void remove_operator(Client& client);
 
@@ -347,16 +352,17 @@ class Channel
      * @return false otherwise
      */
     static bool is_valid_channel_name(const std::string& name);
+
     /**
- * @brief
- * @details cf [grammar](https://datatracker.ietf.org/doc/html/rfc2812#section-2.3.1)
- * `key        =  1*23( %x01-05 / %x07-08 / %x0C / %x0E-1F / %x21-7F )
-              ; any 7-bit US_ASCII character,
-              ; except NUL, CR, LF, FF, h/v TABs, and " "`
- * @param key
- * @return true is key is valid according to RFC grammar
- * @return false otherwise
- */
+    * @brief
+    * @details cf [grammar](https://datatracker.ietf.org/doc/html/rfc2812#section-2.3.1)
+    * `key        =  1*23( %x01-05 / %x07-08 / %x0C / %x0E-1F / %x21-7F )
+                ; any 7-bit US_ASCII character,
+                ; except NUL, CR, LF, FF, h/v TABs, and " "`
+    * @param key
+    * @return true is key is valid according to RFC grammar
+    * @return false otherwise
+    */
     static bool is_valid_channel_key(const std::string& key);
 
   private:
