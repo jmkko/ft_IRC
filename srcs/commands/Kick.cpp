@@ -50,17 +50,18 @@ void Kick::_kick_users_from_chan(std::string& chanName, std::vector<std::string>
             p.response(target, p.get_client(), TRANSFER_KICK, channel->get_name() + " " + target->get_nickname(), _msg);
             channel->broadcast(*server, TRANSFER_KICK, channel->get_name() + " " + target->get_nickname(), p.get_client(), _msg);
             p.response(p.get_client(), TRANSFER_KICK, channel->get_name() + " " + target->get_nickname(), _msg);
-			if (channel->get_nb_members() == 0) {
-				std::map<std::string, Channel*>::iterator it = server->channels.find(channel->get_name());
-				if (it != server->channels.end()) {
-					server->channels.erase(it);
-					delete channel;
-				}
-			}
+
         } else {
             p.response(ERR_USERNOTINCHANNEL, channel->get_name());
         }
     }
+	if (channel->get_nb_members() == 0) {
+		std::map<std::string, Channel*>::iterator it = server->channels.find(channel->get_name());
+		if (it != server->channels.end()) {
+			server->channels.erase(it);
+			delete channel;
+		}
+	}
 }
 
 void Kick::execute(Server& server, Client& client)
