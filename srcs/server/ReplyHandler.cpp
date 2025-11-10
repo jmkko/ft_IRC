@@ -81,7 +81,7 @@ static std::string generate_non_numerical_response(
     case TRANSFER_INVITE:
         return (get_user_id_of(*sender) + "INVITE" + separatedParams);
     case TRANSFER_QUIT:
-        return (get_user_id_of(*sender) + "QUIT" + separatedParams);
+        return (get_user_id_of(*sender) + "QUIT" + separatedParams + trailingMessage);
     case TRANSFER_MODE:
         return (get_user_id_of(*sender) + "MODE" + separatedParams);
     case TRANSFER_TOPIC:

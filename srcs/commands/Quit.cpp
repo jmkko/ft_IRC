@@ -30,13 +30,13 @@ void Quit::execute(Server& server, Client& client)
     std::string trailingMsg = _quitMsg;
     if (trailingMsg.empty())
         trailingMsg = ircConfig.trailing(TRANSFER_QUIT);
-    client.broadcast_to_all_channels(server, TRANSFER_QUIT, "", trailingMsg);
+    client.broadcast_to_all_channels(server, TRANSFER_QUIT, trailingMsg);
     server.add_events_of(client, 0);
 	
 	for (std::map<std::string, Channel*>::iterator it = server.channels.begin(); it != server.channels.end(); it++) {
 		Channel* channel = it->second;
 		if (channel->is_member(client)) {
-			std::string chanName = channel->get_name();
+			std::string chanName = it->first;
 			Part cmd(chanName);
 			cmd.execute(server, client);
 		}
