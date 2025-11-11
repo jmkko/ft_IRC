@@ -266,6 +266,8 @@ bool Channel::remove_from_invited_list(Client& client)
 bool Channel::remove_member(Client& client)
 {
     bool member = is_member(client);
+    if (is_operator(client) && _operators.size() > 1)
+        remove_operator(client);
     _members.erase(&client);
     return (member);
 }
