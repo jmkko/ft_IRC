@@ -13,14 +13,13 @@
  *             🥚 CONSTRUCTORS & DESTRUCTOR                 *
  ************************************************************/
 
-ReplyHandler::ReplyHandler(Server* server) : _server(server) {}
+ReplyHandler::ReplyHandler(Server *server) : _server(server) {}
 
 /*************************************************************
  *                   🛠️ FUNCTIONS                            *
  *************************************************************/
 
-static std::string get_user_id_of(Client& client)
-{
+static std::string get_user_id_of(Client &client) {
     return ":" + client.get_nickname() + "!" + client.get_user_name() + "@" + ircConfig.get_name() + " ";
 }
 
@@ -32,14 +31,13 @@ static std::string get_user_id_of(Client& client)
  * @param parameters message corresponding of the code
  * @return formatted code response
  */
-static std::string
-generate_code_response(Client& client, ReplyCode code, const std::string& parameters, const std::string& trailing)
-{
-    std::string nick          = client.get_nickname().empty() ? "*" : client.get_nickname();
+static std::string generate_code_response(Client &client, ReplyCode code, const std::string &parameters,
+                                          const std::string &trailing) {
+    std::string nick = client.get_nickname().empty() ? "*" : client.get_nickname();
     std::string numericPrefix = ":" + ircConfig.get_name() + " " + Utils::code_to_str(code) + " " + nick;
 
-    std::string        trailingMessage, separatedParams;
-    const std::string& defaultTrailing = ircConfig.trailing(code);
+    std::string trailingMessage, separatedParams;
+    const std::string &defaultTrailing = ircConfig.trailing(code);
 
     if (!trailing.empty()) {
         trailingMessage = " :" + trailing;
@@ -54,9 +52,8 @@ generate_code_response(Client& client, ReplyCode code, const std::string& parame
     return (numericPrefix + separatedParams + trailingMessage);
 }
 
-static std::string generate_non_numerical_response(
-    Client& client, ReplyCode code, const std::string& parameters, Client* sender, const std::string& trailing = "")
-{
+static std::string generate_non_numerical_response(Client &client, ReplyCode code, const std::string &parameters,
+                                                   Client *sender, const std::string &trailing = "") {
     if (!sender) {
         sender = &client;
     }
@@ -81,7 +78,7 @@ static std::string generate_non_numerical_response(
     case TRANSFER_INVITE:
         return (get_user_id_of(*sender) + "INVITE" + separatedParams);
     case TRANSFER_QUIT:
-        return (get_user_id_of(*sender) + "QUIT" + separatedParams);
+        return (get_user_id_of(*sender) + "QUIT" + separatedParams + trailingMessage);
     case TRANSFER_MODE:
         return (get_user_id_of(*sender) + "MODE" + separatedParams);
     case TRANSFER_TOPIC:
@@ -99,14 +96,12 @@ static std::string generate_non_numerical_response(
     }
 }
 
-static bool is_numerical_response(ReplyCode code)
-{
+static bool is_numerical_response(ReplyCode code) {
     return (code < LOWER_CUSTOM_CODE || (code > UPPER_CUSTOM_CODE && code < LOWER_CUSTOM_NONNUMERICAL_CODE));
 }
 
-int ReplyHandler::process_response(
-    Client& client, ReplyCode code, const std::string& parameters, Client* sender, const std::string& trailing)
-{
+int ReplyHandler::process_response(Client &client, ReplyCode code, const std::string &parameters, Client *sender,
+                                   const std::string &trailing) {
     LOG_DT_CMD("processing", ircConfig.str(code));
     std::string response = "";
     if (is_numerical_response(code)) {
@@ -121,19 +116,15 @@ int ReplyHandler::process_response(
     return (code);
 }
 
-void ReplyHandler::process_welcome(Server& server, Client& client)
-{
-    process_response(client,
-                     RPL_WELCOME,
-                     "",
-                     NULL,
-                     ircConfig.trailing(RPL_WELCOME) + " " + client.get_nickname() + "!" + client.get_user_name() + "@localhost");
+void ReplyHandler::process_welcome(Server &server, Client &client) {
+    process_response(client, RPL_WELCOME, "", NULL,
+                     ircConfig.trailing(RPL_WELCOME) + " " + client.get_nickname() + "!" + client.get_user_name() +
+                         "@localhost");
     process_response(client, RPL_YOURHOST, "", NULL, ircConfig.trailing(RPL_YOURHOST) + " " + server.get_name());
     process_response(client, RPL_CREATED, "", NULL, ircConfig.trailing(RPL_CREATED));
     process_response(client, RPL_MYINFO, "", NULL, server.get_name() + " 1.0  0 0");
 }
-void ReplyHandler::_send_reply(Client& client, const std::string& msg)
-{
+void ReplyHandler::_send_reply(Client &client, const std::string &msg) {
     client.append_to_send_buffer(msg + "\r\n");
     _server->add_events_of(client, POLLOUT);
 }
@@ -142,8 +133,7 @@ void ReplyHandler::_send_reply(Client& client, const std::string& msg)
  *               👁️‍ GETTERS and SETTERS                      *
  *************************************************************/
 
-ReplyHandler& ReplyHandler::get_instance(Server* s)
-{
+ReplyHandler &ReplyHandler::get_instance(Server *s) {
     static ReplyHandler instance(s);
     return instance;
 }

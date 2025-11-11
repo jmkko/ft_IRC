@@ -147,12 +147,18 @@ void Mode::_mode_k(Channel *channel, Parser &p, std::string &currentMode, std::s
     size_t invalidChar = 0;
     if (!currentParam.empty())
         invalidChar = std::count_if(currentParam.begin(), currentParam.end(), Utils::is_invalid_char_key);
-    if (currentMode[0] == '+' && !currentParam.empty() && !invalidChar) {
-        if (channel->get_mode() & char_to_mode(currentMode[1])) {
+    if (!currentParam.empty() && !invalidChar) {
+        if (currentMode[0] == '+' && (channel->get_mode() & char_to_mode(currentMode[1])))
             p.response(ERR_KEYSET, channel->get_name());
-        } else {
-            channel->add_mode(char_to_mode(currentMode[1]));
-            channel->set_key(currentParam);
+        else if (currentMode[0] == '-' && channel->get_key() != currentParam)
+            p.response(ERR_NEEDMOREPARAMS, "MODE");
+        else {
+            if (currentMode[0] == '-' && channel->get_key() == currentParam)
+                channel->remove_mode(char_to_mode(currentMode[1]));
+            else {
+                channel->add_mode(char_to_mode(currentMode[1]));
+                channel->set_key(currentParam);
+            }
             validModes += currentMode;
             validModesParams += " " + currentParam;
         }
@@ -216,6 +222,7 @@ void Mode::execute(Server &server, Client &client) {
     std::string validNegativeModes = "-";
     std::string validModes = "";
     std::string validModesParams = "";
+    int nbModeWithParam = 0;
     while (!_modeQueue.empty()) {
         std::string currentMode = _modeQueue.front();
         _modeQueue.pop();
@@ -232,7 +239,7 @@ void Mode::execute(Server &server, Client &client) {
             continue;
         }
         // mode need params but there isn't
-        if ((currentMode == "+k" || currentMode == "+l" || currentMode[1] == 'o') && _paramsQueue.empty()) {
+        if ((Utils::is_char_of(currentMode[1], std::string(VALID_CHAN_MODE_PARAM))) && _paramsQueue.empty()) {
             p.response(ERR_NEEDMOREPARAMS, "MODE");
             continue;
         }
@@ -246,10 +253,15 @@ void Mode::execute(Server &server, Client &client) {
             LOG_d_CMD("MODE with param");
             LOG_DV_CMD(currentMode);
             // negative which don't need param
-            if (currentMode[0] == '-' && (currentMode[1] == 'k' || currentMode[1] == 'l')) {
-                LOG_d_CMD("Negative k or l");
+            if (currentMode[0] == '-' && currentMode[1] == 'l') {
+                LOG_d_CMD("Negative l");
                 channel->remove_mode(char_to_mode(currentMode[1]));
                 validModes += currentMode;
+                continue;
+            }
+            nbModeWithParam++;
+            if (nbModeWithParam > 3) {
+                p.response(CUSTOMERR_TOOMANYMODES, "MODE");
                 continue;
             }
             std::string currentParam = _paramsQueue.front();

@@ -41,7 +41,15 @@ void Part::execute(Server &server, Client &client) {
         } else {
             channel->broadcast(server, TRANSFER_PART, _chanNames[i], &client, _message);
             p.response(TRANSFER_PART, _chanNames[i], _message);
-            channel->remove_member(client);
+            // channel->remove_member(client);
+            client.remove_joined_channel(*channel);
+            if (channel->get_nb_members() == 0) {
+                std::map<std::string, Channel *>::iterator it = server.channels.find(channel->get_name());
+                if (it != server.channels.end()) {
+                    server.channels.erase(it);
+                    delete channel;
+                }
+            }
         }
     }
 }
