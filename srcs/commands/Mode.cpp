@@ -1,6 +1,5 @@
-#include "Mode.hpp"
-
 #include "LogManager.hpp"
+#include "Mode.hpp"
 #include "Parser.hpp"
 #include "ReplyHandler.hpp"
 #include "Server.hpp"

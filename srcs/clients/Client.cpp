@@ -1,6 +1,5 @@
-#include "Client.hpp"
-
 #include "Channel.hpp"
+#include "Client.hpp"
 #include "Config.hpp"
 #include "LogManager.hpp"
 #include "Part.hpp"
@@ -109,7 +108,7 @@ void Client::remove_from_all_channels()
 	}
 	_joinedChannels.clear();
 }
-void 				Client::part_all_channels(Server& server, Client& client)
+void Client::part_all_channels(Server& server, Client& client)
 {
         ReplyHandler &rh = ReplyHandler::get_instance(&server);
         for (std::map<std::string, Channel*>::iterator it = _joinedChannels.begin(); it != _joinedChannels.end(); ++it)
@@ -129,7 +128,7 @@ void 				Client::part_all_channels(Server& server, Client& client)
 	_joinedChannels.clear();
 }
 
-void               Client::set_send_buffer(const std::string& buffer) { _sendBuffer = buffer; }
+void Client::set_send_buffer(const std::string& buffer) { _sendBuffer = buffer; }
 
 Channel* Client::get_channel(const std::string& name) {
 
@@ -144,8 +143,8 @@ void	Client::broadcast_to_all_channels(Server& server, ReplyCode code, const std
 {
     LOG_DT_CMD("nb joined channels", _joinedChannels.size());
     std::set<Client*> target;
-	for (std::map<std::string, Channel*>::iterator it = _joinedChannels.begin(); it != _joinedChannels.end(); it++) {
-		if (it->second) {
+    for (std::map<std::string, Channel*>::iterator it = _joinedChannels.begin(); it != _joinedChannels.end(); it++) {
+	if (it->second) {
             LOG_DT_CMD("to",  it->second->get_name());
 	    Channel* channel = it->second;
 	    std::set<Client*> chanMembers = channel->get_members();
@@ -153,7 +152,7 @@ void	Client::broadcast_to_all_channels(Server& server, ReplyCode code, const std
 	      target.insert(*itc);
 	    }
 	}
-	}
+    }
     ReplyHandler &rh = ReplyHandler::get_instance(&server);
     LOG_DV_CMD(target.size());
     for (std::set<Client *>::iterator it = target.begin(); it != target.end(); ++it) {
