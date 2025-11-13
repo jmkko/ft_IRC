@@ -265,6 +265,8 @@ bool Channel::remove_from_invited_list(Client& client)
 bool Channel::remove_member(Client& client)
 {
     bool member = is_member(client);
+    if (is_operator(client) && _operators.size() > 1)
+        remove_operator(client);
     _members.erase(&client);
     return (member);
 }
@@ -290,6 +292,15 @@ std::set<Client*> Channel::get_members() const { return _members; }
 struct CompareClientsByName {
     bool operator()(const Client* lhs, const Client* rhs) { return lhs->get_nickname() < rhs->get_nickname(); }
 };
+
+const std::deque<std::string> Channel::get_history() const { return _lastMessages; }
+
+void Channel::add_message_to_history(const std::string& message)
+{
+    if (_lastMessages.size() >= MAX_MESSAGES_HISTORY)
+        _lastMessages.pop_front();
+    _lastMessages.push_back(message);
+}
 
 std::vector<std::string> Channel::get_members_list() const
 {

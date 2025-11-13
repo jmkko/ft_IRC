@@ -132,10 +132,24 @@ Channel* Client::get_channel(const std::string& name) {
 void	Client::broadcast_to_all_channels(Server& server, ReplyCode code, const std::string& params, const std::string& trailing)
 {
     LOG_DT_CMD("nb joined channels", _joinedChannels.size());
+    std::set<Client*> target;
 	for (std::map<std::string, Channel*>::iterator it = _joinedChannels.begin(); it != _joinedChannels.end(); it++) {
 		if (it->second) {
             LOG_DT_CMD("to",  it->second->get_name());
-			it->second->broadcast(server, code, params, this, trailing);
-		}
+	    Channel* channel = it->second;
+	    std::set<Client*> chanMembers = channel->get_members();
+	    for (std::set<Client*>::iterator itc = chanMembers.begin(); itc != chanMembers.end(); itc++){
+	      target.insert(*itc);
+	    }
 	}
+	}
+    ReplyHandler &rh = ReplyHandler::get_instance(&server);
+    LOG_DV_CMD(target.size());
+    for (std::set<Client *>::iterator it = target.begin(); it != target.end(); ++it) {
+        Client *recipient = *it;
+        if (recipient == this)
+            continue;
+        LOG_D_SERVER(recipient->get_nickname() + " received a broadcast from " + _nickName, ircConfig.str(code));
+        rh.process_response(*recipient, code, params, this, trailing);
+    }
 }

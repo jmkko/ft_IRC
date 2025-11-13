@@ -104,10 +104,7 @@ class Mode : public ICommand
      * @param validPositiveModes
      * @param validNegativeModes
      */
-    void _mode_with_noparams(Channel*     channel,
-                             std::string& currentMode,
-                             std::string& validPositiveModes,
-                             std::string& validNegativeModes);
+    void _mode_with_noparams(Channel* channel, std::string& currentMode, std::string& validModes);
     /**
      * @brief use case of +k mode
      * build mode is + mode args
@@ -126,7 +123,7 @@ class Mode : public ICommand
                  Parser&      p,
                  std::string& currentMode,
                  std::string& currentParam,
-                 std::string& validPositiveModes,
+                 std::string& validModes,
                  std::string& validModesParams);
     /**
      * @brief use case of +l mode
@@ -144,7 +141,7 @@ class Mode : public ICommand
                  Parser&      p,
                  std::string& currentMode,
                  std::string& currentParam,
-                 std::string& validPositiveModes,
+                 std::string& validModes,
                  std::string& validModesParams);
     /**
      * @brief use case of +o mode
@@ -167,8 +164,7 @@ class Mode : public ICommand
                                     Parser&      p,
                                     std::string& currentMode,
                                     std::string& currentParam,
-                                    std::string& validPositiveModes,
-                                    std::string& validNegativeModes,
+                                    std::string& validModes,
                                     std::string& validModesParams);
     std::string             _channelName;
     std::queue<std::string> _modeQueue;

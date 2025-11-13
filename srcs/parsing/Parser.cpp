@@ -241,7 +241,7 @@ Parser& Parser::is_valid_bot_subcommand(const std::string& subcommand, const std
     bool passedCheck = false;
     if (_isValidCommand) {
         this->is_not_empty_arg(subcommand, cmdName);
-        std::string availableSubcommands[NB_AVAILABLE_BOT_SUBCMD] = {"!reply", "!check"};
+        std::string availableSubcommands[NB_AVAILABLE_BOT_SUBCMD] = {"!reply", "!check", "!brief"};
         for (int i = 0; i < NB_AVAILABLE_BOT_SUBCMD; ++i) {
             if (availableSubcommands[i] == subcommand)
                 passedCheck = true;
@@ -336,6 +336,22 @@ std::string Parser::from_arg(std::string& params)
     params.erase(0, argument.size());
 
     return argument;
+}
+
+std::string Parser::from_remaining_args(std::string& params)
+{
+    std::string        words;
+    std::string        word;
+    std::istringstream iss(params);
+
+    LOG_DV_CMD(params);
+    while (iss >> word) {
+        words += word;
+        words += " ";
+    }
+    words.erase(words.size() - 1, words.size());
+    params.erase(0, params.size());
+    return words;
 }
 
 std::string Parser::from_trailing(std::string& params)

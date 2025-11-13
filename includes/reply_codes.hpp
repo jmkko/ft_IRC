@@ -3,9 +3,9 @@
  * @brief Numerical reply codes
  * @version 0.1
  * @date 2025-10-25
- * 
+ *
  * @copyright Copyright (c) 2025
- * 
+ *
  */
 #ifndef REPLY_CODES_HPP
 #define REPLY_CODES_HPP
@@ -37,6 +37,7 @@ enum ReplyCode {
     CUSTOMRPL_BOT = 600,
     //////////////////////  numerical custom errors
     CUSTOMERR_WRONG_FORMAT = 705,
+    CUSTOMERR_TOOMANYMODES = 706,
 
     ////////////////////// RFC REPLIES (with code defined by RFC)
     RPL_NONE            = 300, // no answer

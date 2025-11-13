@@ -16,6 +16,7 @@ const Config ircConfigTest(SERVER_CONF_FILE_FOR_TEST);
  ************************************************************/
 
 Config::Config(const std::string& fileName) :
+    exist(true),
     _name(SERVER_NAME),
     _psswd(DEFAULT_PASSWORD),
     _port(DEFAULT_PORT),
@@ -35,7 +36,7 @@ Config::Config(const std::string& fileName) :
 #endif
     if (!_parse_config_file(actualFileName)) {
         LOG_SERVER.warning("CONF FILE not loaded!");
-        exit(1);
+        exist = false;
     }
     if (_motd.empty()) {
         LOG_SERVER.warning("MOTD is empty!");

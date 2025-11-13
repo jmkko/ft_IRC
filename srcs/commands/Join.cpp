@@ -86,10 +86,7 @@ void Join::execute(Server& server, Client& client)
             channel->remove_from_invited_list(client);
             if (channel->get_nb_members() == 1) {
                 channel->make_operator(client);
-                p.response(RPL_CHANNELMODEIS, chanName + " +o ");
-                // rh.process_response(client, TRANSFER_MODE, chanName + " +o " + client.get_nickname());  <-- merge changements
             }
-            p.response(RPL_CHANNELMODEIS, chanName + " " + channel->get_modes_str(client));
             _send_list_of_names(p, *channel);
             _display_topic(p, *channel);
         } else {

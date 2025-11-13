@@ -40,7 +40,6 @@ Server::Server(const unsigned short port, const std::string& password) :
     _serverSocket.tcp_listen();
     LOG_SERVER.info("Server " + _name + " start at port :" + Utils::to_string(port));
     std::cout << "\n";
-
     _listen_to_socket(_serverSocket.get_socket(), POLLIN);
 }
 
@@ -217,13 +216,11 @@ void Server::_handle_bot_input(int pfdIndex, Client* botClient, BotState& state)
                 *this, TRANSFER_PRIVMSG, state.targetChannel->get_name(), botClient, state.pendingMsg);
             rh.process_response(*botClient, TRANSFER_PRIVMSG, state.targetChannel->get_name());
             state.readyToSend = true;
-            return;
-        }
-        if (response.find("PRIVMSG") != std::string::npos && state.readyToSend == true) {
             LOG_DV_SERVER(state.pendingMsg);
             _handle_commands(pfdIndex);
             cleanup_bot(so);
             cleanup_socket_and_client(pfdIndex);
+            return;
         }
     }
 }

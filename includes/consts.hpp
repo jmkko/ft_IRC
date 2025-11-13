@@ -3,9 +3,9 @@
  * @brief constants used throughout IRC server program
  * @version 0.1
  * @date 2025-10-25
- * 
+ *
  * @copyright Copyright (c) 2025
- * 
+ *
  */
 #ifndef CONSTS_HPP
 #define CONSTS_HPP
@@ -32,8 +32,8 @@
 #define FORBIDEN_CHAR_BOT_PROMPT  "|;"
 #define FORBIDEN_CHAR_CHAN_NAME   "\x00\x07\x0D\x0A\x20\x2C\x3A" // NOLINT(clang-diagnostic-null-character)
 #define FORBIDEN_CHAR_CHAN_KEY    "\x00\x09\x0A\x0B\x0C\x0D\x20" // NOLINT(clang-diagnostic-null-character)
-#define FORBIDDEN_CHAR_SERVER_KEY "\x00\x09\x0A\x0B\x0D\x20"     // NOLINT(clang-diagnostic-null-character) NUL, HT, LF, VT, CR, space
-#define FORBIDEN_CHAR_USER        "\x00\x0A\x0D\x20\x40"         // NOLINT(clang-diagnostic-null-character)
+#define FORBIDDEN_CHAR_SERVER_KEY "\x00\x09\x0A\x0B\x0D\x20" // NOLINT(clang-diagnostic-null-character) NUL, HT, LF, VT, CR, space
+#define FORBIDEN_CHAR_USER        "\x00\x0A\x0D\x20\x40"     // NOLINT(clang-diagnostic-null-character)
 #define NUMBER_FORB_CCNK          7
 #define NUMBER_FORB_CSK           6
 #define NUMBER_FORB_CCU           5
@@ -47,7 +47,8 @@
 #define DYNAMIC_PORT_MIN          49152
 #define NICKNAME_MAX_LEN          9
 #define NB_AVAILABLE_CMD          15
-#define NB_AVAILABLE_BOT_SUBCMD   2
+#define MAX_MESSAGES_HISTORY      10
+#define NB_AVAILABLE_BOT_SUBCMD   3
 #define USERS_PER_LINE            10
 #define CHANMODE_INIT             0b00000
 #define CHANMODE_KEY              0b00001
