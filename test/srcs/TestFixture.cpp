@@ -1,8 +1,7 @@
-#include "TestFixture.hpp"
-
 #include "LogManager.hpp"
 #include "Logger.hpp"
 #include "TcpSocket.hpp"
+#include "TestFixture.hpp"
 #include "colors.hpp"
 #include "fakeClient.hpp"
 #include "testUtils.hpp"

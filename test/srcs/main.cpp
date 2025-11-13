@@ -74,6 +74,7 @@ int main(int ac, char** av)
             test_motd(*s, &results);
             test_bot(*s, &results);
         }
+        LOG_TEST.info("End of first test suite...");
         runner.stop();
         delete s; // NOLINT(cppcoreguidelines-owning-memory)
 
