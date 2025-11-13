@@ -4,8 +4,10 @@
 #include "Config.hpp"
 #include "LogManager.hpp"
 #include "Part.hpp"
+#include "Server.hpp"
 #include "TcpSocket.hpp"
 #include "consts.hpp"
+#include "reply_codes.hpp"
 
 #include <iostream>
 
@@ -99,7 +101,7 @@ void               Client::remove_joined_channel(Channel& channel) {
 	_joinedChannels.erase(channel.get_name()); 
 }
 
-void 				Client::remove_from_all_channels()
+void Client::remove_from_all_channels()
 {
 	for (std::map<std::string, Channel*>::iterator it = _joinedChannels.begin(); it != _joinedChannels.end(); ++it)
 	{
@@ -109,11 +111,20 @@ void 				Client::remove_from_all_channels()
 }
 void 				Client::part_all_channels(Server& server, Client& client)
 {
-	for (std::map<std::string, Channel*>::iterator it = _joinedChannels.begin(); it != _joinedChannels.end(); ++it)
-	{
-		std::string params = static_cast<std::string>(it->second->get_name());
-		Part doPart(params);
-		doPart.execute(server,client);
+        ReplyHandler &rh = ReplyHandler::get_instance(&server);
+        for (std::map<std::string, Channel*>::iterator it = _joinedChannels.begin(); it != _joinedChannels.end(); ++it)
+        {
+        Channel* channel = it->second;
+        channel->broadcast(server, TRANSFER_PART, channel->get_name(), &client);
+        rh.process_response(*this, TRANSFER_PART, channel->get_name());
+        channel->remove_member(*this);
+            if (channel->get_nb_members() == 0) {
+                std::map<std::string, Channel *>::iterator it = server.channels.find(channel->get_name());
+                if (it != server.channels.end()) {
+                    server.channels.erase(it);
+                    delete channel;
+                }
+            }
 	}
 	_joinedChannels.clear();
 }

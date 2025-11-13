@@ -104,7 +104,7 @@ bool Parser::correct_channel(std::string& name)
             return response(ERR_BADCHANMASK, name);
         }
     }
-    if (!Utils::is_char_of(static_cast<unsigned char>(name[0]), "#&")) {
+    if (!Utils::is_char_of(static_cast<unsigned char>(name[0]), "#&") && (name.size() != 1 && name != "0")) {
         return response(ERR_BADCHANMASK, name);
     }
     if (name.length() < 1 || name.length() >= ircConfig.get_chan_name_max_len()) {
