@@ -4,41 +4,45 @@
 #include "Config.hpp"
 #include "LogManager.hpp"
 #include "Part.hpp"
+#include "Server.hpp"
 #include "TcpSocket.hpp"
 #include "consts.hpp"
+#include "reply_codes.hpp"
 
 #include <iostream>
 #include <set>
 
 /************************************************************
- *		🥚 CONSTRUCTORS & DESTRUCTOR						*
+ *        🥚 CONSTRUCTORS & DESTRUCTOR                        *
  ************************************************************/
 
-Client::Client(Socket socket, sockaddr_in addr)
-    : _socket(socket), _addr(addr), _addrStr(TcpSocket::get_address(_addr)), _status(UNAUTHENTICATED) {}
+Client::Client(Socket socket, sockaddr_in addr) :
+    _socket(socket), _addr(addr), _addrStr(TcpSocket::get_address(_addr)), _status(UNAUTHENTICATED)
+{
+}
 
 Client::~Client(void) {}
 
 /************************************************************
- *		➕ OPERATORS											*
+ *        ➕ OPERATORS                                            *
  ************************************************************/
 
 // clang-format off
 std::ostream& operator<<(std::ostream& os, const Client& c)
 {
     return os << "Client" << "["
-		<< "socket_fd = " << c.get_socket()
-		<< " address = " << c.get_address()
-    	<< " status=" << (c.is_registered() ? "registered" : c.is_authenticated() ? "authenticated" : "unauthenticated")
-		<< " nick=" << c.get_nickname()
-		<< " to receive=" << c.get_read_buffer().size()
-		<< " to send=" << c.get_send_buffer().size()
-		<< " joined channels=" << c.get_nb_joined_channels()
-		<< "]";
+        << "socket_fd = " << c.get_socket()
+        << " address = " << c.get_address()
+        << " status=" << (c.is_registered() ? "registered" : c.is_authenticated() ? "authenticated" : "unauthenticated")
+        << " nick=" << c.get_nickname()
+        << " to receive=" << c.get_read_buffer().size()
+        << " to send=" << c.get_send_buffer().size()
+        << " joined channels=" << c.get_nb_joined_channels()
+        << "]";
 }
 
 /*************************************************************
- *		🛠️ FUNCTIONS											*
+ *        🛠️ FUNCTIONS                                            *
  *************************************************************/
 
 void Client::append_to_send_buffer(const std::string& msg) { _sendBuffer += msg; }
@@ -46,7 +50,7 @@ void Client::append_to_send_buffer(const std::string& msg) { _sendBuffer += msg;
 void Client::append_to_read_buffer(const std::string& msg) { _readBuffer += msg; }
 
 /*************************************************************
- *		👁️‍ GETTERS and SETTERS				 				*
+ *        👁️‍ GETTERS and SETTERS                                 *
  *************************************************************/
 
 Socket             Client::get_socket() const { return _socket.get_socket(); }
@@ -73,7 +77,7 @@ std::string        Client::get_send_buffer() const { return _sendBuffer; }
 std::string&        Client::get_send_buffer() { return _sendBuffer; }
 
 std::string        Client::get_read_buffer() const { return _readBuffer; }
-std::string&        Client::get_read_buffer() { return _readBuffer; }
+std::string&       Client::get_read_buffer() { return _readBuffer; }
 
 bool               Client::has_data_to_send() const { return _sendBuffer.empty(); }
 
@@ -94,54 +98,64 @@ void               Client::set_status(ClientStatus status) { _status = _status |
 void               Client::add_joined_channel(Channel& channel) { _joinedChannels[channel.get_name()] = &channel; }
 
 void               Client::remove_joined_channel(Channel& channel) {
-	channel.remove_member(*this);
-	_joinedChannels.erase(channel.get_name()); 
+    channel.remove_member(*this);
+    _joinedChannels.erase(channel.get_name()); 
 }
 
-void 				Client::remove_from_all_channels()
+void                 Client::remove_from_all_channels()
 {
-	for (std::map<std::string, Channel*>::iterator it = _joinedChannels.begin(); it != _joinedChannels.end(); ++it)
-	{
-		it->second->remove_member(*this);
-	}
-	_joinedChannels.clear();
+    for (std::map<std::string, Channel*>::iterator it = _joinedChannels.begin(); it != _joinedChannels.end(); ++it)
+    {
+        it->second->remove_member(*this);
+    }
+    _joinedChannels.clear();
 }
-void 				Client::part_all_channels(Server& server, Client& client)
+void                 Client::part_all_channels(Server& server, Client& client)
 {
-	for (std::map<std::string, Channel*>::iterator it = _joinedChannels.begin(); it != _joinedChannels.end(); ++it)
-	{
-		std::string params = static_cast<std::string>(it->second->get_name());
-		Part doPart(params);
-		doPart.execute(server,client);
-	}
-	_joinedChannels.clear();
+    ReplyHandler &rh = ReplyHandler::get_instance(&server);
+    LOG_DT_CMD("nb joined channels", _joinedChannels.size());
+    for (std::map<std::string, Channel*>::iterator it = _joinedChannels.begin(); it != _joinedChannels.end(); ++it)
+    {
+        Channel* channel = it->second;
+        channel->broadcast(server, TRANSFER_PART, channel->get_name(), &client);
+        rh.process_response(*this, TRANSFER_PART, channel->get_name());
+        channel->remove_member(*this);
+            if (channel->get_nb_members() == 0) {
+                std::map<std::string, Channel *>::iterator it = server.channels.find(channel->get_name());
+                if (it != server.channels.end()) {
+                    server.channels.erase(it);
+                    delete channel;
+                }
+            }
+    }
+    _joinedChannels.clear();
 }
 
-void               Client::set_send_buffer(const std::string& buffer) { _sendBuffer = buffer; }
+void      Client::set_send_buffer(const std::string& buffer) { _sendBuffer = buffer; }
 
 Channel* Client::get_channel(const std::string& name) {
 
-	std::map<std::string, Channel*>::iterator chan = _joinedChannels.find(name);
-	if (chan != _joinedChannels.end()) {
-		return chan->second;
-	}
-	return NULL;
+    std::map<std::string, Channel*>::iterator chan = _joinedChannels.find(name);
+    if (chan != _joinedChannels.end()) {
+        return chan->second;
+    }
+    return NULL;
 };
 
-void	Client::broadcast_to_all_channels(Server& server, ReplyCode code, const std::string& params, const std::string& trailing)
+void    Client::broadcast_to_all_channels(Server& server, ReplyCode code, const std::string& params, const std::string& trailing)
 {
     LOG_DT_CMD("nb joined channels", _joinedChannels.size());
     std::set<Client*> target;
-	for (std::map<std::string, Channel*>::iterator it = _joinedChannels.begin(); it != _joinedChannels.end(); it++) {
-		if (it->second) {
+    for (std::map<std::string, Channel*>::iterator it = _joinedChannels.begin(); it != _joinedChannels.end(); it++) {
+        if (it->second) {
             LOG_DT_CMD("to",  it->second->get_name());
-	    Channel* channel = it->second;
-	    std::set<Client*> chanMembers = channel->get_members();
-	    for (std::set<Client*>::iterator itc = chanMembers.begin(); itc != chanMembers.end(); itc++){
-	      target.insert(*itc);
-	    }
-	}
-	}
+        Channel* channel = it->second;
+        std::set<Client*> chanMembers = channel->get_members();
+        for (std::set<Client*>::iterator itc = chanMembers.begin(); itc != chanMembers.end(); itc++){
+          target.insert(*itc);
+        }
+    }
+    }
     ReplyHandler &rh = ReplyHandler::get_instance(&server);
     LOG_DV_CMD(target.size());
     for (std::set<Client *>::iterator it = target.begin(); it != target.end(); ++it) {

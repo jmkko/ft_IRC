@@ -64,7 +64,8 @@ bool Parser::response(Client* dest, ReplyCode code, const std::string& params, c
     return response(dest, NULL, code, params, trailing);
 }
 
-bool Parser::response(Client* dest, Client* author, ReplyCode code, const std::string& params, const std::string& trailing)
+bool Parser::response(
+    Client* dest, Client* author, ReplyCode code, const std::string& params, const std::string& trailing)
 {
     if (code != CORRECT_FORMAT) {
         if (rh && _client) {
@@ -104,7 +105,7 @@ bool Parser::correct_channel(std::string& name)
             return response(ERR_BADCHANMASK, name);
         }
     }
-    if (!Utils::is_char_of(static_cast<unsigned char>(name[0]), "#&")) {
+    if (!Utils::is_char_of(static_cast<unsigned char>(name[0]), "#&") && (name.size() != 1 && name != "0")) {
         return response(ERR_BADCHANMASK, name);
     }
     if (name.length() < 1 || name.length() >= ircConfig.get_chan_name_max_len()) {
@@ -236,7 +237,8 @@ Parser& Parser::is_not_empty_arg(const std::string& arg, const std::string& comm
     return *this;
 }
 
-Parser& Parser::is_valid_bot_subcommand(const std::string& subcommand, const std::string& cmdName, bool failCommandIfFalse)
+Parser&
+Parser::is_valid_bot_subcommand(const std::string& subcommand, const std::string& cmdName, bool failCommandIfFalse)
 {
     bool passedCheck = false;
     if (_isValidCommand) {
@@ -340,13 +342,12 @@ std::string Parser::from_arg(std::string& params)
 
 std::string Parser::from_remaining_args(std::string& params)
 {
-    std::string    words;
-    std::string    word;
+    std::string        words;
+    std::string        word;
     std::istringstream iss(params);
 
     LOG_DV_CMD(params);
-    while (iss >> word)
-    {
+    while (iss >> word) {
         words += word;
         words += " ";
     }
@@ -354,7 +355,6 @@ std::string Parser::from_remaining_args(std::string& params)
     params.erase(0, params.size());
     return words;
 }
-
 
 std::string Parser::from_trailing(std::string& params)
 {
