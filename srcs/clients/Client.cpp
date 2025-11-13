@@ -1,6 +1,5 @@
-#include "Client.hpp"
-
 #include "Channel.hpp"
+#include "Client.hpp"
 #include "Config.hpp"
 #include "LogManager.hpp"
 #include "Part.hpp"
@@ -154,7 +153,7 @@ void    Client::broadcast_to_all_channels(Server& server, ReplyCode code, const 
         for (std::set<Client*>::iterator itc = chanMembers.begin(); itc != chanMembers.end(); itc++){
           target.insert(*itc);
         }
-    }
+        }
     }
     ReplyHandler &rh = ReplyHandler::get_instance(&server);
     LOG_DV_CMD(target.size());

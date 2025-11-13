@@ -1,8 +1,7 @@
-#include "Part.hpp"
-
 #include "Channel.hpp"
 #include "Client.hpp"
 #include "Parser.hpp"
+#include "Part.hpp"
 #include "Server.hpp"
 #include "reply_codes.hpp"
 
@@ -10,13 +9,14 @@
  *            🥚 CONSTRUCTORS & DESTRUCTOR                  *
  ************************************************************/
 
-Part::Part(std::string &params) {
+Part::Part(std::string& params)
+{
     Parser parser;
 
     std::string channelsNames = parser.format_parameter(params, NULL);
 
     _chanNames = parser.to_vector(channelsNames);
-    _message = parser.format_parameter(params, NULL);
+    _message   = parser.format_parameter(params, NULL);
 }
 
 Part::~Part(void) {}
@@ -25,7 +25,8 @@ Part::~Part(void) {}
  *                      🛠️ METHODS                           *
  *************************************************************/
 
-void Part::execute(Server &server, Client &client) {
+void Part::execute(Server& server, Client& client)
+{
     Parser p(server, client);
 
     if (_chanNames.size() == 0) {
@@ -33,7 +34,7 @@ void Part::execute(Server &server, Client &client) {
         return;
     }
     for (size_t i = 0; i < _chanNames.size(); i++) {
-        Channel *channel = server.find_channel_by_name(_chanNames[i]);
+        Channel* channel = server.find_channel_by_name(_chanNames[i]);
         if (!channel) {
             p.response(ERR_NOSUCHCHANNEL, _chanNames[i]);
         } else if (!channel->is_member(client)) {
@@ -41,10 +42,9 @@ void Part::execute(Server &server, Client &client) {
         } else {
             channel->broadcast(server, TRANSFER_PART, _chanNames[i], &client, _message);
             p.response(TRANSFER_PART, _chanNames[i], _message);
-            // channel->remove_member(client);
             client.remove_joined_channel(*channel);
             if (channel->get_nb_members() == 0) {
-                std::map<std::string, Channel *>::iterator it = server.channels.find(channel->get_name());
+                std::map<std::string, Channel*>::iterator it = server.channels.find(channel->get_name());
                 if (it != server.channels.end()) {
                     server.channels.erase(it);
                     delete channel;

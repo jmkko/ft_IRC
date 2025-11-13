@@ -1,6 +1,5 @@
-#include "Mode.hpp"
-
 #include "LogManager.hpp"
+#include "Mode.hpp"
 #include "Parser.hpp"
 #include "ReplyHandler.hpp"
 #include "Server.hpp"
@@ -19,9 +18,9 @@
  *                  🛠️ UTILS FUNCTIONS                       *
  *************************************************************/
 
-static void parse_params(std::string &params, std::queue<std::string> *modeQueue,
-                         std::queue<std::string> *paramsQueue) {
-    std::string args;
+static void parse_params(std::string& params, std::queue<std::string>* modeQueue, std::queue<std::string>* paramsQueue)
+{
+    std::string        args;
     std::istringstream iss(params);
     LOG_DV_CMD(params);
     // first args must be a modes
@@ -66,7 +65,8 @@ static void parse_params(std::string &params, std::queue<std::string> *modeQueue
     }
 }
 
-static unsigned short char_to_mode(char c) {
+static unsigned short char_to_mode(char c)
+{
     if (c == 'i')
         return CHANMODE_INVITE;
     if (c == 'k')
@@ -82,7 +82,8 @@ static unsigned short char_to_mode(char c) {
  *                    📁 CLASS METHODS                      *
  ************************************************************/
 Mode::Mode() {}
-Mode::Mode(std::string &params) {
+Mode::Mode(std::string& params)
+{
     Parser parser;
 
     _channelName = parser.format_parameter(params, NULL);
@@ -93,10 +94,11 @@ Mode::~Mode() {}
 /*************************************************************
  *                     🛠️ FUNCTIONS                          *
  *************************************************************/
-bool Mode::_simple_args(Server &server, Client &client, Channel *&channel, Parser &p) {
+bool Mode::_simple_args(Server& server, Client& client, Channel*& channel, Parser& p)
+{
     // no params -> MODEV
     if (Channel::is_valid_channel_name(_channelName)) {
-        std::map<std::string, Channel *>::iterator it = server.channels.find(_channelName);
+        std::map<std::string, Channel*>::iterator it = server.channels.find(_channelName);
         if (it == server.channels.end()) {
             p.response(ERR_NOSUCHCHANNEL, _channelName);
             return true;
@@ -122,14 +124,14 @@ bool Mode::_simple_args(Server &server, Client &client, Channel *&channel, Parse
         LOG_d_CMD("only Chan param");
         std::string modeIsReply = channel->get_name();
         modeIsReply += channel->get_modes_str(client);
-        // modeIsReply += get_modes(currentModes, channel);
         p.response(RPL_CHANNELMODEIS, modeIsReply);
         return true;
     }
     return false;
 }
 
-void Mode::_mode_with_noparams(Channel *channel, std::string &currentMode, std::string &validModes) {
+void Mode::_mode_with_noparams(Channel* channel, std::string& currentMode, std::string& validModes)
+{
     LOG_d_CMD("MODE without param");
     LOG_DV_CMD(currentMode);
     if (currentMode[0] == '+') {
@@ -142,8 +144,13 @@ void Mode::_mode_with_noparams(Channel *channel, std::string &currentMode, std::
     }
 }
 
-void Mode::_mode_k(Channel *channel, Parser &p, std::string &currentMode, std::string &currentParam,
-                   std::string &validModes, std::string &validModesParams) {
+void Mode::_mode_k(Channel*     channel,
+                   Parser&      p,
+                   std::string& currentMode,
+                   std::string& currentParam,
+                   std::string& validModes,
+                   std::string& validModesParams)
+{
     size_t invalidChar = 0;
     if (!currentParam.empty())
         invalidChar = std::count_if(currentParam.begin(), currentParam.end(), Utils::is_invalid_char_key);
@@ -166,8 +173,13 @@ void Mode::_mode_k(Channel *channel, Parser &p, std::string &currentMode, std::s
         p.response(ERR_NEEDMOREPARAMS, "MODE");
 }
 
-void Mode::_mode_l(Channel *channel, Parser &p, std::string &currentMode, std::string &currentParam,
-                   std::string &validModes, std::string &validModesParams) {
+void Mode::_mode_l(Channel*     channel,
+                   Parser&      p,
+                   std::string& currentMode,
+                   std::string& currentParam,
+                   std::string& validModes,
+                   std::string& validModesParams)
+{
     size_t invalidChar = 0;
     if (!currentParam.empty())
         invalidChar = std::count_if(currentParam.begin(), currentParam.end(), Utils::is_not_digit);
@@ -181,12 +193,18 @@ void Mode::_mode_l(Channel *channel, Parser &p, std::string &currentMode, std::s
         p.response(ERR_NEEDMOREPARAMS, "MODE");
 }
 
-void Mode::_mode_o(Server &server, Channel *channel, Parser &p, std::string &currentMode, std::string &currentParam,
-                   std::string &validModes, std::string &validModesParams) {
+void Mode::_mode_o(Server&      server,
+                   Channel*     channel,
+                   Parser&      p,
+                   std::string& currentMode,
+                   std::string& currentParam,
+                   std::string& validModes,
+                   std::string& validModesParams)
+{
     size_t invalidChar = 0;
-    invalidChar = std::count_if(currentParam.begin(), currentParam.end(), Utils::is_invalid_char_nick);
+    invalidChar        = std::count_if(currentParam.begin(), currentParam.end(), Utils::is_invalid_char_nick);
     if (!currentParam.empty() && !invalidChar) {
-        Client *targetOp = server.find_client_by_nickname(currentParam);
+        Client* targetOp = server.find_client_by_nickname(currentParam);
         if (!targetOp)
             p.response(ERR_NOSUCHNICK, currentParam);
         else if (!channel->is_member(*targetOp))
@@ -204,10 +222,11 @@ void Mode::_mode_o(Server &server, Channel *channel, Parser &p, std::string &cur
         p.response(ERR_NEEDMOREPARAMS, "MODE");
 }
 
-void Mode::execute(Server &server, Client &client) {
+void Mode::execute(Server& server, Client& client)
+{
     Parser p(server, client);
 
-    Channel *channel = NULL;
+    Channel* channel = NULL;
     LOG_DV_CMD(_modeQueue.size());
     LOG_DV_CMD(_paramsQueue.size());
     if (_simple_args(server, client, channel, p))
@@ -218,23 +237,20 @@ void Mode::execute(Server &server, Client &client) {
         return;
     }
     // others cases main args loop
-    std::string validPositiveModes = "+";
-    std::string validNegativeModes = "-";
-    std::string validModes = "";
+    std::string validModes       = "";
     std::string validModesParams = "";
-    int nbModeWithParam = 0;
+    int         nbModeWithParam  = 0;
     while (!_modeQueue.empty()) {
         std::string currentMode = _modeQueue.front();
         _modeQueue.pop();
         // cases more than one + or -, or no operator or only + or -
-        if (currentMode.size() > 2 || currentMode.size() == 1 ||
-            !Utils::is_char_of(currentMode[0], std::string(MODE_OPERATOR))) {
+        if (currentMode.size() > 2 || currentMode.size() == 1 || !Utils::is_char_of(currentMode[0], std::string(MODE_OPERATOR))) {
             p.response(ERR_NEEDMOREPARAMS, "MODE");
             continue;
         }
         // case not a valid mode
-        if (!Utils::is_char_of(currentMode[1], std::string(VALID_CHAN_MODE_NOPARAM)) &&
-            !Utils::is_char_of(currentMode[1], std::string(VALID_CHAN_MODE_PARAM))) {
+        if (!Utils::is_char_of(currentMode[1], std::string(VALID_CHAN_MODE_NOPARAM))
+            && !Utils::is_char_of(currentMode[1], std::string(VALID_CHAN_MODE_PARAM))) {
             p.response(ERR_UNKNOWNMODE, currentMode.substr(1));
             continue;
         }
