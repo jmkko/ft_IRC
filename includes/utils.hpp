@@ -19,8 +19,8 @@
 #define EVENT_TO_STR Utils::event_to_str
 
 /**
-* @class Utils
-* @brief Utility class for conversion, argument validation
+ * @class Utils
+ * @brief Utility class for conversion, argument validation
  */
 class Utils
 {

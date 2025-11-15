@@ -68,21 +68,21 @@ ICommand* CmdFactory::make_command(Server& server, Client& client, std::string& 
                                                       "BOT",
                                                       "PING"};
 
-    ICommand* (CmdFactory::* ptr[NB_AVAILABLE_CMD])(std::string&) = {&CmdFactory::user_cmd,
-                                                                     &CmdFactory::pass_cmd,
-                                                                     &CmdFactory::nick_cmd,
-                                                                     &CmdFactory::topic_cmd,
-                                                                     &CmdFactory::quit_cmd,
-                                                                     &CmdFactory::invite_cmd,
-                                                                     &CmdFactory::join_cmd,
-                                                                     &CmdFactory::part_cmd,
-                                                                     &CmdFactory::mode_cmd,
-                                                                     &CmdFactory::privmsg_cmd,
-                                                                     &CmdFactory::who_cmd,
-                                                                     &CmdFactory::kick_cmd,
-                                                                     &CmdFactory::motd_cmd,
-                                                                     &CmdFactory::bot_cmd,
-                                                                     &CmdFactory::ping_cmd};
+    ICommand* (CmdFactory::*ptr[NB_AVAILABLE_CMD])(std::string&) = {&CmdFactory::user_cmd,
+                                                                    &CmdFactory::pass_cmd,
+                                                                    &CmdFactory::nick_cmd,
+                                                                    &CmdFactory::topic_cmd,
+                                                                    &CmdFactory::quit_cmd,
+                                                                    &CmdFactory::invite_cmd,
+                                                                    &CmdFactory::join_cmd,
+                                                                    &CmdFactory::part_cmd,
+                                                                    &CmdFactory::mode_cmd,
+                                                                    &CmdFactory::privmsg_cmd,
+                                                                    &CmdFactory::who_cmd,
+                                                                    &CmdFactory::kick_cmd,
+                                                                    &CmdFactory::motd_cmd,
+                                                                    &CmdFactory::bot_cmd,
+                                                                    &CmdFactory::ping_cmd};
 
     iss >> commandLine;
     for (size_t i = 0; i < NB_AVAILABLE_CMD; i++) {

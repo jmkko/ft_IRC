@@ -17,7 +17,7 @@
  * @details responsabilities
  * - single instanciation of each logger
  * - provide helper macros
- * 
+ *
  */
 class LogManager
 {

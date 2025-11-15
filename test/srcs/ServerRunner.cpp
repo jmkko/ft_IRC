@@ -1,6 +1,7 @@
 #include "ServerRunner.hpp"
 
 #include "LogManager.hpp"
+#include "ReplyHandler.hpp"
 #include "consts.hpp"
 #include "signal_handler.hpp"
 #include "testUtils.hpp"
@@ -17,8 +18,12 @@ ServerRunner::ServerRunner(Server& s) : _server(s), _isRunning(false) {}
 
 ServerRunner::~ServerRunner()
 {
-    if (_isRunning) {
-        stop();
+    if (_thread.joinable()) {
+        try {
+            stop();
+        } catch (std::exception e) {
+            LOG_W_TEST("Runner", e.what());
+        }
     }
 }
 
@@ -29,10 +34,11 @@ ServerRunner::~ServerRunner()
 void ServerRunner::start()
 {
     // Reset global signal
-    globalSignal = 0;
+    // globalSignal = 0;
 
-    if (_isRunning)
+    if (_thread.joinable()) {
         throw std::runtime_error("Server already running");
+    }
 
     _isRunning = true;
     _thread    = std::thread([this]() {
@@ -51,23 +57,19 @@ void ServerRunner::start()
 
 void ServerRunner::stop()
 {
-    if (!_isRunning)
-        return;
-
     LOG_d_TEST("Stopping server...");
 
-    // Signal the server to stop
-    globalSignal = SIGINT;
+    _server.stop();
 
     // Wait for server to process the signal and stop
     std::this_thread::sleep_for(std::chrono::milliseconds(SERVER_STOP_WAIT_MS));
 
     if (_thread.joinable()) {
+        LOG_d_TEST("joining server");
         _thread.join();
+        LOG_d_TEST("joined server");
     }
-
-    // Reset signal for next test
-    globalSignal = 0;
+    
     _isRunning   = false;
 
     LOG_TEST.debug("Server stopped");

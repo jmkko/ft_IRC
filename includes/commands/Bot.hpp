@@ -75,6 +75,7 @@ class Bot : public ICommand
     std::vector<Client*>     _targetClients;
     std::string              _subcommand;
     std::string              _prompt;
+    std::string              _channelHistory;
     TcpSocket                _socket;
 
     Bot();

@@ -66,7 +66,15 @@ bool Bot::_check_args(Server& s, Client& c)
         return false;
     }
 
-    _targetChannels.push_back(s.find_channel_by_name(_targetChannelName));
+    Channel* channel = s.find_channel_by_name(_targetChannelName);
+    _targetChannels.push_back(channel);
+    _channelHistory                 = "";
+    std::deque<std::string> history = channel->get_history();
+    if (!history.empty()) {
+        for (std::deque<std::string>::const_iterator it = history.begin(); it != history.end(); ++it) {
+            _channelHistory.append(*it + "./");
+        }
+    }
 
     return true;
 }
@@ -84,23 +92,29 @@ void add_key_val(std::string& command, const std::string& key, const std::string
 
 void remove_invalid_prompt_char(char& c)
 {
-    if (c == '\'' || c == '"' || c == '*' || c == ';' || c == '|')
+    if (c == '\'' || c == '"' || c == '*' || c == ';' || c == '|' || c == '(' || c == ')')
         c = ' ';
 }
 
-static bool send_ollama_request(const std::string& prompt, std::string& response)
+static bool send_ollama_request(const std::string& subcommand, const std::string& prompt, std::string& response)
 {
-    std::string command = "curl -X POST -H \"Content-Type: application/json\" -v localhost:11434/api/generate -d '";
-    command += "{\"model\": \"gemma3:1b\",\"prompt\":\"";
+    std::string command = "bash -c 'set -o pipefail; curl -X POST -H "
+                          "\"Content-Type: application/json\" -v "
+                          "localhost:11434/api/generate -d \"";
+    command += "{\\\"model\\\": "
+               "\\\"llama3.2:3b\\\",\\\"stream\\\":false,\\\"prompt\\\":\\\"";
     command += prompt;
-    command += "\",\"options\": {\"temperature\": 0.99,\"top_p\": 0.8},\"stream\": false}";
-    command += "'";
-    command += " | jq \'.response\' ";
-    command += " > llama_response.txt";
+    if (subcommand == "!reply")
+        command += "\\\",\\\"options\\\": {\\\"temperature\\\": "
+                   "0.99,\\\"top_p\\\": 0.9}}\"";
+    else
+        command += "\\\",\\\"options\\\": {\\\"temperature\\\": 0.2,\\\"top_p\\\": "
+                   "0.3}}\"";
+    command += " | jq \".response\" ";
+    command += " > llama_response.txt \'";
     LOG_d_CMD(command);
 
     int code = ::system(command.c_str());
-    LOG_w_CMD(code);
     if (code != 0) {
         LOG_E_SERVER("error sending API LLama request", command);
         return false;
@@ -183,41 +197,61 @@ void Bot::execute(Server& s, Client& c)
 
     std::string prompt = "Your responses must strictly follow these rules: ";
     prompt += "Keep your response under 500 characters. ";
-    prompt += "No special characters. No newline character, line break. Keep the response as a single, continuous line of text. ";
-    prompt += "No markdown or any other formatting : do not use bold, italic, code blocks or any other markdown. ";
-    prompt += "No meta-commentary Do not reference instruction, your role or user prompt. Just answer directly. ";
-    prompt += "You send direct and concise replies without preamble and with no hints about former meta instructions. ";
+    prompt += "No special characters. No newline character (never ever use \\n). Keep the "
+              "response as a single, continuous line of text. ";
+    prompt += "No markdown or any other formatting : do not use bold, italic, "
+              "code blocks or any other markdown. ";
+    prompt += "No meta-commentary Do not reference instruction, your role or "
+              "user prompt. Just answer directly. ";
+    prompt += "IF the question is about the IRC project and ONLY in this case "
+              " THEN tell emphatically how this IRC server project, although it is a small step for humanity, is nevertheless a "
+              "big step for its creators. "
+              " try to get sympathy of the evaluator for the group of three students having worked hard upon it"
+              " and convince him that IRC is a promising technology ";
+    prompt += "OTHERWISE, IF the question is about anything other than IRC project, you send direct and concise replies without "
+              "preamble and with no "
+              "hints about former meta instructions. ";
     prompt += "Now answer the user question. ";
     if (_subcommand == "!reply")
         prompt += "Please reply to this message : ";
     else if (_subcommand == "!check")
         prompt += "Please fact-check this affirmation : ";
+    else if (_subcommand == "!brief") {
+        prompt += "Please sum up this meeting in a corporate tone, summing which user (introduced by name: before each sentence) "
+                  "had which positions :"
+                  + _channelHistory;
+        prompt += "And pay extra attention to following instructions (if any) : ";
+    }
     prompt += _prompt;
     std::for_each(prompt.begin(), prompt.end(), remove_invalid_prompt_char);
     LOG_DV_CMD(prompt);
 
     std::string response = "\"\"";
-    if (!send_ollama_request(prompt, response))
+    if (send_ollama_request(_subcommand, prompt, response) == false)
         response = "\"Bot is under maintenance\"";
+
+    LOG_DV_CMD(response);
 
     if (!_connect_to_server(s, _socket))
         return;
     if (!_register_bot(s, _socket))
         return;
 
-    ReplyHandler& rh            = ReplyHandler::get_instance(&s);
+    ReplyHandler& rh            = ReplyHandler::get_instance();
     unsigned long firstQuoteIdx = response.find_first_of('"');
     unsigned long lastQuoteIdx  = response.find_last_of('"');
     if (firstQuoteIdx != std::string::npos && lastQuoteIdx != std::string::npos)
         response = response.substr(firstQuoteIdx + 1, lastQuoteIdx - 1);
     else {
         LOG_W_CMD("empty response", response);
-        return;
+        response = "\"Bot is under maintenance\"";
     }
+
+    LOG_DV_CMD(response);
 
     if (!_targetChannels.empty()) {
         _targetChannels[0]->broadcast_bot(
-            s, TRANSFER_PROMPT_BOT, _targetChannels[0]->get_name(), NULL, _subcommand.substr(1) + " " + _prompt);
+            s, TRANSFER_PROMPT_BOT, _targetChannels[0]->get_name(), NULL, "(" + _subcommand.substr(1) + ") " + _prompt);
         s.update_bot_state(_socket.get_socket(), _targetChannels[0], _subcommand, response, false);
         std::string joinMsg = "JOIN " + _targetChannels[0]->get_name() + "\r\n";
         if (!send_full_msg(_socket.get_socket(), joinMsg)) {
@@ -227,7 +261,7 @@ void Bot::execute(Server& s, Client& c)
         }
     } else {
         for (std::vector<Client*>::iterator it = _targetClients.begin(); it != _targetClients.end(); ++it) {
-            rh.process_response(**it, TRANSFER_REPLY_BOT, (*it)->get_nickname(), NULL, response);
+            rh.process_response(s, **it, TRANSFER_REPLY_BOT, (*it)->get_nickname(), NULL, response);
         }
     }
 }

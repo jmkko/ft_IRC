@@ -57,12 +57,13 @@ void valid_motd_should_rpl(Server& s)
         send_line(so, validMotd);
         std::this_thread::sleep_for(std::chrono::milliseconds(SERVER_MOTD_WAIT_MS));
         std::string reply = "";
-        int         tries = 0;
-        while (reply.find(TO_STRING(ERR_NOMOTD)) == std::string::npos
-               && (reply.find(ircConfig.trailing(RPL_ENDOFMOTD)) == std::string::npos || tries < MAX_TRIES_MOTD)) {
-            reply += recv_lines(so, "roro on motd");
-            ++tries;
-        }
+        // int         tries = 0;
+        // while (reply.find(TO_STRING(ERR_NOMOTD)) == std::string::npos
+        //        && (reply.find(ircConfig.trailing(RPL_ENDOFMOTD)) == std::string::npos || tries < MAX_TRIES_MOTD)) {
+        //     reply += recv_lines(so, "roro on motd");
+        //     ++tries;
+        // }
+        reply += recv_lines(so, "roro on motd");
         LOG_DV_TEST(reply);
         AssertReply ar(reply);
         ar.is_formatted(RPL_MOTDSTART, userNick, "", "- " + ircConfigTest.get_name() + " message of the day -");
@@ -112,7 +113,8 @@ void test_motd(Server& s, t_results* r)
     print_test_series("command MOTD");
     print_test_series_part("common cases");
 
-    run_test(r, [&] { valid_motd_should_rpl(s); }, "'MOTD");
+    run_test(
+        r, [&] { valid_motd_should_rpl(s); }, "'MOTD");
 
     print_test_series_part("error cases");
     // run_test(r, [&] { motd_not_opening_should_err(s); }, "'MOTD file with no rights");

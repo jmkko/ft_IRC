@@ -13,7 +13,7 @@
  *             🥚 CONSTRUCTORS & DESTRUCTOR                 *
  ************************************************************/
 
-ReplyHandler::ReplyHandler(Server* server) : _server(server) {}
+ReplyHandler::ReplyHandler() {}
 
 /*************************************************************
  *                   🛠️ FUNCTIONS                            *
@@ -105,7 +105,7 @@ static bool is_numerical_response(ReplyCode code)
 }
 
 int ReplyHandler::process_response(
-    Client& client, ReplyCode code, const std::string& parameters, Client* sender, const std::string& trailing)
+    Server& server, Client& client, ReplyCode code, const std::string& parameters, Client* sender, const std::string& trailing)
 {
     LOG_DT_CMD("processing", ircConfig.str(code));
     std::string response = "";
@@ -116,34 +116,34 @@ int ReplyHandler::process_response(
 
     if (!response.empty()) {
         LOG_CMD.sending(__FILE_NAME__, __FUNCTION__, "\n\t\t\t\t\t\t\t\t\t\t\t   " + response, &client);
-        _send_reply(client, response);
+        _send_reply(server, client, response);
     }
     return (code);
 }
 
 void ReplyHandler::process_welcome(Server& server, Client& client)
 {
-    process_response(client,
+    process_response(server, client,
                      RPL_WELCOME,
                      "",
                      NULL,
                      ircConfig.trailing(RPL_WELCOME) + " " + client.get_nickname() + "!" + client.get_user_name() + "@localhost");
-    process_response(client, RPL_YOURHOST, "", NULL, ircConfig.trailing(RPL_YOURHOST) + " " + server.get_name());
-    process_response(client, RPL_CREATED, "", NULL, ircConfig.trailing(RPL_CREATED));
-    process_response(client, RPL_MYINFO, "", NULL, server.get_name() + " 1.0  0 0");
+    process_response(server, client, RPL_YOURHOST, "", NULL, ircConfig.trailing(RPL_YOURHOST) + " " + server.get_name());
+    process_response(server, client, RPL_CREATED, "", NULL, ircConfig.trailing(RPL_CREATED));
+    process_response(server, client, RPL_MYINFO, "", NULL, server.get_name() + " 1.0  0 0");
 }
-void ReplyHandler::_send_reply(Client& client, const std::string& msg)
+void ReplyHandler::_send_reply(Server& server, Client& client, const std::string& msg)
 {
     client.append_to_send_buffer(msg + "\r\n");
-    _server->add_events_of(client, POLLOUT);
+    server.add_events_of(client, POLLOUT);
 }
 
 /*************************************************************
  *               👁️‍ GETTERS and SETTERS                      *
  *************************************************************/
 
-ReplyHandler& ReplyHandler::get_instance(Server* s)
+ReplyHandler& ReplyHandler::get_instance()
 {
-    static ReplyHandler instance(s);
+    static ReplyHandler instance;
     return instance;
 }

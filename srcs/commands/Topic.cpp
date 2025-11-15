@@ -1,6 +1,7 @@
 #include "Topic.hpp"
 
 #include "Channel.hpp"
+#include "LogManager.hpp"
 #include "Parser.hpp"
 #include "ReplyHandler.hpp"
 #include "Server.hpp"
@@ -16,15 +17,17 @@ Topic::Topic(std::string& params) : _clearTopic(false)
 {
     Parser parser;
 
-    _chan = parser.format_parameter(params, NULL);
-    std::istringstream iss(params);
-    std::string        token;
-    iss >> token;
-    if (token == ":") {
+    _chan                = parser.format_parameter(params, NULL);
+    std::string topicArg = params;
+
+    if (topicArg == " :") {
         _clearTopic = true;
         _topic      = "";
-    } else {
-        _topic = parser.format_parameter(params, NULL);
+    } else if (!topicArg.empty()) {
+        if (topicArg.length() > 1 && topicArg[1] == ':')
+            _topic = topicArg.substr(2);
+        else
+            _topic = topicArg.substr(1);
     }
 }
 

@@ -6,7 +6,7 @@
 /*   By: fpetit <fpetit@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/22 10:25:15 by jhervoch          #+#    #+#             */
-/*   Updated: 2025/10/24 16:15:32 by fpetit           ###   ########.fr       */
+/*   Updated: 2025/11/14 23:51:57 by fpetit           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@
 Parser::Parser(void) : rh(NULL), _server(NULL), _client(NULL), _isValidCommand(true) {}
 
 Parser::Parser(Server& server, Client& client) :
-    rh(&ReplyHandler::get_instance(&server)), _server(&server), _client(&client), _isValidCommand(true)
+    rh(&ReplyHandler::get_instance()), _server(&server), _client(&client), _isValidCommand(true)
 {
 }
 
@@ -69,11 +69,11 @@ bool Parser::response(Client* dest, Client* author, ReplyCode code, const std::s
     if (code != CORRECT_FORMAT) {
         if (rh && _client) {
             if (dest && author) {
-                rh->process_response(*dest, code, params, author, trailing);
+                rh->process_response(*_server, *dest, code, params, author, trailing);
             } else if (dest) {
-                rh->process_response(*dest, code, params, NULL, trailing);
+                rh->process_response(*_server, *dest, code, params, NULL, trailing);
             } else {
-                rh->process_response(*_client, code, params, NULL, trailing);
+                rh->process_response(*_server, *_client, code, params, NULL, trailing);
             }
         }
         return (false);
@@ -104,7 +104,7 @@ bool Parser::correct_channel(std::string& name)
             return response(ERR_BADCHANMASK, name);
         }
     }
-    if (!Utils::is_char_of(static_cast<unsigned char>(name[0]), "#&")) {
+    if (!Utils::is_char_of(static_cast<unsigned char>(name[0]), "#&") && (name.size() != 1 && name != "0")) {
         return response(ERR_BADCHANMASK, name);
     }
     if (name.length() < 1 || name.length() >= ircConfig.get_chan_name_max_len()) {
@@ -241,7 +241,7 @@ Parser& Parser::is_valid_bot_subcommand(const std::string& subcommand, const std
     bool passedCheck = false;
     if (_isValidCommand) {
         this->is_not_empty_arg(subcommand, cmdName);
-        std::string availableSubcommands[NB_AVAILABLE_BOT_SUBCMD] = {"!reply", "!check"};
+        std::string availableSubcommands[NB_AVAILABLE_BOT_SUBCMD] = {"!reply", "!check", "!brief"};
         for (int i = 0; i < NB_AVAILABLE_BOT_SUBCMD; ++i) {
             if (availableSubcommands[i] == subcommand)
                 passedCheck = true;
@@ -336,6 +336,22 @@ std::string Parser::from_arg(std::string& params)
     params.erase(0, argument.size());
 
     return argument;
+}
+
+std::string Parser::from_remaining_args(std::string& params)
+{
+    std::string        words;
+    std::string        word;
+    std::istringstream iss(params);
+
+    LOG_DV_CMD(params);
+    while (iss >> word) {
+        words += word;
+        words += " ";
+    }
+    words.erase(words.size() - 1, words.size());
+    params.erase(0, params.size());
+    return words;
 }
 
 std::string Parser::from_trailing(std::string& params)

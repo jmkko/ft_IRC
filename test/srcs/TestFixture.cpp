@@ -1,8 +1,7 @@
-#include "TestFixture.hpp"
-
 #include "LogManager.hpp"
 #include "Logger.hpp"
 #include "TcpSocket.hpp"
+#include "TestFixture.hpp"
 #include "colors.hpp"
 #include "fakeClient.hpp"
 #include "testUtils.hpp"
@@ -53,9 +52,5 @@ void TestFixture::cleanup()
             }
         }
         _sockets.clear();
-
-        // Give server time to cleanup disconnected clients
-        std::this_thread::sleep_for(std::chrono::milliseconds(SERVER_PROCESS_TIME_MS));
     }
-    _server.cleanup_channels();
 }

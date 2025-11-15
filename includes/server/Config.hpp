@@ -28,6 +28,7 @@
 class Config
 {
   public:
+    bool exist;
     /**
      * @brief Construct a new Config object from filename
      *

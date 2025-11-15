@@ -45,6 +45,6 @@ void Invite::execute(Server& server, Client& client)
     } else {
         channel->invite_client(*target);
         p.response(RPL_INVITING, _nickname + " " + _channelName);
-        p.response(target, &client, TRANSFER_INVITE, _nickname, _channelName);
+        p.response(target, &client, TRANSFER_INVITE, _nickname + " " + _channelName);
     }
 }

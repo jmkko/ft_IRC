@@ -163,7 +163,8 @@ void valid_change_should_void(Server& s)
         send_line(so, validNickChangeMsg);
         std::string reply = recv_lines(so);
         AssertReply ar(reply);
-        ar.is_empty();
+        // ar.is_empty();
+        ar.matches_entirely(":roro!roro@" + s.get_name() + " NICK :rorothebo");
 
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());
@@ -187,7 +188,7 @@ void valid_change_should_notice(Server& s)
         send_line(so, validNickChangeMsg);
         std::string reply = recv_lines(so);
         AssertReply ar(reply);
-        ar.is_empty();
+        ar.matches_entirely(":op!op@" + s.get_name() + " NICK :rorothebo");
         std::string reply2 = recv_lines(so2);
         AssertReply ar2(reply2);
         // LOG_SERVER.error(reply2);
@@ -320,18 +321,31 @@ void test_nick(Server& s, t_results* r)
 {
     print_test_series("command NICK");
     print_test_series_part("valid cases");
-    run_test(r, [&] { valid_nick_should_void(s); }, "NICK roro should void himself");
-    run_test(r, [&] { valid_nick2_should_void(s); }, "NICK ro3ro should void himself");
-    run_test(r, [&] { valid_nick_after_user_should_notice(s); }, "NICK roro should notice after USER");
-    run_test(r, [&] { valid_nick_special_should_void(s); }, "NICK [roro] should void himself");
-    run_test(r, [&] { valid_nick_rename_special_should_void(s); }, "NICK roro->[roro] should void himself");
-    run_test(r, [&] { valid_change_should_void(s); }, "NICK roro->\"roro the boss should\" void himself");
-    run_test(r, [&] { valid_change_should_notice(s); }, "NICK roro->\"roro the boss\" should tell is new nick to other");
+    run_test(
+        r, [&] { valid_nick_should_void(s); }, "NICK roro should void himself");
+    run_test(
+        r, [&] { valid_nick2_should_void(s); }, "NICK ro3ro should void himself");
+    run_test(
+        r, [&] { valid_nick_after_user_should_notice(s); }, "NICK roro should notice after USER");
+    run_test(
+        r, [&] { valid_nick_special_should_void(s); }, "NICK [roro] should void himself");
+    run_test(
+        r, [&] { valid_nick_rename_special_should_void(s); }, "NICK roro->[roro] should void himself");
+    run_test(
+        r, [&] { valid_change_should_void(s); }, "NICK roro->\"roro the boss should\" void himself");
+    run_test(
+        r, [&] { valid_change_should_notice(s); }, "NICK roro->\"roro the boss\" should tell is new nick to other");
     print_test_series_part("error cases");
-    run_test(r, [&] { no_arg_should_err(s); }, "NICK no arg");
-    run_test(r, [&] { invalid_char_star_should_err(s); }, "NICK ro*ro should err");
-    run_test(r, [&] { invalid_char_comma_should_err(s); }, "NICK ro,ro should err");
-    run_test(r, [&] { invalid_char_arobase_should_err(s); }, "NICK ro@ro should err");
-    run_test(r, [&] { starting_with_number_should_err(s); }, "NICK 3oro should err");
-    run_test(r, [&] { taken_should_err(s); }, "NICK taken should err");
+    run_test(
+        r, [&] { no_arg_should_err(s); }, "NICK no arg");
+    run_test(
+        r, [&] { invalid_char_star_should_err(s); }, "NICK ro*ro should err");
+    run_test(
+        r, [&] { invalid_char_comma_should_err(s); }, "NICK ro,ro should err");
+    run_test(
+        r, [&] { invalid_char_arobase_should_err(s); }, "NICK ro@ro should err");
+    run_test(
+        r, [&] { starting_with_number_should_err(s); }, "NICK 3oro should err");
+    run_test(
+        r, [&] { taken_should_err(s); }, "NICK taken should err");
 }
