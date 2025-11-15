@@ -6,7 +6,7 @@
 /*   By: fpetit <fpetit@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/22 10:25:15 by jhervoch          #+#    #+#             */
-/*   Updated: 2025/10/24 16:15:32 by fpetit           ###   ########.fr       */
+/*   Updated: 2025/11/14 23:51:57 by fpetit           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@
 Parser::Parser(void) : rh(NULL), _server(NULL), _client(NULL), _isValidCommand(true) {}
 
 Parser::Parser(Server& server, Client& client) :
-    rh(&ReplyHandler::get_instance(&server)), _server(&server), _client(&client), _isValidCommand(true)
+    rh(&ReplyHandler::get_instance()), _server(&server), _client(&client), _isValidCommand(true)
 {
 }
 
@@ -69,11 +69,11 @@ bool Parser::response(Client* dest, Client* author, ReplyCode code, const std::s
     if (code != CORRECT_FORMAT) {
         if (rh && _client) {
             if (dest && author) {
-                rh->process_response(*dest, code, params, author, trailing);
+                rh->process_response(*_server, *dest, code, params, author, trailing);
             } else if (dest) {
-                rh->process_response(*dest, code, params, NULL, trailing);
+                rh->process_response(*_server, *dest, code, params, NULL, trailing);
             } else {
-                rh->process_response(*_client, code, params, NULL, trailing);
+                rh->process_response(*_server, *_client, code, params, NULL, trailing);
             }
         }
         return (false);

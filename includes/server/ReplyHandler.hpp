@@ -53,7 +53,8 @@ class ReplyHandler
     /**
      * @brief directs the message to the correct response method,
      * either to a response with ReplyCode or a Transfer response
-     *
+     * 
+     * @param server server
      * @param client who made the command
      * @param code Replycode
      * @param parameters of the command
@@ -61,7 +62,7 @@ class ReplyHandler
      * @param trailing message of the Replycode
      * @return @see ReplyCode or Internal code
      */
-    int process_response(Client&            client,
+    int process_response(Server& server, Client&            client,
                          ReplyCode          code,
                          const std::string& parameters = "",
                          Client*            sender     = NULL,
@@ -80,24 +81,26 @@ class ReplyHandler
      * @brief Singleton pattern, this function allows you to have
      * only one instance of this class
      *
-     * @param s the Server
      * @return the only one instance of ReplyHandler
      */
-    static ReplyHandler& get_instance(Server* s);
+    static ReplyHandler& get_instance();
+
+    void set_server(Server* s);
 
   private:
-    Server* _server;
+    // Server* _server;
 
-    ReplyHandler(Server* s);
+    ReplyHandler();
 
     /**
      * @brief append the correct message to the Client buffer
      * and add POLLOUT event in the pollfd of the Client
      *
-     * @param c the Client
+     * @param server server
+     * @param client the Client
      * @param msg string to add to the buffer
      */
-    void _send_reply(Client& c, const std::string& msg);
+    void _send_reply(Server& server, Client& client, const std::string& msg);
 };
 
 #endif

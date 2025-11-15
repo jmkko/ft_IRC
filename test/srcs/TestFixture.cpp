@@ -52,9 +52,5 @@ void TestFixture::cleanup()
             }
         }
         _sockets.clear();
-
-        // Give server time to cleanup disconnected clients
-        std::this_thread::sleep_for(std::chrono::milliseconds(SERVER_PROCESS_TIME_MS));
     }
-    _server.cleanup_channels();
 }

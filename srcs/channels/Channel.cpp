@@ -160,26 +160,26 @@ std::ostream&	operator<<(std::ostream& os, const Channel& c)
 void Channel::broadcast(
     Server& server, ReplyCode replyCode, const std::string& params, Client* sender, const std::string& trailing) const
 {
-    ReplyHandler& rh = ReplyHandler::get_instance(&server);
+    ReplyHandler& rh = ReplyHandler::get_instance();
     LOG_DV_CMD(_members.size());
     for (std::set<Client*>::iterator it = _members.begin(); it != _members.end(); ++it) {
         Client* recipient = *it;
         if (sender && recipient == sender)
             continue;
         LOG_D_SERVER(recipient->get_nickname() + " received a broadcast from " + get_name(), ircConfig.str(replyCode));
-        rh.process_response(*recipient, replyCode, params, sender, trailing);
+        rh.process_response(server, *recipient, replyCode, params, sender, trailing);
     }
 }
 
 void Channel::broadcast_bot(
     Server& server, ReplyCode replyCode, const std::string& params, Client* sender, const std::string& trailing) const
 {
-    ReplyHandler& rh = ReplyHandler::get_instance(&server);
+    ReplyHandler& rh = ReplyHandler::get_instance();
     LOG_DV_CMD(_members.size());
     for (std::set<Client*>::iterator it = _members.begin(); it != _members.end(); ++it) {
         Client* recipient = *it;
         LOG_D_SERVER(recipient->get_nickname() + " received a broadcast from " + get_name(), ircConfig.str(replyCode));
-        rh.process_response(*recipient, replyCode, params, sender, trailing);
+        rh.process_response(server, *recipient, replyCode, params, sender, trailing);
     }
 }
 

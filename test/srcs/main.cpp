@@ -1,6 +1,7 @@
 #include "AssertUtils.hpp"
 #include "LogManager.hpp"
 #include "Logger.hpp"
+#include "ReplyHandler.hpp"
 #include "Server.hpp"
 #include "ServerRunner.hpp"
 #include "consts.hpp"
@@ -75,12 +76,15 @@ int main(int ac, char** av)
             test_bot(*s, &results);
         }
         LOG_TEST.info("End of first test suite...");
-        runner.stop();
+        s->stop();
+        std::this_thread::sleep_for(std::chrono::milliseconds(SERVER_RERUN_WAIT_MS));
         delete s; // NOLINT(cppcoreguidelines-owning-memory)
+        std::this_thread::sleep_for(std::chrono::milliseconds(SERVER_RERUN_WAIT_MS));
 
         if (chmod(SERVER_CONF_FILE_FOR_TEST, 000) != 0) {
             throw std::runtime_error(TO_STRING("error changing rights ") + strerror(errno));
         }
+        
         Server*      s2 = new Server(TEST_PORT, DEFAULT_PASSWORD);
         ServerRunner runner2(*s2);
         runner2.start();

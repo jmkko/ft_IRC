@@ -13,7 +13,9 @@
 #define SERVER_MOTD_WAIT_MS    50
 #define SERVER_START_WAIT_MS   50
 #define SERVER_STOP_WAIT_MS    20
+#define SERVER_RERUN_WAIT_MS   1000
 #define TEST_PORT              4343
+#define TEST_PORT_2            4344
 
 class Server;
 typedef struct Sresults {

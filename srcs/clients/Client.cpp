@@ -110,12 +110,12 @@ void Client::remove_from_all_channels()
 }
 void Client::part_all_channels(Server& server, Client& client)
 {
-        ReplyHandler &rh = ReplyHandler::get_instance(&server);
+        ReplyHandler &rh = ReplyHandler::get_instance();
         for (std::map<std::string, Channel*>::iterator it = _joinedChannels.begin(); it != _joinedChannels.end(); ++it)
         {
         Channel* channel = it->second;
         channel->broadcast(server, TRANSFER_PART, channel->get_name(), &client);
-        rh.process_response(*this, TRANSFER_PART, channel->get_name());
+        rh.process_response(server, *this, TRANSFER_PART, channel->get_name());
         channel->remove_member(*this);
             if (channel->get_nb_members() == 0) {
                 std::map<std::string, Channel *>::iterator it = server.channels.find(channel->get_name());
@@ -153,13 +153,13 @@ void	Client::broadcast_to_all_channels(Server& server, ReplyCode code, const std
 	    }
 	}
     }
-    ReplyHandler &rh = ReplyHandler::get_instance(&server);
+    ReplyHandler &rh = ReplyHandler::get_instance();
     LOG_DV_CMD(target.size());
     for (std::set<Client *>::iterator it = target.begin(); it != target.end(); ++it) {
         Client *recipient = *it;
         if (recipient == this)
             continue;
         LOG_D_SERVER(recipient->get_nickname() + " received a broadcast from " + _nickName, ircConfig.str(code));
-        rh.process_response(*recipient, code, params, this, trailing);
+        rh.process_response(server, *recipient, code, params, this, trailing);
     }
 }

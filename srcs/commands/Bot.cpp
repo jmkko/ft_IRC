@@ -237,7 +237,7 @@ void Bot::execute(Server& s, Client& c)
     if (!_register_bot(s, _socket))
         return;
 
-    ReplyHandler& rh            = ReplyHandler::get_instance(&s);
+    ReplyHandler& rh            = ReplyHandler::get_instance();
     unsigned long firstQuoteIdx = response.find_first_of('"');
     unsigned long lastQuoteIdx  = response.find_last_of('"');
     if (firstQuoteIdx != std::string::npos && lastQuoteIdx != std::string::npos)
@@ -261,7 +261,7 @@ void Bot::execute(Server& s, Client& c)
         }
     } else {
         for (std::vector<Client*>::iterator it = _targetClients.begin(); it != _targetClients.end(); ++it) {
-            rh.process_response(**it, TRANSFER_REPLY_BOT, (*it)->get_nickname(), NULL, response);
+            rh.process_response(s, **it, TRANSFER_REPLY_BOT, (*it)->get_nickname(), NULL, response);
         }
     }
 }

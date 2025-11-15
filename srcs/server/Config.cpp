@@ -35,7 +35,7 @@ Config::Config(const std::string& fileName) :
         actualFileName = SERVER_CONF_FILE_FOR_TEST;
 #endif
     if (!_parse_config_file(actualFileName)) {
-        LOG_SERVER.warning("CONF FILE not loaded!");
+        LOG_SERVER.warning("CONF FILE not loaded! " + actualFileName);
         exist = false;
     }
     if (_motd.empty()) {
