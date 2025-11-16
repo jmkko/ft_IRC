@@ -273,6 +273,7 @@ void Mode::execute(Server& server, Client& client)
             if (currentMode[0] == '-' && currentMode[1] == 'l') {
                 LOG_d_CMD("Negative l");
                 channel->remove_mode(char_to_mode(currentMode[1]));
+                channel->set_user_limit(NO_LIMIT);
                 validModes += currentMode;
                 continue;
             }
