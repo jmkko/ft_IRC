@@ -268,6 +268,7 @@ bool Channel::remove_member(Client& client)
     if (is_operator(client) && _operators.size() > 1)
         remove_operator(client);
     _members.erase(&client);
+    LOG_D_CMD("successfully removed from members", client.get_nickname());
     return (member);
 }
 

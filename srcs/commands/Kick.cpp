@@ -46,7 +46,8 @@ void Kick::_kick_users_from_chan(std::string& chanName, std::vector<std::string>
         Client* target = p.get_server()->find_client_by_nickname(usersNames[i]);
         if (!channel->is_operator(*p.get_client())) {
             p.response(ERR_CHANOPRIVSNEEDED, channel->get_name());
-        } else if (target && channel->remove_member(*target)) {
+        } else if (target) {
+            target->remove_joined_channel(*channel);
             p.response(target, p.get_client(), TRANSFER_KICK, channel->get_name() + " " + target->get_nickname(), _msg);
             channel->broadcast(*server, TRANSFER_KICK, channel->get_name() + " " + target->get_nickname(), p.get_client(), _msg);
             p.response(p.get_client(), TRANSFER_KICK, channel->get_name() + " " + target->get_nickname(), _msg);
@@ -88,7 +89,8 @@ void Kick::execute(Server& server, Client& client)
             p.response(ERR_NOSUCHCHANNEL, _channelsNames[i]);
         } else if (!channel->is_operator(client)) {
             p.response(ERR_CHANOPRIVSNEEDED, channel->get_name());
-        } else if (target && channel->remove_member(*target)) {
+        } else if (target) {
+            target->remove_joined_channel(*channel);
             p.response(target, &client, TRANSFER_KICK, channel->get_name() + " " + target->get_nickname(), _msg);
             channel->broadcast(server, TRANSFER_KICK, channel->get_name() + " " + target->get_nickname(), &client, _msg);
             p.response(TRANSFER_KICK, channel->get_name() + " " + target->get_nickname(), _msg);

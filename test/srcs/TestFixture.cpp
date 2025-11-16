@@ -43,6 +43,13 @@ void TestFixture::cleanup()
         LOG_dt_TEST("Fixture cleanup - closing " + Utils::to_string(_sockets.size()) + " socket(s)");
         for (auto& socket : _sockets) {
             if (socket && socket->get_socket() != -1) {
+                send_line(*socket.get(), "JOIN 0\r\n");
+                // Give server time to process
+                std::this_thread::sleep_for(std::chrono::milliseconds(SERVER_PROCESS_TIME_MS));
+            }
+        }
+        for (auto& socket : _sockets) {
+            if (socket && socket->get_socket() != -1) {
                 // Send QUIT command to properly disconnect from server
                 send_line(*socket.get(), validQuitMsg);
 
@@ -53,4 +60,6 @@ void TestFixture::cleanup()
         }
         _sockets.clear();
     }
+    // _server.cleanup_channels();
+    std::this_thread::sleep_for(std::chrono::milliseconds(SERVER_PROCESS_TIME_MS));
 }
