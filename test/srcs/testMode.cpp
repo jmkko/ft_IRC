@@ -708,51 +708,51 @@ void test_mode(Server& s, t_results* r)
     // run_test([&] { mode_plusi_should_allow_op_to_join_without_invite(s); }, "+i (op)");
     // run_test([&] { mode_plusl_should_allow_op_to_join_if_max_reached(s); }, "+l <limit> (op)");
 
-    // run_test(
-    //     r, [&] { mode_no_option_should_send_modes_list(s); }, "list");
-    // run_test(
-    //     r, [&] { mode_pluso_should_grant_op_and_kick(s); }, "+o <user>");
-    // run_test(
-    //     r, [&] { mode_minuso_should_remove_op_and_kick(s); }, "-o <user>");
-    // run_test(
-    //     r, [&] { many_modes_work(s); }, "+kl <key> <limit>");
-    // run_test(
-    //     r, [&] { many_many_modes_work(s); }, "+kl key 10 +it +o roro");
+    run_test(
+        r, [&] { mode_no_option_should_send_modes_list(s); }, "list");
+    run_test(
+        r, [&] { mode_pluso_should_grant_op_and_kick(s); }, "+o <user>");
+    run_test(
+        r, [&] { mode_minuso_should_remove_op_and_kick(s); }, "-o <user>");
+    run_test(
+        r, [&] { many_modes_work(s); }, "+kl <key> <limit>");
+    run_test(
+        r, [&] { many_many_modes_work(s); }, "+kl key 10 +it +o roro");
 
-    // run_test(
-    //     r, [&] { no_chan_should_err(s); }, "no chan");
-    // run_test(
-    //     r, [&] { no_keyarg_should_err(s); }, "+k no arg");
-    // run_test(
-    //     r, [&] { no_limitarg_should_err(s); }, "+l no arg");
-    // run_test(
-    //     r, [&] { no_oparg_should_err(s); }, "+o no arg");
-    // run_test(
-    //     r, [&] { key_already_set_should_err(s); }, "+k already set");
-    // run_test(
-    //     r, [&] { unknown_mode_should_err(s); }, "+z");
-    // run_test(
-    //     r, [&] { unknown_chan_should_err(s); }, "unknown chan");
-    // run_test(
-    //     r, [&] { mode_l_negativearg_should_err(s); }, "+l -1");
-    // run_test(
-    //     r, [&] { mode_o_unknown_user_should_err(s); }, "+o unknown");
-    // run_test(
-    //     r, [&] { mode_minuso_noarg_user_should_err(s); }, "-o no user");
-    // run_test(
-    //     r, [&] { mode_plusi_no_invite_should_err(s); }, "+i");
-    // run_test(
-    //     r, [&] { mode_plusk_no_key_should_err(s); }, "+k <key>");
-    // run_test(
-    //     r, [&] { mode_plusi_with_invite_should_send_rpl_and_broadcast(s); }, "+i after being invited.");
-    // run_test(
-    //     r, [&] { mode_plusl_should_block_join_if_max_reached(s); }, "+l <limit>");
-    // run_test(
-    //     r, [&] { mode_plusl_zeroarg_should_block_join(s); }, "+l 0");
-    // run_test(
-    //     r, [&] { mode_minusk_should_lift_block(s); }, "-k <key>");
-    // run_test(
-    //     r, [&] { mode_minusi_should_lift_block(s); }, "-i");
+    run_test(
+        r, [&] { no_chan_should_err(s); }, "no chan");
+    run_test(
+        r, [&] { no_keyarg_should_err(s); }, "+k no arg");
+    run_test(
+        r, [&] { no_limitarg_should_err(s); }, "+l no arg");
+    run_test(
+        r, [&] { no_oparg_should_err(s); }, "+o no arg");
+    run_test(
+        r, [&] { key_already_set_should_err(s); }, "+k already set");
+    run_test(
+        r, [&] { unknown_mode_should_err(s); }, "+z");
+    run_test(
+        r, [&] { unknown_chan_should_err(s); }, "unknown chan");
+    run_test(
+        r, [&] { mode_l_negativearg_should_err(s); }, "+l -1");
+    run_test(
+        r, [&] { mode_o_unknown_user_should_err(s); }, "+o unknown");
+    run_test(
+        r, [&] { mode_minuso_noarg_user_should_err(s); }, "-o no user");
+    run_test(
+        r, [&] { mode_plusi_no_invite_should_err(s); }, "+i");
+    run_test(
+        r, [&] { mode_plusk_no_key_should_err(s); }, "+k <key>");
+    run_test(
+        r, [&] { mode_plusi_with_invite_should_send_rpl_and_broadcast(s); }, "+i after being invited.");
+    run_test(
+        r, [&] { mode_plusl_should_block_join_if_max_reached(s); }, "+l <limit>");
+    run_test(
+        r, [&] { mode_plusl_zeroarg_should_block_join(s); }, "+l 0");
+    run_test(
+        r, [&] { mode_minusk_should_lift_block(s); }, "-k <key>");
+    run_test(
+        r, [&] { mode_minusi_should_lift_block(s); }, "-i");
     run_test(
         r, [&] { mode_minusl_should_lift_block(s); }, "-l");
 }
