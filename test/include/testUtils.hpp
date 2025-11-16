@@ -6,7 +6,7 @@
 #include "printUtils.hpp"
 #include "reply_codes.hpp"
 
-#define MAX_TRIES_MOTD         10
+#define MAX_TRIES_MOTD         3
 #define SERVER_PROCESS_TIME_MS 10
 #define SERVER_BOT_WAIT_MS     8000
 #define SERVER_SEND_WAIT_MS    15
