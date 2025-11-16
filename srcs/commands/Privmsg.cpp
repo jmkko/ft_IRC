@@ -17,8 +17,14 @@ Privmsg::Privmsg(std::string& params)
 
     std::string targetList = parser.format_parameter(params, NULL);
     _targets               = parser.to_vector(targetList);
-    _message               = parser.from_remaining_args(params);
-    LOG_DV_CMD(_message);
+    LOG_DV_CMD(params);
+    if (!params.empty() && params.find(" :") == 0)
+        _message = parser.from_trailing(params);
+    else if (params.empty())
+        _message = "";
+    else
+        _message = parser.from_remaining_args(params);
+    LOG_D_CMD("message", "|" + _message + "|");
     if (!_message.empty() && _message[0] == ':') {
         _message.replace(0, 1, "");
     }

@@ -6,7 +6,7 @@
 /*   By: fpetit <fpetit@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/22 10:25:15 by jhervoch          #+#    #+#             */
-/*   Updated: 2025/11/15 18:28:40 by fpetit           ###   ########.fr       */
+/*   Updated: 2025/11/16 18:28:10 by fpetit           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -298,9 +298,7 @@ std::map<std::string, std::string> Parser::to_map(std::string& keys, std::string
     }
     return (result);
 }
-// return an argument, as a formated string of parameters args = param1,param2,param3
-// can apply a function on every param (but not in use for now)
-// if arguments start by ':' takes the all line
+
 std::string Parser::format_parameter(std::string& params, Checker function)
 {
     std::string        arguments, list, trailing;
