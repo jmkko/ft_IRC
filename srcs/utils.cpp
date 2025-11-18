@@ -37,10 +37,10 @@ bool Utils::check_password(const std::string& s)
         LOG_SERVER.warning(std::string("password must be ") + TO_STRING(MIN_PASSWORD_LEN) + " long at least");
         return false;
     }
-    for (std::string::const_iterator it = s.begin(); it != s.end(); ++it)
-    {
+    for (std::string::const_iterator it = s.begin(); it != s.end(); ++it) {
         if (Utils::is_invalid_char_key(*it)) {
-            LOG_w_SERVER("password must contain only ASCII chars in range A-Z, a-z, 0-9, !@#$%^&*(), \%x01-05, \%x07-08, \%x0C, and \%x0E-1F");
+            LOG_w_SERVER("password must contain only ASCII chars in range A-Z, a-z, 0-9, !@#$%^&*(), \%x01-05, \%x07-08, \%x0C, "
+                         "and \%x0E-1F");
             return false;
         }
     }

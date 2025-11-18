@@ -1,8 +1,7 @@
-#include "TestFixture.hpp"
-
 #include "LogManager.hpp"
 #include "Logger.hpp"
 #include "TcpSocket.hpp"
+#include "TestFixture.hpp"
 #include "colors.hpp"
 #include "fakeClient.hpp"
 #include "testUtils.hpp"
@@ -44,6 +43,13 @@ void TestFixture::cleanup()
         LOG_dt_TEST("Fixture cleanup - closing " + Utils::to_string(_sockets.size()) + " socket(s)");
         for (auto& socket : _sockets) {
             if (socket && socket->get_socket() != -1) {
+                send_line(*socket.get(), "JOIN 0\r\n");
+                // Give server time to process
+                std::this_thread::sleep_for(std::chrono::milliseconds(SERVER_PROCESS_TIME_MS));
+            }
+        }
+        for (auto& socket : _sockets) {
+            if (socket && socket->get_socket() != -1) {
                 // Send QUIT command to properly disconnect from server
                 send_line(*socket.get(), validQuitMsg);
 
@@ -53,9 +59,7 @@ void TestFixture::cleanup()
             }
         }
         _sockets.clear();
-
-        // Give server time to cleanup disconnected clients
-        std::this_thread::sleep_for(std::chrono::milliseconds(SERVER_PROCESS_TIME_MS));
     }
-    _server.cleanup_channels();
+    // _server.cleanup_channels();
+    std::this_thread::sleep_for(std::chrono::milliseconds(SERVER_PROCESS_TIME_MS));
 }

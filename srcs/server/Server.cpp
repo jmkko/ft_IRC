@@ -40,7 +40,6 @@ Server::Server(const unsigned short port, const std::string& password) :
     _serverSocket.tcp_listen();
     LOG_SERVER.info("Server " + _name + " start at port :" + Utils::to_string(port));
     std::cout << "\n";
-
     _listen_to_socket(_serverSocket.get_socket(), POLLIN);
 }
 
@@ -73,7 +72,7 @@ void Server::start()
 
         LOG_DT_SERVER("event detected", pollResult);
         for (int i = 0; i < static_cast<int>(_pfds.size()); i++) {
-            if (globalSignal == SIGINT && globalSignal == SIGABRT)
+            if (globalSignal == SIGINT || globalSignal == SIGABRT)
                 break;
 
             if (i >= static_cast<int>(_pfds.size()))
@@ -108,7 +107,9 @@ void Server::start()
             }
         }
     }
+    LOG_d_SERVER("exiting main server loop");
     _clean();
+    LOG_d_SERVER("clean ended");
 }
 
 void Server::update_bot_state(
@@ -208,22 +209,20 @@ void Server::_handle_bot_input(int pfdIndex, Client* botClient, BotState& state)
         LOG_D_SERVER("bot received", buffer);
         botClient->append_to_read_buffer(std::string(static_cast<char*>(buffer)));
         std::string  response(botClient->get_read_buffer());
-        ReplyHandler rh = ReplyHandler::get_instance(this);
+        ReplyHandler rh = ReplyHandler::get_instance();
 
         if (response.find("JOIN") != std::string::npos) {
             LOG_DV_SERVER(response);
             _handle_commands(pfdIndex);
             state.targetChannel->broadcast_bot(
                 *this, TRANSFER_PRIVMSG, state.targetChannel->get_name(), botClient, state.pendingMsg);
-            rh.process_response(*botClient, TRANSFER_PRIVMSG, state.targetChannel->get_name());
+            rh.process_response(*this, *botClient, TRANSFER_PRIVMSG, state.targetChannel->get_name());
             state.readyToSend = true;
-            return;
-        }
-        if (response.find("PRIVMSG") != std::string::npos && state.readyToSend == true) {
             LOG_DV_SERVER(state.pendingMsg);
             _handle_commands(pfdIndex);
             cleanup_bot(so);
             cleanup_socket_and_client(pfdIndex);
+            return;
         }
     }
 }
@@ -384,7 +383,8 @@ void Server::_clean()
     }
     _bots.erase(_bots.begin(), _bots.end());
     _bots.clear();
-    cleanup_channels();
+    if (!channels.empty())
+        cleanup_channels();
 
     globalSignal = 0;
     LOG_SERVER.debug("Server cleaned and ready for reuse");

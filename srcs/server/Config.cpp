@@ -16,6 +16,7 @@ const Config ircConfigTest(SERVER_CONF_FILE_FOR_TEST);
  ************************************************************/
 
 Config::Config(const std::string& fileName) :
+    exist(true),
     _name(SERVER_NAME),
     _psswd(DEFAULT_PASSWORD),
     _port(DEFAULT_PORT),
@@ -34,8 +35,8 @@ Config::Config(const std::string& fileName) :
         actualFileName = SERVER_CONF_FILE_FOR_TEST;
 #endif
     if (!_parse_config_file(actualFileName)) {
-        LOG_SERVER.warning("CONF FILE not loaded!");
-        exit(1);
+        LOG_SERVER.warning("CONF FILE not loaded! " + actualFileName);
+        exist = false;
     }
     if (_motd.empty()) {
         LOG_SERVER.warning("MOTD is empty!");
@@ -131,13 +132,13 @@ void Config::_set_key_value(const std::string& key, std::string& value)
     const size_t nbParam = 7;
     std::string  keyList[nbParam]
         = {"server_name", "password", "port", "maxJoinedChannels", "chanNameMaxLen", "nicknameMaxLen", "targetLimit"};
-    void (Config::* functions[nbParam])(std::string&) = {&Config::_set_name,
-                                                         &Config::_set_password,
-                                                         &Config::_set_port,
-                                                         &Config::_set_max_joined_channels,
-                                                         &Config::_set_chan_name_max_len,
-                                                         &Config::_set_nickname_max_len,
-                                                         &Config::_set_target_limit};
+    void (Config::*functions[nbParam])(std::string&) = {&Config::_set_name,
+                                                        &Config::_set_password,
+                                                        &Config::_set_port,
+                                                        &Config::_set_max_joined_channels,
+                                                        &Config::_set_chan_name_max_len,
+                                                        &Config::_set_nickname_max_len,
+                                                        &Config::_set_target_limit};
     for (size_t i = 0; i < nbParam; i++) {
         if (key == keyList[i]) {
             (this->*functions[i])(value);

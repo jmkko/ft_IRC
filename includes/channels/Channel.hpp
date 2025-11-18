@@ -13,6 +13,8 @@
 #include "ReplyHandler.hpp"
 #include "reply_codes.hpp"
 
+#include <cstddef>
+#include <queue>
 #include <set>
 #include <string>
 #include <vector>
@@ -173,6 +175,8 @@ class Channel
      * @param client
      * @return true
      * @return false
+     * @pre return from erase is ignored in case client is not invited, so it safe to use in that case.
+     * Yet still better if the caller function has checked that client is invited
      */
     bool remove_from_invited_list(Client& client);
 
@@ -214,6 +218,8 @@ class Channel
      *
      * @param client
      * @return false if member was not in the channel
+     * @pre return from erase is ignored in case client is not an member, so it safe to use in that case.
+     * Yet still better if the caller function has checked that client is member
      */
     bool remove_member(Client& client);
 
@@ -230,7 +236,8 @@ class Channel
      * @brief removes op status from client
      *
      * @param client
-     * @pre caller function should have checked that client is operator
+     * @pre return from erase is ignored in case client is not an operator, so it safe to use in that case.
+     * Yet still better if the caller function has checked that client is operator
      */
     void remove_operator(Client& client);
 
@@ -276,6 +283,20 @@ class Channel
      * @return size_t
      */
     size_t get_nb_members() const;
+
+    /**
+     * @brief Get the message history
+     *
+     * @return const std::queue<std::string>
+     */
+    const std::deque<std::string> get_history() const;
+
+    /**
+     * @brief adds a message to channel history
+     * @details if message number reaches MAX_MESSAGES_HISTORY, the oldest one is removed
+     * @param message
+     */
+    void add_message_to_history(const std::string& message);
 
     /**
      * @brief Get a list of #Client members
@@ -331,6 +352,7 @@ class Channel
      * @return false otherwise
      */
     static bool is_valid_channel_name(const std::string& name);
+
     /**
  * @brief
  * @details cf [grammar](https://datatracker.ietf.org/doc/html/rfc2812#section-2.3.1)
@@ -344,15 +366,16 @@ class Channel
     static bool is_valid_channel_key(const std::string& key);
 
   private:
-    std::string       _name;
-    std::string       _topic;
-    std::string       _key;
-    unsigned short    _mode;
-    int               _userLimit; // -1 if -l not set
-    std::set<Client*> _members;
-    std::set<Client*> _invites;
-    std::set<Client*> _operators;
-    std::set<Client*> _banList;
+    std::string             _name;
+    std::string             _topic;
+    std::string             _key;
+    unsigned short          _mode;
+    int                     _userLimit; // -1 if -l not set
+    std::set<Client*>       _members;
+    std::set<Client*>       _invites;
+    std::set<Client*>       _operators;
+    std::set<Client*>       _banList;
+    std::deque<std::string> _lastMessages;
 
     Channel();
 };

@@ -160,26 +160,26 @@ std::ostream&	operator<<(std::ostream& os, const Channel& c)
 void Channel::broadcast(
     Server& server, ReplyCode replyCode, const std::string& params, Client* sender, const std::string& trailing) const
 {
-    ReplyHandler& rh = ReplyHandler::get_instance(&server);
+    ReplyHandler& rh = ReplyHandler::get_instance();
     LOG_DV_CMD(_members.size());
     for (std::set<Client*>::iterator it = _members.begin(); it != _members.end(); ++it) {
         Client* recipient = *it;
         if (sender && recipient == sender)
             continue;
         LOG_D_SERVER(recipient->get_nickname() + " received a broadcast from " + get_name(), ircConfig.str(replyCode));
-        rh.process_response(*recipient, replyCode, params, sender, trailing);
+        rh.process_response(server, *recipient, replyCode, params, sender, trailing);
     }
 }
 
 void Channel::broadcast_bot(
     Server& server, ReplyCode replyCode, const std::string& params, Client* sender, const std::string& trailing) const
 {
-    ReplyHandler& rh = ReplyHandler::get_instance(&server);
+    ReplyHandler& rh = ReplyHandler::get_instance();
     LOG_DV_CMD(_members.size());
     for (std::set<Client*>::iterator it = _members.begin(); it != _members.end(); ++it) {
         Client* recipient = *it;
         LOG_D_SERVER(recipient->get_nickname() + " received a broadcast from " + get_name(), ircConfig.str(replyCode));
-        rh.process_response(*recipient, replyCode, params, sender, trailing);
+        rh.process_response(server, *recipient, replyCode, params, sender, trailing);
     }
 }
 
@@ -265,7 +265,10 @@ bool Channel::remove_from_invited_list(Client& client)
 bool Channel::remove_member(Client& client)
 {
     bool member = is_member(client);
+    if (is_operator(client) && _operators.size() > 1)
+        remove_operator(client);
     _members.erase(&client);
+    LOG_D_CMD("successfully removed from members", client.get_nickname());
     return (member);
 }
 
@@ -290,6 +293,15 @@ std::set<Client*> Channel::get_members() const { return _members; }
 struct CompareClientsByName {
     bool operator()(const Client* lhs, const Client* rhs) { return lhs->get_nickname() < rhs->get_nickname(); }
 };
+
+const std::deque<std::string> Channel::get_history() const { return _lastMessages; }
+
+void Channel::add_message_to_history(const std::string& message)
+{
+    if (_lastMessages.size() >= MAX_MESSAGES_HISTORY)
+        _lastMessages.pop_front();
+    _lastMessages.push_back(message);
+}
 
 std::vector<std::string> Channel::get_members_list() const
 {

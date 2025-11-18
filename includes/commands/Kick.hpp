@@ -73,11 +73,12 @@ class Kick : public ICommand
     /**
      * @brief removes specified users from channel
      *
+     * @param server
      * @param chanName
      * @param usersNames
      * @param p
      */
-    void _kick_users_from_chan(std::string& chanName, std::vector<std::string>& usersNames, Parser& p);
+    void _kick_users_from_chan(Server& server, std::string& chanName, std::vector<std::string>& usersNames, Parser& p);
 };
 
 #endif

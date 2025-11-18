@@ -65,7 +65,7 @@ void op_existing_chan_valid_user_should_transfer(Server& s)
 /**
  @brief integration test - normal case - many users
 */
-void op_existing_chan_valid_users_should_transfer(Server& s)
+void op_one_channel_many_users_should_transfer(Server& s)
 {
     try {
         TEST_SETUP(test, s, 3);
@@ -84,7 +84,7 @@ void op_existing_chan_valid_users_should_transfer(Server& s)
         ar.is_formatted_transfer(opNick, "KICK #chan roro");
         ar.is_formatted_transfer(opNick, "KICK #chan toto");
 
-        // kicked user1 gets an individual noticd
+        // kicked user1 gets an individual notice
         reply = recv_lines(so);
         ar.handle_new_reply(reply);
         ar.is_formatted_transfer(opNick, "KICK #chan roro");
@@ -224,7 +224,7 @@ void op_user_not_in_channel_should_err(Server& s)
         send_line(soOp, validKickMsg);
         std::string reply = recv_lines(soOp);
         AssertReply ar(reply);
-        ar.is_formatted(ERR_USERNOTINCHANNEL, opNick, "#chan");
+        ar.is_formatted(ERR_USERNOTINCHANNEL, opNick, "#chan roro");
 
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());
@@ -321,16 +321,16 @@ void test_kick(Server& s, t_results* r)
 {
     print_test_series("command KICK");
     print_test_series_part("common cases");
-    run_test(r, [&] { op_existing_chan_valid_user_should_transfer(s); }, "single kick");
-    run_test(r, [&] { op_existing_chan_valid_users_should_transfer(s); }, "combo double kick");
-    run_test(r, [&] { kick_with_reason_should_transfer(s); }, "custom reason should appear in message");
+    run_test(r, [&] { op_existing_chan_valid_user_should_transfer(s); }, "KICK single kick");
+    run_test(r, [&] { op_one_channel_many_users_should_transfer(s); }, "KICK combo double kick");
+    run_test(r, [&] { kick_with_reason_should_transfer(s); }, "KICK custom reason should appear in message");
 
     print_test_series_part("error cases");
-    run_test(r, [&] { no_op_should_err(s); }, "no op");
-    run_test(r, [&] { op_missing_chan_should_err(s); }, "no chan");
-    run_test(r, [&] { op_missing_user_should_err(s); }, "no user");
-    run_test(r, [&] { op_user_not_in_channel_should_err(s); }, "not in chan");
-    run_test(r, [&] { op_invalid_channel_should_err(s); }, "invalid chan");
-    run_test(r, [&] { op_valid_inexistent_channel_should_err(s); }, "inexisting chan");
-    run_test(r, [&] { op_matching_size_channel_list_and_user_list_should_transfer(s); }, "user list and channel list are same size");
+    run_test(r, [&] { no_op_should_err(s); }, "KICK no op");
+    run_test(r, [&] { op_missing_chan_should_err(s); }, "KICK no chan");
+    run_test(r, [&] { op_missing_user_should_err(s); }, "KICK no user");
+    run_test(r, [&] { op_user_not_in_channel_should_err(s); }, "KICK not in chan");
+    run_test(r, [&] { op_invalid_channel_should_err(s); }, "KICK invalid chan");
+    run_test(r, [&] { op_valid_inexistent_channel_should_err(s); }, "KICK inexisting chan");
+    run_test(r, [&] { op_matching_size_channel_list_and_user_list_should_transfer(s); }, "KICK user list and channel list are same size");
 }

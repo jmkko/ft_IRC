@@ -207,10 +207,10 @@ void msg_in_arg_instead_of_trailing_should_notice(Server& s)
 
 		authenticate(so, "user");
         // test is received
-        send_line(soOp, "PRIVMSG user message only must be displayed\r\n");
+        send_line(soOp, "PRIVMSG user many words message\r\n");
         std::string reply = recv_lines(so);
         AssertReply ar(reply);
-        ar.matches_entirely(":op!op@hazardous.irc.serv PRIVMSG user :message");
+        ar.matches_entirely(":op!op@hazardous.irc.serv PRIVMSG user :many words message");
     } catch (const std::runtime_error& e) {
         LOG_TEST.error(e.what());
     }

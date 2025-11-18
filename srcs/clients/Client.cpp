@@ -1,11 +1,13 @@
-#include "Client.hpp"
-
 #include "Channel.hpp"
+#include "Client.hpp"
 #include "Config.hpp"
 #include "LogManager.hpp"
 #include "Part.hpp"
+#include "Server.hpp"
 #include "TcpSocket.hpp"
 #include "consts.hpp"
+#include "reply_codes.hpp"
+#include "utils.hpp"
 
 #include <iostream>
 
@@ -99,26 +101,39 @@ void               Client::remove_joined_channel(Channel& channel) {
 	_joinedChannels.erase(channel.get_name()); 
 }
 
-void 				Client::remove_from_all_channels()
+void Client::remove_from_all_channels()
 {
 	for (std::map<std::string, Channel*>::iterator it = _joinedChannels.begin(); it != _joinedChannels.end(); ++it)
 	{
-		it->second->remove_member(*this);
-	}
-	_joinedChannels.clear();
-}
-void 				Client::part_all_channels(Server& server, Client& client)
-{
-	for (std::map<std::string, Channel*>::iterator it = _joinedChannels.begin(); it != _joinedChannels.end(); ++it)
-	{
-		std::string params = static_cast<std::string>(it->second->get_name());
-		Part doPart(params);
-		doPart.execute(server,client);
+		if (it->second->get_nb_members() > 0)
+            it->second->remove_member(*this);
 	}
 	_joinedChannels.clear();
 }
 
-void               Client::set_send_buffer(const std::string& buffer) { _sendBuffer = buffer; }
+void Client::part_all_channels(Server& server, Client& client)
+{
+    ReplyHandler &rh = ReplyHandler::get_instance();
+    for (std::map<std::string, Channel*>::iterator it = _joinedChannels.begin(); it != _joinedChannels.end(); ++it)
+    {
+        Channel* channel = it->second;
+        if (channel == NULL)
+            continue;
+        channel->broadcast(server, TRANSFER_PART, channel->get_name(), &client);
+        rh.process_response(server, *this, TRANSFER_PART, channel->get_name());
+        channel->remove_member(*this);
+        if (channel->get_nb_members() == 0) {
+            std::map<std::string, Channel *>::iterator it = server.channels.find(channel->get_name());
+            if (it != server.channels.end()) {
+                server.channels.erase(it);
+                delete channel;
+            }
+        }
+    }
+	_joinedChannels.clear();
+}
+
+void Client::set_send_buffer(const std::string& buffer) { _sendBuffer = buffer; }
 
 Channel* Client::get_channel(const std::string& name) {
 
@@ -132,10 +147,24 @@ Channel* Client::get_channel(const std::string& name) {
 void	Client::broadcast_to_all_channels(Server& server, ReplyCode code, const std::string& params, const std::string& trailing)
 {
     LOG_DT_CMD("nb joined channels", _joinedChannels.size());
-	for (std::map<std::string, Channel*>::iterator it = _joinedChannels.begin(); it != _joinedChannels.end(); it++) {
-		if (it->second) {
+    std::set<Client*> target;
+    for (std::map<std::string, Channel*>::iterator it = _joinedChannels.begin(); it != _joinedChannels.end(); it++) {
+	if (it->second) {
             LOG_DT_CMD("to",  it->second->get_name());
-			it->second->broadcast(server, code, params, this, trailing);
-		}
+	    Channel* channel = it->second;
+	    std::set<Client*> chanMembers = channel->get_members();
+	    for (std::set<Client*>::iterator itc = chanMembers.begin(); itc != chanMembers.end(); itc++){
+	      target.insert(*itc);
+	    }
 	}
+    }
+    ReplyHandler &rh = ReplyHandler::get_instance();
+    LOG_DV_CMD(target.size());
+    for (std::set<Client *>::iterator it = target.begin(); it != target.end(); ++it) {
+        Client *recipient = *it;
+        if (recipient == this)
+            continue;
+        LOG_D_SERVER(recipient->get_nickname() + " received a broadcast from " + _nickName, ircConfig.str(code));
+        rh.process_response(server, *recipient, code, params, this, trailing);
+    }
 }

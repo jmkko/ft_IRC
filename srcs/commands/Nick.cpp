@@ -43,7 +43,9 @@ void Nick::execute(Server& server, Client& client)
         client.set_status(REGISTERED);
         p.rh->process_welcome(server, client);
     } else if (!oldNickname.empty() && !client.get_user_name().empty() && client.is_registered()) {
-        client.broadcast_to_all_channels(server, TRANSFER_NICK, "", _nickname); // ! \\ ;
+        client.broadcast_to_all_channels(server, TRANSFER_NICK, "",
+                                         _nickname); // ! \\ ;
+        p.response(TRANSFER_NICK, "", _nickname);
     }
     client.set_nickname(_nickname);
 }

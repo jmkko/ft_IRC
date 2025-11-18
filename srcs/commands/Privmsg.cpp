@@ -1,8 +1,10 @@
 #include "Privmsg.hpp"
 
 #include "Client.hpp"
+#include "LogManager.hpp"
 #include "Parser.hpp"
 #include "Server.hpp"
+#include "consts.hpp"
 #include "reply_codes.hpp"
 
 /************************************************************
@@ -15,7 +17,18 @@ Privmsg::Privmsg(std::string& params)
 
     std::string targetList = parser.format_parameter(params, NULL);
     _targets               = parser.to_vector(targetList);
-    _message               = parser.format_parameter(params, NULL);
+    LOG_DV_CMD(params);
+    if (!params.empty() && params.find(" :") == 0)
+        _message = parser.from_trailing(params);
+    else if (params.empty())
+        _message = "";
+    else
+        _message = parser.from_remaining_args(params);
+    LOG_D_CMD("message", "|" + _message + "|");
+    if (!_message.empty() && _message[0] == ':') {
+        _message.replace(0, 1, "");
+    }
+    LOG_DV_CMD(_message);
 }
 
 Privmsg::~Privmsg(void) {}
@@ -45,6 +58,7 @@ void Privmsg::execute(Server& server, Client& client)
         if (silent.correct_channel(*it)) {
             Channel* chan = server.find_channel_by_name(*it);
             if (chan && chan->is_member(client)) {
+                chan->add_message_to_history(client.get_nickname() + ":" + _message);
                 chan->broadcast(server, TRANSFER_PRIVMSG, *it, &client, _message);
             } else if (chan) {
                 p.response(ERR_NOTONCHANNEL, *it);

@@ -1,8 +1,10 @@
 #include "Quit.hpp"
 
+#include "Channel.hpp"
 #include "Client.hpp"
 #include "Config.hpp"
 #include "LogManager.hpp"
+#include "Part.hpp"
 #include "ReplyHandler.hpp"
 #include "Server.hpp"
 #include "reply_codes.hpp"

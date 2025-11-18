@@ -6,14 +6,16 @@
 #include "printUtils.hpp"
 #include "reply_codes.hpp"
 
-#define MAX_TRIES_MOTD         10
+#define MAX_TRIES_MOTD         3
 #define SERVER_PROCESS_TIME_MS 10
 #define SERVER_BOT_WAIT_MS     8000
 #define SERVER_SEND_WAIT_MS    15
 #define SERVER_MOTD_WAIT_MS    50
 #define SERVER_START_WAIT_MS   50
 #define SERVER_STOP_WAIT_MS    20
+#define SERVER_RERUN_WAIT_MS   1000
 #define TEST_PORT              4343
+#define TEST_PORT_2            4344
 
 class Server;
 typedef struct Sresults {
@@ -116,7 +118,7 @@ static const std::string& validModePlusIMsg           = "MODE #chan +i\r\n";
 static const std::string& validModeMinusIMsg          = "MODE #chan -i\r\n";
 static const std::string& validModePlusLMsg           = "MODE #chan +l 1\r\n";
 static const std::string& validModePlusLZeroMsg       = "MODE #chan +l 0\r\n";
-static const std::string& validModeMinusLMsg          = "MODE #chan -l\r\n";
+static const std::string& validModeMinusLMsg          = "MODE #chan -l 1\r\n";
 static const std::string& invalidModePlusLNegativeMsg = "MODE #chan +l -1\r\n";
 static const std::string& invalidModePlusLNoArgMsg    = "MODE #chan +l\r\n";
 static const std::string& validModePlusOMsg           = "MODE #chan +o op2\r\n";
