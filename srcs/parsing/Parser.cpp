@@ -10,8 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Parser.hpp"
-
 #include "Config.hpp"
 #include "LogManager.hpp"
 #include "Parser.hpp"
@@ -143,7 +141,7 @@ bool Parser::correct_key(std::string& key)
     }
     for (std::string::const_iterator it = key.begin(); it != key.end(); ++it) {
         unsigned char c = *it;
-        if (c > 0x07F || Utils::is_char_of(c, std::string(FORBIDEN_CHAR_CHAN_KEY, 7))) { // NOLINT
+        if (c > 0x07F || Utils::is_char_of(c, std::string(FORBIDEN_CHAR_CHAN_KEY, 9))) { // NOLINT
             return response(ERR_BADCHANNELKEY);
         }
     }

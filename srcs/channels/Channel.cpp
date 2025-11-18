@@ -1,5 +1,4 @@
 #include "Channel.hpp"
-
 #include "Client.hpp"
 #include "Config.hpp"
 #include "ICommand.hpp"
@@ -80,7 +79,7 @@ bool Channel::is_valid_channel_key(const std::string& key)
     }
     for (std::string::const_iterator it = key.begin(); it != key.end(); ++it) {
         unsigned char c = *it;
-        if (c > 0x07F || Utils::is_char_of(c, std::string(FORBIDEN_CHAR_CHAN_KEY, 7))) { // NOLINT
+        if (c > 0x07F || Utils::is_char_of(c, std::string(FORBIDEN_CHAR_CHAN_KEY, 9))) { // NOLINT
             return false;
         }
     }

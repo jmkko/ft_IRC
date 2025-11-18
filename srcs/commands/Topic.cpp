@@ -1,10 +1,9 @@
-#include "Topic.hpp"
-
 #include "Channel.hpp"
 #include "LogManager.hpp"
 #include "Parser.hpp"
 #include "ReplyHandler.hpp"
 #include "Server.hpp"
+#include "Topic.hpp"
 #include "reply_codes.hpp"
 
 #include <sstream>
@@ -25,7 +24,7 @@ Topic::Topic(std::string& params) : _clearTopic(false)
         _topic      = "";
     } else if (!topicArg.empty()) {
         if (topicArg.length() > 1 && topicArg[1] == ':')
-            _topic = topicArg.substr(2);
+            _topic = topicArg.substr(3);
         else
             _topic = topicArg.substr(1);
     }

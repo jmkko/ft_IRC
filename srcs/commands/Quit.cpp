@@ -1,10 +1,9 @@
-#include "Quit.hpp"
-
 #include "Channel.hpp"
 #include "Client.hpp"
 #include "Config.hpp"
 #include "LogManager.hpp"
 #include "Part.hpp"
+#include "Quit.hpp"
 #include "ReplyHandler.hpp"
 #include "Server.hpp"
 #include "reply_codes.hpp"
@@ -30,7 +29,7 @@ void Quit::execute(Server& server, Client& client)
     std::string trailingMsg = _quitMsg;
     if (trailingMsg.empty())
         trailingMsg = ircConfig.trailing(TRANSFER_QUIT);
-    client.broadcast_to_all_channels(server, TRANSFER_QUIT, "", trailingMsg);
+    client.broadcast_to_all_channels(server, TRANSFER_QUIT, trailingMsg);
     server.add_events_of(client, 0);
     server.cleanup_socket_and_client(pfdIndex);
 }
